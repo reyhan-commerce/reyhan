@@ -9,6 +9,7 @@ use App\Services\Sms\Drivers\FarazSmsDriver;
 use App\Services\Sms\Drivers\GhasedakDriver;
 use App\Services\Sms\Drivers\KavenegarDriver;
 use App\Services\Sms\Drivers\LogDriver;
+use App\Settings\SmsSettings;
 use Illuminate\Support\Manager;
 
 class SmsManager extends Manager
@@ -18,10 +19,17 @@ class SmsManager extends Manager
      */
     public function getDefaultDriver(): string
     {
-        /** @var string $driver */
-        $driver = $this->config->get('sms.default', 'log');
+        try {
+            /** @var SmsSettings $settings */
+            $settings = $this->container->make(SmsSettings::class);
 
-        return $driver;
+            return $settings->active_driver;
+        } catch (\Throwable) {
+            /** @var string $driver */
+            $driver = $this->config->get('sms.default', 'log');
+
+            return $driver;
+        }
     }
 
     /**

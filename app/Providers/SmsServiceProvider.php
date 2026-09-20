@@ -8,7 +8,7 @@ use App\Services\Integrations\FarazSms\FarazSmsClient;
 use App\Services\Integrations\Ghasedak\GhasedakClient;
 use App\Services\Integrations\Kavenegar\KavenegarClient;
 use App\Services\Sms\SmsManager;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
+use App\Settings\SmsSettings;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,41 +20,32 @@ class SmsServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(KavenegarClient::class, function (Application $app): KavenegarClient {
-            /** @var ConfigRepository $config */
-            $config = $app->make(ConfigRepository::class);
-            /** @var array{api_key?: string, sender?: string, otp_pattern?: string} $options */
-            $options = $config->get('sms.drivers.kavenegar', []);
+            $settings = $app->make(SmsSettings::class);
 
             return new KavenegarClient(
-                apiKey: (string) ($options['api_key'] ?? ''),
-                sender: (string) ($options['sender'] ?? ''),
-                otpPattern: (string) ($options['otp_pattern'] ?? '')
+                apiKey: (string) ($settings->kavenegar_api_key ?? ''),
+                sender: (string) ($settings->kavenegar_sender ?? ''),
+                otpPattern: (string) ($settings->kavenegar_otp_pattern ?? '')
             );
         });
 
         $this->app->singleton(FarazSmsClient::class, function (Application $app): FarazSmsClient {
-            /** @var ConfigRepository $config */
-            $config = $app->make(ConfigRepository::class);
-            /** @var array{api_key?: string, sender?: string, otp_pattern?: string} $options */
-            $options = $config->get('sms.drivers.farazsms', []);
+            $settings = $app->make(SmsSettings::class);
 
             return new FarazSmsClient(
-                apiKey: (string) ($options['api_key'] ?? ''),
-                sender: (string) ($options['sender'] ?? ''),
-                otpPattern: (string) ($options['otp_pattern'] ?? '')
+                apiKey: (string) ($settings->farazsms_api_key ?? ''),
+                sender: (string) ($settings->farazsms_sender ?? ''),
+                otpPattern: (string) ($settings->farazsms_otp_pattern ?? '')
             );
         });
 
         $this->app->singleton(GhasedakClient::class, function (Application $app): GhasedakClient {
-            /** @var ConfigRepository $config */
-            $config = $app->make(ConfigRepository::class);
-            /** @var array{api_key?: string, sender?: string, otp_template?: string} $options */
-            $options = $config->get('sms.drivers.ghasedak', []);
+            $settings = $app->make(SmsSettings::class);
 
             return new GhasedakClient(
-                apiKey: (string) ($options['api_key'] ?? ''),
-                sender: (string) ($options['sender'] ?? ''),
-                otpTemplate: (string) ($options['otp_template'] ?? '')
+                apiKey: (string) ($settings->ghasedak_api_key ?? ''),
+                sender: (string) ($settings->ghasedak_sender ?? ''),
+                otpTemplate: (string) ($settings->ghasedak_otp_template ?? '')
             );
         });
 
