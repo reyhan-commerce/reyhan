@@ -8,11 +8,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\RequestOtpRequest;
 use App\Http\Requests\Api\V1\Auth\VerifyOtpRequest;
 use App\Http\Resources\V1\UserResource;
-use App\Jobs\SendOtpSmsJob;
 use App\Models\User;
+use App\Notifications\Auth\SendOtpNotification;
 use App\Services\Captcha\CaptchaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redis;
 
 class AuthController extends Controller
@@ -57,12 +59,14 @@ class AuthController extends Controller
         // 3. Generate 5-digit cryptographically secure OTP
         $code = (string) random_int(10000, 99999);
 
-        // Store OTP and throttle in Redis DB 0 with 120-second TTL
-        $redis->setex("otp:code:{$mobile}", 120, $code);
+        // Store hashed OTP and throttle in Redis DB 0 with 120-second TTL
+        $hashedCode = Hash::make($code);
+        $redis->setex("otp:code:{$mobile}", 120, $hashedCode);
         $redis->setex($throttleKey, 120, '1');
 
-        // 4. Dispatch SMS Job via Redis Queue (DB 2)
-        SendOtpSmsJob::dispatch($mobile, $code);
+        // 4. Dispatch SMS Notification via SmsChannel
+        Notification::route('sms', $mobile)
+            ->notify(new SendOtpNotification($code));
 
         return response()->json([
             'success' => true,
@@ -83,9 +87,9 @@ class AuthController extends Controller
         $deviceName = (string) ($request->input('device_name') ?? 'web-client');
 
         $redis = Redis::connection('default');
-        $storedCode = (string) $redis->get("otp:code:{$mobile}");
+        $storedHashedCode = (string) $redis->get("otp:code:{$mobile}");
 
-        if (empty($storedCode) || $storedCode !== $code) {
+        if (empty($storedHashedCode) || ! Hash::check($code, $storedHashedCode)) {
             return response()->json([
                 'success' => false,
                 'message' => 'کد تایید وارد شده نامعتبر یا منقضی شده است.',

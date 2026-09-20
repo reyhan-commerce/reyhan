@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Jobs\SendOtpSmsJob;
 use App\Models\User;
+use App\Notifications\Auth\SendOtpNotification;
 use App\Services\Captcha\CaptchaService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Redis;
 
@@ -37,7 +39,9 @@ test('otp request fails when captcha is invalid', function () {
         ->assertJsonValidationErrors(['captcha_code']);
 });
 
-test('otp request succeeds with valid captcha and dispatches sms job', function () {
+test('otp request succeeds with valid captcha and dispatches sms notification', function () {
+    Notification::fake();
+
     $captchaService = app(CaptchaService::class);
     $captcha = $captchaService->generate();
     $answer = Redis::connection('default')->get("captcha:{$captcha['key']}");
@@ -53,17 +57,24 @@ test('otp request succeeds with valid captcha and dispatches sms job', function 
             'success' => true,
         ]);
 
-    // Verify OTP exists in Redis
-    $storedCode = Redis::connection('default')->get('otp:code:09123456789');
-    expect($storedCode)->not->toBeNull()->toHaveLength(5);
+    // Verify OTP exists as a secure Bcrypt hash in Redis
+    $storedHash = (string) Redis::connection('default')->get('otp:code:09123456789');
+    expect($storedHash)->not->toBeEmpty()
+        ->and(str_starts_with($storedHash, '$2y$'))->toBeTrue();
 
-    // Verify SMS Job was dispatched
-    Queue::assertPushed(SendOtpSmsJob::class, function ($job) use ($storedCode) {
-        return $job->mobile === '09123456789' && $job->code === $storedCode;
-    });
+    // Verify Notification was dispatched
+    Notification::assertSentOnDemand(
+        SendOtpNotification::class,
+        function (SendOtpNotification $notification, array $channels, $notifiable) use ($storedHash) {
+            return $notifiable->routes['sms'] === '09123456789'
+                && Hash::check($notification->code, $storedHash);
+        }
+    );
 });
 
 test('otp request is throttled when called multiple times within 120s', function () {
+    Notification::fake();
+
     $captchaService = app(CaptchaService::class);
 
     // 1st request
@@ -87,8 +98,9 @@ test('otp request is throttled when called multiple times within 120s', function
     $response->assertStatus(429);
 });
 
-test('otp verify creates user and issues sanctum token', function () {
-    Redis::connection('default')->setex('otp:code:09123456789', 120, '12345');
+test('otp verify checks hash, creates user and issues sanctum token', function () {
+    $code = '12345';
+    Redis::connection('default')->setex('otp:code:09123456789', 120, Hash::make($code));
 
     $response = $this->postJson('/api/v1/auth/otp/verify', [
         'mobile' => '۰۹۱۲۳۴۵۶۷۸۹', // Test Persian digits input

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Sms;
 
+use App\Services\Integrations\FarazSms\FarazSmsClient;
+use App\Services\Integrations\Ghasedak\GhasedakClient;
+use App\Services\Integrations\Kavenegar\KavenegarClient;
 use App\Services\Sms\Contracts\SmsDriverInterface;
 use App\Services\Sms\Drivers\FarazSmsDriver;
 use App\Services\Sms\Drivers\GhasedakDriver;
@@ -40,11 +43,13 @@ class SmsManager extends Manager
         /** @var array{api_key?: string, sender?: string, otp_pattern?: string} $config */
         $config = $this->config->get('sms.drivers.kavenegar', []);
 
-        return new KavenegarDriver(
+        $client = new KavenegarClient(
             apiKey: (string) ($config['api_key'] ?? ''),
             sender: (string) ($config['sender'] ?? ''),
             otpPattern: (string) ($config['otp_pattern'] ?? '')
         );
+
+        return new KavenegarDriver($client);
     }
 
     /**
@@ -55,11 +60,13 @@ class SmsManager extends Manager
         /** @var array{api_key?: string, sender?: string, otp_pattern?: string} $config */
         $config = $this->config->get('sms.drivers.farazsms', []);
 
-        return new FarazSmsDriver(
+        $client = new FarazSmsClient(
             apiKey: (string) ($config['api_key'] ?? ''),
             sender: (string) ($config['sender'] ?? ''),
             otpPattern: (string) ($config['otp_pattern'] ?? '')
         );
+
+        return new FarazSmsDriver($client);
     }
 
     /**
@@ -70,10 +77,12 @@ class SmsManager extends Manager
         /** @var array{api_key?: string, sender?: string, otp_template?: string} $config */
         $config = $this->config->get('sms.drivers.ghasedak', []);
 
-        return new GhasedakDriver(
+        $client = new GhasedakClient(
             apiKey: (string) ($config['api_key'] ?? ''),
             sender: (string) ($config['sender'] ?? ''),
             otpTemplate: (string) ($config['otp_template'] ?? '')
         );
+
+        return new GhasedakDriver($client);
     }
 }

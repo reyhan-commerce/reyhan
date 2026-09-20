@@ -59,6 +59,14 @@ class User extends Authenticatable
     ];
 
     /**
+     * Route notifications for the SMS channel.
+     */
+    public function routeNotificationForSms(): string
+    {
+        return $this->mobile;
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

@@ -4,56 +4,25 @@ declare(strict_types=1);
 
 namespace App\Services\Sms\Drivers;
 
+use App\Services\Integrations\FarazSms\FarazSmsClient;
 use App\Services\Sms\Contracts\SmsDriverInterface;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class FarazSmsDriver implements SmsDriverInterface
 {
     public function __construct(
-        protected string $apiKey,
-        protected string $sender,
-        protected string $otpPattern
+        protected FarazSmsClient $client
     ) {}
 
     public function send(string $to, string $message): bool
     {
-        try {
-            $response = Http::timeout(5)->withHeaders([
-                'Authorization' => "AccessKey {$this->apiKey}",
-            ])->post('https://edge.ippanel.com/api/v1/sms/send/webservice/single', [
-                'recipient' => [$to],
-                'sender' => $this->sender,
-                'message' => $message,
-            ]);
-
-            return $response->successful();
-        } catch (\Throwable $e) {
-            Log::error('[FarazSmsDriver] Error sending SMS: '.$e->getMessage());
-
-            return false;
-        }
+        return $this->client->send($to, $message);
     }
 
+    /**
+     * @param  array<string, string>  $tokens
+     */
     public function sendOtp(string $to, string $code, array $tokens = []): bool
     {
-        try {
-            $inputData = array_merge(['code' => $code], $tokens);
-
-            $response = Http::timeout(5)->withHeaders([
-                'Authorization' => "AccessKey {$this->apiKey}",
-            ])->post('https://edge.ippanel.com/api/v1/sms/pattern/normal/send', [
-                'code' => $this->otpPattern,
-                'sender' => $this->sender,
-                'recipient' => $to,
-                'variable' => $inputData,
-            ]);
-
-            return $response->successful();
-        } catch (\Throwable $e) {
-            Log::error('[FarazSmsDriver] Error sending OTP: '.$e->getMessage());
-
-            return false;
-        }
+        return $this->client->sendOtp($to, $code, $tokens);
     }
 }
