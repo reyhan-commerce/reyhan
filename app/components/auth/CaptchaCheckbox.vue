@@ -10,20 +10,6 @@ type CheckboxState = 'idle' | 'verifying' | 'success' | 'error'
 const state = ref<CheckboxState>('idle')
 const isHovered = ref(false)
 
-// Zero-allocation prefix check on raw SHA-256 byte buffer
-const hasTargetPrefix = (bytes: Uint8Array, difficulty: number): boolean => {
-  const fullBytes = Math.floor(difficulty / 2)
-  for (let i = 0; i < fullBytes; i++) {
-    if (bytes[i] !== 0) return false
-  }
-  if (difficulty % 2 === 1) {
-    if (((bytes[fullBytes] ?? 0) >> 4) !== 0) return false
-  }
-  return true
-}
-
-const encoder = new TextEncoder()
-
 const handleCheckboxClick = async () => {
   if (state.value === 'verifying' || state.value === 'success') return
 
@@ -31,13 +17,6 @@ const handleCheckboxClick = async () => {
   const startTime = performance.now()
 
   try {
-    if (typeof window === 'undefined' || !window.crypto?.subtle) {
-      console.error('[Captcha] crypto.subtle is unavailable (requires HTTPS or localhost).')
-      state.value = 'error'
-      emit('reset')
-      return
-    }
-
     const challenge = await authStore.fetchCaptcha()
     if (!challenge) {
       console.error('[Captcha] Failed to fetch challenge')
@@ -46,34 +25,26 @@ const handleCheckboxClick = async () => {
       return
     }
 
-    let nonce = 0
-    let found = false
+    // High-performance synchronous pure-JS solver:
+    // 100% independent of crypto.subtle, runs seamlessly on 0.0.0.0, LAN IPs, HTTP and HTTPS
+    const solution = solvePoWChallenge(challenge.salt, challenge.difficulty)
 
-    // Solve PoW using high-performance byte-level check
-    while (!found && nonce < 200000) {
-      const msgBuffer = encoder.encode(challenge.salt + nonce)
-      const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer)
-      const bytes = new Uint8Array(hashBuffer)
-
-      if (hasTargetPrefix(bytes, challenge.difficulty)) {
-        found = true
-        break
-      }
-      nonce++
-    }
-
-    if (!found) {
+    if (!solution) {
       console.error('[Captcha] Could not find nonce within limit')
       state.value = 'error'
       emit('reset')
       return
     }
 
-    // Measure interaction + compute time
-    const elapsedMs = Math.round(performance.now() - startTime)
+    // Measure total interaction + round-trip compute time
+    const totalElapsedMs = Math.round(performance.now() - startTime)
 
     // Send solution to backend
-    const verified = await authStore.solveCaptcha(challenge.key, nonce.toString(), Math.max(elapsedMs, 50))
+    const verified = await authStore.solveCaptcha(
+      challenge.key,
+      solution.nonce.toString(),
+      Math.max(totalElapsedMs, 50)
+    )
 
     if (verified) {
       state.value = 'success'
