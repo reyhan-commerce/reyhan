@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Api\V1\Auth;
 
 use App\Pipelines\Normalizer\PersianNormalizer;
+use App\Rules\ValidOtp;
 use Illuminate\Foundation\Http\FormRequest;
 
 class VerifyOtpRequest extends FormRequest
@@ -38,13 +39,13 @@ class VerifyOtpRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, list<string>>
+     * @return array<string, list<mixed>>
      */
     public function rules(): array
     {
         return [
             'mobile' => ['required', 'string', 'regex:/^09[0-9]{9}$/'],
-            'code' => ['required', 'string', 'digits:5'],
+            'code' => ['required', 'string', 'digits:5', new ValidOtp],
             'device_name' => ['nullable', 'string', 'max:100'],
         ];
     }

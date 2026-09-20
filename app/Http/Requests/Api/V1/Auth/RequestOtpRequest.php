@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Api\V1\Auth;
 
 use App\Pipelines\Normalizer\PersianNormalizer;
+use App\Rules\ValidCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RequestOtpRequest extends FormRequest
@@ -32,13 +33,13 @@ class RequestOtpRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, list<string>>
+     * @return array<string, list<mixed>>
      */
     public function rules(): array
     {
         return [
             'mobile' => ['required', 'string', 'regex:/^09[0-9]{9}$/'],
-            'captcha_token' => ['required', 'string'],
+            'captcha_token' => ['required', 'string', new ValidCaptcha],
         ];
     }
 }

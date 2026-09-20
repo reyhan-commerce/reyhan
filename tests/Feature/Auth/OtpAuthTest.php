@@ -167,6 +167,19 @@ test('otp verify checks hash, creates user and issues sanctum token', function (
     expect(Redis::connection('default')->get('otp:code:09123456789'))->toBeNull();
 });
 
+test('otp verify fails when code is incorrect or expired', function () {
+    $code = '12345';
+    Redis::connection('default')->setex('otp:code:09123456789', 120, Hash::make($code));
+
+    $response = $this->postJson('/api/v1/auth/otp/verify', [
+        'mobile' => '09123456789',
+        'code' => '99999',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['code']);
+});
+
 test('authenticated user can view profile and logout', function () {
     $user = User::create([
         'mobile' => '09129876543',

@@ -9,47 +9,26 @@ use App\Http\Requests\Api\V1\Auth\RequestOtpRequest;
 use App\Http\Requests\Api\V1\Auth\VerifyOtpRequest;
 use App\Http\Resources\V1\UserResource;
 use App\Models\User;
-use App\Notifications\Auth\SendOtpNotification;
-use App\Services\Captcha\CaptchaService;
+use App\Services\Otp\OtpService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Redis;
 
 class AuthController extends Controller
 {
     public function __construct(
-        protected CaptchaService $captchaService
+        protected OtpService $otpService
     ) {}
 
     /**
-     * Request OTP verification code after verifying captcha.
+     * Request OTP verification code (Captcha validated via FormRequest Rule).
      */
     public function requestOtp(RequestOtpRequest $request): JsonResponse
     {
         $mobile = (string) $request->input('mobile');
-        $captchaToken = (string) $request->input('captcha_token');
 
-        // 1. Verify "I am not a robot" captcha token
-        if (! $this->captchaService->verify($captchaToken)) {
-            $msg = __('Security challenge is invalid or expired. Please click the checkbox again.');
-
-            return response()->json([
-                'success' => false,
-                'message' => $msg,
-                'errors' => [
-                    'captcha_token' => [$msg],
-                ],
-            ], 422);
-        }
-
-        // 2. Throttle check (1 OTP per 120 seconds)
-        $throttleKey = "otp:throttle:{$mobile}";
-        $redis = Redis::connection('default');
-
-        if ($redis->get($throttleKey)) {
-            $ttl = (int) $redis->ttl($throttleKey);
+        // Throttle check (1 OTP per 120 seconds)
+        if ($this->otpService->isThrottled($mobile)) {
+            $ttl = $this->otpService->getThrottleTtl($mobile);
 
             return response()->json([
                 'success' => false,
@@ -57,54 +36,28 @@ class AuthController extends Controller
             ], 429);
         }
 
-        // 3. Generate 5-digit cryptographically secure OTP
-        $code = (string) random_int(10000, 99999);
-
-        // Store hashed OTP and throttle in Redis DB 0 with 120-second TTL
-        $hashedCode = Hash::make($code);
-        $redis->setex("otp:code:{$mobile}", 120, $hashedCode);
-        $redis->setex($throttleKey, 120, '1');
-
-        // 4. Dispatch SMS Notification via SmsChannel
-        Notification::route('sms', $mobile)
-            ->notify(new SendOtpNotification($code));
+        // Generate OTP, store hash in Redis, and dispatch notification
+        $result = $this->otpService->generateAndSend($mobile);
 
         return response()->json([
             'success' => true,
             'message' => __('Verification code sent successfully.'),
             'data' => [
-                'expires_in' => 120,
+                'expires_in' => $result['expires_in'],
             ],
         ]);
     }
 
     /**
-     * Verify OTP and issue Sanctum personal access token.
+     * Verify OTP and issue Sanctum personal access token (OTP verified via FormRequest Rule).
      */
     public function verifyOtp(VerifyOtpRequest $request): JsonResponse
     {
         $mobile = (string) $request->input('mobile');
-        $code = (string) $request->input('code');
         $deviceName = (string) ($request->input('device_name') ?? 'web-client');
 
-        $redis = Redis::connection('default');
-        $storedHashedCode = (string) $redis->get("otp:code:{$mobile}");
-
-        if (empty($storedHashedCode) || ! Hash::check($code, $storedHashedCode)) {
-            $msg = __('Verification code is invalid or has expired.');
-
-            return response()->json([
-                'success' => false,
-                'message' => $msg,
-                'errors' => [
-                    'code' => [$msg],
-                ],
-            ], 422);
-        }
-
         // Invalidate OTP in Redis
-        $redis->del("otp:code:{$mobile}");
-        $redis->del("otp:throttle:{$mobile}");
+        $this->otpService->clear($mobile);
 
         // Find or create customer
         /** @var User $user */
