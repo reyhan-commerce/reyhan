@@ -5,7 +5,8 @@ const toast = useToast()
 const step = ref<'mobile' | 'otp'>('mobile')
 const mobile = ref('')
 const captchaToken = ref('')
-const otpCode = ref('')
+const otpValues = ref<string[]>([])
+const otpCode = computed(() => otpValues.value.join(''))
 
 // Countdown timer for OTP resend (120 seconds)
 const countdown = ref(120)
@@ -65,17 +66,18 @@ const handleRequestOtp = async () => {
 }
 
 const handleVerifyOtp = async () => {
-  if (!otpCode.value || otpCode.value.length < 5) {
+  const code = otpCode.value
+  if (!code || code.length < 5) {
     toast.add({
       title: 'خطا',
-      description: 'لطفاً کد تایید دریافتی را وارد فرمایید.',
+      description: 'لطفاً کد تایید را وارد فرمایید.',
       color: 'warning',
       icon: 'i-lucide-alert-triangle'
     })
     return
   }
 
-  const success = await authStore.verifyOtp(mobile.value, otpCode.value)
+  const success = await authStore.verifyOtp(mobile.value, code)
   if (success) {
     toast.add({
       title: 'خوش آمدید',
@@ -91,13 +93,14 @@ const handleResendOtp = async () => {
   if (countdown.value > 0) return
   step.value = 'mobile'
   captchaToken.value = ''
+  otpValues.value = []
 }
 
 const resetModal = () => {
   step.value = 'mobile'
   mobile.value = ''
   captchaToken.value = ''
-  otpCode.value = ''
+  otpValues.value = []
   if (timerInterval) clearInterval(timerInterval)
 }
 
@@ -172,20 +175,25 @@ onUnmounted(() => {
           </UButton>
         </div>
 
-        <div class="space-y-1.5">
-          <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-            کد تایید
+        <div class="space-y-3 flex flex-col items-center">
+          <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 self-start">
+            کد تایید ۶ رقمی
           </label>
-          <UInput
-            v-model="otpCode"
-            type="text"
-            inputmode="numeric"
-            maxlength="6"
-            placeholder="• • • • • •"
-            size="xl"
-            class="min-h-14 w-full text-center text-2xl font-bold tracking-widest"
-            autofocus
-          />
+          <div
+            class="flex justify-center w-full py-2"
+            dir="ltr"
+          >
+            <UPinInput
+              v-model="otpValues"
+              :length="6"
+              :separator="3"
+              otp
+              size="xl"
+              placeholder="○"
+              autofocus
+              @complete="handleVerifyOtp"
+            />
+          </div>
         </div>
 
         <!-- Timer & Resend -->
