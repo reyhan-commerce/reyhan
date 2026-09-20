@@ -75,6 +75,18 @@ php artisan octane:start --server=frankenphp --port=8000
 
 ---
 
+## 📡 Core API v1 Endpoints (Phase 1)
+
+| Method | Endpoint | Auth Guard | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/captcha/generate` | Public | Generates SVG visual/math captcha and UUID key |
+| `POST` | `/api/v1/auth/otp/request` | Public | Validates captcha and dispatches 5-digit OTP via SMS |
+| `POST` | `/api/v1/auth/otp/verify` | Public | Verifies OTP code and returns Sanctum access token |
+| `GET` | `/api/v1/auth/me` | `auth:sanctum` | Returns authenticated customer profile |
+| `POST` | `/api/v1/auth/logout` | `auth:sanctum` | Revokes active Sanctum device access token |
+
+---
+
 ## 🧪 Quality Assurance & Test Commands
 
 Every contribution must pass all three quality gates:

@@ -1,0 +1,141 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Jobs\SendOtpSmsJob;
+use App\Models\User;
+use App\Services\Captcha\CaptchaService;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Redis;
+
+uses(DatabaseTransactions::class);
+
+beforeEach(function () {
+    Redis::connection('default')->flushdb();
+    Queue::fake();
+});
+
+test('captcha generate endpoint returns key and svg', function () {
+    $response = $this->getJson('/api/v1/captcha/generate');
+
+    $response->assertOk()
+        ->assertJsonStructure([
+            'success',
+            'data' => ['key', 'svg'],
+        ]);
+});
+
+test('otp request fails when captcha is invalid', function () {
+    $response = $this->postJson('/api/v1/auth/otp/request', [
+        'mobile' => '09123456789',
+        'captcha_key' => 'invalid-uuid',
+        'captcha_code' => '999',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['captcha_code']);
+});
+
+test('otp request succeeds with valid captcha and dispatches sms job', function () {
+    $captchaService = app(CaptchaService::class);
+    $captcha = $captchaService->generate();
+    $answer = Redis::connection('default')->get("captcha:{$captcha['key']}");
+
+    $response = $this->postJson('/api/v1/auth/otp/request', [
+        'mobile' => '09123456789',
+        'captcha_key' => $captcha['key'],
+        'captcha_code' => (string) $answer,
+    ]);
+
+    $response->assertOk()
+        ->assertJson([
+            'success' => true,
+        ]);
+
+    // Verify OTP exists in Redis
+    $storedCode = Redis::connection('default')->get('otp:code:09123456789');
+    expect($storedCode)->not->toBeNull()->toHaveLength(5);
+
+    // Verify SMS Job was dispatched
+    Queue::assertPushed(SendOtpSmsJob::class, function ($job) use ($storedCode) {
+        return $job->mobile === '09123456789' && $job->code === $storedCode;
+    });
+});
+
+test('otp request is throttled when called multiple times within 120s', function () {
+    $captchaService = app(CaptchaService::class);
+
+    // 1st request
+    $captcha1 = $captchaService->generate();
+    $answer1 = Redis::connection('default')->get("captcha:{$captcha1['key']}");
+    $this->postJson('/api/v1/auth/otp/request', [
+        'mobile' => '09123456789',
+        'captcha_key' => $captcha1['key'],
+        'captcha_code' => (string) $answer1,
+    ])->assertOk();
+
+    // 2nd request within 120 seconds
+    $captcha2 = $captchaService->generate();
+    $answer2 = Redis::connection('default')->get("captcha:{$captcha2['key']}");
+    $response = $this->postJson('/api/v1/auth/otp/request', [
+        'mobile' => '09123456789',
+        'captcha_key' => $captcha2['key'],
+        'captcha_code' => (string) $answer2,
+    ]);
+
+    $response->assertStatus(429);
+});
+
+test('otp verify creates user and issues sanctum token', function () {
+    Redis::connection('default')->setex('otp:code:09123456789', 120, '12345');
+
+    $response = $this->postJson('/api/v1/auth/otp/verify', [
+        'mobile' => '۰۹۱۲۳۴۵۶۷۸۹', // Test Persian digits input
+        'code' => '۱۲۳۴۵',         // Test Persian digits input
+        'device_name' => 'test-device',
+    ]);
+
+    $response->assertOk()
+        ->assertJsonStructure([
+            'success',
+            'data' => [
+                'token',
+                'user' => ['id', 'mobile', 'full_name'],
+            ],
+        ]);
+
+    // Verify user in database
+    $user = User::where('mobile', '09123456789')->first();
+    expect($user)->not->toBeNull()
+        ->and($user->mobile_verified_at)->not->toBeNull();
+
+    // Verify OTP code was deleted from Redis
+    expect(Redis::connection('default')->get('otp:code:09123456789'))->toBeNull();
+});
+
+test('authenticated user can view profile and logout', function () {
+    $user = User::create([
+        'mobile' => '09129876543',
+        'is_active' => true,
+        'mobile_verified_at' => now(),
+    ]);
+
+    $token = $user->createToken('test')->plainTextToken;
+
+    // Test /api/v1/auth/me
+    $meResponse = $this->withToken($token)->getJson('/api/v1/auth/me');
+    $meResponse->assertOk()
+        ->assertJsonPath('data.mobile', '09129876543');
+
+    // Test /api/v1/auth/logout
+    $logoutResponse = $this->withToken($token)->postJson('/api/v1/auth/logout');
+    $logoutResponse->assertOk()
+        ->assertJson([
+            'success' => true,
+            'message' => 'با موفقیت خارج شدید.',
+        ]);
+
+    // Verify token was revoked from database
+    expect($user->fresh()->tokens)->toHaveCount(0);
+});
