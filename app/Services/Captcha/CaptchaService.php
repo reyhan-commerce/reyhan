@@ -31,8 +31,8 @@ class CaptchaService
     {
         $key = (string) Str::uuid();
         $salt = Str::random(16);
-        // Moderate difficulty: 4 leading zero hex characters (fast in JS ~150ms-400ms, stops naive bots)
-        $difficulty = 4;
+        // Moderate difficulty: 3 leading zero hex characters (~20ms-80ms in JS, frictionless for humans, stops bot flooding)
+        $difficulty = 3;
 
         Redis::connection(self::REDIS_CONNECTION)->setex(
             "captcha:challenge:{$key}",
@@ -71,8 +71,8 @@ class CaptchaService
         /** @var array{salt: string, difficulty: int, verified: bool} $data */
         $data = json_decode($storedJson, true, 512, JSON_THROW_ON_ERROR);
 
-        // Honeypot / human speed check: a human click + compute takes at least 200ms
-        if ($elapsedMs < 100) {
+        // Honeypot / human speed check: ensure it's not a zero-millisecond automated script
+        if ($elapsedMs < 30) {
             return false;
         }
 

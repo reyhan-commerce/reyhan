@@ -8,15 +8,19 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Captcha\SolveCaptchaRequest;
 use App\Services\Captcha\CaptchaService;
 use Illuminate\Http\JsonResponse;
+use JsonException;
 
 class CaptchaController extends Controller
 {
     public function __construct(
         protected CaptchaService $captchaService
-    ) {}
+    )
+    {
+    }
 
     /**
      * Generate "I am not a robot" challenge.
+     * @throws JsonException
      */
     public function generate(): JsonResponse
     {

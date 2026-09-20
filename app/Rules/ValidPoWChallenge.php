@@ -52,7 +52,7 @@ class ValidPoWChallenge implements DataAwareRule, ValidationRule
         $nonce = (string) $value;
         $elapsedMs = (int) ($this->data[$this->elapsedField] ?? 0);
 
-        if (empty($key) || empty($nonce)) {
+        if ($key === '' || $nonce === '') {
             $fail(__('Security verification failed. Please try again.'));
 
             return;

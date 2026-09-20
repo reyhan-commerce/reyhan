@@ -16,7 +16,7 @@ test('generates valid PoW challenge for interactive robot check', function () {
     expect($result)->toHaveKeys(['key', 'salt', 'difficulty'])
         ->and($result['key'])->toBeString()->not->toBeEmpty()
         ->and($result['salt'])->toBeString()->not->toBeEmpty()
-        ->and($result['difficulty'])->toBeInt()->toBe(4);
+        ->and($result['difficulty'])->toBeInt()->toBe(3);
 });
 
 test('solves PoW challenge and verifies one-time token', function () {
@@ -24,7 +24,7 @@ test('solves PoW challenge and verifies one-time token', function () {
     $challenge = $service->generate();
 
     $salt = $challenge['salt'];
-    $targetPrefix = '0000';
+    $targetPrefix = '000';
 
     // Solve PoW in test runner
     $nonce = 0;
