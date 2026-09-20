@@ -62,7 +62,10 @@ class OtpService
             throw new OtpThrottledException($ttl);
         }
 
-        $code = (string) random_int(10000, 99999);
+        // Fixed OTP in local/dev environment for seamless development and testing
+        $code = app()->environment(['local', 'dev'])
+            ? '123456'
+            : (string) random_int(10000, 99999);
         $hashedCode = Hash::make($code);
 
         $redis->setex("otp:code:{$mobile}", self::TTL_SECONDS, $hashedCode);
