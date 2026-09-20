@@ -41,6 +41,7 @@ class AuthController extends Controller
 
     /**
      * Verify OTP and authenticate customer (OTP validated via FormRequest Rule).
+     *
      * @throws UserDeactivatedException
      */
     public function verifyOtp(VerifyOtpRequest $request): JsonResponse

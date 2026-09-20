@@ -10,22 +10,43 @@ use App\Models\User;
 class UserService
 {
     /**
-     * Find existing customer or register new customer by mobile, ensuring active status and verified timestamp.
+     * Find an existing user by mobile phone.
+     */
+    public function findByMobile(string $mobile): ?User
+    {
+        return User::where('mobile', $mobile)->first();
+    }
+
+    /**
+     * Create a new customer with verified mobile status.
+     */
+    public function createCustomer(string $mobile): User
+    {
+        return User::create([
+            'mobile' => $mobile,
+            'is_active' => true,
+            'mobile_verified_at' => now(),
+        ]);
+    }
+
+    /**
+     * Ensure the user account is active and not suspended.
      *
      * @throws UserDeactivatedException
      */
-    public function findOrCreateCustomerByMobile(string $mobile): User
+    public function ensureIsActive(User $user): void
     {
-        $user = User::firstOrCreate(
-            ['mobile' => $mobile],
-            ['is_active' => true]
-        );
-
-        if (!$user->is_active) {
+        if (! $user->is_active) {
             throw new UserDeactivatedException;
         }
+    }
 
-        if (!$user->mobile_verified_at) {
+    /**
+     * Mark customer's mobile as verified if not previously verified.
+     */
+    public function markMobileAsVerified(User $user): User
+    {
+        if ($user->mobile_verified_at === null) {
             $user->forceFill(['mobile_verified_at' => now()])->save();
         }
 
@@ -33,13 +54,34 @@ class UserService
     }
 
     /**
+     * Orchestrate finding or creating customer and preparing verified active instance.
+     *
+     * @throws UserDeactivatedException
+     */
+    public function getOrCreateActiveCustomer(string $mobile): User
+    {
+        $user = $this->findByMobile($mobile);
+
+        if (! $user) {
+            return $this->createCustomer($mobile);
+        }
+
+        $this->ensureIsActive($user);
+        $this->markMobileAsVerified($user);
+
+        return $user;
+    }
+
+    /**
      * Authenticate customer and issue Sanctum personal access token.
+     *
+     * @return array{user: User, token: string}
      *
      * @throws UserDeactivatedException
      */
     public function authenticateWithOtp(string $mobile, string $deviceName = 'web-client'): array
     {
-        $user = $this->findOrCreateCustomerByMobile($mobile);
+        $user = $this->getOrCreateActiveCustomer($mobile);
         $token = $user->createToken($deviceName)->plainTextToken;
 
         return [
