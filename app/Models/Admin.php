@@ -4,14 +4,33 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class Admin extends Authenticatable
+class Admin extends Authenticatable implements FilamentUser, HasName
 {
     use HasRoles, Notifiable, SoftDeletes;
+
+    /**
+     * Determine if admin can access the Filament panel.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return (bool) $this->is_active;
+    }
+
+    /**
+     * Display name for Filament UI.
+     */
+    public function getFilamentName(): string
+    {
+        return $this->name;
+    }
 
     /**
      * Default guard for admin permissions.

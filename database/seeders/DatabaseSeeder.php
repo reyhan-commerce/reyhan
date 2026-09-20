@@ -24,5 +24,7 @@ class DatabaseSeeder extends Seeder
             'national_code' => '0012345678',
             'email' => 'test@easyshop.test',
         ]);
+
+        $this->call(AdminRoleSeeder::class);
     }
 }

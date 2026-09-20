@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\V1\AppSettingController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CaptchaController;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,9 @@ use Illuminate\Support\Facades\Route;
 | All routes in this file are versioned RESTful endpoints.
 |
 */
+
+// Public Store Settings
+Route::get('/app/settings', [AppSettingController::class, 'index'])->name('app.settings');
 
 // Captcha
 Route::get('/captcha/generate', [CaptchaController::class, 'generate'])->name('captcha.generate');
