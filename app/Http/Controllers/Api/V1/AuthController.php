@@ -26,17 +26,8 @@ class AuthController extends Controller
     {
         $mobile = (string) $request->input('mobile');
 
-        // Throttle check (1 OTP per 120 seconds)
-        if ($this->otpService->isThrottled($mobile)) {
-            $ttl = $this->otpService->getThrottleTtl($mobile);
-
-            return response()->json([
-                'success' => false,
-                'message' => __('Please wait :seconds seconds before requesting another code.', ['seconds' => $ttl]),
-            ], 429);
-        }
-
         // Generate OTP, store hash in Redis, and dispatch notification
+        // Will throw OtpThrottledException (which renders JSON 429) if throttled
         $result = $this->otpService->generateAndSend($mobile);
 
         return response()->json([

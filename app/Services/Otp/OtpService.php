@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Otp;
 
+use App\Exceptions\Auth\OtpThrottledException;
 use App\Notifications\Auth\SendOtpNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -44,17 +45,28 @@ class OtpService
 
     /**
      * Generate 5-digit cryptographically secure OTP, store hashed in Redis, and dispatch notification.
+     * Throws OtpThrottledException if called within throttle window.
      *
      * @return array{code: string, expires_in: int}
+     *
+     * @throws OtpThrottledException
      */
     public function generateAndSend(string $mobile): array
     {
+        $redis = Redis::connection(self::REDIS_CONNECTION);
+        $throttleKey = "otp:throttle:{$mobile}";
+
+        // Enforce throttle within generateAndSend
+        if ($redis->get($throttleKey)) {
+            $ttl = max((int) $redis->ttl($throttleKey), 0);
+            throw new OtpThrottledException($ttl);
+        }
+
         $code = (string) random_int(10000, 99999);
         $hashedCode = Hash::make($code);
 
-        $redis = Redis::connection(self::REDIS_CONNECTION);
         $redis->setex("otp:code:{$mobile}", self::TTL_SECONDS, $hashedCode);
-        $redis->setex("otp:throttle:{$mobile}", self::TTL_SECONDS, '1');
+        $redis->setex($throttleKey, self::TTL_SECONDS, '1');
 
         Notification::route('sms', $mobile)
             ->notify(new SendOtpNotification($code));
