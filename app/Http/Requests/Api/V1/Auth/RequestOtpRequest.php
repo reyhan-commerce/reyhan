@@ -41,18 +41,4 @@ class RequestOtpRequest extends FormRequest
             'captcha_token' => ['required', 'string'],
         ];
     }
-
-    /**
-     * Custom Persian validation messages.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return [
-            'mobile.required' => 'شماره موبایل الزامی است.',
-            'mobile.regex' => 'شماره موبایل معتبر نمی‌باشد (الگوی صحیح: ۰۹xxxxxxxxx).',
-            'captcha_token.required' => 'تأیید امنیتی الزامی است.',
-        ];
-    }
 }

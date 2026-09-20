@@ -48,13 +48,13 @@ class CaptchaController extends Controller
         if (! $passed) {
             return response()->json([
                 'success' => false,
-                'message' => 'اعتبارسنجی امنیتی ناموفق بود. لطفاً دوباره تلاش کنید.',
+                'message' => __('Security verification failed. Please try again.'),
             ], 422);
         }
 
         return response()->json([
             'success' => true,
-            'message' => 'تأیید هویت با موفقیت انجام شد.',
+            'message' => __('Security verification succeeded.'),
         ]);
     }
 }

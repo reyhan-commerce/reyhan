@@ -48,19 +48,4 @@ class VerifyOtpRequest extends FormRequest
             'device_name' => ['nullable', 'string', 'max:100'],
         ];
     }
-
-    /**
-     * Custom Persian validation messages.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return [
-            'mobile.required' => 'شماره موبایل الزامی است.',
-            'mobile.regex' => 'شماره موبایل معتبر نمی‌باشد.',
-            'code.required' => 'کد تایید الزامی است.',
-            'code.digits' => 'کد تایید باید ۵ رقم باشد.',
-        ];
-    }
 }

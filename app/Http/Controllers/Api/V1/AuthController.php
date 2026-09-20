@@ -33,11 +33,13 @@ class AuthController extends Controller
 
         // 1. Verify "I am not a robot" captcha token
         if (! $this->captchaService->verify($captchaToken)) {
+            $msg = __('Security challenge is invalid or expired. Please click the checkbox again.');
+
             return response()->json([
                 'success' => false,
-                'message' => 'تأیید امنیتی نامعتبر یا منقضی شده است. لطفاً دوباره دکمه را کلیک کنید.',
+                'message' => $msg,
                 'errors' => [
-                    'captcha_token' => ['تأیید امنیتی نامعتبر یا منقضی شده است.'],
+                    'captcha_token' => [$msg],
                 ],
             ], 422);
         }
@@ -51,7 +53,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => "لطفاً {$ttl} ثانیه تا درخواست مجدد کد صبر کنید.",
+                'message' => __('Please wait :seconds seconds before requesting another code.', ['seconds' => $ttl]),
             ], 429);
         }
 
@@ -69,7 +71,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'کد تایید با موفقیت ارسال گردید.',
+            'message' => __('Verification code sent successfully.'),
             'data' => [
                 'expires_in' => 120,
             ],
@@ -89,11 +91,13 @@ class AuthController extends Controller
         $storedHashedCode = (string) $redis->get("otp:code:{$mobile}");
 
         if (empty($storedHashedCode) || ! Hash::check($code, $storedHashedCode)) {
+            $msg = __('Verification code is invalid or has expired.');
+
             return response()->json([
                 'success' => false,
-                'message' => 'کد تایید وارد شده نامعتبر یا منقضی شده است.',
+                'message' => $msg,
                 'errors' => [
-                    'code' => ['کد تایید وارد شده نامعتبر یا منقضی شده است.'],
+                    'code' => [$msg],
                 ],
             ], 422);
         }
@@ -112,7 +116,7 @@ class AuthController extends Controller
         if (! $user->is_active) {
             return response()->json([
                 'success' => false,
-                'message' => 'حساب کاربری شما مسدود شده است.',
+                'message' => __('Your account has been deactivated.'),
             ], 403);
         }
 
@@ -125,7 +129,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'با موفقیت وارد شدید.',
+            'message' => __('Successfully logged in.'),
             'data' => [
                 'token' => $token,
                 'user' => new UserResource($user),
@@ -146,12 +150,12 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'با موفقیت خارج شدید.',
+            'message' => __('Successfully logged out.'),
         ]);
     }
 
     /**
-     * Get currently authenticated user profile.
+     * Get authenticated customer profile.
      */
     public function me(Request $request): JsonResponse
     {
