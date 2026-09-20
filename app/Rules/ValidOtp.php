@@ -56,7 +56,8 @@ class ValidOtp implements DataAwareRule, ValidationRule
             return;
         }
 
-        if (! $this->otpService->check($mobile, $code)) {
+        // Verify and automatically consume/clear OTP in Redis
+        if (! $this->otpService->verify($mobile, $code)) {
             $fail(__('Verification code is invalid or has expired.'));
         }
     }

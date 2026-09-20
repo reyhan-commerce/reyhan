@@ -47,9 +47,6 @@ class AuthController extends Controller
         $mobile = (string) $request->input('mobile');
         $deviceName = (string) ($request->input('device_name') ?? 'web-client');
 
-        // Invalidate OTP in Redis
-        $this->otpService->clear($mobile);
-
         // Find or create customer
         /** @var User $user */
         $user = User::firstOrCreate(

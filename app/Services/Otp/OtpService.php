@@ -78,7 +78,29 @@ class OtpService
     }
 
     /**
-     * Check if the provided OTP code matches the stored hash in Redis.
+     * Verify the provided OTP code against Redis hash, and automatically clear keys if valid.
+     */
+    public function verify(string $mobile, string $code): bool
+    {
+        $redis = Redis::connection(self::REDIS_CONNECTION);
+        $storedHash = (string) $redis->get("otp:code:{$mobile}");
+
+        if (empty($storedHash)) {
+            return false;
+        }
+
+        if (! Hash::check($code, $storedHash)) {
+            return false;
+        }
+
+        // Verification succeeded: automatically invalidate code and throttle in Redis
+        $this->clear($mobile);
+
+        return true;
+    }
+
+    /**
+     * Check if the provided OTP code matches without clearing it.
      */
     public function check(string $mobile, string $code): bool
     {
