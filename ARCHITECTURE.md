@@ -95,5 +95,57 @@ To prevent overselling during high-traffic flash sales:
 - **RESTful Routing**: Strictly use `Route::apiResource(...)` inside `routes/api/v1.php`.
 - **Quality Gates**:
   - Run `./vendor/bin/pint --test` before committing any code.
-  - Run `./vendor/bin/phpstan analyse` to verify Larastan Level 8 compliance.
-  - Run `./vendor/bin/pest` to verify all functional tests pass.
+  - Run `./vendor/bin/phpstan analyse` to verify PHPStan / Larastan Level 8 compliance.
+  - Run `php artisan test` to verify all Pest functional and unit tests pass.
+
+---
+
+## 6. Mandatory Engineering Contracts & Design Conventions
+
+All AI agents and developers writing backend code for EasyShop **must strictly follow these 8 design contracts**:
+
+### Contract 1: Single Responsibility Principle (SRP) & Granular Services
+- Every class, service method, and action must have **only one reason to change**.
+- Never aggregate multiple lifecycle tasks into one bloated method (e.g., finding, creating, checking status, updating timestamps must be broken into distinct methods like `findByMobile()`, `createCustomer()`, `ensureIsActive()`, and `markMobileAsVerified()`).
+- Separate 3rd-party HTTP API clients (`app/Services/Integrations/{Provider}/`) from framework drivers (`app/Services/Sms/Drivers/`). Drivers must remain thin adapters.
+
+### Contract 2: Ultra-Thin Controllers (Traffic Orchestration Only)
+- Controllers must **NEVER** contain business logic, database mutations (`firstOrCreate`, `save`), direct validation calls (`$request->validate()`), or direct cache/Redis manipulations.
+- Controller methods should rarely exceed 3–5 lines of code: resolve input from FormRequest, invoke domain service/action, return structured `JsonResponse`.
+
+### Contract 3: Custom Validation Rules as Security & Domain Gates
+- Complex domain validation conditions (such as interactive Proof-of-Work captcha checks or OTP verification) must reside inside dedicated custom validation rules (`app/Rules/` implementing `ValidationRule` and `DataAwareRule`).
+- If input violates a domain constraint, the FormRequest must fail before the controller is executed.
+- Automatic consumption of one-time tokens (e.g., OTP or PoW challenge invalidation) must occur inside the service `verify()` method when validation passes.
+
+### Contract 4: Dependency Injection, IoC Auto-Wiring & Octane Memory Lifecycle
+- **NO manual `new` instantiation** in service classes or managers. Always register services in Service Providers and rely on constructor auto-wiring via the Laravel IoC Container.
+- **HTTP Client Reusability**: Pre-configure and encapsulate a single `Illuminate\Http\Client\PendingRequest` instance inside integration clients instead of repeatedly invoking the `Http::` facade.
+- **Octane & Long-Running Worker Compatibility**:
+  - Do NOT bind mutable or setting-dependent services as `singleton` if their configuration can change dynamically at runtime.
+  - Use transient binding (`$this->app->bind(...)`) so each request or queue job resolves fresh state.
+  - Listen to `Spatie\LaravelSettings\Events\SettingsSaved` to immediately purge stale settings instances (`$this->app->forgetInstance(...)`).
+  - Provide `forgetDrivers()` on managers to flush internal driver caches.
+
+### Contract 5: Domain Exceptions with Self-Rendering (`render()`)
+- Do NOT handle domain failure flows with conditional `if-else` JSON error responses in controllers.
+- Throw strongly-typed Domain Exceptions (e.g., `OtpThrottledException`, `UserDeactivatedException`).
+- Exceptions must implement their own `render(Request $request): JsonResponse` method with appropriate HTTP status codes (403, 422, 429) so Laravel automatically transforms them into standardized API responses.
+
+### Contract 6: Zero-Friction Human UX & Modern Proof-of-Work (PoW) Anti-Bot
+- Math-based and noisy distorted image captchas are strictly prohibited.
+- User verification must employ client-side cryptographic Proof-of-Work (SHA-256 via browser `crypto.subtle`) inside an interactive "I am not a robot" checkbox with $\ge 48\times 48\text{px}$ touch targets.
+- Server verifies the salt, nonce, and minimum elapsed human interaction time ($\ge 100\text{ms}$).
+
+### Contract 7: Strict Localization & Zero Hardcoded Strings
+- No Persian or English UI/error messages may be hardcoded in PHP classes, FormRequests, or Controllers.
+- Hardcoded `messages()` in FormRequests are prohibited; rely on `lang/fa/validation.php` attributes and rules.
+- Controller and exception messages must strictly use Laravel translation functions: `__('Message string')` backed by `lang/fa.json` and `lang/fa/validation.php`.
+- The application default locale is `fa` with fallback `fa`.
+
+### Contract 8: Idiomatic Framework Abstractions Over Re-invented Wheels
+- Always prefer Laravel's built-in abstractions:
+  - Use `Illuminate\Support\Facades\Pipeline` for step-based transformations instead of custom `foreach` loops.
+  - Use Laravel Notification system (`app/Notifications/`) and custom notification channels (`app/Notifications/Channels/SmsChannel.php`) for messaging, rather than ad-hoc queue jobs or direct driver calls.
+  - Always hash sensitive verification tokens stored in Redis using `Hash::make()` and check via `Hash::check()`.
+
