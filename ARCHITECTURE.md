@@ -22,6 +22,11 @@ This document serves as the authoritative blueprint for the frontend architectur
 - Use logical CSS utilities (`ms-*`, `me-*`, `ps-*`, `pe-*`, `start-*`, `end-*`) rather than directional (`ml-*`, `mr-*`, `left-*`, `right-*`).
 - Font family is **Vazirmatn Variable** loaded via `@fontsource-variable/vazirmatn`.
 
+### Pillar 4: Zero-Friction Human Security (In-Browser PoW & SubtleCrypto)
+- Distortion/math captchas are strictly prohibited.
+- Security challenges must be resolved transparently via client-side Proof-of-Work (`crypto.subtle.digest('SHA-256')`) triggered by the interactive `<AuthCaptchaCheckbox />` component.
+- The UI must provide clear states: Idle ("من ربات نیستم"), Verifying (rotating spinner), Success (green badge with checkmark), and Error (retry prompt). Touch targets must be at least $48\times 48\text{px}$ (`min-h-[64px]` card).
+
 ---
 
 ## 2. Directory Structure & Nuxt 4 Conventions
