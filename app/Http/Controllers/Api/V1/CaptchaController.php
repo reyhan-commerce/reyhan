@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Services\Captcha\CaptchaService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class CaptchaController extends Controller
 {
@@ -15,7 +16,7 @@ class CaptchaController extends Controller
     ) {}
 
     /**
-     * Generate visual SVG captcha.
+     * Generate "I am not a robot" challenge.
      */
     public function generate(): JsonResponse
     {
@@ -24,6 +25,36 @@ class CaptchaController extends Controller
         return response()->json([
             'success' => true,
             'data' => $captcha,
+        ]);
+    }
+
+    /**
+     * Solve the challenge via interactive click.
+     */
+    public function solve(Request $request): JsonResponse
+    {
+        $request->validate([
+            'key' => ['required', 'string'],
+            'nonce' => ['required', 'string'],
+            'elapsed_ms' => ['required', 'integer', 'min:0'],
+        ]);
+
+        $key = (string) $request->input('key');
+        $nonce = (string) $request->input('nonce');
+        $elapsedMs = (int) $request->input('elapsed_ms');
+
+        $passed = $this->captchaService->solve($key, $nonce, $elapsedMs);
+
+        if (! $passed) {
+            return response()->json([
+                'success' => false,
+                'message' => 'اعتبارسنجی امنیتی ناموفق بود. لطفاً دوباره تلاش کنید.',
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تأیید هویت با موفقیت انجام شد.',
         ]);
     }
 }

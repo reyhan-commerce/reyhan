@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 // Captcha
 Route::get('/captcha/generate', [CaptchaController::class, 'generate'])->name('captcha.generate');
+Route::post('/captcha/solve', [CaptchaController::class, 'solve'])->name('captcha.solve');
 
 // Customer Authentication
 Route::prefix('auth')->name('auth.')->group(function () {

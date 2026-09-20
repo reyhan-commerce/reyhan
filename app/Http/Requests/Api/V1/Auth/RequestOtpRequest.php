@@ -38,8 +38,7 @@ class RequestOtpRequest extends FormRequest
     {
         return [
             'mobile' => ['required', 'string', 'regex:/^09[0-9]{9}$/'],
-            'captcha_key' => ['required', 'string'],
-            'captcha_code' => ['required', 'string'],
+            'captcha_token' => ['required', 'string'],
         ];
     }
 
@@ -53,8 +52,7 @@ class RequestOtpRequest extends FormRequest
         return [
             'mobile.required' => 'شماره موبایل الزامی است.',
             'mobile.regex' => 'شماره موبایل معتبر نمی‌باشد (الگوی صحیح: ۰۹xxxxxxxxx).',
-            'captcha_key.required' => 'شناسه کپچا الزامی است.',
-            'captcha_code.required' => 'کد امنیتی کپچا الزامی است.',
+            'captcha_token.required' => 'تأیید امنیتی الزامی است.',
         ];
     }
 }

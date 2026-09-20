@@ -6,43 +6,51 @@ use App\Services\Captcha\CaptchaService;
 use Illuminate\Support\Facades\Redis;
 
 beforeEach(function () {
-    // Clear Redis test keys
     Redis::connection('default')->flushdb();
 });
 
-test('generates valid svg captcha with uuid key', function () {
+test('generates valid PoW challenge for interactive robot check', function () {
     $service = new CaptchaService;
     $result = $service->generate();
 
-    expect($result)->toHaveKeys(['key', 'svg'])
+    expect($result)->toHaveKeys(['key', 'salt', 'difficulty'])
         ->and($result['key'])->toBeString()->not->toBeEmpty()
-        ->and($result['svg'])->toContain('<svg')->toContain('</svg>');
+        ->and($result['salt'])->toBeString()->not->toBeEmpty()
+        ->and($result['difficulty'])->toBeInt()->toBe(4);
 });
 
-test('verifies correct captcha answer and deletes key', function () {
+test('solves PoW challenge and verifies one-time token', function () {
     $service = new CaptchaService;
-    $result = $service->generate();
-    $key = $result['key'];
+    $challenge = $service->generate();
 
-    // Read stored answer directly from Redis
-    $stored = Redis::connection('default')->get("captcha:{$key}");
-    expect($stored)->not->toBeNull();
+    $salt = $challenge['salt'];
+    $targetPrefix = '0000';
 
-    // Verify with correct answer
-    $isValid = $service->verify($key, (string) $stored);
-    expect($isValid)->toBeTrue();
+    // Solve PoW in test runner
+    $nonce = 0;
+    while (true) {
+        $hash = hash('sha256', $salt.(string) $nonce);
+        if (str_starts_with($hash, $targetPrefix)) {
+            break;
+        }
+        $nonce++;
+    }
 
-    // Second attempt must fail because key is one-time use
-    expect($service->verify($key, (string) $stored))->toBeFalse();
+    // Solve with human speed simulation (>= 100ms)
+    $passed = $service->solve($challenge['key'], (string) $nonce, 250);
+    expect($passed)->toBeTrue();
+
+    // Verify token consumed
+    expect($service->verify($challenge['key']))->toBeTrue();
+
+    // Second verify attempt must fail (one-time use)
+    expect($service->verify($challenge['key']))->toBeFalse();
 });
 
-test('accepts Persian numerals for captcha answer', function () {
+test('rejects bot when elapsed time is unrealistically fast', function () {
     $service = new CaptchaService;
-    $result = $service->generate();
-    $key = $result['key'];
+    $challenge = $service->generate();
 
-    Redis::connection('default')->setex("captcha:{$key}", 120, '14');
-
-    // User submits Persian digits '۱۴'
-    expect($service->verify($key, '۱۴'))->toBeTrue();
+    $passed = $service->solve($challenge['key'], '123', 50); // < 100ms
+    expect($passed)->toBeFalse();
 });

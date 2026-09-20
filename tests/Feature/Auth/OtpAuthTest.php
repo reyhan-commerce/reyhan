@@ -27,38 +27,62 @@ beforeEach(function () {
     Queue::fake();
 });
 
-test('captcha generate endpoint returns key and svg', function () {
+test('captcha generate endpoint returns key, salt, and difficulty', function () {
     $response = $this->getJson('/api/v1/captcha/generate');
 
     $response->assertOk()
         ->assertJsonStructure([
             'success',
-            'data' => ['key', 'svg'],
+            'data' => ['key', 'salt', 'difficulty'],
         ]);
 });
 
-test('otp request fails when captcha is invalid', function () {
+test('captcha solve validates pow and activates challenge token', function () {
+    $captchaService = app(CaptchaService::class);
+    $challenge = $captchaService->generate();
+
+    // Compute valid nonce
+    $nonce = 0;
+    while (! str_starts_with(hash('sha256', $challenge['salt'].(string) $nonce), '0000')) {
+        $nonce++;
+    }
+
+    $response = $this->postJson('/api/v1/captcha/solve', [
+        'key' => $challenge['key'],
+        'nonce' => (string) $nonce,
+        'elapsed_ms' => 300,
+    ]);
+
+    $response->assertOk()
+        ->assertJson(['success' => true]);
+});
+
+test('otp request fails when captcha token is missing or unverified', function () {
     $response = $this->postJson('/api/v1/auth/otp/request', [
         'mobile' => '09123456789',
-        'captcha_key' => 'invalid-uuid',
-        'captcha_code' => '999',
+        'captcha_token' => 'unverified-uuid',
     ]);
 
     $response->assertStatus(422)
-        ->assertJsonValidationErrors(['captcha_code']);
+        ->assertJsonValidationErrors(['captcha_token']);
 });
 
-test('otp request succeeds with valid captcha and dispatches sms notification', function () {
+test('otp request succeeds with verified captcha and dispatches sms notification', function () {
     Notification::fake();
 
     $captchaService = app(CaptchaService::class);
-    $captcha = $captchaService->generate();
-    $answer = Redis::connection('default')->get("captcha:{$captcha['key']}");
+    $challenge = $captchaService->generate();
+
+    // Solve PoW
+    $nonce = 0;
+    while (! str_starts_with(hash('sha256', $challenge['salt'].(string) $nonce), '0000')) {
+        $nonce++;
+    }
+    $captchaService->solve($challenge['key'], (string) $nonce, 250);
 
     $response = $this->postJson('/api/v1/auth/otp/request', [
         'mobile' => '09123456789',
-        'captcha_key' => $captcha['key'],
-        'captcha_code' => (string) $answer,
+        'captcha_token' => $challenge['key'],
     ]);
 
     $response->assertOk()
@@ -87,21 +111,29 @@ test('otp request is throttled when called multiple times within 120s', function
     $captchaService = app(CaptchaService::class);
 
     // 1st request
-    $captcha1 = $captchaService->generate();
-    $answer1 = Redis::connection('default')->get("captcha:{$captcha1['key']}");
+    $challenge1 = $captchaService->generate();
+    $nonce1 = 0;
+    while (! str_starts_with(hash('sha256', $challenge1['salt'].(string) $nonce1), '0000')) {
+        $nonce1++;
+    }
+    $captchaService->solve($challenge1['key'], (string) $nonce1, 250);
+
     $this->postJson('/api/v1/auth/otp/request', [
         'mobile' => '09123456789',
-        'captcha_key' => $captcha1['key'],
-        'captcha_code' => (string) $answer1,
+        'captcha_token' => $challenge1['key'],
     ])->assertOk();
 
     // 2nd request within 120 seconds
-    $captcha2 = $captchaService->generate();
-    $answer2 = Redis::connection('default')->get("captcha:{$captcha2['key']}");
+    $challenge2 = $captchaService->generate();
+    $nonce2 = 0;
+    while (! str_starts_with(hash('sha256', $challenge2['salt'].(string) $nonce2), '0000')) {
+        $nonce2++;
+    }
+    $captchaService->solve($challenge2['key'], (string) $nonce2, 250);
+
     $response = $this->postJson('/api/v1/auth/otp/request', [
         'mobile' => '09123456789',
-        'captcha_key' => $captcha2['key'],
-        'captcha_code' => (string) $answer2,
+        'captcha_token' => $challenge2['key'],
     ]);
 
     $response->assertStatus(429);

@@ -29,16 +29,15 @@ class AuthController extends Controller
     public function requestOtp(RequestOtpRequest $request): JsonResponse
     {
         $mobile = (string) $request->input('mobile');
-        $captchaKey = (string) $request->input('captcha_key');
-        $captchaCode = (string) $request->input('captcha_code');
+        $captchaToken = (string) $request->input('captcha_token');
 
-        // 1. Verify Captcha
-        if (! $this->captchaService->verify($captchaKey, $captchaCode)) {
+        // 1. Verify "I am not a robot" captcha token
+        if (! $this->captchaService->verify($captchaToken)) {
             return response()->json([
                 'success' => false,
-                'message' => 'کد امنیتی وارد شده نادرست یا منقضی شده است.',
+                'message' => 'تأیید امنیتی نامعتبر یا منقضی شده است. لطفاً دوباره دکمه را کلیک کنید.',
                 'errors' => [
-                    'captcha_code' => ['کد امنیتی وارد شده نادرست یا منقضی شده است.'],
+                    'captcha_token' => ['تأیید امنیتی نامعتبر یا منقضی شده است.'],
                 ],
             ], 422);
         }

@@ -4,117 +4,113 @@ declare(strict_types=1);
 
 namespace App\Services\Captcha;
 
-use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 
 class CaptchaService
 {
     /**
-     * Redis connection name for captcha storage (DB 0).
+     * Redis connection name for captcha challenge storage (DB 0).
      */
     protected const REDIS_CONNECTION = 'default';
 
     /**
-     * Captcha TTL in seconds (2 minutes).
+     * Challenge TTL in seconds (3 minutes).
      */
-    protected const TTL_SECONDS = 120;
+    protected const TTL_SECONDS = 180;
 
     /**
-     * Generate a new visual math or alphanumeric SVG captcha.
+     * Generate a modern PoW challenge for the "I am not a robot" interactive widget.
      *
-     * @return array{key: string, svg: string}
+     * @return array{key: string, salt: string, difficulty: int}
      */
     public function generate(): array
     {
-        $num1 = random_int(1, 9);
-        $num2 = random_int(1, 9);
-        $operator = random_int(0, 1) === 1 ? '+' : '-';
-
-        if ($operator === '-' && $num1 < $num2) {
-            // Ensure positive result for friendly UX
-            [$num1, $num2] = [$num2, $num1];
-        }
-
-        $expression = "{$num1} {$operator} {$num2} = ?";
-        $result = $operator === '+' ? ($num1 + $num2) : ($num1 - $num2);
-
         $key = (string) Str::uuid();
+        $salt = Str::random(16);
+        // Moderate difficulty: 4 leading zero hex characters (fast in JS ~150ms-400ms, stops naive bots)
+        $difficulty = 4;
 
-        // Save hashed result in Redis DB 0 with 2-minute TTL
         Redis::connection(self::REDIS_CONNECTION)->setex(
-            "captcha:{$key}",
+            "captcha:challenge:{$key}",
             self::TTL_SECONDS,
-            (string) $result
+            json_encode([
+                'salt' => $salt,
+                'difficulty' => $difficulty,
+                'verified' => false,
+            ], JSON_THROW_ON_ERROR)
         );
-
-        $svg = $this->renderSvg($expression);
 
         return [
             'key' => $key,
-            'svg' => $svg,
+            'salt' => $salt,
+            'difficulty' => $difficulty,
         ];
     }
 
     /**
-     * Verify the user's captcha answer and immediately invalidate the key.
+     * Verify the client's computed solution when clicking "I am not a robot".
      */
-    public function verify(?string $key, ?string $answer): bool
+    public function solve(string $key, string $nonce, int $elapsedMs = 0): bool
     {
-        if (empty($key) || empty($answer)) {
-            return false;
-        }
-
-        $redisKey = "captcha:{$key}";
+        $redisKey = "captcha:challenge:{$key}";
         $redis = Redis::connection(self::REDIS_CONNECTION);
 
-        /** @var string|null $stored */
-        $stored = $redis->get($redisKey);
+        /** @var string|null $storedJson */
+        $storedJson = $redis->get($redisKey);
 
-        // One-time use: immediately delete the key
-        $redis->del($redisKey);
-
-        if ($stored === null) {
+        if ($storedJson === null) {
             return false;
         }
 
-        $normalizedInput = trim(PersianNormalizer::normalizeNumber($answer));
+        /** @var array{salt: string, difficulty: int, verified: bool} $data */
+        $data = json_decode($storedJson, true, 512, JSON_THROW_ON_ERROR);
 
-        return $normalizedInput === trim($stored);
+        // Honeypot / human speed check: a human click + compute takes at least 200ms
+        if ($elapsedMs < 100) {
+            return false;
+        }
+
+        // Validate hash
+        $targetPrefix = str_repeat('0', $data['difficulty']);
+        $hash = hash('sha256', $data['salt'].$nonce);
+
+        if (! str_starts_with($hash, $targetPrefix)) {
+            return false;
+        }
+
+        // Mark as verified with 2-minute expiration for submitting the OTP form
+        $data['verified'] = true;
+        $redis->setex($redisKey, 120, json_encode($data, JSON_THROW_ON_ERROR));
+
+        return true;
     }
 
     /**
-     * Render a lightweight, secure SVG image with noise lines.
+     * Consume the verified captcha challenge token when submitting the action (e.g., OTP request).
      */
-    protected function renderSvg(string $text): string
+    public function verify(?string $key, ?string $answer = null): bool
     {
-        $width = 140;
-        $height = 46;
-
-        // Generate noise lines
-        $noiseLines = '';
-        for ($i = 0; $i < 4; $i++) {
-            $x1 = random_int(0, $width);
-            $y1 = random_int(0, $height);
-            $x2 = random_int(0, $width);
-            $y2 = random_int(0, $height);
-            $color = sprintf('#%06X', random_int(0x777777, 0xCCCCCC));
-            $noiseLines .= "<line x1='{$x1}' y1='{$y1}' x2='{$x2}' y2='{$y2}' stroke='{$color}' stroke-width='1.5' stroke-dasharray='2,2'/>";
+        if (empty($key)) {
+            return false;
         }
 
-        // Generate characters with slight rotation
-        $chars = mb_str_split($text);
-        $charSvg = '';
-        $xOffset = 18;
+        $redisKey = "captcha:challenge:{$key}";
+        $redis = Redis::connection(self::REDIS_CONNECTION);
 
-        foreach ($chars as $char) {
-            $rotate = random_int(-15, 15);
-            $y = random_int(28, 33);
-            $color = sprintf('#%06X', random_int(0x111111, 0x444444));
-            $charSvg .= "<text x='{$xOffset}' y='{$y}' fill='{$color}' font-family='system-ui, sans-serif' font-size='20' font-weight='bold' transform='rotate({$rotate}, {$xOffset}, {$y})'>{$char}</text>";
-            $xOffset += 16;
+        /** @var string|null $storedJson */
+        $storedJson = $redis->get($redisKey);
+
+        if ($storedJson === null) {
+            return false;
         }
 
-        return "<svg xmlns='http://www.w3.org/2000/svg' width='{$width}' height='{$height}' viewBox='0 0 {$width} {$height}' style='background-color: #f8fafc; border-radius: 8px;'>{$noiseLines}{$charSvg}</svg>";
+        // Delete immediately (one-time use token)
+        $redis->del($redisKey);
+
+        /** @var array{salt: string, difficulty: int, verified: bool} $data */
+        $data = json_decode($storedJson, true, 512, JSON_THROW_ON_ERROR);
+
+        return $data['verified'];
     }
 }
