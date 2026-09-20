@@ -29,7 +29,7 @@ export default defineNuxtConfig({
 
   site: {
     defaultLocale: 'fa-IR',
-    name: 'فروشگاه اینترنتی جعفری'
+    name: 'فروشگاه اینترنتی ایزیشاپ'
   },
 
   runtimeConfig: {

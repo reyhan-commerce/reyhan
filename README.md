@@ -1,6 +1,6 @@
-# Jafari E-Commerce — Frontend Core (Nuxt 4)
+# EasyShop E-Commerce — Frontend Core (Nuxt 4)
 
-Production-grade, ultra-accessible, mobile-first e-commerce frontend for the Jafari online cosmetics and personal care store. Built on **Nuxt 4**, **Nuxt UI (Reka UI)**, **Tailwind CSS v4**, and **Vazirmatn** typography.
+Production-grade, ultra-accessible, mobile-first e-commerce frontend for the EasyShop online cosmetics and personal care store. Built on **Nuxt 4**, **Nuxt UI (Reka UI)**, **Tailwind CSS v4**, and **Vazirmatn** typography.
 
 ---
 
