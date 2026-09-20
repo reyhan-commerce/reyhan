@@ -1,6 +1,6 @@
-# Jafari E-Commerce — Backend Core (Laravel 13)
+# EasyShop E-Commerce — Backend Core (Laravel 13)
 
-Production-grade, high-concurrency RESTful backend API for the Jafari cosmetics and personal care e-commerce platform. Built on **Laravel 13**, **PostgreSQL 18/17**, and **Redis**.
+Production-grade, high-concurrency RESTful backend API for the EasyShop cosmetics and personal care e-commerce platform. Built on **Laravel 13**, **PostgreSQL 18/17**, and **Redis**.
 
 ---
 

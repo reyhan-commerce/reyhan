@@ -1,6 +1,6 @@
 # Backend Architectural Manual & Context (AI & Human Guide)
 
-This document provides a comprehensive blueprint of the backend architecture, coding conventions, domain rules, and developer tooling for the Jafari cosmetics platform. **All AI agents and engineers working on this repository must strictly adhere to the patterns defined here.**
+This document provides a comprehensive blueprint of the backend architecture, coding conventions, domain rules, and developer tooling for the EasyShop cosmetics platform. **All AI agents and engineers working on this repository must strictly adhere to the patterns defined here.**
 
 ---
 
