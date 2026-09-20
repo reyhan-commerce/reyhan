@@ -8,6 +8,7 @@ use App\Pipelines\Normalizer\Contracts\NormalizerPipeInterface;
 use App\Pipelines\Normalizer\Pipes\NormalizeCharactersPipe;
 use App\Pipelines\Normalizer\Pipes\NormalizeDigitsPipe;
 use App\Pipelines\Normalizer\Pipes\NormalizeZwnjPipe;
+use Illuminate\Support\Facades\Pipeline;
 
 class PersianNormalizer
 {
@@ -31,13 +32,12 @@ class PersianNormalizer
             return '';
         }
 
-        $carry = $value;
-        foreach (self::$textPipes as $pipeClass) {
-            $pipe = new $pipeClass;
-            $carry = $pipe->handle($carry, fn (string $res): string => $res);
-        }
+        /** @var string $result */
+        $result = Pipeline::send($value)
+            ->through(self::$textPipes)
+            ->thenReturn();
 
-        return $carry;
+        return $result;
     }
 
     /**
@@ -54,13 +54,12 @@ class PersianNormalizer
             NormalizeZwnjPipe::class,
         ];
 
-        $carry = $value;
-        foreach ($searchPipes as $pipeClass) {
-            $pipe = new $pipeClass;
-            $carry = $pipe->handle($carry, fn (string $res): string => $res);
-        }
+        /** @var string $result */
+        $result = Pipeline::send($value)
+            ->through($searchPipes)
+            ->thenReturn();
 
-        return $carry;
+        return $result;
     }
 
     /**
