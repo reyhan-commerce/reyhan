@@ -13,9 +13,10 @@ export interface User {
   created_at?: string
 }
 
-export interface CaptchaData {
+export interface CaptchaChallenge {
   key: string
-  svg: string
+  salt: string
+  difficulty: number
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -41,24 +42,39 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthModalOpen.value = false
   }
 
-  const fetchCaptcha = async (): Promise<CaptchaData | null> => {
+  const fetchCaptcha = async (): Promise<CaptchaChallenge | null> => {
     try {
-      const response = await api<ApiResponse<CaptchaData>>('/captcha/generate')
+      const response = await api<ApiResponse<CaptchaChallenge>>('/captcha/generate')
       return response.data || null
     } catch {
       return null
     }
   }
 
-  const requestOtp = async (mobile: string, captchaKey: string, captchaCode: string): Promise<boolean> => {
+  const solveCaptcha = async (key: string, nonce: string, elapsedMs: number): Promise<boolean> => {
+    try {
+      const response = await api<ApiResponse<{ message: string }>>('/captcha/solve', {
+        method: 'POST',
+        body: {
+          key,
+          nonce,
+          elapsed_ms: elapsedMs
+        }
+      })
+      return Boolean(response.success)
+    } catch {
+      return false
+    }
+  }
+
+  const requestOtp = async (mobile: string, captchaToken: string): Promise<boolean> => {
     isLoading.value = true
     try {
       await api<ApiResponse<{ expires_in: number }>>('/auth/otp/request', {
         method: 'POST',
         body: {
           mobile,
-          captcha_key: captchaKey,
-          captcha_code: captchaCode
+          captcha_token: captchaToken
         }
       })
       return true
@@ -140,6 +156,7 @@ export const useAuthStore = defineStore('auth', () => {
     openAuthModal,
     closeAuthModal,
     fetchCaptcha,
+    solveCaptcha,
     requestOtp,
     verifyOtp,
     fetchUser,

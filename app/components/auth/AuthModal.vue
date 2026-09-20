@@ -4,8 +4,7 @@ const toast = useToast()
 
 const step = ref<'mobile' | 'otp'>('mobile')
 const mobile = ref('')
-const captchaCode = ref('')
-const captchaKey = ref('')
+const captchaToken = ref('')
 const otpCode = ref('')
 
 // Countdown timer for OTP resend (120 seconds)
@@ -42,17 +41,17 @@ const handleRequestOtp = async () => {
     return
   }
 
-  if (!captchaCode.value) {
+  if (!captchaToken.value) {
     toast.add({
-      title: 'کد امنیتی',
-      description: 'لطفاً کد امنیتی را وارد فرمایید.',
+      title: 'تأیید امنیتی',
+      description: 'لطفاً تیک «من ربات نیستم» را فعال نمایید.',
       color: 'warning',
       icon: 'i-lucide-shield-alert'
     })
     return
   }
 
-  const success = await authStore.requestOtp(mobile.value, captchaKey.value, captchaCode.value)
+  const success = await authStore.requestOtp(mobile.value, captchaToken.value)
   if (success) {
     step.value = 'otp'
     startTimer()
@@ -91,13 +90,13 @@ const handleVerifyOtp = async () => {
 const handleResendOtp = async () => {
   if (countdown.value > 0) return
   step.value = 'mobile'
-  captchaCode.value = ''
+  captchaToken.value = ''
 }
 
 const resetModal = () => {
   step.value = 'mobile'
   mobile.value = ''
-  captchaCode.value = ''
+  captchaToken.value = ''
   otpCode.value = ''
   if (timerInterval) clearInterval(timerInterval)
 }
@@ -137,9 +136,9 @@ onUnmounted(() => {
           />
         </div>
 
-        <AuthCaptchaInput
-          v-model="captchaCode"
-          @key-change="captchaKey = $event"
+        <AuthCaptchaCheckbox
+          @verified="captchaToken = $event"
+          @reset="captchaToken = ''"
         />
 
         <UButton
