@@ -7,21 +7,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Spatie\Permission\Traits\HasRoles;
 
-/**
- * @property int $id
- * @property string $name
- * @property string $email
- * @property string $password
- * @property string|null $avatar
- * @property bool $is_active
- * @property string|null $remember_token
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
- */
 class Admin extends Authenticatable
 {
     use HasRoles, Notifiable, SoftDeletes;

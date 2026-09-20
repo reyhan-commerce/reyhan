@@ -180,6 +180,27 @@ test('otp verify fails when code is incorrect or expired', function () {
         ->assertJsonValidationErrors(['code']);
 });
 
+test('otp verify fails with 403 when user is deactivated', function () {
+    User::create([
+        'mobile' => '09121112233',
+        'is_active' => false,
+    ]);
+
+    $code = '12345';
+    Redis::connection('default')->setex('otp:code:09121112233', 120, Hash::make($code));
+
+    $response = $this->postJson('/api/v1/auth/otp/verify', [
+        'mobile' => '09121112233',
+        'code' => $code,
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJson([
+            'success' => false,
+            'message' => 'حساب کاربری شما مسدود شده است.',
+        ]);
+});
+
 test('authenticated user can view profile and logout', function () {
     $user = User::create([
         'mobile' => '09129876543',
