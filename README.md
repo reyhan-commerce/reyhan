@@ -10,7 +10,7 @@ Production-grade, high-concurrency RESTful backend API for the EasyShop cosmetic
 | :--- | :--- |
 | **Framework** | Laravel 13.x (PHP 8.5+ with strict typing) |
 | **High-Performance Runtime** | Laravel Octane + FrankenPHP binary |
-| **Primary Database** | PostgreSQL 18.4 (Database: `shop_db` on port `30102`) |
+| **Primary Database** | PostgreSQL 18.4 (Production/Dev: `easyshop_db`, Test: `easyshop_test_db` on port `30102`) |
 | **DB Extensions** | `pg_trgm` (trigram fuzzy search), `cube`, `earthdistance` (geodistance) |
 | **In-Memory Store** | Redis 8.6 (Port `30101`, partitioned into DB 0, 1, 2) |
 | **Queue & Dashboard** | Laravel Horizon (Redis DB 2) |
@@ -31,7 +31,7 @@ Production-grade, high-concurrency RESTful backend API for the EasyShop cosmetic
 ### 2. Environment Configuration
 Ensure `.env` contains the required infrastructure connections:
 ```env
-APP_NAME="Jafari Shop"
+APP_NAME="EasyShop"
 APP_ENV=local
 APP_KEY=base64:...
 APP_DEBUG=true
@@ -40,7 +40,7 @@ APP_URL=http://localhost:8000
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=30102
-DB_DATABASE=shop_db
+DB_DATABASE=easyshop_db
 DB_USERNAME=postgres
 DB_PASSWORD=password
 

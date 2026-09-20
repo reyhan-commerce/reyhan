@@ -20,7 +20,7 @@ This document provides a comprehensive blueprint of the backend architecture, co
    - **`users` Table**: End-customers who interact with the Nuxt frontend. They authenticate solely via mobile phone number + SMS OTP through Laravel Sanctum. No passwords or Spatie roles are assigned to `users`.
    - **`admins` Table**: Store administrators and staff who access the Filament 5 admin panel. Authenticated via session cookies on the `admin` guard, governed by Spatie Permissions and Filament Shield.
 3. **Database-Level Data Integrity**:
-   - Primary database is PostgreSQL 18/17 (`shop_db`).
+   - Primary database is PostgreSQL 18/17 (`easyshop_db` in development, `easyshop_test_db` for automated tests).
    - Extensions enabled:
      - `pg_trgm`: Used for GIN-indexed trigram fuzzy search across Persian and English product titles and brand names.
      - `cube` & `earthdistance`: Used for spatial distance calculation (e.g., shipping hubs to delivery addresses).
