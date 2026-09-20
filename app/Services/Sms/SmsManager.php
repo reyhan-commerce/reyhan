@@ -32,7 +32,7 @@ class SmsManager extends Manager
      */
     protected function createLogDriver(): SmsDriverInterface
     {
-        return new LogDriver;
+        return $this->container->make(LogDriver::class);
     }
 
     /**
@@ -40,16 +40,9 @@ class SmsManager extends Manager
      */
     protected function createKavenegarDriver(): SmsDriverInterface
     {
-        /** @var array{api_key?: string, sender?: string, otp_pattern?: string} $config */
-        $config = $this->config->get('sms.drivers.kavenegar', []);
-
-        $client = new KavenegarClient(
-            apiKey: (string) ($config['api_key'] ?? ''),
-            sender: (string) ($config['sender'] ?? ''),
-            otpPattern: (string) ($config['otp_pattern'] ?? '')
-        );
-
-        return new KavenegarDriver($client);
+        return $this->container->make(KavenegarDriver::class, [
+            'client' => $this->container->make(KavenegarClient::class),
+        ]);
     }
 
     /**
@@ -57,16 +50,9 @@ class SmsManager extends Manager
      */
     protected function createFarazsmsDriver(): SmsDriverInterface
     {
-        /** @var array{api_key?: string, sender?: string, otp_pattern?: string} $config */
-        $config = $this->config->get('sms.drivers.farazsms', []);
-
-        $client = new FarazSmsClient(
-            apiKey: (string) ($config['api_key'] ?? ''),
-            sender: (string) ($config['sender'] ?? ''),
-            otpPattern: (string) ($config['otp_pattern'] ?? '')
-        );
-
-        return new FarazSmsDriver($client);
+        return $this->container->make(FarazSmsDriver::class, [
+            'client' => $this->container->make(FarazSmsClient::class),
+        ]);
     }
 
     /**
@@ -74,15 +60,8 @@ class SmsManager extends Manager
      */
     protected function createGhasedakDriver(): SmsDriverInterface
     {
-        /** @var array{api_key?: string, sender?: string, otp_template?: string} $config */
-        $config = $this->config->get('sms.drivers.ghasedak', []);
-
-        $client = new GhasedakClient(
-            apiKey: (string) ($config['api_key'] ?? ''),
-            sender: (string) ($config['sender'] ?? ''),
-            otpTemplate: (string) ($config['otp_template'] ?? '')
-        );
-
-        return new GhasedakDriver($client);
+        return $this->container->make(GhasedakDriver::class, [
+            'client' => $this->container->make(GhasedakClient::class),
+        ]);
     }
 }

@@ -5,6 +5,11 @@ declare(strict_types=1);
 use App\Models\User;
 use App\Notifications\Auth\SendOtpNotification;
 use App\Services\Captcha\CaptchaService;
+use App\Services\Sms\Drivers\FarazSmsDriver;
+use App\Services\Sms\Drivers\GhasedakDriver;
+use App\Services\Sms\Drivers\KavenegarDriver;
+use App\Services\Sms\Drivers\LogDriver;
+use App\Services\Sms\SmsManager;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -150,4 +155,13 @@ test('authenticated user can view profile and logout', function () {
 
     // Verify token was revoked from database
     expect($user->fresh()->tokens)->toHaveCount(0);
+});
+
+test('sms manager resolves drivers and clients via ioc container without manual new', function () {
+    $smsManager = app(SmsManager::class);
+
+    expect($smsManager->driver('log'))->toBeInstanceOf(LogDriver::class)
+        ->and($smsManager->driver('kavenegar'))->toBeInstanceOf(KavenegarDriver::class)
+        ->and($smsManager->driver('farazsms'))->toBeInstanceOf(FarazSmsDriver::class)
+        ->and($smsManager->driver('ghasedak'))->toBeInstanceOf(GhasedakDriver::class);
 });
