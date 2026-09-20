@@ -68,7 +68,7 @@ const handleVerifyOtp = async () => {
   if (!otpCode.value || otpCode.value.length < 5) {
     toast.add({
       title: 'خطا',
-      description: 'لطفاً کد تایید ۵ رقمی دریافتی را وارد فرمایید.',
+      description: 'لطفاً کد تایید دریافتی را وارد فرمایید.',
       color: 'warning',
       icon: 'i-lucide-alert-triangle'
     })
@@ -174,14 +174,14 @@ onUnmounted(() => {
 
         <div class="space-y-1.5">
           <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-            کد تایید ۵ رقمی
+            کد تایید
           </label>
           <UInput
             v-model="otpCode"
             type="text"
             inputmode="numeric"
-            maxlength="5"
-            placeholder="• • • • •"
+            maxlength="6"
+            placeholder="• • • • • •"
             size="xl"
             class="min-h-14 w-full text-center text-2xl font-bold tracking-widest"
             autofocus
