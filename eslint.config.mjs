@@ -14,6 +14,9 @@ export default withNuxt(
           ['^v-bind:ui$', [{ match: 'objectValues' }]]
         ]
       }
+    },
+    rules: {
+      'vue/no-v-html': 'off'
     }
   }
 )

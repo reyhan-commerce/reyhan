@@ -1,14 +1,17 @@
-<script setup>
+<script setup lang="ts">
+const authStore = useAuthStore()
+
 useHead({
+  htmlAttrs: {
+    dir: 'rtl',
+    lang: 'fa-IR'
+  },
   meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+    { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5' }
   ],
   link: [
     { rel: 'icon', href: '/favicon.ico' }
-  ],
-  htmlAttrs: {
-    lang: 'en'
-  }
+  ]
 })
 
 const title = 'فروشگاه اینترنتی ایزیشاپ (EasyShop)'
@@ -18,9 +21,14 @@ useSeoMeta({
   title,
   description,
   ogTitle: title,
-  ogDescription: description,
-  ogImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
-  twitterCard: 'summary_large_image'
+  ogDescription: description
+})
+
+// Fetch current user if token exists on mount
+onMounted(() => {
+  if (authStore.isAuthenticated) {
+    authStore.fetchUser()
+  }
 })
 </script>
 
@@ -30,25 +38,57 @@ useSeoMeta({
       <template #left>
         <NuxtLink
           to="/"
-          class="focus-visible:outline-3 outline-primary/25 rounded-md p-1 -ms-1"
+          class="focus-visible:outline-3 outline-primary/25 rounded-md p-1 -ms-1 flex items-center gap-2"
         >
-          <AppLogo class="w-auto h-6 shrink-0" />
+          <div class="size-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg">
+            E
+          </div>
+          <span class="font-bold text-lg text-neutral-900 dark:text-white">
+            ایزیشاپ
+          </span>
         </NuxtLink>
-
-        <TemplateMenu />
       </template>
 
       <template #right>
         <UColorModeButton />
 
-        <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-          color="neutral"
-          variant="ghost"
-        />
+        <!-- User Authentication Button -->
+        <template v-if="authStore.isAuthenticated">
+          <UDropdownMenu
+            :items="[
+              [{
+                label: authStore.user?.full_name || 'کاربر گرامی',
+                icon: 'i-lucide-user',
+                disabled: true
+              }],
+              [{
+                label: 'خروج از حساب',
+                icon: 'i-lucide-log-out',
+                onSelect: () => authStore.logout()
+              }]
+            ]"
+          >
+            <UButton
+              color="neutral"
+              variant="subtle"
+              icon="i-lucide-user"
+              class="min-h-10 px-3"
+            >
+              {{ authStore.user?.full_name || 'حساب کاربری' }}
+            </UButton>
+          </UDropdownMenu>
+        </template>
+        <template v-else>
+          <UButton
+            color="primary"
+            variant="solid"
+            icon="i-lucide-log-in"
+            class="min-h-10 px-4 font-medium"
+            @click="authStore.openAuthModal"
+          >
+            ورود / ثبت‌نام
+          </UButton>
+        </template>
       </template>
     </UHeader>
 
@@ -56,25 +96,17 @@ useSeoMeta({
       <NuxtPage />
     </UMain>
 
-    <USeparator icon="i-simple-icons-nuxtdotjs" />
+    <USeparator />
 
     <UFooter>
       <template #left>
-        <p class="text-sm text-muted">
-          Built with Nuxt UI • © {{ new Date().getFullYear() }}
+        <p class="text-sm text-neutral-500">
+          تمامی حقوق مادی و معنوی این سایت متعلق به فروشگاه اینترنتی ایزیشاپ می‌باشد • © {{ new Date().getFullYear() }}
         </p>
       </template>
-
-      <template #right>
-        <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-          color="neutral"
-          variant="ghost"
-        />
-      </template>
     </UFooter>
+
+    <!-- Global Auth Modal -->
+    <AuthModal />
   </UApp>
 </template>

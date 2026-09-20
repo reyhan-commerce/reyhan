@@ -49,6 +49,16 @@ The application will be available at `http://localhost:3000`.
 
 ---
 
+## 🔐 Authentication & API Integration (Phase 1)
+
+- **`useApi()` Composable** (`app/composables/useApi.ts`): Type-safe `$fetch` client with automatic base URL injection, Bearer token attachment from Cookie/Pinia, and RFC 7807 toast alerts.
+- **`useAuthStore`** (`app/stores/auth.ts`): Pinia store with full customer OTP lifecycle, 30-day SSR cookie persistence, and auth modal trigger.
+- **`CaptchaInput` Component** (`app/components/auth/CaptchaInput.vue`): Interactive SVG captcha with one-click reload button.
+- **`AuthModal` Component** (`app/components/auth/AuthModal.vue`): Accessible 2-step OTP modal (mobile input + 5-digit verification code with 120s countdown).
+- **`auth` Route Middleware** (`app/middleware/auth.ts`): Client & SSR protection for user-only routes.
+
+---
+
 ## 🧪 Quality Assurance Commands
 
 Ensure code cleanliness and type correctness prior to pushing commits:
