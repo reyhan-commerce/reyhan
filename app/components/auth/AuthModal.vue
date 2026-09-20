@@ -67,10 +67,10 @@ const handleRequestOtp = async () => {
 
 const handleVerifyOtp = async () => {
   const code = otpCode.value
-  if (!code || code.length < 5) {
+  if (!code || code.length !== 6) {
     toast.add({
       title: 'خطا',
-      description: 'لطفاً کد تایید را وارد فرمایید.',
+      description: 'لطفاً کد تایید ۶ رقمی را وارد فرمایید.',
       color: 'warning',
       icon: 'i-lucide-alert-triangle'
     })
