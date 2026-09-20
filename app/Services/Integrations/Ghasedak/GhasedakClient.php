@@ -4,24 +4,30 @@ declare(strict_types=1);
 
 namespace App\Services\Integrations\Ghasedak;
 
+use App\Settings\SmsSettings;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class GhasedakClient
 {
-    protected PendingRequest $http;
-
     public function __construct(
-        protected string $apiKey,
-        protected string $sender,
-        protected string $otpTemplate,
-        ?PendingRequest $http = null
-    ) {
-        $this->http = $http ?? Http::baseUrl('https://api.ghasedak.me/v2/')
+        protected SmsSettings $settings,
+        protected ?PendingRequest $http = null
+    ) {}
+
+    protected function http(): PendingRequest
+    {
+        if ($this->http !== null) {
+            return $this->http;
+        }
+
+        $apiKey = (string) ($this->settings->ghasedak_api_key ?? '');
+
+        return Http::baseUrl('https://api.ghasedak.me/v2/')
             ->timeout(5)
             ->withHeaders([
-                'apikey' => $this->apiKey,
+                'apikey' => $apiKey,
             ])
             ->asForm();
     }
@@ -29,10 +35,11 @@ class GhasedakClient
     public function send(string $to, string $message): bool
     {
         try {
-            $response = $this->http->post('sms/send/simple', [
+            $sender = (string) ($this->settings->ghasedak_sender ?? '');
+            $response = $this->http()->post('sms/send/simple', [
                 'receptor' => $to,
                 'message' => $message,
-                'linenumber' => $this->sender,
+                'linenumber' => $sender,
             ]);
 
             return $response->successful();
@@ -49,10 +56,11 @@ class GhasedakClient
     public function sendOtp(string $to, string $code, array $tokens = []): bool
     {
         try {
-            $response = $this->http->post('verification/send/simple', [
+            $template = (string) ($this->settings->ghasedak_otp_template ?? '');
+            $response = $this->http()->post('verification/send/simple', [
                 'receptor' => $to,
                 'type' => '1',
-                'template' => $this->otpTemplate,
+                'template' => $template,
                 'param1' => $code,
             ]);
 

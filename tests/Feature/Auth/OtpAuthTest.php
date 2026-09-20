@@ -5,13 +5,17 @@ declare(strict_types=1);
 use App\Models\User;
 use App\Notifications\Auth\SendOtpNotification;
 use App\Services\Captcha\CaptchaService;
+use App\Services\Integrations\Kavenegar\KavenegarClient;
 use App\Services\Sms\Drivers\FarazSmsDriver;
 use App\Services\Sms\Drivers\GhasedakDriver;
 use App\Services\Sms\Drivers\KavenegarDriver;
 use App\Services\Sms\Drivers\LogDriver;
 use App\Services\Sms\SmsManager;
+use App\Settings\SmsSettings;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Redis;
@@ -164,4 +168,29 @@ test('sms manager resolves drivers and clients via ioc container without manual 
         ->and($smsManager->driver('kavenegar'))->toBeInstanceOf(KavenegarDriver::class)
         ->and($smsManager->driver('farazsms'))->toBeInstanceOf(FarazSmsDriver::class)
         ->and($smsManager->driver('ghasedak'))->toBeInstanceOf(GhasedakDriver::class);
+});
+
+test('sms clients reflect runtime updates to SmsSettings dynamically', function () {
+    /** @var SmsSettings $settings */
+    $settings = app(SmsSettings::class);
+    $settings->kavenegar_sender = 'initial_sender';
+    $settings->save();
+
+    /** @var KavenegarClient $client */
+    $client = app(KavenegarClient::class);
+
+    // Update settings in database / runtime
+    $settings->kavenegar_sender = 'updated_sender_live';
+    $settings->save();
+
+    // Client directly reads updated sender without restarting container
+    Http::fake([
+        'api.kavenegar.com/*' => Http::response(['status' => 200]),
+    ]);
+
+    $client->send('09123456789', 'تست پیامک');
+
+    Http::assertSent(function (Request $request) {
+        return $request['sender'] === 'updated_sender_live';
+    });
 });
