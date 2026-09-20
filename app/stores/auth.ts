@@ -62,7 +62,8 @@ export const useAuthStore = defineStore('auth', () => {
         }
       })
       return Boolean(response.success)
-    } catch {
+    } catch (error) {
+      console.error('[authStore] solveCaptcha failed:', error)
       return false
     }
   }
