@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\Sms;
 
-use App\Services\Integrations\FarazSms\FarazSmsClient;
-use App\Services\Integrations\Ghasedak\GhasedakClient;
-use App\Services\Integrations\Kavenegar\KavenegarClient;
 use App\Services\Sms\Contracts\SmsDriverInterface;
 use App\Services\Sms\Drivers\FarazSmsDriver;
 use App\Services\Sms\Drivers\GhasedakDriver;
@@ -36,32 +33,26 @@ class SmsManager extends Manager
     }
 
     /**
-     * Create Kavenegar driver instance.
+     * Create Kavenegar driver instance via container auto-wiring.
      */
     protected function createKavenegarDriver(): SmsDriverInterface
     {
-        return $this->container->make(KavenegarDriver::class, [
-            'client' => $this->container->make(KavenegarClient::class),
-        ]);
+        return $this->container->make(KavenegarDriver::class);
     }
 
     /**
-     * Create FarazSMS driver instance.
+     * Create FarazSMS driver instance via container auto-wiring.
      */
     protected function createFarazsmsDriver(): SmsDriverInterface
     {
-        return $this->container->make(FarazSmsDriver::class, [
-            'client' => $this->container->make(FarazSmsClient::class),
-        ]);
+        return $this->container->make(FarazSmsDriver::class);
     }
 
     /**
-     * Create Ghasedak driver instance.
+     * Create Ghasedak driver instance via container auto-wiring.
      */
     protected function createGhasedakDriver(): SmsDriverInterface
     {
-        return $this->container->make(GhasedakDriver::class, [
-            'client' => $this->container->make(GhasedakClient::class),
-        ]);
+        return $this->container->make(GhasedakDriver::class);
     }
 }
