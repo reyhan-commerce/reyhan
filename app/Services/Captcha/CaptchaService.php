@@ -6,23 +6,26 @@ namespace App\Services\Captcha;
 
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
+use JsonException;
 
 class CaptchaService
 {
     /**
      * Redis connection name for captcha challenge storage (DB 0).
      */
-    protected const REDIS_CONNECTION = 'default';
+    protected const string REDIS_CONNECTION = 'default';
 
     /**
      * Challenge TTL in seconds (3 minutes).
      */
-    protected const TTL_SECONDS = 180;
+    protected const int TTL_SECONDS = 180;
 
     /**
      * Generate a modern PoW challenge for the "I am not a robot" interactive widget.
      *
      * @return array{key: string, salt: string, difficulty: int}
+     *
+     * @throws JsonException
      */
     public function generate(): array
     {
@@ -50,6 +53,8 @@ class CaptchaService
 
     /**
      * Verify the client's computed solution when clicking "I am not a robot".
+     *
+     * @throws JsonException
      */
     public function solve(string $key, string $nonce, int $elapsedMs = 0): bool
     {
@@ -88,6 +93,8 @@ class CaptchaService
 
     /**
      * Consume the verified captcha challenge token when submitting the action (e.g., OTP request).
+     *
+     * @throws JsonException
      */
     public function verify(?string $key, ?string $answer = null): bool
     {
