@@ -1,5 +1,9 @@
 <script setup lang="ts">
 const authStore = useAuthStore()
+const settingsStore = useSettingsStore()
+
+// Fetch public store settings in SSR/initial load
+await useAsyncData('app-settings', () => settingsStore.fetchSettings())
 
 useHead({
   htmlAttrs: {
@@ -10,12 +14,12 @@ useHead({
     { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5' }
   ],
   link: [
-    { rel: 'icon', href: '/favicon.ico' }
+    { rel: 'icon', href: settingsStore.settings.store_favicon || '/favicon.ico' }
   ]
 })
 
-const title = 'فروشگاه اینترنتی ایزیشاپ (EasyShop)'
-const description = 'خرید آنلاین باکیفیت‌ترین محصولات آرایشی، مراقبت پوست و مو با تضمین اصالت کالا و ارسال سریع'
+const title = computed(() => settingsStore.settings.store_name)
+const description = computed(() => settingsStore.settings.store_slogan || 'خرید آنلاین باکیفیت‌ترین محصولات آرایشی، مراقبت پوست و مو با تضمین اصالت کالا و ارسال سریع')
 
 useSeoMeta({
   title,
@@ -41,10 +45,10 @@ onMounted(() => {
           class="focus-visible:outline-3 outline-primary/25 rounded-md p-1 -ms-1 flex items-center gap-2"
         >
           <div class="size-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg">
-            E
+            {{ settingsStore.settings.store_name.charAt(0) || 'E' }}
           </div>
           <span class="font-bold text-lg text-neutral-900 dark:text-white">
-            ایزیشاپ
+            {{ settingsStore.settings.store_name }}
           </span>
         </NuxtLink>
       </template>
