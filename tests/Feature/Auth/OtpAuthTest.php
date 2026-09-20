@@ -194,3 +194,32 @@ test('sms clients reflect runtime updates to SmsSettings dynamically', function 
         return $request['sender'] === 'updated_sender_live';
     });
 });
+
+test('sms manager switches active driver dynamically when SmsSettings active_driver changes', function () {
+    /** @var SmsSettings $settings */
+    $settings = app(SmsSettings::class);
+
+    // Initial driver is log
+    $settings->active_driver = 'log';
+    $settings->save();
+
+    /** @var SmsManager $manager1 */
+    $manager1 = app(SmsManager::class);
+    expect($manager1->driver())->toBeInstanceOf(LogDriver::class);
+
+    // Change driver in settings to kavenegar
+    $settings->active_driver = 'kavenegar';
+    $settings->save();
+
+    /** @var SmsManager $manager2 */
+    $manager2 = app(SmsManager::class);
+    expect($manager2->driver())->toBeInstanceOf(KavenegarDriver::class);
+
+    // Change driver in settings to farazsms
+    $settings->active_driver = 'farazsms';
+    $settings->save();
+
+    /** @var SmsManager $manager3 */
+    $manager3 = app(SmsManager::class);
+    expect($manager3->driver())->toBeInstanceOf(FarazSmsDriver::class);
+});

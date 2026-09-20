@@ -15,7 +15,7 @@ use Illuminate\Support\Manager;
 class SmsManager extends Manager
 {
     /**
-     * Get the default driver name.
+     * Get the default driver name dynamically from SmsSettings.
      */
     public function getDefaultDriver(): string
     {
@@ -30,6 +30,16 @@ class SmsManager extends Manager
 
             return $driver;
         }
+    }
+
+    /**
+     * Clear all cached driver instances so fresh drivers are resolved.
+     */
+    public function forgetDrivers(): self
+    {
+        $this->drivers = [];
+
+        return $this;
     }
 
     /**
