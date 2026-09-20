@@ -45,7 +45,7 @@ class VerifyOtpRequest extends FormRequest
     {
         return [
             'mobile' => ['required', 'string', 'regex:/^09[0-9]{9}$/'],
-            'code' => ['required', 'string', 'digits_between:5,6', new ValidOtp],
+            'code' => ['required', 'string', 'digits:6', new ValidOtp],
             'device_name' => ['nullable', 'string', 'max:100'],
         ];
     }

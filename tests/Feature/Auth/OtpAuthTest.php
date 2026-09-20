@@ -140,12 +140,12 @@ test('otp request is throttled when called multiple times within 120s', function
 });
 
 test('otp verify checks hash, creates user and issues sanctum token', function () {
-    $code = '12345';
+    $code = '123456';
     Redis::connection('default')->setex('otp:code:09123456789', 120, Hash::make($code));
 
     $response = $this->postJson('/api/v1/auth/otp/verify', [
         'mobile' => '۰۹۱۲۳۴۵۶۷۸۹', // Test Persian digits input
-        'code' => '۱۲۳۴۵',         // Test Persian digits input
+        'code' => '۱۲۳۴۵۶',         // Test Persian digits input
         'device_name' => 'test-device',
     ]);
 
@@ -168,12 +168,12 @@ test('otp verify checks hash, creates user and issues sanctum token', function (
 });
 
 test('otp verify fails when code is incorrect or expired', function () {
-    $code = '12345';
+    $code = '123456';
     Redis::connection('default')->setex('otp:code:09123456789', 120, Hash::make($code));
 
     $response = $this->postJson('/api/v1/auth/otp/verify', [
         'mobile' => '09123456789',
-        'code' => '99999',
+        'code' => '999999',
     ]);
 
     $response->assertStatus(422)
@@ -186,7 +186,7 @@ test('otp verify fails with 403 when user is deactivated', function () {
         'is_active' => false,
     ]);
 
-    $code = '12345';
+    $code = '123456';
     Redis::connection('default')->setex('otp:code:09121112233', 120, Hash::make($code));
 
     $response = $this->postJson('/api/v1/auth/otp/verify', [

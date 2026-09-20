@@ -44,7 +44,7 @@ class OtpService
     }
 
     /**
-     * Generate 5-digit cryptographically secure OTP, store hashed in Redis, and dispatch notification.
+     * Generate 6-digit cryptographically secure OTP, store hashed in Redis, and dispatch notification.
      * Throws OtpThrottledException if called within throttle window.
      *
      * @return array{code: string, expires_in: int}
@@ -65,7 +65,7 @@ class OtpService
         // Fixed OTP in local/dev environment for seamless development and testing
         $code = app()->environment(['local', 'dev'])
             ? '123456'
-            : (string) random_int(10000, 99999);
+            : (string) random_int(100000, 999999);
         $hashedCode = Hash::make($code);
 
         $redis->setex("otp:code:{$mobile}", self::TTL_SECONDS, $hashedCode);
