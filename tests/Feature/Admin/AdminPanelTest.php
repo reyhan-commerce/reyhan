@@ -50,3 +50,29 @@ test('deactivated admin cannot access admin panel', function () {
 
     $response->assertForbidden();
 });
+
+test('admin can access general settings page', function () {
+    $admin = Admin::create([
+        'name' => 'ادمین تنظیمات',
+        'email' => 'settings-admin@easyshop.local',
+        'password' => bcrypt('password'),
+        'is_active' => true,
+    ]);
+
+    $response = $this->actingAs($admin, 'admin')->get('/admin/manage-general-settings');
+
+    $response->assertOk();
+});
+
+test('admin can access sms settings page', function () {
+    $admin = Admin::create([
+        'name' => 'ادمین پیامک',
+        'email' => 'sms-admin@easyshop.local',
+        'password' => bcrypt('password'),
+        'is_active' => true,
+    ]);
+
+    $response = $this->actingAs($admin, 'admin')->get('/admin/manage-sms-settings');
+
+    $response->assertOk();
+});
