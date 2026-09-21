@@ -1,7 +1,5 @@
 schema: spec-driven
 
-schema: spec-driven
-
 # EasyShop Architecture & Domain Context
 context: |
   Domain: Cosmetics & Skincare E-Commerce Platform (EasyShop / فروشگاه اینترنتی ایزیشاپ)
@@ -26,14 +24,14 @@ context: |
 # Per-artifact rules
 rules:
   proposal:
-    - Clarify customer impact and dual-stack (frontend + backend) requirements
-    - Always state whether database migrations or breaking API changes are introduced
-  spec:
-    - Define exact API request/response schemas in JSON format
-    - Document error states (validation 422, auth 401, concurrency 409)
+    - "Clarify customer impact and dual-stack requirements"
+    - "Always state whether database migrations or breaking API changes are introduced"
+  specs:
+    - "Define exact API request/response schemas in JSON format"
+    - "Document error states (validation 422, auth 401, concurrency 409)"
   tasks:
-    - Order tasks logically: Database -> Backend Service/Action -> API Controller -> Frontend Store -> Frontend UI -> Pest Test
-    - Include verification steps (Pest tests, Larastan, and pnpm typecheck)
+    - "Order tasks logically: Database -> Backend Service -> API Controller -> Frontend Store -> Frontend UI -> Pest Test"
+    - "Include verification steps (Pest tests, Larastan, and pnpm typecheck)"
 
 # Per-operation guidance
 operations:
