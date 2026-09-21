@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\AppSettingController;
-use App\Settings\GeneralSettings;
 use Illuminate\Support\Facades\Cache;
 
 test('public settings endpoint returns store configuration and caches in redis', function () {

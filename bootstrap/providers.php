@@ -1,8 +1,13 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\Filament\AdminPanelProvider;
+use App\Providers\HorizonServiceProvider;
+use App\Providers\SmsServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\Filament\AdminPanelProvider::class,
-    App\Providers\HorizonServiceProvider::class,
-    App\Providers\SmsServiceProvider::class,
+    AppServiceProvider::class,
+    AdminPanelProvider::class,
+    HorizonServiceProvider::class,
+    SmsServiceProvider::class,
 ];

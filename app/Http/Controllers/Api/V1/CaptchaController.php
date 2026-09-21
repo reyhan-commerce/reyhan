@@ -14,12 +14,11 @@ class CaptchaController extends Controller
 {
     public function __construct(
         protected CaptchaService $captchaService
-    )
-    {
-    }
+    ) {}
 
     /**
      * Generate "I am not a robot" challenge.
+     *
      * @throws JsonException
      */
     public function generate(): JsonResponse
