@@ -4,12 +4,22 @@ useHead({
 })
 
 const cartStore = useCartStore()
+const authStore = useAuthStore()
+const router = useRouter()
 const { formatPrice, toPersianDigits } = usePersian()
 const couponInput = ref('')
 
 onMounted(() => {
   cartStore.fetchCart()
 })
+
+const handleProceedToCheckout = () => {
+  if (!authStore.isAuthenticated) {
+    authStore.openAuthModal()
+    return
+  }
+  router.push('/checkout')
+}
 
 const handleApplyCoupon = async () => {
   if (!couponInput.value.trim()) return
@@ -309,7 +319,8 @@ const handleClearCart = async () => {
               block
               trailing
               icon="i-lucide-arrow-left"
-              class="mt-4 font-bold shadow-sm"
+              class="mt-4 font-bold shadow-sm cursor-pointer"
+              @click="handleProceedToCheckout"
             >
               ادامه ثبت سفارش
             </UButton>
