@@ -121,7 +121,7 @@ const handleRemove = () => {
             size="xs"
             icon="i-lucide-plus"
             class="text-gray-600 dark:text-gray-300"
-            :disabled="isUpdating || (item.variant && item.quantity >= Math.min(item.variant.stock, 10))"
+            :disabled="Boolean(isUpdating || (item.variant && item.quantity >= Math.min(item.variant.stock, 10)))"
             @click="handleIncrease"
           />
         </div>
