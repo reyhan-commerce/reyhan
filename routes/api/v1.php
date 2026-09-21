@@ -66,3 +66,28 @@ Route::prefix('geo')->name('geo.')->group(function () {
     Route::get('/provinces', [GeoController::class, 'provinces'])->name('provinces');
     Route::get('/provinces/{province}/cities', [GeoController::class, 'cities'])->name('cities');
 });
+
+// Payment Gateways & Callback (Public callback from bank)
+Route::prefix('payment')->name('payment.')->group(function () {
+    Route::get('/gateways', [\App\Http\Controllers\Api\V1\PaymentController::class, 'gateways'])->name('gateways');
+    Route::post('/verify', [\App\Http\Controllers\Api\V1\PaymentController::class, 'verify'])->name('verify');
+    Route::get('/verify', [\App\Http\Controllers\Api\V1\PaymentController::class, 'verify'])->name('verify.get');
+});
+
+// Authenticated Customer Operations: Addresses, Checkout & Orders
+Route::middleware('auth:sanctum')->group(function () {
+    // User Addresses
+    Route::apiResource('addresses', \App\Http\Controllers\Api\V1\AddressController::class);
+    Route::patch('/addresses/{address}/default', [\App\Http\Controllers\Api\V1\AddressController::class, 'setDefault'])->name('addresses.default');
+
+    // Checkout
+    Route::prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/preview', [\App\Http\Controllers\Api\V1\CheckoutController::class, 'preview'])->name('preview');
+        Route::post('/create-order', [\App\Http\Controllers\Api\V1\CheckoutController::class, 'createOrder'])->name('create-order');
+    });
+
+    // Orders History
+    Route::get('/orders', [\App\Http\Controllers\Api\V1\OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{orderNumber}', [\App\Http\Controllers\Api\V1\OrderController::class, 'show'])->name('orders.show');
+});
+

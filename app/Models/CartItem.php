@@ -39,6 +39,11 @@ class CartItem extends Model
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
+    public function productVariant(): BelongsTo
+    {
+        return $this->variant();
+    }
+
     /**
      * @return Attribute<int, never>
      */
