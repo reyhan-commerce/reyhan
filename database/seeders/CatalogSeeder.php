@@ -487,6 +487,32 @@ class CatalogSeeder extends Seeder
                     'order' => 1,
                 ]
             );
+
+            // 6. Product Images (Gallery)
+            $productImages = [
+                'nivea-sunscreen-spf50' => 'sunscreen.jpg',
+                'loreal-infallible-foundation' => 'foundation.jpg',
+                'my-lipstick-collection' => 'lipstick.jpg',
+                'cinere-vitamin-c-serum' => 'serum.jpg',
+                'nivea-soft-moisturizing-cream' => 'moisturizer.jpg',
+                'isadora-big-bold-mascara' => 'mascara.jpg',
+                'loreal-elvive-total-repair-shampoo' => 'shampoo.jpg',
+                'my-eyeshadow-palette-8color' => 'eyeshadow.jpg',
+            ];
+
+            foreach ($productImages as $slug => $imageFile) {
+                $imagePath = database_path("seeders/images/{$imageFile}");
+                if (! file_exists($imagePath)) {
+                    continue;
+                }
+
+                $product = Product::where('slug', $slug)->first();
+                if ($product && $product->getFirstMedia('gallery') === null) {
+                    $product->addMedia($imagePath)
+                        ->preservingOriginal()
+                        ->toMediaCollection('gallery');
+                }
+            }
         });
     }
 }
