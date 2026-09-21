@@ -1,0 +1,132 @@
+# EasyShop E-Commerce - Complete Autonomous Shopping Agent API Specification
+
+Version: 1.0.0
+Base URL: https://easyshop.ir/api/v1
+Format: JSON (Accept: application/json, Content-Type: application/json)
+Character Set: UTF-8 (Persian text normalized: standard ZWNJ \u200C, unified Yehs/Kafs)
+
+## 1. Authentication & Security
+- Customer accounts use passwordless Mobile OTP:
+  - `POST /api/v1/auth/otp/request` { "mobile": "09123456789", "captcha_key": "uuid", "captcha_code": "1234" }
+  - `POST /api/v1/auth/otp/verify` { "mobile": "09123456789", "code": "12345" } -> Returns Sanctum bearer token.
+- Guest sessions can read all public catalog endpoints without authentication.
+
+## 2. Catalog & Discovery Endpoints
+
+### 2.1 GET /categories/tree
+Returns the full multi-level category taxonomy.
+Response Schema:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "مراقبت از پوست",
+      "slug": "skincare",
+      "icon": "i-lucide-sparkles",
+      "children": [
+        {
+          "id": 2,
+          "name": "کرم ضد آفتاب",
+          "slug": "sunscreen",
+          "children": []
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 2.2 GET /products
+Search and filter products with pagination.
+Parameters:
+- `q` (string, optional): Search keyword. Supports Persian characters and fuzzy matching.
+- `category` (string, optional): Category slug.
+- `brand` (string, optional): Brand slug.
+- `min_price` (integer, optional): Minimum price in Rials.
+- `max_price` (integer, optional): Maximum price in Rials.
+- `in_stock` (boolean/integer, optional): `1` for in-stock items only.
+- `sort` (string, enum): `latest`, `cheapest`, `expensive`, `popular`, `bestselling`.
+- `page` (integer, default: 1): Page number.
+- `per_page` (integer, default: 16): Items per page.
+
+Response Schema:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 10,
+      "name": "کرم ضد آفتاب بی‌رنگ فیوژن واتر SPF50",
+      "slug": "isdin-fusion-water-spf50",
+      "thumbnail": "https://easyshop.ir/storage/products/thumbnail.webp",
+      "brand": { "id": 2, "name": "ایزدین", "slug": "isdin" },
+      "category": { "id": 5, "name": "ضد آفتاب", "slug": "sunscreen" },
+      "primary_price": 12500000,
+      "primary_compare_at_price": 14000000,
+      "price_range": { "min": 12500000, "max": 12500000 },
+      "is_in_stock": true,
+      "is_featured": true,
+      "variants_count": 1
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "last_page": 5,
+    "per_page": 16,
+    "total": 78
+  }
+}
+```
+
+### 2.3 GET /products/{slug}
+Returns full detail for a single product including its variant matrix.
+Response Schema:
+```json
+{
+  "success": true,
+  "data": {
+    "id": 10,
+    "name": "کرم پودر مات ۲۴ ساعته",
+    "slug": "loreal-infallible-24h-foundation",
+    "short_description": "پوشش‌دهی کامل با ماندگاری ۲۴ ساعته مناسب انواع پوست",
+    "description": "توضیحات کامل تخصصی محصول...",
+    "brand": { "id": 3, "name": "لورال", "name_en": "L'Oreal", "slug": "loreal" },
+    "category": { "id": 8, "name": "کرم پودر", "slug": "foundation" },
+    "images": [
+      "https://easyshop.ir/storage/products/1.webp",
+      "https://easyshop.ir/storage/products/2.webp"
+    ],
+    "scoped_attributes": [
+      {
+        "id": 1,
+        "name": "شماره رنگ",
+        "values": [
+          { "id": 101, "value": "شماره ۱۱۰ عاجی", "color_hex": "#F4E3D7" },
+          { "id": 102, "value": "شماره ۱۲۰ بژ روشن", "color_hex": "#E8D3C0" }
+        ]
+      }
+    ],
+    "available_variants": [
+      {
+        "id": 25,
+        "sku": "LOR-INF-110",
+        "price": 9500000,
+        "compare_at_price": 11000000,
+        "stock": 14,
+        "weight": 120,
+        "attribute_value_ids": [101]
+      }
+    ],
+    "average_rating": 4.8,
+    "reviews_count": 32
+  }
+}
+```
+
+## 3. Pricing & Currency Conversion
+- Backend figures are stored in **IRR (Rials)**.
+- Displayed consumer prices are in **IRT (Toman)** = `Math.floor(rial / 10)`.
+- Standard thousand separator is `,` or `٬`.
+- Persian numerals (۰-۹) are native in UI through `Vazirmatn FD` font.

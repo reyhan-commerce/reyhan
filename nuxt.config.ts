@@ -30,9 +30,25 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   site: {
-    url: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    url: process.env.NUXT_PUBLIC_SITE_URL || 'https://easyshop.ir',
     defaultLocale: 'fa-IR',
-    name: 'فروشگاه اینترنتی ایزیشاپ'
+    name: 'فروشگاه اینترنتی ایزیشاپ',
+    description: 'مرجع تخصصی خرید آنلاین محصولات آرایشی، بهداشتی و مراقبت از پوست اورجینال'
+  },
+
+  sitemap: {
+    sources: [
+      (process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api/v1') + '/sitemap/urls'
+    ]
+  },
+
+  robots: {
+    disallow: ['/cart', '/checkout', '/profile'],
+    allow: ['/products', '/categories', '/pages', '/about', '/contact', '/terms', '/faq']
+  },
+
+  ogImage: {
+    enabled: true
   },
 
   runtimeConfig: {

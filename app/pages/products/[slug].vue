@@ -37,6 +37,33 @@ useSeoMeta({
   ogDescription: computed(() => product.value.short_description || '')
 })
 
+// Google Rich Snippets (Schema.org / JSON-LD)
+useSchemaOrg([
+  defineProduct({
+    name: product.value.name,
+    description: product.value.short_description || product.value.name,
+    image: product.value.gallery?.map(g => g.url) || [],
+    sku: product.value.variants?.[0]?.sku || '',
+    offers: [
+      defineOffer({
+        price: product.value.price_range?.min ? Math.floor(product.value.price_range.min / 10) : 0,
+        priceCurrency: 'IRT',
+        availability: product.value.variants?.some(v => v.stock > 0)
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+        url: `https://easyshop.ir/products/${product.value.slug}`
+      })
+    ]
+  }),
+  defineBreadcrumb({
+    itemListElement: [
+      { name: 'صفحه اصلی', item: '/' },
+      ...(product.value.category ? [{ name: product.value.category.name, item: `/categories/${product.value.category.slug}` }] : []),
+      { name: product.value.name }
+    ]
+  })
+])
+
 // Quantity controls
 function incrementQty() {
   if (selectedVariant.value && quantity.value < selectedVariant.value.stock) {
