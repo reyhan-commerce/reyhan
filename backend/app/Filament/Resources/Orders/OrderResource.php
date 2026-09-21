@@ -24,6 +24,7 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -87,30 +88,25 @@ class OrderResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('خلاصه سفارش و مشخصات خریدار')
-                    ->columns(3)
+                Section::make('شناسه و وضعیت کلی سفارش')
+                    ->columns(4)
                     ->schema([
                         TextEntry::make('order_number')
                             ->label('شماره سفارش')
                             ->copyable()
-                            ->weight('bold'),
-
-                        TextEntry::make('user.name')
-                            ->label('خریدار')
-                            ->default(fn (Order $record): string => $record->user ? trim(($record->user->first_name ?? '').' '.($record->user->last_name ?? '')) : 'کاربر مهمان'),
-
-                        TextEntry::make('user.mobile')
-                            ->label('شماره موبایل خریدار')
-                            ->copyable(),
+                            ->weight('bold')
+                            ->icon(Heroicon::OutlinedTicket),
 
                         TextEntry::make('status')
-                            ->label('وضعیت')
+                            ->label('وضعیت سفارش')
                             ->badge()
                             ->formatStateUsing(fn (OrderStatus $state): string => $state->label())
                             ->color(fn (OrderStatus $state): string => $state->color()),
 
                         TextEntry::make('shipping_method')
                             ->label('روش ارسال')
+                            ->badge()
+                            ->color('gray')
                             ->formatStateUsing(fn (?ShippingMethod $state): string => $state?->label() ?? 'نامشخص'),
 
                         TextEntry::make('created_at')
@@ -118,53 +114,87 @@ class OrderResource extends Resource
                             ->formatStateUsing(fn (?string $state): string => $state ? Jalalian::fromDateTime($state)->format('Y/m/d H:i') : '-'),
                     ]),
 
-                Section::make('آدرس تحویل مرسوله')
-                    ->columns(2)
+                Grid::make(2)
                     ->schema([
-                        TextEntry::make('shipping_address.recipient_name')
-                            ->label('نام تحویل‌گیرنده'),
+                        Section::make('مشخصات حساب خریدار')
+                            ->columnSpan(1)
+                            ->schema([
+                                TextEntry::make('user.name')
+                                    ->label('نام و نام خانوادگی خریدار')
+                                    ->default(fn (Order $record): string => $record->user ? trim(($record->user->first_name ?? '').' '.($record->user->last_name ?? '')) : 'کاربر مهمان')
+                                    ->weight('bold'),
 
-                        TextEntry::make('shipping_address.mobile')
-                            ->label('شماره تماس تحویل‌گیرنده'),
+                                TextEntry::make('user.mobile')
+                                    ->label('تلفن همراه خریدار')
+                                    ->copyable()
+                                    ->default('-'),
 
-                        TextEntry::make('shipping_address.province_name')
-                            ->label('استان'),
+                                TextEntry::make('user.email')
+                                    ->label('پست الکترونیکی خریدار')
+                                    ->default('-'),
+                            ]),
 
-                        TextEntry::make('shipping_address.city_name')
-                            ->label('شهر'),
+                        Section::make('مشخصات و آدرس گیرنده مرسوله')
+                            ->columnSpan(1)
+                            ->columns(2)
+                            ->schema([
+                                TextEntry::make('shipping_address.recipient_name')
+                                    ->label('نام تحویل‌گیرنده')
+                                    ->default('-'),
 
-                        TextEntry::make('shipping_address.postal_code')
-                            ->label('کد پستی ۱۰ رقمی'),
+                                TextEntry::make('shipping_address.mobile')
+                                    ->label('تلفن تحویل‌گیرنده')
+                                    ->copyable()
+                                    ->default('-'),
 
-                        TextEntry::make('shipping_address.address')
-                            ->label('نشانی پستی دقیق')
-                            ->columnSpanFull(),
+                                TextEntry::make('shipping_address.province_name')
+                                    ->label('استان')
+                                    ->default('-'),
+
+                                TextEntry::make('shipping_address.city_name')
+                                    ->label('شهر')
+                                    ->default('-'),
+
+                                TextEntry::make('shipping_address.postal_code')
+                                    ->label('کد پستی')
+                                    ->copyable()
+                                    ->default('-')
+                                    ->columnSpanFull(),
+
+                                TextEntry::make('shipping_address.address')
+                                    ->label('نشانی دقیق پستی')
+                                    ->columnSpanFull()
+                                    ->default('-'),
+                            ]),
                     ]),
 
-                Section::make('اقلام خریداری شده')
+                Section::make('اقلام سفارش داده شده')
                     ->schema([
                         RepeatableEntry::make('items')
                             ->label('')
-                            ->columns(4)
+                            ->columns(5)
                             ->schema([
                                 TextEntry::make('product_name')
                                     ->label('نام کالا')
-                                    ->weight('bold'),
+                                    ->weight('bold')
+                                    ->columnSpan(2),
 
                                 TextEntry::make('variant_title')
-                                    ->label('تنوع / مشخصات'),
+                                    ->label('مشخصات / تنوع')
+                                    ->default('ساده'),
 
                                 TextEntry::make('quantity')
                                     ->label('تعداد')
                                     ->suffix(' عدد'),
 
                                 TextEntry::make('final_price')
-                                    ->label('مبلغ کل سطر')
+                                    ->label('مبلغ سطر')
+                                    ->weight('bold')
                                     ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)).' تومان'),
                             ]),
                     ]),
 
-                Section::make('صورتحساب و مبالغ مالی')
+                Section::make('خلاصه فاکتور و مبالغ پرداختی')
                     ->columns(4)
                     ->schema([
                         TextEntry::make('items_subtotal')
@@ -180,8 +210,9 @@ class OrderResource extends Resource
                             ->formatStateUsing(fn (int $state): string => $state === 0 ? 'رایگان' : number_format((int) ($state / 10)).' تومان'),
 
                         TextEntry::make('final_payable')
-                            ->label('مبلغ نهایی پرداخت شده')
+                            ->label('مبلغ نهایی فاکتور')
                             ->weight('bold')
+                            ->color('success')
                             ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)).' تومان'),
                     ]),
             ]);
@@ -198,10 +229,17 @@ class OrderResource extends Resource
                     ->sortable()
                     ->weight('bold'),
 
-                TextColumn::make('user.mobile')
+                TextColumn::make('user.name')
                     ->label('خریدار')
-                    ->description(fn (Order $record): string => $record->user ? trim(($record->user->first_name ?? '').' '.($record->user->last_name ?? '')) : '')
-                    ->searchable(),
+                    ->state(fn (Order $record): string => $record->user ? trim(($record->user->first_name ?? '').' '.($record->user->last_name ?? '')) ?: 'کاربر بدون نام' : 'کاربر مهمان')
+                    ->description(fn (Order $record): string => $record->user !== null ? $record->user->mobile : ($record->shipping_address['mobile'] ?? ''))
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('user', function (Builder $q) use ($search) {
+                            $q->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%")
+                                ->orWhere('mobile', 'like', "%{$search}%");
+                        });
+                    }),
 
                 TextColumn::make('status')
                     ->label('وضعیت')
@@ -219,6 +257,7 @@ class OrderResource extends Resource
                     ->label('مبلغ کل (تومان)')
                     ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)))
                     ->suffix(' تومان')
+                    ->weight('medium')
                     ->sortable(),
 
                 TextColumn::make('created_at')
@@ -227,6 +266,10 @@ class OrderResource extends Resource
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('هنوز سفارشی ثبت نشده است')
+            ->emptyStateDescription('هنگامی که مشتریان در فروشگاه سفارشی ثبت کنند، اطلاعات سفارش و اقلام آن در این جدول نمایش داده می‌شود.')
+            ->emptyStateIcon(Heroicon::OutlinedShoppingBag)
+            ->filtersFormColumns(2)
             ->filters([
                 SelectFilter::make('status')
                     ->label('فیلتر بر اساس وضعیت')

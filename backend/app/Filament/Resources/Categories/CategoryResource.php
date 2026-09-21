@@ -18,6 +18,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -51,60 +52,76 @@ class CategoryResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('اطلاعات دسته‌بندی')
-                    ->description('مشخصات و ساختار درختی دسته‌بندی')
-                    ->columns(2)
+                Grid::make(['default' => 1, 'lg' => 3])
                     ->schema([
-                        TextInput::make('name')
-                            ->label('نام دسته‌بندی')
-                            ->required()
-                            ->maxLength(255)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (string $operation, ?string $state, callable $set, callable $get): void {
-                                if ($operation === 'create' && empty($get('slug')) && ! empty($state)) {
-                                    $set('slug', Str::slug($state, '-', null));
-                                }
-                            }),
+                        Grid::make(1)
+                            ->columnSpan(['default' => 1, 'lg' => 2])
+                            ->schema([
+                                Section::make('مشخصات و عنوان دسته‌بندی')
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->label('نام دسته‌بندی')
+                                            ->placeholder('مثال: مراقبت از پوست')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (string $operation, ?string $state, callable $set, callable $get): void {
+                                                if ($operation === 'create' && empty($get('slug')) && ! empty($state)) {
+                                                    $set('slug', Str::slug($state, '-', null));
+                                                }
+                                            }),
 
-                        TextInput::make('slug')
-                            ->label('نامک یکتا (Slug)')
-                            ->required()
-                            ->unique(Category::class, 'slug', ignoreRecord: true)
-                            ->maxLength(255),
+                                        TextInput::make('slug')
+                                            ->label('نامک یکتا (Persian Slug)')
+                                            ->required()
+                                            ->unique(Category::class, 'slug', ignoreRecord: true)
+                                            ->maxLength(255)
+                                            ->prefixIcon(Heroicon::OutlinedLink),
 
-                        Select::make('parent_id')
-                            ->label('دسته‌بندی والد')
-                            ->relationship('parent', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->placeholder('دسته‌بندی ریشه (بدون والد)'),
+                                        Textarea::make('description')
+                                            ->label('توضیحات دسته‌بندی')
+                                            ->placeholder('توضیحاتی جهت معرفی این بخش و بهینه‌سازی سئو...')
+                                            ->rows(4)
+                                            ->columnSpanFull(),
+                                    ]),
+                            ]),
 
-                        TextInput::make('order')
-                            ->label('ترتیب نمایش')
-                            ->required()
-                            ->numeric()
-                            ->default(0),
+                        Grid::make(1)
+                            ->columnSpan(['default' => 1, 'lg' => 1])
+                            ->schema([
+                                Section::make('سلسله‌مراتب و وضعیت')
+                                    ->schema([
+                                        Select::make('parent_id')
+                                            ->label('دسته‌بندی والد')
+                                            ->relationship('parent', 'name')
+                                            ->searchable()
+                                            ->preload()
+                                            ->placeholder('دسته‌بندی اصلی (ریشه)'),
 
-                        Textarea::make('description')
-                            ->label('توضیحات دسته‌بندی')
-                            ->rows(3)
-                            ->columnSpanFull(),
+                                        TextInput::make('order')
+                                            ->label('ترتیب اولویت نمایش')
+                                            ->numeric()
+                                            ->default(0),
 
-                        TextInput::make('icon')
-                            ->label('آیکون')
-                            ->maxLength(100)
-                            ->placeholder('i-heroicons-sparkles'),
+                                        Toggle::make('is_active')
+                                            ->label('فعال و قابل مشاهده در سایت')
+                                            ->default(true),
+                                    ]),
 
-                        FileUpload::make('image')
-                            ->label('تصویر شاخص')
-                            ->image()
-                            ->directory('categories'),
+                                Section::make('تصویر و آیکون')
+                                    ->schema([
+                                        FileUpload::make('image')
+                                            ->label('تصویر کاور دسته')
+                                            ->image()
+                                            ->directory('categories'),
 
-                        Toggle::make('is_active')
-                            ->label('فعال و قابل نمایش')
-                            ->default(true)
-                            ->required(),
-                    ]),
+                                        TextInput::make('icon')
+                                            ->label('نام آیکون Nuxt UI')
+                                            ->placeholder('i-lucide-sparkles'),
+                                    ]),
+                            ]),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -114,23 +131,22 @@ class CategoryResource extends Resource
             ->columns([
                 ImageColumn::make('image')
                     ->label('تصویر')
-                    ->circular(),
+                    ->circular()
+                    ->size(40),
 
                 TextColumn::make('name')
-                    ->label('نام دسته‌بندی')
+                    ->label('نام دسته‌بندی و مسیر')
                     ->searchable()
                     ->sortable()
                     ->weight(fn (Category $record): string => $record->parent_id ? 'medium' : 'bold')
-                    ->formatStateUsing(function (string $state, Category $record): string {
-                        return $record->parent_id ? '↳ '.$state : '📁 '.$state;
-                    })
+                    ->formatStateUsing(fn (string $state, Category $record): string => $record->parent_id ? '↳ '.$state : '📁 '.$state)
                     ->description(function (Category $record): ?string {
                         $ancestors = $record->getAncestors();
                         if ($ancestors->isEmpty()) {
-                            return 'دسته‌بندی اصلی (ریشه)';
+                            return 'دسته‌بندی اصلی (سطح ۱)';
                         }
 
-                        return 'مسیر: '.$ancestors->pluck('name')->implode(' > ');
+                        return 'مسیر والد: '.$ancestors->pluck('name')->implode(' > ');
                     }),
 
                 TextColumn::make('slug')
@@ -139,23 +155,15 @@ class CategoryResource extends Resource
                     ->badge()
                     ->color('gray'),
 
-                TextColumn::make('parent.name')
-                    ->label('والد')
-                    ->searchable()
-                    ->placeholder('ریشه')
-                    ->badge()
-                    ->color('info'),
-
                 TextColumn::make('products_count')
-                    ->label('تعداد کالا')
+                    ->label('تعداد کالاها')
                     ->counts('products')
-                    ->sortable()
                     ->badge()
-                    ->color('success'),
+                    ->color('info')
+                    ->sortable(),
 
                 TextColumn::make('order')
                     ->label('ترتیب')
-                    ->numeric()
                     ->sortable(),
 
                 IconColumn::make('is_active')
@@ -168,7 +176,11 @@ class CategoryResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultGroup('parent.name')
+            ->defaultSort('order')
+            ->emptyStateHeading('هنوز دسته‌بندی ثبت نشده است')
+            ->emptyStateDescription('برای شروع ساختار درختی کاتالوگ، اولین دسته‌بندی را ایجاد کنید.')
+            ->emptyStateIcon(Heroicon::OutlinedFolder)
+            ->filtersFormColumns(2)
             ->groups([
                 Group::make('parent.name')
                     ->label('دسته‌بندی والد')

@@ -23,6 +23,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -36,6 +37,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
+use Morilog\Jalali\Jalalian;
 use UnitEnum;
 
 class ProductResource extends Resource
@@ -58,91 +60,113 @@ class ProductResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('اطلاعات پایه محصول')
-                    ->description('عنوان، دسته‌بندی و نامک اینترنتی محصول')
-                    ->columns(2)
+                Grid::make(['default' => 1, 'lg' => 3])
                     ->schema([
-                        TextInput::make('name')
-                            ->label('نام کامل محصول')
-                            ->required()
-                            ->maxLength(255)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (string $operation, ?string $state, callable $set, callable $get): void {
-                                if ($operation === 'create' && empty($get('slug')) && ! empty($state)) {
-                                    $set('slug', Str::slug($state, '-', null));
-                                }
-                            }),
+                        // Main Canvas (2 Cols on Desktop)
+                        Grid::make(1)
+                            ->columnSpan(['default' => 1, 'lg' => 2])
+                            ->schema([
+                                Section::make('اطلاعات و محتوای اصلی محصول')
+                                    ->description('نام تجاری، خلاصه کوتاه و توضیحات تکمیلی کالا')
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->label('نام کامل محصول')
+                                            ->placeholder('مثال: کرم پودر مات ۲۴ ساعته لورآل')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (string $operation, ?string $state, callable $set, callable $get): void {
+                                                if ($operation === 'create' && empty($get('slug')) && ! empty($state)) {
+                                                    $set('slug', Str::slug($state, '-', null));
+                                                }
+                                            }),
 
-                        TextInput::make('slug')
-                            ->label('نامک یکتا (Persian Slug)')
-                            ->required()
-                            ->unique(Product::class, 'slug', ignoreRecord: true)
-                            ->maxLength(255),
+                                        Textarea::make('short_description')
+                                            ->label('خلاصه کوتاه (نمایش در کارت‌های خرید)')
+                                            ->placeholder('یک یا دو خط توضیح کلیدی در مورد مشخصات بارز این محصول...')
+                                            ->rows(2),
 
-                        Select::make('category_id')
-                            ->label('دسته‌بندی اصلی')
-                            ->relationship('category', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
+                                        RichEditor::make('description')
+                                            ->label('نقد، بررسی و توضیحات جامع محصول')
+                                            ->fileAttachmentsDirectory('products/descriptions')
+                                            ->columnSpanFull(),
+                                    ]),
 
-                        Select::make('brand_id')
-                            ->label('برند سازنده')
-                            ->relationship('brand', 'name')
-                            ->searchable()
-                            ->preload(),
+                                Section::make('گالری تصاویر کالا')
+                                    ->description('تصاویر باکیفیت محصول برای نمایش در صفحه خرید و زوم')
+                                    ->schema([
+                                        SpatieMediaLibraryFileUpload::make('gallery')
+                                            ->collection('gallery')
+                                            ->label('')
+                                            ->multiple()
+                                            ->reorderable()
+                                            ->image()
+                                            ->maxFiles(8)
+                                            ->helperText('می‌توانید تا ۸ تصویر اضافه کنید. اولین تصویر به عنوان کاور اصلی استفاده خواهد شد.'),
+                                    ]),
 
-                        Textarea::make('short_description')
-                            ->label('خلاصه معرفی محصول')
-                            ->rows(2)
-                            ->columnSpanFull(),
+                                Section::make('سئو و بهینه‌سازی موتورهای جستجو (SEO)')
+                                    ->description('اطلاعات متادیتا جهت ارتقای رتبه و پیش‌نمایش در گوگل')
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->schema([
+                                        TextInput::make('meta_title')
+                                            ->label('عنوان متا (Meta Title)')
+                                            ->maxLength(255),
 
-                        RichEditor::make('description')
-                            ->label('توضیحات و نقد کامل محصول')
-                            ->columnSpanFull(),
-                    ]),
+                                        Textarea::make('meta_description')
+                                            ->label('توضیحات متا (Meta Description)')
+                                            ->rows(3),
+                                    ]),
+                            ]),
 
-                Section::make('گالری تصاویر محصول')
-                    ->description('تصاویر باکیفیت برای نمایش در صفحه خرید و اسلایدر')
-                    ->schema([
-                        SpatieMediaLibraryFileUpload::make('gallery')
-                            ->collection('gallery')
-                            ->label('تصاویر گالری')
-                            ->multiple()
-                            ->reorderable()
-                            ->image()
-                            ->maxFiles(8),
-                    ]),
+                        // Sidebar Canvas (1 Col on Desktop)
+                        Grid::make(1)
+                            ->columnSpan(['default' => 1, 'lg' => 1])
+                            ->schema([
+                                Section::make('وضعیت و انتشار')
+                                    ->schema([
+                                        Toggle::make('is_active')
+                                            ->label('فعال برای فروش آنلاین')
+                                            ->default(true)
+                                            ->helperText('در صورت غیرفعال بودن، کالا در کاتالوگ فرانت نمایش داده نمی‌شود'),
 
-                Section::make('سئو و بهینه‌سازی موتورهای جستجو')
-                    ->description('اطلاعات متادیتا جهت ارتقای رتبه در گوگل')
-                    ->columns(2)
-                    ->schema([
-                        TextInput::make('meta_title')
-                            ->label('عنوان متا (SEO Title)')
-                            ->maxLength(255),
+                                        Toggle::make('is_featured')
+                                            ->label('محصول ویژه و پیشنهادی')
+                                            ->default(false)
+                                            ->helperText('نمایش در اسلایدرهای صفحه اصلی فروشگاه'),
 
-                        Textarea::make('meta_description')
-                            ->label('توضیحات متا (SEO Description)')
-                            ->rows(2),
-                    ]),
+                                        DateTimePicker::make('published_at')
+                                            ->label('تاریخ انتشار')
+                                            ->default(now()),
+                                    ]),
 
-                Section::make('تنظیمات انتشار و وضعیت')
-                    ->columns(3)
-                    ->schema([
-                        Toggle::make('is_active')
-                            ->label('فعال برای فروش')
-                            ->default(true)
-                            ->required(),
+                                Section::make('دسته‌بندی و سازنده')
+                                    ->schema([
+                                        Select::make('category_id')
+                                            ->label('دسته‌بندی اصلی')
+                                            ->relationship('category', 'name')
+                                            ->searchable()
+                                            ->preload()
+                                            ->required(),
 
-                        Toggle::make('is_featured')
-                            ->label('محصول برگزیده / ویژه')
-                            ->default(false),
+                                        Select::make('brand_id')
+                                            ->label('برند سازنده')
+                                            ->relationship('brand', 'name')
+                                            ->searchable()
+                                            ->preload(),
 
-                        DateTimePicker::make('published_at')
-                            ->label('تاریخ و ساعت انتشار')
-                            ->default(now()),
-                    ]),
+                                        TextInput::make('slug')
+                                            ->label('نامک یکتا (Persian Slug)')
+                                            ->required()
+                                            ->unique(Product::class, 'slug', ignoreRecord: true)
+                                            ->maxLength(255)
+                                            ->prefixIcon(Heroicon::OutlinedLink)
+                                            ->helperText('برای ساختار URL اختصاصی این محصول در فرانت‌اند'),
+                                    ]),
+                            ]),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -153,14 +177,16 @@ class ProductResource extends Resource
                 SpatieMediaLibraryImageColumn::make('gallery')
                     ->collection('gallery')
                     ->label('تصویر')
-                    ->circular(),
+                    ->circular()
+                    ->size(45),
 
                 TextColumn::make('name')
-                    ->label('نام محصول')
+                    ->label('مشخصات کالا')
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
-                    ->limit(40),
+                    ->description(fn (Product $record): string => 'اسلاگ: '.$record->slug)
+                    ->wrap(),
 
                 TextColumn::make('category.name')
                     ->label('دسته‌بندی')
@@ -175,19 +201,22 @@ class ProductResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('price_range')
-                    ->label('محدوده قیمت')
-                    ->formatStateUsing(function ($record): string {
-                        /** @var Product $record */
+                    ->label('محدوده قیمت (تومان)')
+                    ->formatStateUsing(function (Product $record): string {
                         $range = $record->price_range;
                         if (! $range['min'] && ! $range['max']) {
                             return 'بدون تنوع';
                         }
-                        if ($range['min'] === $range['max']) {
-                            return number_format((float) $range['min']).' ریال';
+                        $minToman = (int) ($range['min'] / 10);
+                        $maxToman = (int) ($range['max'] / 10);
+
+                        if ($minToman === $maxToman) {
+                            return number_format($minToman).' تومان';
                         }
 
-                        return number_format((float) $range['min']).' - '.number_format((float) $range['max']).' ریال';
-                    }),
+                        return number_format($minToman).' تا '.number_format($maxToman).' تومان';
+                    })
+                    ->weight('medium'),
 
                 TextColumn::make('variants_count')
                     ->label('تنوع‌ها')
@@ -203,26 +232,34 @@ class ProductResource extends Resource
                     ->label('وضعیت')
                     ->boolean(),
 
-                TextColumn::make('published_at')
-                    ->label('تاریخ انتشار')
-                    ->dateTime()
+                TextColumn::make('created_at')
+                    ->label('تاریخ ایجاد')
+                    ->formatStateUsing(fn (?string $state): string => $state ? Jalalian::fromDateTime($state)->format('Y/m/d') : '-')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('هنوز محصولی ثبت نشده است')
+            ->emptyStateDescription('برای افزودن اولین محصول آرایشی یا بهداشتی، روی دکمه ثبت محصول جدید کلیک کنید.')
+            ->emptyStateIcon(Heroicon::OutlinedShoppingBag)
+            ->filtersFormColumns(2)
             ->filters([
                 TernaryFilter::make('is_active')
-                    ->label('وضعیت فعال'),
+                    ->label('وضعیت فعال بودن')
+                    ->trueLabel('فقط کالاهای فعال')
+                    ->falseLabel('کالاهای غیرفعال'),
                 TernaryFilter::make('is_featured')
                     ->label('محصولات ویژه'),
                 SelectFilter::make('category_id')
                     ->label('دسته‌بندی')
                     ->relationship('category', 'name'),
                 SelectFilter::make('brand_id')
-                    ->label('برند')
+                    ->label('برند سازنده')
                     ->relationship('brand', 'name'),
                 TrashedFilter::make()
-                    ->label('حذف شده‌ها'),
+                    ->label('سطل زباله'),
             ])
+
             ->recordActions([
                 EditAction::make(),
             ])

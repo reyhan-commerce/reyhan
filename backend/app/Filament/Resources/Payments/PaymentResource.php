@@ -10,6 +10,7 @@ use App\Filament\Resources\Payments\Pages\CreatePayment;
 use App\Filament\Resources\Payments\Pages\EditPayment;
 use App\Filament\Resources\Payments\Pages\ListPayments;
 use App\Models\Payment;
+use App\Models\User;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -82,9 +83,17 @@ class PaymentResource extends Resource
                     ->copyable()
                     ->weight('bold'),
 
-                TextColumn::make('user.mobile')
-                    ->label('موبایل پرداخت‌کننده')
-                    ->searchable(),
+                TextColumn::make('user.name')
+                    ->label('پرداخت‌کننده')
+                    ->state(fn (Payment $record): string => $record->user instanceof User ? trim(($record->user->first_name ?? '').' '.($record->user->last_name ?? '')) ?: 'کاربر بدون نام' : 'کاربر مهمان')
+                    ->description(fn (Payment $record): string => $record->user instanceof User ? ($record->user->mobile ?? '') : '')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('user', function (Builder $q) use ($search) {
+                            $q->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%")
+                                ->orWhere('mobile', 'like', "%{$search}%");
+                        });
+                    }),
 
                 TextColumn::make('gateway')
                     ->label('درگاه پرداخت')
@@ -96,12 +105,19 @@ class PaymentResource extends Resource
                         default => 'درگاه بانکی',
                     })
                     ->badge()
-                    ->color('primary'),
+                    ->color(fn (?PaymentGateway $state): string => match ($state) {
+                        PaymentGateway::Zarinpal => 'warning',
+                        PaymentGateway::Saman => 'info',
+                        PaymentGateway::Mellat => 'danger',
+                        PaymentGateway::Sandbox => 'gray',
+                        default => 'primary',
+                    }),
 
                 TextColumn::make('amount')
                     ->label('مبلغ (تومان)')
                     ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)))
                     ->suffix(' تومان')
+                    ->weight('medium')
                     ->sortable(),
 
                 TextColumn::make('status')
@@ -128,10 +144,23 @@ class PaymentResource extends Resource
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('هنوز تراکنشی ثبت نشده است')
+            ->emptyStateDescription('هنگامی که کاربران به درگاه متصل شوند، وضعیت و جزئیات تراکنش‌های بانکی در اینجا ذخیره و نمایش داده می‌شود.')
+            ->emptyStateIcon(Heroicon::OutlinedCreditCard)
+            ->filtersFormColumns(2)
             ->filters([
                 SelectFilter::make('status')
                     ->label('فیلتر بر اساس وضعیت')
                     ->options(collect(PaymentStatus::cases())->mapWithKeys(fn (PaymentStatus $status): array => [$status->value => $status->label()])->all()),
+
+                SelectFilter::make('gateway')
+                    ->label('فیلتر درگاه پرداخت')
+                    ->options(collect(PaymentGateway::cases())->mapWithKeys(fn (PaymentGateway $gateway): array => [$gateway->value => match ($gateway) {
+                        PaymentGateway::Zarinpal => 'زرین‌پال',
+                        PaymentGateway::Saman => 'بانک سامان',
+                        PaymentGateway::Mellat => 'بانک ملت',
+                        PaymentGateway::Sandbox => 'سندباکس (تست)',
+                    }])->all()),
             ])
             ->recordActions([
                 EditAction::make(),

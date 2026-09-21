@@ -17,6 +17,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -48,51 +49,70 @@ class BrandResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('مشخصات برند')
-                    ->description('اطلاعات شرکت سازنده یا برند تجاری')
-                    ->columns(2)
+                Grid::make(3)
                     ->schema([
-                        TextInput::make('name')
-                            ->label('نام فارسی برند')
-                            ->required()
-                            ->maxLength(255)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (string $operation, ?string $state, callable $set, callable $get): void {
-                                if ($operation === 'create' && empty($get('slug')) && ! empty($state)) {
-                                    $set('slug', Str::slug($state, '-', null));
-                                }
-                            }),
+                        Grid::make(1)
+                            ->columnSpan(['default' => 3, 'lg' => 2])
+                            ->schema([
+                                Section::make('مشخصات برند')
+                                    ->description('اطلاعات شرکت سازنده یا برند تجاری کالاها')
+                                    ->columns(2)
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->label('نام فارسی برند')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (string $operation, ?string $state, callable $set, callable $get): void {
+                                                if ($operation === 'create' && empty($get('slug')) && ! empty($state)) {
+                                                    $set('slug', Str::slug($state, '-', null));
+                                                }
+                                            }),
 
-                        TextInput::make('slug')
-                            ->label('نامک یکتا (Slug)')
-                            ->required()
-                            ->unique(Brand::class, 'slug', ignoreRecord: true)
-                            ->maxLength(255),
+                                        TextInput::make('slug')
+                                            ->label('نامک یکتا (Slug)')
+                                            ->required()
+                                            ->unique(Brand::class, 'slug', ignoreRecord: true)
+                                            ->maxLength(255),
 
-                        TextInput::make('name_en')
-                            ->label('نام انگلیسی / لاتین برند')
-                            ->maxLength(255),
+                                        TextInput::make('name_en')
+                                            ->label('نام لاتین / انگلیسی')
+                                            ->maxLength(255)
+                                            ->columnSpanFull(),
 
-                        FileUpload::make('logo')
-                            ->label('لوگوی برند')
-                            ->image()
-                            ->directory('brands'),
+                                        Textarea::make('description')
+                                            ->label('توضیحات و معرفی برند')
+                                            ->rows(4)
+                                            ->columnSpanFull(),
+                                    ]),
+                            ]),
 
-                        TextInput::make('order')
-                            ->label('ترتیب نمایش')
-                            ->required()
-                            ->numeric()
-                            ->default(0),
+                        Grid::make(1)
+                            ->columnSpan(['default' => 3, 'lg' => 1])
+                            ->schema([
+                                Section::make('لوگو و نماد تجاری')
+                                    ->schema([
+                                        FileUpload::make('logo')
+                                            ->label('تصویر لوگو')
+                                            ->image()
+                                            ->directory('brands')
+                                            ->imageEditor(),
+                                    ]),
 
-                        Toggle::make('is_active')
-                            ->label('فعال و قابل نمایش')
-                            ->default(true)
-                            ->required(),
+                                Section::make('تنظیمات انتشار')
+                                    ->schema([
+                                        TextInput::make('order')
+                                            ->label('ترتیب نمایش')
+                                            ->required()
+                                            ->numeric()
+                                            ->default(0),
 
-                        Textarea::make('description')
-                            ->label('توضیحات و معرفی برند')
-                            ->rows(3)
-                            ->columnSpanFull(),
+                                        Toggle::make('is_active')
+                                            ->label('فعال و قابل نمایش')
+                                            ->default(true)
+                                            ->required(),
+                                    ]),
+                            ]),
                     ]),
             ]);
     }
@@ -103,30 +123,22 @@ class BrandResource extends Resource
             ->columns([
                 ImageColumn::make('logo')
                     ->label('لوگو')
-                    ->circular(),
+                    ->circular()
+                    ->size(40),
 
                 TextColumn::make('name')
                     ->label('نام برند')
                     ->searchable()
                     ->sortable()
-                    ->weight('bold'),
-
-                TextColumn::make('name_en')
-                    ->label('نام انگلیسی')
-                    ->searchable()
-                    ->badge()
-                    ->color('gray'),
-
-                TextColumn::make('slug')
-                    ->label('نامک')
-                    ->searchable(),
+                    ->weight('bold')
+                    ->description(fn (Brand $record): string => $record->name_en ? $record->name_en.' • '.$record->slug : $record->slug),
 
                 TextColumn::make('products_count')
-                    ->label('تعداد کالا')
+                    ->label('تعداد کالاها')
                     ->counts('products')
                     ->sortable()
                     ->badge()
-                    ->color('success'),
+                    ->color('info'),
 
                 TextColumn::make('order')
                     ->label('ترتیب')
@@ -143,6 +155,11 @@ class BrandResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('order')
+            ->emptyStateHeading('هنوز برندی ثبت نشده است')
+            ->emptyStateDescription('برای نسبت دادن محصولات به سازندگان آنها، اولین برند را اضافه کنید.')
+            ->emptyStateIcon(Heroicon::OutlinedSparkles)
+            ->filtersFormColumns(2)
             ->filters([
                 TernaryFilter::make('is_active')
                     ->label('وضعیت فعال/غیرفعال'),

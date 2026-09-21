@@ -194,6 +194,10 @@ class ReviewResource extends Resource
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('هنوز دیدگاهی ثبت نشده است')
+            ->emptyStateDescription('هنگامی که مشتریان برای کالاهای خریداری شده نظر یا امتیاز ثبت کنند، دیدگاه‌ها در اینجا بررسی و تایید می‌شوند.')
+            ->emptyStateIcon(Heroicon::OutlinedChatBubbleBottomCenterText)
+            ->filtersFormColumns(2)
             ->filters([
                 SelectFilter::make('status')
                     ->label('فیلتر بر اساس وضعیت')

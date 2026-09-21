@@ -134,12 +134,8 @@ class UserResource extends Resource
                 TextColumn::make('full_name')
                     ->label('نام مشتری')
                     ->searchable(['first_name', 'last_name'])
-                    ->weight('bold'),
-
-                TextColumn::make('mobile')
-                    ->label('شماره موبایل')
-                    ->searchable()
-                    ->copyable(),
+                    ->weight('bold')
+                    ->description(fn (User $record): string => $record->email ? $record->mobile.' • '.$record->email : $record->mobile),
 
                 TextColumn::make('national_code')
                     ->label('کد ملی')
@@ -171,6 +167,10 @@ class UserResource extends Resource
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('هنوز کاربری ثبت نام نکرده است')
+            ->emptyStateDescription('لیست خریداران و مشتریان ثبت‌نام شده در این بخش نمایش داده خواهد شد.')
+            ->emptyStateIcon(Heroicon::OutlinedUsers)
+            ->filtersFormColumns(2)
             ->filters([
                 TernaryFilter::make('is_active')
                     ->label('وضعیت حساب')
