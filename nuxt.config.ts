@@ -14,6 +14,8 @@ export default defineNuxtConfig({
   },
 
   app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
+    layoutTransition: { name: 'layout', mode: 'out-in' },
     head: {
       htmlAttrs: {
         dir: 'rtl',
@@ -28,6 +30,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   site: {
+    url: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
     defaultLocale: 'fa-IR',
     name: 'فروشگاه اینترنتی ایزیشاپ'
   },
