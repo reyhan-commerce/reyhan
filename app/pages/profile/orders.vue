@@ -144,7 +144,7 @@ const copyToClipboard = async (text: string, key: string) => {
         <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-neutral-100 dark:border-neutral-800">
           <div class="flex items-center gap-2">
             <span class="text-xs text-neutral-400">شماره سفارش:</span>
-            <span class="font-mono font-bold text-sm text-neutral-900 dark:text-white">
+            <span class="font-mono font-en font-bold text-sm text-neutral-900 dark:text-white">
               {{ order.order_number }}
             </span>
             <button

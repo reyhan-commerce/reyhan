@@ -181,7 +181,7 @@ const brands = [
         </div>
 
         <!-- Live Glass Countdown Timer -->
-        <div class="flex items-center gap-2 self-start sm:self-auto font-mono text-sm font-black">
+        <div class="flex items-center gap-2 self-start sm:self-auto text-sm font-black">
           <div class="size-11 rounded-2xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800 flex items-center justify-center text-rose-600 dark:text-rose-400 shadow-xs">
             {{ toPersianDigits(String(timeLeft.hours).padStart(2, '0')) }}
           </div>
@@ -253,7 +253,7 @@ const brands = [
             class="size-4.5 text-primary"
           />
           <span class="font-bold text-sm text-neutral-800 dark:text-neutral-200">{{ brand.name }}</span>
-          <span class="text-xs text-neutral-400 font-mono">({{ brand.name_en }})</span>
+          <span class="text-xs text-neutral-400 font-en">({{ brand.name_en }})</span>
         </NuxtLink>
       </div>
     </section>

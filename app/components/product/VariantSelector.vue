@@ -247,7 +247,7 @@ function notifyMe() {
 
       <!-- SKU & Meta details -->
       <div class="flex items-center gap-4 text-xs text-neutral-400 pt-2 border-t border-neutral-200/60 dark:border-neutral-700/60">
-        <span>کد کالا (SKU): <strong class="text-neutral-600 dark:text-neutral-300 font-mono">{{ currentVariant.sku }}</strong></span>
+        <span>کد کالا (SKU): <strong class="text-neutral-600 dark:text-neutral-300 font-mono font-en">{{ currentVariant.sku }}</strong></span>
         <span v-if="currentVariant.weight">وزن: {{ currentVariant.weight }} گرم</span>
       </div>
 

@@ -65,7 +65,7 @@ function handleOpenModal() {
 
         <!-- Big Score Display -->
         <div class="flex items-baseline gap-2">
-          <span class="text-4xl sm:text-5xl font-black text-neutral-900 dark:text-white font-mono">
+          <span class="text-4xl sm:text-5xl font-black text-neutral-900 dark:text-white">
             {{ toPersianDigits(stats.average_rating) }}
           </span>
           <span class="text-sm text-neutral-400">از ۵</span>

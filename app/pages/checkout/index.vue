@@ -108,7 +108,7 @@ async function handlePay() {
           @click="currentStep = 1"
         >
           <div
-            class="size-9 sm:size-10 rounded-2xl flex items-center justify-center font-mono font-bold text-sm transition-all"
+            class="size-9 sm:size-10 rounded-2xl flex items-center justify-center font-bold text-sm transition-all"
             :class="currentStep >= 1 ? 'bg-primary text-white shadow-md shadow-primary/25' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
           >
             <UIcon
@@ -139,7 +139,7 @@ async function handlePay() {
           @click="currentStep = 2"
         >
           <div
-            class="size-9 sm:size-10 rounded-2xl flex items-center justify-center font-mono font-bold text-sm transition-all"
+            class="size-9 sm:size-10 rounded-2xl flex items-center justify-center font-bold text-sm transition-all"
             :class="currentStep >= 2 ? 'bg-primary text-white shadow-md shadow-primary/25' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
           >
             <UIcon
@@ -170,7 +170,7 @@ async function handlePay() {
           @click="currentStep = 3"
         >
           <div
-            class="size-9 sm:size-10 rounded-2xl flex items-center justify-center font-mono font-bold text-sm transition-all"
+            class="size-9 sm:size-10 rounded-2xl flex items-center justify-center font-bold text-sm transition-all"
             :class="currentStep === 3 ? 'bg-primary text-white shadow-md shadow-primary/25' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
           >
             <span>۳</span>
@@ -300,7 +300,7 @@ async function handlePay() {
                   </span>
                 </div>
 
-                <span class="text-xs font-mono text-neutral-500" dir="ltr">
+                <span class="text-xs font-mono font-en text-neutral-500" dir="ltr">
                   {{ addr.recipient_mobile }}
                 </span>
               </div>
@@ -310,7 +310,7 @@ async function handlePay() {
               </p>
 
               <div class="flex items-center justify-between text-xs text-neutral-400 ps-8 pt-1 border-t border-neutral-100 dark:border-neutral-800/60">
-                <span>کد پستی: <strong class="font-mono text-neutral-600 dark:text-neutral-300">{{ addr.postal_code }}</strong></span>
+                <span>کد پستی: <strong class="font-mono font-en text-neutral-600 dark:text-neutral-300">{{ addr.postal_code }}</strong></span>
 
                 <button
                   type="button"
@@ -579,7 +579,7 @@ async function handlePay() {
               />
               <span>خلاصه فاکتور سفارش</span>
             </h3>
-            <span class="text-xs text-neutral-400 font-mono">
+            <span class="text-xs text-neutral-400">
               {{ cartStore.itemsCount }} قلم کالا
             </span>
           </div>

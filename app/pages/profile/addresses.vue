@@ -152,7 +152,7 @@ const handleDelete = async (addressId: number) => {
                 name="i-lucide-phone"
                 class="w-3.5 h-3.5"
               />
-              <span class="font-mono dir-ltr">{{ addr.recipient_mobile }}</span>
+              <span class="font-mono font-en dir-ltr">{{ addr.recipient_mobile }}</span>
             </span>
             <span>•</span>
             <span class="flex items-center gap-1">

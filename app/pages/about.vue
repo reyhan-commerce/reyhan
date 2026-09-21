@@ -80,7 +80,7 @@ const stats = [
         :key="idx"
         class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 text-center shadow-xs flex flex-col items-center justify-center gap-1.5"
       >
-        <span class="text-2xl sm:text-3xl font-black text-primary-600 dark:text-primary-400 font-mono">
+        <span class="text-2xl sm:text-3xl font-black text-primary-600 dark:text-primary-400">
           {{ s.value }}
         </span>
         <span class="text-xs text-neutral-500 dark:text-neutral-400 font-medium">

@@ -196,7 +196,7 @@ async function handleSubmit() {
               dir="ltr"
               maxlength="11"
               size="md"
-              class="w-full font-mono text-end"
+              class="w-full font-mono font-en text-end"
             />
           </div>
         </div>
@@ -210,7 +210,7 @@ async function handleSubmit() {
             dir="ltr"
             maxlength="10"
             size="md"
-            class="w-full font-mono text-end"
+            class="w-full font-mono font-en text-end"
           />
         </div>
 

@@ -141,7 +141,7 @@ const contactInfo = [
               v-model="form.mobile"
               placeholder="۰۹۱۲۳۴۵۶۷۸۹"
               size="lg"
-              class="w-full font-mono text-left"
+              class="w-full font-mono font-en text-left"
             />
           </div>
         </div>

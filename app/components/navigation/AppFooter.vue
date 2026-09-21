@@ -80,7 +80,7 @@ const customerServiceLinks = [
               class="size-4 text-primary shrink-0"
             />
             <span class="font-medium">پشتیبانی تلفنی:</span>
-            <span class="font-bold font-mono [direction:ltr] text-neutral-800 dark:text-neutral-200">{{ phone }}</span>
+            <span class="font-bold font-en font-mono [direction:ltr] text-neutral-800 dark:text-neutral-200">{{ phone }}</span>
             <span class="text-[11px] text-neutral-400">(شنبه تا پنج‌شنبه ۹ الی ۱۸)</span>
           </div>
 
@@ -90,7 +90,7 @@ const customerServiceLinks = [
               class="size-4 text-primary shrink-0"
             />
             <span class="font-medium">ایمیل ارتباطی:</span>
-            <span class="font-mono text-neutral-800 dark:text-neutral-200">{{ email }}</span>
+            <span class="font-en font-mono text-neutral-800 dark:text-neutral-200">{{ email }}</span>
           </div>
         </div>
       </div>

@@ -214,7 +214,7 @@ onMounted(() => {
               برند: {{ product.brand.name }}
               <span
                 v-if="product.brand.name_en"
-                class="font-mono text-neutral-400"
+                class="font-en text-neutral-400"
               >({{ product.brand.name_en }})</span>
             </NuxtLink>
           </div>

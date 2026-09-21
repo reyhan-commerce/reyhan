@@ -29,7 +29,7 @@ const handleError = () => {
             class="w-10 h-10"
           />
         </div>
-        <span class="text-3xl sm:text-4xl font-black text-neutral-900 dark:text-white font-mono mt-2">
+        <span class="text-3xl sm:text-4xl font-black text-neutral-900 dark:text-white mt-2">
           {{ toPersianDigits(error.statusCode) }}
         </span>
       </div>

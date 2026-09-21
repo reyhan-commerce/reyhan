@@ -126,7 +126,7 @@ const handleSave = async () => {
               placeholder="مثال: ۰۰۱۲۳۴۵۶۷۸"
               maxlength="10"
               size="lg"
-              class="w-full font-mono text-left"
+              class="w-full font-mono font-en text-left"
             />
           </div>
 
@@ -140,7 +140,7 @@ const handleSave = async () => {
                 :model-value="authStore.user?.mobile"
                 disabled
                 size="lg"
-                class="w-full font-mono text-left bg-neutral-50 dark:bg-neutral-800/50 cursor-not-allowed opacity-80"
+                class="w-full font-mono font-en text-left bg-neutral-50 dark:bg-neutral-800/50 cursor-not-allowed opacity-80"
               />
               <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md">
                 تایید شده
@@ -158,7 +158,7 @@ const handleSave = async () => {
               type="email"
               placeholder="example@mail.com"
               size="lg"
-              class="w-full text-left font-mono"
+              class="w-full text-left font-mono font-en"
             />
           </div>
         </div>

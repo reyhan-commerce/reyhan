@@ -138,7 +138,7 @@ onMounted(async () => {
             <div class="flex items-center justify-between pt-1">
               <span class="text-neutral-500 dark:text-neutral-400">شماره سفارش:</span>
               <div class="flex items-center gap-2">
-                <span class="font-mono font-bold text-neutral-900 dark:text-neutral-100">
+                <span class="font-mono font-en font-bold text-neutral-900 dark:text-neutral-100">
                   {{ verifyData?.order_number }}
                 </span>
                 <button
@@ -163,8 +163,8 @@ onMounted(async () => {
               class="flex items-center justify-between pt-3.5"
             >
               <span class="text-neutral-500 dark:text-neutral-400">کد رهگیری بانکی:</span>
-              <span class="font-mono font-semibold text-neutral-800 dark:text-neutral-200">
-                {{ toPersianDigits(verifyData.tracking_code || verifyData.reference_id) }}
+              <span class="font-mono font-en font-semibold text-neutral-800 dark:text-neutral-200">
+                {{ verifyData.tracking_code || verifyData.reference_id }}
               </span>
             </div>
 

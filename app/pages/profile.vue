@@ -110,7 +110,7 @@ const handleLogout = async () => {
               {{ authStore.user?.full_name || 'کاربر گرامی' }}
             </h1>
             <div class="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
-              <span class="font-mono font-medium dir-ltr">{{ authStore.user?.mobile }}</span>
+              <span class="font-mono font-en font-medium dir-ltr">{{ authStore.user?.mobile }}</span>
               <span class="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700" />
               <span class="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
                 <UIcon

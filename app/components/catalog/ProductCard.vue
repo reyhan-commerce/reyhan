@@ -11,17 +11,17 @@ const { formatPrice, formatDiscount } = usePersian()
 
 const displayPrice = computed(() => {
   if (props.product.primary_price) {
-    return formatPrice(props.product.primary_price)
+    return formatPrice(props.product.primary_price, { showUnit: false })
   }
   if (props.product.price_range.min) {
-    return formatPrice(props.product.price_range.min)
+    return formatPrice(props.product.price_range.min, { showUnit: false })
   }
   return 'تماس بگیرید'
 })
 
 const compareAtPrice = computed(() => {
   if (props.product.primary_compare_at_price) {
-    return formatPrice(props.product.primary_compare_at_price)
+    return formatPrice(props.product.primary_compare_at_price, { showUnit: false })
   }
   return null
 })
@@ -156,12 +156,12 @@ const discountPercent = computed(() => {
         <div class="flex flex-col">
           <span
             v-if="compareAtPrice"
-            class="text-xs text-neutral-400 line-through font-mono decoration-rose-500/50"
+            class="text-xs text-neutral-400 line-through decoration-rose-500/50"
           >
             {{ compareAtPrice }}
           </span>
           <div class="flex items-baseline gap-1">
-            <span class="text-base sm:text-lg font-black text-neutral-900 dark:text-white font-mono">
+            <span class="text-base sm:text-lg font-black text-neutral-900 dark:text-white">
               {{ displayPrice }}
             </span>
             <span class="text-[10px] text-neutral-400 font-normal">تومان</span>
