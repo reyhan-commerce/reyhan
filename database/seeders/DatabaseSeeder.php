@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminRoleSeeder::class,
             CatalogSeeder::class,
+            IranGeoSeeder::class,
         ]);
     }
 }

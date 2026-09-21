@@ -5,8 +5,13 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\V1\AppSettingController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CaptchaController;
+use App\Http\Controllers\Api\V1\CartController;
+use App\Http\Controllers\Api\V1\CartCouponController;
+use App\Http\Controllers\Api\V1\CartItemController;
+use App\Http\Controllers\Api\V1\CartSyncController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CategoryTreeController;
+use App\Http\Controllers\Api\V1\GeoController;
 use App\Http\Controllers\Api\V1\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,3 +48,21 @@ Route::prefix('auth')->name('auth.')->group(function () {
 Route::get('/categories/tree', CategoryTreeController::class)->name('categories.tree');
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
+
+// Shopping Cart
+Route::prefix('cart')->name('cart.')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('index');
+    Route::delete('/', [CartController::class, 'destroy'])->name('destroy');
+    Route::post('/items', [CartItemController::class, 'store'])->name('items.store');
+    Route::put('/items/{cartItem}', [CartItemController::class, 'update'])->name('items.update');
+    Route::delete('/items/{cartItem}', [CartItemController::class, 'destroy'])->name('items.destroy');
+    Route::post('/coupon', [CartCouponController::class, 'store'])->name('coupon.store');
+    Route::delete('/coupon', [CartCouponController::class, 'destroy'])->name('coupon.destroy');
+    Route::middleware('auth:sanctum')->post('/sync', CartSyncController::class)->name('sync');
+});
+
+// Iranian Geographical Data
+Route::prefix('geo')->name('geo.')->group(function () {
+    Route::get('/provinces', [GeoController::class, 'provinces'])->name('provinces');
+    Route::get('/provinces/{province}/cities', [GeoController::class, 'cities'])->name('cities');
+});
