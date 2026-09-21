@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Resources\V1;
+
+use App\Models\Cart;
+use App\Services\Pricing\PricingService;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * @mixin Cart
+ */
+class CartResource extends JsonResource
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        /** @var PricingService $pricingService */
+        $pricingService = app(PricingService::class);
+        $pricing = $pricingService->calculateCart($this->resource);
+
+        $items = $this->relationLoaded('items')
+            ? $this->items
+            : $this->items()->with(['variant.product.media', 'variant.product.brand'])->get();
+
+        return [
+            'id' => $this->id,
+            'items_count' => $pricing['total_items_count'],
+            'items' => CartItemResource::collection($items),
+            'pricing' => $pricing,
+        ];
+    }
+}

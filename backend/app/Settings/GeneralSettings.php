@@ -1,0 +1,43 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Settings;
+
+use Spatie\LaravelSettings\Settings;
+
+class GeneralSettings extends Settings
+{
+    public string $store_name;
+
+    public ?string $store_slogan;
+
+    public ?string $store_logo;
+
+    public ?string $store_favicon;
+
+    public ?string $support_phone;
+
+    public ?string $support_email;
+
+    public ?string $address;
+
+    public ?string $postal_code;
+
+    public int $free_shipping_threshold;
+
+    public bool $is_store_open;
+
+    public ?string $maintenance_message;
+
+    public ?string $instagram_url;
+
+    public ?string $telegram_url;
+
+    public ?string $enamad_code;
+
+    public static function group(): string
+    {
+        return 'general';
+    }
+}
