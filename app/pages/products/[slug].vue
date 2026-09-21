@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import ProductReviews from '~/components/review/ProductReviews.vue'
 import VariantSelector from '~/components/product/VariantSelector.vue'
 import type { ProductDetailItem, ProductVariantItem } from '~/stores/catalog'
+import { useWishlistStore } from '~/stores/wishlist'
 
 const route = useRoute()
 const api = useApi()
+const wishlistStore = useWishlistStore()
 const { formatPrice } = usePersian()
 
 const slug = computed(() => decodeURIComponent(String(route.params.slug || '')))
@@ -62,6 +65,10 @@ const activeImage = computed(() => {
     return product.value.gallery[activeImageIndex.value]?.url || product.value.gallery[0]?.url
   }
   return null
+})
+
+onMounted(() => {
+  wishlistStore.fetchWishlistIds()
 })
 </script>
 
@@ -127,6 +134,27 @@ const activeImage = computed(() => {
               />
               <span>کالای برگزیده</span>
             </span>
+          </div>
+
+          <!-- Wishlist Heart Button -->
+          <div class="absolute top-4 end-4 z-10">
+            <button
+              type="button"
+              class="size-10 rounded-2xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-700/80 flex items-center justify-center shadow-md transition-all active:scale-90 hover:scale-110 cursor-pointer"
+              :class="[
+                wishlistStore.isInWishlist(product.id)
+                  ? 'text-rose-500'
+                  : 'text-neutral-400 hover:text-rose-500'
+              ]"
+              title="افزودن به علاقه‌مندی‌ها"
+              @click="wishlistStore.toggleWishlist(product.id)"
+            >
+              <UIcon
+                name="i-lucide-heart"
+                class="w-5 h-5 transition-transform"
+                :class="{ 'fill-rose-500 text-rose-500': wishlistStore.isInWishlist(product.id) }"
+              />
+            </button>
           </div>
 
           <!-- Full View Button -->
@@ -272,6 +300,21 @@ const activeImage = computed(() => {
       <div class="max-w-none text-neutral-700 dark:text-neutral-300 text-sm sm:text-base leading-loose">
         <div v-html="product.description" />
       </div>
+    </div>
+
+    <!-- Product Reviews & Ratings Section -->
+    <div class="mt-8 pt-8 border-t border-neutral-200 dark:border-neutral-800 flex flex-col gap-6">
+      <div class="flex items-center gap-2">
+        <div class="w-1.5 h-6 rounded-full bg-primary" />
+        <h2 class="text-xl font-black text-neutral-900 dark:text-white">
+          نظرات و بررسی تخصصی خریداران
+        </h2>
+      </div>
+
+      <ProductReviews
+        :product-id="product.id"
+        :product-name="product.name"
+      />
     </div>
 
     <!-- Sticky Mobile Bottom Bar (< 640px) -->

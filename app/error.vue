@@ -1,37 +1,78 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app'
 
-defineProps<{
+const props = defineProps<{
   error: NuxtError
 }>()
 
-const handleError = () => clearError({ redirect: '/' })
+const { toPersianDigits } = usePersian()
+
+const is404 = computed(() => props.error?.statusCode === 404)
+
+const handleError = () => {
+  clearError({ redirect: '/' })
+}
 </script>
 
 <template>
-  <div
-    class="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-950 font-sans"
-    dir="rtl"
-  >
-    <div class="max-w-md w-full text-center space-y-6 bg-white dark:bg-gray-900 p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm">
-      <div class="w-20 h-20 rounded-full bg-red-50 dark:bg-red-950/40 text-red-500 flex items-center justify-center mx-auto text-3xl font-black">
-        {{ error.statusCode || 500 }}
+  <div class="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex items-center justify-center p-4 font-sans dir-rtl">
+    <div class="w-full max-w-lg bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-8 sm:p-12 text-center shadow-xl flex flex-col items-center gap-6 relative overflow-hidden">
+      <!-- Decorative background blur -->
+      <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      <!-- Big Status Badge / Code -->
+      <div class="flex flex-col items-center gap-2">
+        <div class="w-20 h-20 rounded-3xl bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 flex items-center justify-center shadow-sm">
+          <UIcon
+            :name="is404 ? 'i-lucide-file-question' : 'i-lucide-alert-octagon'"
+            class="w-10 h-10"
+          />
+        </div>
+        <span class="text-3xl sm:text-4xl font-black text-neutral-900 dark:text-white font-mono mt-2">
+          {{ toPersianDigits(error.statusCode) }}
+        </span>
       </div>
-      <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">
-        {{ error.statusCode === 404 ? 'صفحه مورد نظر یافت نشد' : 'خطایی در پردازش رخ داد' }}
-      </h1>
-      <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-        {{ error.message || 'متاسفانه صفحه یا منبع درخواستی شما در دسترس نیست.' }}
-      </p>
-      <UButton
-        color="primary"
-        size="lg"
-        block
-        icon="i-lucide-home"
-        @click="handleError"
-      >
-        بازگشت به صفحه اصلی
-      </UButton>
+
+      <!-- Error Text -->
+      <div class="flex flex-col gap-2">
+        <h1 class="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white">
+          {{ is404 ? 'صفحه مورد نظر یافت نشد!' : 'خطایی در پردازش درخواست رخ داد' }}
+        </h1>
+        <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm mx-auto">
+          {{
+            is404
+              ? 'متاسفانه صفحه‌ای که به دنبال آن هستید حذف شده، تغییر نام داده شده یا موقتاً در دسترس نمی‌باشد.'
+              : (error.message || 'مشکلی در ارتباط با سرور رخ داده است. لطفاً مجدداً تلاش فرمایید.')
+          }}
+        </p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+        <UButton
+          color="primary"
+          size="lg"
+          block
+          icon="i-lucide-home"
+          class="font-bold cursor-pointer"
+          @click="handleError"
+        >
+          صفحه اصلی
+        </UButton>
+
+        <UButton
+          to="/products"
+          variant="outline"
+          color="neutral"
+          size="lg"
+          block
+          icon="i-lucide-shopping-bag"
+          class="font-semibold cursor-pointer"
+        >
+          مشاهده محصولات
+        </UButton>
+      </div>
     </div>
   </div>
 </template>

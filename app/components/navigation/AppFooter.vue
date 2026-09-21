@@ -15,19 +15,19 @@ const features = [
 ]
 
 const quickLinks = [
+  { label: 'درباره ما', to: '/about' },
+  { label: 'تماس با ما', to: '/contact' },
   { label: 'کاتالوگ همه محصولات', to: '/products' },
-  { label: 'دسته‌بندی‌های کالا', to: '/categories' },
   { label: 'پیشنهادات شگفت‌انگیز', to: '/products?sort=featured' },
-  { label: 'پرفروش‌ترین‌های فصل', to: '/products?sort=popular' },
   { label: 'سبد خرید من', to: '/cart' }
 ]
 
 const customerServiceLinks = [
-  { label: 'پرسش‌های متداول (FAQ)', to: '#' },
-  { label: 'رویه‌های بازگرداندن کالا', to: '#' },
-  { label: 'شرایط و قوانین استفاده', to: '#' },
-  { label: 'سیاست حفظ حریم خصوصی', to: '#' },
-  { label: 'راهنمای ثبت و پیگیری سفارش', to: '#' }
+  { label: 'پرسش‌های متداول (FAQ)', to: '/faq' },
+  { label: 'رویه‌های بازگرداندن کالا', to: '/terms' },
+  { label: 'شرایط و قوانین استفاده', to: '/terms' },
+  { label: 'سفارش‌ها و پیگیری مرسوله', to: '/profile/orders' },
+  { label: 'لیست علاقه‌مندی‌ها', to: '/profile/wishlist' }
 ]
 </script>
 

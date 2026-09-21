@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useWishlistStore } from '~/stores/wishlist'
 import type { ProductCardItem } from '~/stores/catalog'
 
 const props = defineProps<{
   product: ProductCardItem
 }>()
 
+const wishlistStore = useWishlistStore()
 const { formatPrice, formatDiscount } = usePersian()
 
 const displayPrice = computed(() => {
@@ -75,6 +77,25 @@ const discountPercent = computed(() => {
           <span>ویژه</span>
         </span>
       </div>
+
+      <!-- Wishlist Heart Button -->
+      <button
+        type="button"
+        class="absolute top-3 end-3 z-20 w-8 h-8 rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border border-neutral-200/70 dark:border-neutral-700/70 flex items-center justify-center shadow-xs transition-all active:scale-90 hover:scale-110 cursor-pointer"
+        :class="[
+          wishlistStore.isInWishlist(product.id)
+            ? 'text-rose-500'
+            : 'text-neutral-400 hover:text-rose-500'
+        ]"
+        title="علاقه‌مندی‌ها"
+        @click.prevent.stop="wishlistStore.toggleWishlist(product.id)"
+      >
+        <UIcon
+          name="i-lucide-heart"
+          class="w-4 h-4 transition-transform"
+          :class="{ 'fill-rose-500 text-rose-500': wishlistStore.isInWishlist(product.id) }"
+        />
+      </button>
 
       <!-- Quick Action Floating Overlay on Desktop Hover -->
       <div class="absolute inset-x-3 bottom-3 hidden sm:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-10 pointer-events-none">

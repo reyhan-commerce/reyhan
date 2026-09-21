@@ -145,6 +145,28 @@ onMounted(() => {
                     icon: 'i-lucide-user',
                     disabled: true
                   }],
+                  [
+                    {
+                      label: 'سفارش‌های من',
+                      icon: 'i-lucide-package',
+                      to: '/profile/orders'
+                    },
+                    {
+                      label: 'لیست علاقه‌مندی‌ها',
+                      icon: 'i-lucide-heart',
+                      to: '/profile/wishlist'
+                    },
+                    {
+                      label: 'آدرس‌های تحویل',
+                      icon: 'i-lucide-map-pin',
+                      to: '/profile/addresses'
+                    },
+                    {
+                      label: 'اطلاعات حساب کاربری',
+                      icon: 'i-lucide-user-cog',
+                      to: '/profile/settings'
+                    }
+                  ],
                   [{
                     label: 'خروج از حساب',
                     icon: 'i-lucide-log-out',
