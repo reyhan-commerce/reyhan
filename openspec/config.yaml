@@ -1,0 +1,48 @@
+schema: spec-driven
+
+schema: spec-driven
+
+# EasyShop Architecture & Domain Context
+context: |
+  Domain: Cosmetics & Skincare E-Commerce Platform (EasyShop / فروشگاه اینترنتی ایزیشاپ)
+  Language & Locale: Persian (fa-IR), universal RTL direction, Persian numerals (Vazirmatn FD font). Use .font-en for English numbers/SKU/codes.
+  Currency: Consumer UI in Iranian Toman (IRT), Backend database in Rials (IRR) (1 Toman = 10 Rials).
+
+  Backend Tech Stack:
+    - Framework: Laravel 13 with PHP 8.5+ (strict typing declared)
+    - Database: PostgreSQL 18.4 (pg_trgm, GIN indexing)
+    - Cache & Locks: Redis 8.6 (DB 0: cache/OTP, DB 1: session, DB 2: queue)
+    - Testing: Pest PHP (Strictly non-UI, feature & unit tests)
+    - Code Style & Static Analysis: Laravel Pint (PSR-12), Larastan (PHPStan Level 8)
+    - Admin Panel: Filament 5 with Shield and Spatie Settings
+
+  Frontend Tech Stack:
+    - Framework: Nuxt 4 with Vue 3 and TypeScript strict mode
+    - Styling: Tailwind CSS v4 (@theme static) + Nuxt UI (Reka UI primitives)
+    - State: Pinia with persistedstate
+    - Typography: Vazirmatn FD for native Persian digits, .font-en for Latin numbers
+    - Package Manager: pnpm
+
+# Per-artifact rules
+rules:
+  proposal:
+    - Clarify customer impact and dual-stack (frontend + backend) requirements
+    - Always state whether database migrations or breaking API changes are introduced
+  spec:
+    - Define exact API request/response schemas in JSON format
+    - Document error states (validation 422, auth 401, concurrency 409)
+  tasks:
+    - Order tasks logically: Database -> Backend Service/Action -> API Controller -> Frontend Store -> Frontend UI -> Pest Test
+    - Include verification steps (Pest tests, Larastan, and pnpm typecheck)
+
+# Per-operation guidance
+operations:
+  apply:
+    guidance:
+      - Always run `./vendor/bin/pint --test` and `./vendor/bin/phpstan analyse` after backend changes
+      - Always run `pnpm typecheck` in frontend/ after frontend changes
+      - Run relevant Pest tests to confirm zero regressions
+  archive:
+    guidance:
+      - Verify both frontend and backend builds before archiving changes
+
