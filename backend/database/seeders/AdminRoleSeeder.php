@@ -17,6 +17,7 @@ class AdminRoleSeeder extends Seeder
     public function run(): void
     {
         $roles = [
+            'super_admin',
             'SuperAdmin',
             'ShopManager',
             'InventorySpecialist',
@@ -40,6 +41,7 @@ class AdminRoleSeeder extends Seeder
             ]
         );
 
-        $admin->syncRoles(['SuperAdmin']);
+        $admin->syncRoles(['super_admin', 'SuperAdmin']);
+
     }
 }

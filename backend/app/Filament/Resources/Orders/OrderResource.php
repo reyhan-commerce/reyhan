@@ -1,0 +1,300 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Resources\Orders;
+
+use App\Enums\OrderStatus;
+use App\Enums\ShippingMethod;
+use App\Filament\Resources\Orders\Pages\CreateOrder;
+use App\Filament\Resources\Orders\Pages\EditOrder;
+use App\Filament\Resources\Orders\Pages\ListOrders;
+use App\Filament\Resources\Orders\Pages\ViewOrder;
+use App\Models\Order;
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Morilog\Jalali\Jalalian;
+use UnitEnum;
+
+class OrderResource extends Resource
+{
+    protected static ?string $model = Order::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingBag;
+
+    protected static ?string $navigationLabel = 'سفارشات';
+
+    protected static ?string $modelLabel = 'سفارش';
+
+    protected static ?string $pluralModelLabel = 'سفارشات';
+
+    protected static string|UnitEnum|null $navigationGroup = 'سفارشات و مالی';
+
+    protected static ?int $navigationSort = 1;
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('وضعیت و مدیریت سفارش')
+                    ->columns(2)
+                    ->schema([
+                        Select::make('status')
+                            ->label('وضعیت فعلی سفارش')
+                            ->options(array_combine(
+                                array_map(fn (OrderStatus $s): string => $s->value, OrderStatus::cases()),
+                                array_map(fn (OrderStatus $s): string => $s->label(), OrderStatus::cases())
+                            ))
+                            ->required(),
+
+                        Select::make('shipping_method')
+                            ->label('روش ارسال مرسوله')
+                            ->options(array_combine(
+                                array_map(fn (ShippingMethod $m): string => $m->value, ShippingMethod::cases()),
+                                array_map(fn (ShippingMethod $m): string => $m->label(), ShippingMethod::cases())
+                            ))
+                            ->required(),
+
+                        Textarea::make('notes')
+                            ->label('یادداشت‌های داخلی سفارش')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ]),
+            ]);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('خلاصه سفارش و مشخصات خریدار')
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('order_number')
+                            ->label('شماره سفارش')
+                            ->copyable()
+                            ->weight('bold'),
+
+                        TextEntry::make('user.name')
+                            ->label('خریدار')
+                            ->default(fn (Order $record): string => $record->user ? trim(($record->user->first_name ?? '').' '.($record->user->last_name ?? '')) : 'کاربر مهمان'),
+
+                        TextEntry::make('user.mobile')
+                            ->label('شماره موبایل خریدار')
+                            ->copyable(),
+
+                        TextEntry::make('status')
+                            ->label('وضعیت')
+                            ->badge()
+                            ->formatStateUsing(fn (OrderStatus $state): string => $state->label())
+                            ->color(fn (OrderStatus $state): string => $state->color()),
+
+                        TextEntry::make('shipping_method')
+                            ->label('روش ارسال')
+                            ->formatStateUsing(fn (?ShippingMethod $state): string => $state?->label() ?? 'نامشخص'),
+
+                        TextEntry::make('created_at')
+                            ->label('زمان ثبت سفارش')
+                            ->formatStateUsing(fn (?string $state): string => $state ? Jalalian::fromDateTime($state)->format('Y/m/d H:i') : '-'),
+                    ]),
+
+                Section::make('آدرس تحویل مرسوله')
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('shipping_address.recipient_name')
+                            ->label('نام تحویل‌گیرنده'),
+
+                        TextEntry::make('shipping_address.mobile')
+                            ->label('شماره تماس تحویل‌گیرنده'),
+
+                        TextEntry::make('shipping_address.province_name')
+                            ->label('استان'),
+
+                        TextEntry::make('shipping_address.city_name')
+                            ->label('شهر'),
+
+                        TextEntry::make('shipping_address.postal_code')
+                            ->label('کد پستی ۱۰ رقمی'),
+
+                        TextEntry::make('shipping_address.address')
+                            ->label('نشانی پستی دقیق')
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('اقلام خریداری شده')
+                    ->schema([
+                        RepeatableEntry::make('items')
+                            ->label('')
+                            ->columns(4)
+                            ->schema([
+                                TextEntry::make('product_name')
+                                    ->label('نام کالا')
+                                    ->weight('bold'),
+
+                                TextEntry::make('variant_title')
+                                    ->label('تنوع / مشخصات'),
+
+                                TextEntry::make('quantity')
+                                    ->label('تعداد')
+                                    ->suffix(' عدد'),
+
+                                TextEntry::make('final_price')
+                                    ->label('مبلغ کل سطر')
+                                    ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)).' تومان'),
+                            ]),
+                    ]),
+
+                Section::make('صورتحساب و مبالغ مالی')
+                    ->columns(4)
+                    ->schema([
+                        TextEntry::make('items_subtotal')
+                            ->label('جمع کل اقلام')
+                            ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)).' تومان'),
+
+                        TextEntry::make('coupon_discount')
+                            ->label('تخفیف کوپن')
+                            ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)).' تومان'),
+
+                        TextEntry::make('shipping_fee')
+                            ->label('هزینه ارسال')
+                            ->formatStateUsing(fn (int $state): string => $state === 0 ? 'رایگان' : number_format((int) ($state / 10)).' تومان'),
+
+                        TextEntry::make('final_payable')
+                            ->label('مبلغ نهایی پرداخت شده')
+                            ->weight('bold')
+                            ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)).' تومان'),
+                    ]),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('order_number')
+                    ->label('شماره سفارش')
+                    ->searchable()
+                    ->copyable()
+                    ->sortable()
+                    ->weight('bold'),
+
+                TextColumn::make('user.mobile')
+                    ->label('خریدار')
+                    ->description(fn (Order $record): string => $record->user ? trim(($record->user->first_name ?? '').' '.($record->user->last_name ?? '')) : '')
+                    ->searchable(),
+
+                TextColumn::make('status')
+                    ->label('وضعیت')
+                    ->badge()
+                    ->formatStateUsing(fn (OrderStatus $state): string => $state->label())
+                    ->color(fn (OrderStatus $state): string => $state->color())
+                    ->sortable(),
+
+                TextColumn::make('shipping_method')
+                    ->label('روش ارسال')
+                    ->formatStateUsing(fn (?ShippingMethod $state): string => $state?->label() ?? '-')
+                    ->toggleable(),
+
+                TextColumn::make('final_payable')
+                    ->label('مبلغ کل (تومان)')
+                    ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)))
+                    ->suffix(' تومان')
+                    ->sortable(),
+
+                TextColumn::make('created_at')
+                    ->label('زمان ثبت')
+                    ->formatStateUsing(fn (?string $state): string => $state ? Jalalian::fromDateTime($state)->format('Y/m/d H:i') : '-')
+                    ->sortable(),
+            ])
+            ->defaultSort('created_at', 'desc')
+            ->filters([
+                SelectFilter::make('status')
+                    ->label('فیلتر بر اساس وضعیت')
+                    ->options(array_combine(
+                        array_map(fn (OrderStatus $s): string => $s->value, OrderStatus::cases()),
+                        array_map(fn (OrderStatus $s): string => $s->label(), OrderStatus::cases())
+                    )),
+
+                TrashedFilter::make(),
+            ])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+                Action::make('markAsShipped')
+                    ->label('ثبت ارسال')
+                    ->icon(Heroicon::OutlinedTruck)
+                    ->color('success')
+                    ->visible(fn (Order $record): bool => $record->status === OrderStatus::Processing || $record->status === OrderStatus::PendingPayment)
+
+                    ->form([
+                        TextInput::make('tracking_code')
+                            ->label('کد رهگیری مرسوله پستی')
+                            ->required()
+                            ->maxLength(50),
+                    ])
+                    ->action(function (Order $record, array $data): void {
+                        $notes = $record->notes ? $record->notes."\n" : '';
+                        $notes .= 'کد رهگیری پستی: '.$data['tracking_code'];
+
+                        $record->update([
+                            'status' => OrderStatus::Shipped,
+                            'shipped_at' => now(),
+                            'notes' => $notes,
+                        ]);
+
+                        Notification::make()
+                            ->title('سفارش به وضعیت ارسال شده تغییر یافت')
+                            ->success()
+                            ->send();
+                    }),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListOrders::route('/'),
+            'create' => CreateOrder::route('/create'),
+            'view' => ViewOrder::route('/{record}'),
+            'edit' => EditOrder::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+}

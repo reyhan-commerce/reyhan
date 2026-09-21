@@ -331,32 +331,20 @@ parameters:
 			path: app/Http/Resources/V1/OrderItemResource.php
 
 		-
-			message: '#^Cannot access property \$value on string\.$#'
+			message: '#^Cannot access property \$value on App\\Enums\\ShippingMethod\|null\.$#'
 			identifier: property.nonObject
-			count: 2
+			count: 1
 			path: app/Http/Resources/V1/OrderResource.php
 
 		-
-			message: '#^Cannot call method color\(\) on string\.$#'
+			message: '#^Cannot call method title\(\) on App\\Enums\\ShippingMethod\|null\.$#'
 			identifier: method.nonObject
 			count: 1
 			path: app/Http/Resources/V1/OrderResource.php
 
 		-
-			message: '#^Cannot call method label\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Resources/V1/OrderResource.php
-
-		-
-			message: '#^Cannot call method title\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Resources/V1/OrderResource.php
-
-		-
-			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
-			identifier: method.nonObject
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\CarbonImmutable\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Resources/V1/OrderResource.php
 
@@ -455,36 +443,6 @@ parameters:
 			identifier: method.unresolvableReturnType
 			count: 1
 			path: app/Http/Resources/V1/ProductVariantResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$first_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/V1/ReviewResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/V1/ReviewResource.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$last_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/V1/ReviewResource.php
-
-		-
-			message: '#^Cannot access property \$value on string\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Http/Resources/V1/ReviewResource.php
-
-		-
-			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Resources/V1/ReviewResource.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
@@ -1267,13 +1225,13 @@ parameters:
 			path: app/Services/Inventory/StockReservationService.php
 
 		-
-			message: '#^Cannot access property \$email on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			message: '#^Cannot access property \$email on App\\Models\\User\|null\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: app/Services/Payment/Drivers/ZarinpalDriver.php
 
 		-
-			message: '#^Cannot access property \$mobile on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			message: '#^Cannot access property \$mobile on App\\Models\\User\|null\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: app/Services/Payment/Drivers/ZarinpalDriver.php

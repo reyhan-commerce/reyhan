@@ -41,9 +41,9 @@ class CouponResource extends Resource
 
     protected static ?string $pluralModelLabel = 'کوپن‌های تخفیف';
 
-    protected static string|UnitEnum|null $navigationGroup = 'فروش و بازاریابی';
+    protected static string|UnitEnum|null $navigationGroup = 'سفارشات و مالی';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

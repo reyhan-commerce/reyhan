@@ -43,7 +43,7 @@ class CategoryResource extends Resource
 
     protected static ?string $pluralModelLabel = 'دسته‌بندی‌ها';
 
-    protected static string|UnitEnum|null $navigationGroup = 'مدیریت کاتالوگ';
+    protected static string|UnitEnum|null $navigationGroup = 'فروشگاه و کاتالوگ';
 
     protected static ?int $navigationSort = 1;
 

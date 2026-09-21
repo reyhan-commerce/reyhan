@@ -6,7 +6,9 @@ namespace App\Models;
 
 use App\Enums\OrderStatus;
 use App\Enums\ShippingMethod;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +17,28 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property string $order_number
+ * @property int|null $user_id
+ * @property OrderStatus $status
+ * @property ShippingMethod|null $shipping_method
+ * @property array<string, mixed>|null $shipping_address
+ * @property int $items_subtotal
+ * @property int $discount_amount
+ * @property int $coupon_discount
+ * @property string|null $coupon_code
+ * @property int $shipping_fee
+ * @property int $final_payable
+ * @property string|null $notes
+ * @property CarbonImmutable|null $paid_at
+ * @property CarbonImmutable|null $shipped_at
+ * @property CarbonImmutable|null $cancelled_at
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable $updated_at
+ * @property-read User|null $user
+ * @property-read Collection<int, OrderItem> $items
+ */
 class Order extends Model
 {
     use HasFactory;

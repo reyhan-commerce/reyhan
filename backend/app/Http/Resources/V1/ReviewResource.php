@@ -45,7 +45,8 @@ class ReviewResource extends JsonResource
             'status' => $this->status->value,
             'admin_reply' => $this->admin_reply,
             'admin_reply_at' => $this->admin_reply_at?->toIso8601String(),
-            'created_at' => $this->created_at?->toIso8601String(),
+            'created_at' => $this->created_at->toIso8601String(),
         ];
+
     }
 }

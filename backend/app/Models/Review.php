@@ -5,11 +5,32 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ReviewStatus;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $product_id
+ * @property int $rating
+ * @property int|null $longevity_rating
+ * @property int|null $coverage_rating
+ * @property int|null $value_rating
+ * @property string $comment
+ * @property array<string>|null $strengths
+ * @property array<string>|null $weaknesses
+ * @property bool $is_verified_purchase
+ * @property ReviewStatus $status
+ * @property string|null $admin_reply
+ * @property CarbonImmutable|null $admin_reply_at
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable $updated_at
+ * @property-read User|null $user
+ * @property-read Product $product
+ */
 class Review extends Model
 {
     use HasFactory;

@@ -18,4 +18,13 @@ enum PaymentStatus: string
             self::Failed => 'ناموفق',
         };
     }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::Pending => 'warning',
+            self::Success => 'success',
+            self::Failed => 'error',
+        };
+    }
 }

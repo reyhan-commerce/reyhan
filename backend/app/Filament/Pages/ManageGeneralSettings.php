@@ -11,9 +11,11 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use UnitEnum;
 
 class ManageGeneralSettings extends SettingsPage
 {
@@ -25,96 +27,110 @@ class ManageGeneralSettings extends SettingsPage
 
     protected static ?string $title = 'تنظیمات عمومی فروشگاه';
 
+    protected static string|UnitEnum|null $navigationGroup = 'تنظیمات سیستم';
+
     protected static ?int $navigationSort = 1;
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('مشخصات اصلی فروشگاه')
-                    ->description('اطلاعات پایه و هویتی فروشگاه ایزیشاپ')
-                    ->columns(2)
-                    ->schema([
-                        TextInput::make('store_name')
-                            ->label('نام فروشگاه')
-                            ->required()
-                            ->maxLength(255),
+                Tabs::make('تنظیمات فروشگاه')
+                    ->tabs([
+                        Tab::make('هویت و برندینگ')
+                            ->icon(Heroicon::OutlinedBuildingStorefront)
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('store_name')
+                                    ->label('نام فروشگاه')
+                                    ->required()
+                                    ->maxLength(255),
 
-                        TextInput::make('store_slogan')
-                            ->label('شعار فروشگاه')
-                            ->maxLength(255),
+                                TextInput::make('store_slogan')
+                                    ->label('شعار فروشگاه')
+                                    ->placeholder('فروشگاه تخصصی آرایشی و بهداشتی')
+                                    ->maxLength(255),
 
-                        FileUpload::make('store_logo')
-                            ->label('لوگوی فروشگاه')
-                            ->image()
-                            ->directory('settings'),
+                                FileUpload::make('store_logo')
+                                    ->label('لوگوی اصلی فروشگاه')
+                                    ->image()
+                                    ->directory('settings')
+                                    ->helperText('پیشنهاد: تصویر PNG با زمینه شفاف'),
 
-                        FileUpload::make('store_favicon')
-                            ->label('آیکون وب‌سایت (Favicon)')
-                            ->image()
-                            ->directory('settings'),
-                    ]),
+                                FileUpload::make('store_favicon')
+                                    ->label('آیکون وب‌سایت (Favicon)')
+                                    ->image()
+                                    ->directory('settings')
+                                    ->helperText('پیشنهاد: ابعاد ۳۲×۳۲ یا ۴۸×۴۸ پیکسل'),
+                            ]),
 
-                Section::make('راه‌های ارتباطی و آدرس')
-                    ->description('اطلاعات تماس جهت نمایش در فوتر و صفحه ارتباط با ما')
-                    ->columns(2)
-                    ->schema([
-                        TextInput::make('support_phone')
-                            ->label('تلفن پشتیبانی')
-                            ->tel()
-                            ->maxLength(50),
+                        Tab::make('راه‌های ارتباطی و آدرس')
+                            ->icon(Heroicon::OutlinedPhone)
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('support_phone')
+                                    ->label('تلفن پشتیبانی')
+                                    ->tel()
+                                    ->maxLength(50),
 
-                        TextInput::make('support_email')
-                            ->label('ایمیل پشتیبانی')
-                            ->email()
-                            ->maxLength(100),
+                                TextInput::make('support_email')
+                                    ->label('ایمیل پشتیبانی')
+                                    ->email()
+                                    ->maxLength(100),
 
-                        TextInput::make('postal_code')
-                            ->label('کد پستی')
-                            ->maxLength(20),
+                                TextInput::make('postal_code')
+                                    ->label('کد پستی انبار مرکزی')
+                                    ->maxLength(20),
 
-                        Textarea::make('address')
-                            ->label('آدرس فیزیکی')
-                            ->rows(2)
-                            ->columnSpanFull(),
-                    ]),
+                                Textarea::make('address')
+                                    ->label('آدرس فیزیکی دفتر یا انبار')
+                                    ->rows(3)
+                                    ->columnSpanFull(),
+                            ]),
 
-                Section::make('قوانین فروش و سفارش')
-                    ->description('تنظیمات هزینه ارسال و وضعیت دسترسی به فروشگاه')
-                    ->columns(2)
-                    ->schema([
-                        TextInput::make('free_shipping_threshold')
-                            ->label('سقف خرید برای ارسال رایگان (تومان)')
-                            ->numeric()
-                            ->required()
-                            ->prefix('تومان'),
+                        Tab::make('سفارشات و ارسال')
+                            ->icon(Heroicon::OutlinedTruck)
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('free_shipping_threshold')
+                                    ->label('حداقل خرید برای ارسال رایگان')
+                                    ->numeric()
+                                    ->required()
+                                    ->suffix('تومان')
+                                    ->helperText('خریدهای بالاتر از این مبلغ شامل ارسال رایگان خواهند شد'),
 
-                        Toggle::make('is_store_open')
-                            ->label('فروشگاه فعال است (امکان ثبت سفارش)')
-                            ->default(true),
+                                Toggle::make('is_store_open')
+                                    ->label('وضعیت فعال بودن فروشگاه (امکان ثبت سفارش)')
+                                    ->default(true)
+                                    ->helperText('در صورت خاموش بودن، دکمه خرید در فرانت غیرفعال می‌شود'),
 
-                        Textarea::make('maintenance_message')
-                            ->label('پیام عدم پذیرش سفارش یا تعمیرات')
-                            ->rows(2)
-                            ->columnSpanFull(),
-                    ]),
+                                Textarea::make('maintenance_message')
+                                    ->label('متن اطلاعیه تعطیلی یا تعمیرات')
+                                    ->rows(2)
+                                    ->columnSpanFull(),
+                            ]),
 
-                Section::make('شبکه‌های اجتماعی و نمادها')
-                    ->columns(2)
-                    ->schema([
-                        TextInput::make('instagram_url')
-                            ->label('لینک صفحه اینستاگرام')
-                            ->url(),
+                        Tab::make('شبکه‌های اجتماعی و نمادها')
+                            ->icon(Heroicon::OutlinedGlobeAlt)
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('instagram_url')
+                                    ->label('لینک صفحه اینستاگرام')
+                                    ->url()
+                                    ->placeholder('https://instagram.com/easyshop'),
 
-                        TextInput::make('telegram_url')
-                            ->label('لینک کانال تلگرام')
-                            ->url(),
+                                TextInput::make('telegram_url')
+                                    ->label('لینک کانال یا پشتیبانی تلگرام')
+                                    ->url()
+                                    ->placeholder('https://t.me/easyshop'),
 
-                        Textarea::make('enamad_code')
-                            ->label('کد لوگوی اینماد')
-                            ->rows(2)
-                            ->columnSpanFull(),
-                    ]),
+                                Textarea::make('enamad_code')
+                                    ->label('کد اسکریپت یا لوگوی اینماد (Enamad)')
+                                    ->rows(3)
+                                    ->columnSpanFull(),
+                            ]),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 }

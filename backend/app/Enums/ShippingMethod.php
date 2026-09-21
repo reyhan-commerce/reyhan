@@ -24,4 +24,9 @@ enum ShippingMethod: string
             self::Pishtaz => '۲ تا ۴ روز کاری',
         };
     }
+
+    public function label(): string
+    {
+        return $this->title();
+    }
 }

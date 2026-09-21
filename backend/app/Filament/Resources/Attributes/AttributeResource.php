@@ -39,7 +39,7 @@ class AttributeResource extends Resource
 
     protected static ?string $pluralModelLabel = 'ویژگی‌ها';
 
-    protected static string|UnitEnum|null $navigationGroup = 'مدیریت کاتالوگ';
+    protected static string|UnitEnum|null $navigationGroup = 'فروشگاه و کاتالوگ';
 
     protected static ?int $navigationSort = 3;
 

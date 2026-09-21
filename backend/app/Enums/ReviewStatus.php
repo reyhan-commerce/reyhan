@@ -18,4 +18,13 @@ enum ReviewStatus: string
             self::Rejected => 'رد شده',
         };
     }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::Pending => 'warning',
+            self::Approved => 'success',
+            self::Rejected => 'error',
+        };
+    }
 }
