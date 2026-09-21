@@ -89,5 +89,26 @@ Route::middleware('auth:sanctum')->group(function () {
     // Orders History
     Route::get('/orders', [\App\Http\Controllers\Api\V1\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{orderNumber}', [\App\Http\Controllers\Api\V1\OrderController::class, 'show'])->name('orders.show');
+
+    // Customer Profile
+    Route::get('/profile', [\App\Http\Controllers\Api\V1\ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profile', [\App\Http\Controllers\Api\V1\ProfileController::class, 'update'])->name('profile.update');
+
+    // Customer Wishlist
+    Route::prefix('wishlist')->name('wishlist.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\V1\WishlistController::class, 'index'])->name('index');
+        Route::get('/ids', [\App\Http\Controllers\Api\V1\WishlistController::class, 'ids'])->name('ids');
+        Route::post('/{product}/toggle', [\App\Http\Controllers\Api\V1\WishlistController::class, 'toggle'])->name('toggle');
+    });
+
+    // Submit Product Review
+    Route::post('/products/{product}/reviews', [\App\Http\Controllers\Api\V1\ReviewController::class, 'store'])->name('reviews.store');
 });
+
+// Product Reviews (Public List)
+Route::get('/products/{product}/reviews', [\App\Http\Controllers\Api\V1\ReviewController::class, 'index'])->name('reviews.index');
+
+// Static CMS Pages & Dynamic Sitemap
+Route::get('/pages/{slug}', [\App\Http\Controllers\Api\V1\PageController::class, 'show'])->name('pages.show');
+Route::get('/sitemap/urls', [\App\Http\Controllers\Api\V1\PageController::class, 'sitemap'])->name('sitemap.urls');
 

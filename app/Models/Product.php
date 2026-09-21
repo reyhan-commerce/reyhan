@@ -196,6 +196,50 @@ class Product extends Model implements HasMedia
         return $matrix;
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->latest();
+    }
+
+    public function approvedReviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->where('status', \App\Enums\ReviewStatus::Approved)->latest();
+    }
+
+    public function wishlists(): HasMany
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    /**
+     * Get aggregated review stats for this product.
+     *
+     * @return array{average_rating: float, average_longevity: float, average_coverage: float, average_value: float, total_reviews: int}
+     */
+    public function getReviewStats(): array
+    {
+        $approved = $this->approvedReviews();
+        $count = $approved->count();
+
+        if ($count === 0) {
+            return [
+                'average_rating' => 5.0,
+                'average_longevity' => 5.0,
+                'average_coverage' => 5.0,
+                'average_value' => 5.0,
+                'total_reviews' => 0,
+            ];
+        }
+
+        return [
+            'average_rating' => round((float) $approved->avg('rating'), 1),
+            'average_longevity' => round((float) $approved->avg('longevity_rating'), 1),
+            'average_coverage' => round((float) $approved->avg('coverage_rating'), 1),
+            'average_value' => round((float) $approved->avg('value_rating'), 1),
+            'total_reviews' => $count,
+        ];
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('gallery');

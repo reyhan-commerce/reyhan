@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             AdminRoleSeeder::class,
             CatalogSeeder::class,
             IranGeoSeeder::class,
+            PageSeeder::class,
         ]);
     }
 }
