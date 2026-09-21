@@ -101,12 +101,12 @@ const activeImage = computed(() => {
       <!-- Media Gallery (5 cols) -->
       <div class="lg:col-span-5 flex flex-col gap-4">
         <!-- Main Large Image Container -->
-        <div class="relative aspect-square rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 p-6 flex items-center justify-center overflow-hidden shadow-xs">
+        <div class="relative aspect-square rounded-3xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 flex items-center justify-center overflow-hidden shadow-sm group">
           <img
             v-if="activeImage"
             :src="activeImage"
             :alt="product.name"
-            class="h-full w-full object-contain object-center transition-all duration-300"
+            class="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-104"
           >
           <div
             v-else
@@ -118,15 +118,34 @@ const activeImage = computed(() => {
           <!-- Featured Badge -->
           <div
             v-if="product.is_featured"
-            class="absolute top-4 start-4"
+            class="absolute top-4 start-4 z-10 pointer-events-none"
           >
-            <UBadge
-              color="warning"
-              variant="subtle"
-              size="sm"
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-neutral-950/80 dark:bg-black/75 text-amber-400 border border-amber-400/40 backdrop-blur-md text-xs font-bold shadow-md">
+              <UIcon
+                name="i-lucide-sparkles"
+                class="size-3.5 text-amber-400"
+              />
+              <span>کالای برگزیده</span>
+            </span>
+          </div>
+
+          <!-- Full View Button -->
+          <div
+            v-if="activeImage"
+            class="absolute bottom-4 end-4 z-10"
+          >
+            <a
+              :href="activeImage"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="size-10 rounded-2xl bg-white/85 dark:bg-neutral-900/85 hover:bg-white dark:hover:bg-neutral-900 text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-neutral-700/80 backdrop-blur-md shadow-md flex items-center justify-center transition-all hover:scale-105"
+              title="مشاهده در اندازه اصلی"
             >
-              کالای برگزیده
-            </UBadge>
+              <UIcon
+                name="i-lucide-maximize-2"
+                class="size-4"
+              />
+            </a>
           </div>
         </div>
 
@@ -139,14 +158,14 @@ const activeImage = computed(() => {
             v-for="(img, idx) in product.gallery"
             :key="img.id"
             type="button"
-            class="size-16 rounded-xl border-2 p-1 overflow-hidden transition-all shrink-0 bg-white dark:bg-neutral-800"
-            :class="activeImageIndex === idx ? 'border-primary shadow-xs' : 'border-neutral-200 dark:border-neutral-700 opacity-70 hover:opacity-100'"
+            class="size-18 rounded-2xl border-2 overflow-hidden transition-all shrink-0 bg-neutral-100 dark:bg-neutral-800"
+            :class="activeImageIndex === idx ? 'border-primary ring-2 ring-primary/20 shadow-sm' : 'border-transparent opacity-65 hover:opacity-100'"
             @click="activeImageIndex = idx"
           >
             <img
               :src="img.url"
               :alt="img.name"
-              class="h-full w-full object-contain"
+              class="h-full w-full object-cover"
             >
           </button>
         </div>

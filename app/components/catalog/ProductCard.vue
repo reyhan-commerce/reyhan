@@ -38,12 +38,12 @@ const discountPercent = computed(() => {
     class="group relative h-full rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between"
   >
     <!-- Product Thumbnail & Badges -->
-    <div class="relative aspect-square w-full overflow-hidden bg-neutral-50/80 dark:bg-neutral-800/40 flex items-center justify-center p-4">
+    <div class="relative aspect-square w-full overflow-hidden bg-neutral-100 dark:bg-neutral-800/80 border-b border-neutral-100 dark:border-neutral-800/60 flex items-center justify-center">
       <img
         v-if="product.thumbnail"
         :src="product.thumbnail"
         :alt="product.name"
-        class="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-108"
+        class="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-106"
         loading="lazy"
       >
       <div
@@ -53,28 +53,35 @@ const discountPercent = computed(() => {
         {{ product.name.charAt(0) }}
       </div>
 
+      <!-- Subtle bottom gradient vignette for smooth transition into card -->
+      <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/25 via-black/5 to-transparent pointer-events-none" />
+
       <!-- Top Badges (Discount & Featured) -->
-      <div class="absolute top-3 start-3 flex flex-col gap-1.5 items-start z-10">
+      <div class="absolute top-3 start-3 flex flex-col gap-1.5 items-start z-10 pointer-events-none">
         <span
           v-if="discountPercent"
-          class="px-2.5 py-1 rounded-full bg-rose-600 text-white font-black text-xs shadow-sm shadow-rose-600/30"
+          class="px-2.5 py-1 rounded-xl bg-rose-500 text-white font-black text-xs shadow-md shadow-rose-500/30 tracking-tight"
         >
           {{ discountPercent }}
         </span>
         <span
           v-if="product.is_featured"
-          class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 font-bold text-[10px] border border-amber-500/30 backdrop-blur-xs"
+          class="px-2.5 py-1 rounded-xl bg-neutral-900/85 dark:bg-black/80 text-amber-400 border border-amber-400/35 backdrop-blur-md font-bold text-[11px] shadow-sm flex items-center gap-1"
         >
-          ویژه
+          <UIcon
+            name="i-lucide-sparkles"
+            class="size-3 text-amber-400"
+          />
+          <span>ویژه</span>
         </span>
       </div>
 
       <!-- Quick Action Floating Overlay on Desktop Hover -->
-      <div class="absolute inset-x-3 bottom-3 hidden sm:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-10">
-        <div class="w-full py-2 px-3 rounded-xl bg-neutral-900/85 dark:bg-white/90 text-white dark:text-neutral-900 backdrop-blur-md text-xs font-bold text-center shadow-lg flex items-center justify-center gap-1.5">
+      <div class="absolute inset-x-3 bottom-3 hidden sm:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-10 pointer-events-none">
+        <div class="w-full py-2.5 px-3 rounded-2xl bg-neutral-950/85 dark:bg-neutral-900/95 text-white border border-white/10 backdrop-blur-md text-xs font-bold text-center shadow-xl flex items-center justify-center gap-1.5">
           <UIcon
             name="i-lucide-eye"
-            class="size-3.5"
+            class="size-3.5 text-primary"
           />
           <span>مشاهده و انتخاب</span>
         </div>
@@ -83,7 +90,7 @@ const discountPercent = computed(() => {
       <!-- Out of Stock Overlay -->
       <div
         v-if="!product.is_in_stock"
-        class="absolute inset-0 bg-neutral-900/60 backdrop-blur-[2px] flex items-center justify-center z-20"
+        class="absolute inset-0 bg-neutral-900/70 backdrop-blur-[2px] flex items-center justify-center z-20"
       >
         <span class="px-3.5 py-1.5 rounded-full bg-neutral-800 text-neutral-200 font-bold text-xs shadow-md border border-neutral-700">
           ناموجود
