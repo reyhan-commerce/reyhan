@@ -1,0 +1,16 @@
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.sw?
+
+# Environment & local files
+.env
+.env.backup
+.env.production
+.env.local
+
+# Temporary files
+*.bak
+*.tmp
