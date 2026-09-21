@@ -103,6 +103,11 @@ export const useAuthStore = defineStore('auth', () => {
         tokenCookie.value = response.data.token
         user.value = response.data.user
         closeAuthModal()
+
+        // Sync guest cart to user
+        const cartStore = useCartStore()
+        cartStore.syncGuestCart()
+
         return true
       }
       return false

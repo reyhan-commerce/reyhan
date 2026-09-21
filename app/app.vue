@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const authStore = useAuthStore()
+const cartStore = useCartStore()
 const settingsStore = useSettingsStore()
+const { toPersianDigits } = usePersian()
 
 // Fetch public store settings in SSR/initial load
 await useAsyncData('app-settings', () => settingsStore.fetchSettings())
@@ -11,7 +13,8 @@ useHead({
     lang: 'fa-IR'
   },
   meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5' }
+    { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5' },
+    { name: 'description', content: 'خرید آنلاین باکیفیت‌ترین محصولات آرایشی، مراقبت پوست و مو با تضمین اصالت کالا و ارسال سریع' }
   ],
   link: [
     { rel: 'icon', href: settingsStore.settings.store_favicon || '/favicon.ico' }
@@ -28,8 +31,9 @@ useSeoMeta({
   ogDescription: description
 })
 
-// Fetch current user if token exists on mount
+// Fetch cart and user on mount
 onMounted(() => {
+  cartStore.fetchCart()
   if (authStore.isAuthenticated) {
     authStore.fetchUser()
   }
@@ -55,6 +59,26 @@ onMounted(() => {
 
       <template #right>
         <UColorModeButton />
+
+        <!-- Cart Button -->
+        <CartSlideover>
+          <UButton
+            color="neutral"
+            variant="ghost"
+            icon="i-lucide-shopping-bag"
+            class="relative min-h-10 px-2.5"
+            aria-label="سبد خرید"
+          >
+            <UBadge
+              v-if="cartStore.itemsCount > 0"
+              color="primary"
+              size="xs"
+              class="absolute -top-1 -right-1 font-bold min-w-5 h-5 flex items-center justify-center rounded-full"
+            >
+              {{ toPersianDigits(cartStore.itemsCount) }}
+            </UBadge>
+          </UButton>
+        </CartSlideover>
 
         <!-- User Authentication Button -->
         <template v-if="authStore.isAuthenticated">
