@@ -26,7 +26,7 @@ class ReviewResource extends JsonResource
             $lastName = $this->user->last_name ?: '';
             if ($firstName || $lastName) {
                 // Privacy masking: e.g. "فاطمه ر."
-                $lastInitial = $lastName ? mb_substr($lastName, 0, 1) . '.' : '';
+                $lastInitial = $lastName ? mb_substr($lastName, 0, 1).'.' : '';
                 $userName = trim("{$firstName} {$lastInitial}") ?: $this->user->full_name;
             }
         }

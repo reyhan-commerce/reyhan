@@ -71,7 +71,7 @@ class ZarinpalDriver implements PaymentDriverInterface
         } catch (Throwable $e) {
             return new PaymentRequestResult(
                 success: false,
-                errorMessage: 'خطای سیستمی در برقراری ارتباط با زرین‌پال: ' . $e->getMessage(),
+                errorMessage: 'خطای سیستمی در برقراری ارتباط با زرین‌پال: '.$e->getMessage(),
             );
         }
     }
@@ -128,7 +128,7 @@ class ZarinpalDriver implements PaymentDriverInterface
         } catch (Throwable $e) {
             return new PaymentVerifyResult(
                 success: false,
-                errorMessage: 'خطا در تایید تراکنش: ' . $e->getMessage(),
+                errorMessage: 'خطا در تایید تراکنش: '.$e->getMessage(),
             );
         }
     }

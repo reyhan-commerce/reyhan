@@ -27,13 +27,13 @@ beforeEach(function (): void {
 
     $category = Category::create([
         'name' => 'زیبایی',
-        'slug' => 'beauty-' . uniqid(),
+        'slug' => 'beauty-'.uniqid(),
         'is_active' => true,
     ]);
 
     $brand = Brand::create([
         'name' => 'برند تایید',
-        'slug' => 'brand-v-' . uniqid(),
+        'slug' => 'brand-v-'.uniqid(),
         'is_active' => true,
     ]);
 
@@ -41,13 +41,13 @@ beforeEach(function (): void {
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'محصول پرداخت تستی',
-        'slug' => 'prod-v-' . uniqid(),
+        'slug' => 'prod-v-'.uniqid(),
         'is_active' => true,
     ]);
 
     $this->variant = ProductVariant::create([
         'product_id' => $product->id,
-        'sku' => 'SKU-V-' . strtoupper(uniqid()),
+        'sku' => 'SKU-V-'.strtoupper(uniqid()),
         'price' => 2000000,
         'stock' => 10,
         'is_active' => true,
@@ -79,7 +79,7 @@ beforeEach(function (): void {
         'total_price' => 2000000,
     ]);
 
-    $this->authority = 'SB-' . uniqid();
+    $this->authority = 'SB-'.uniqid();
 
     $this->payment = Payment::create([
         'order_id' => $this->order->id,

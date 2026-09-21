@@ -17,19 +17,19 @@ use Laravel\Sanctum\Sanctum;
 test('public can view reviews and stats for product', function () {
     $category = Category::create([
         'name' => 'آرایشی تست',
-        'slug' => 'cat-rev-' . uniqid(),
+        'slug' => 'cat-rev-'.uniqid(),
         'is_active' => true,
     ]);
     $brand = Brand::create([
         'name' => 'برند نقد',
-        'slug' => 'brand-rev-' . uniqid(),
+        'slug' => 'brand-rev-'.uniqid(),
         'is_active' => true,
     ]);
     $product = Product::create([
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'کرم پودر نقد',
-        'slug' => 'prod-rev-' . uniqid(),
+        'slug' => 'prod-rev-'.uniqid(),
         'is_active' => true,
     ]);
     $user = User::factory()->create([
@@ -69,24 +69,24 @@ test('user who purchased product gets verified buyer badge upon review submissio
     $user = User::factory()->create();
     $category = Category::create([
         'name' => 'دسته تست خرید',
-        'slug' => 'cat-buy-' . uniqid(),
+        'slug' => 'cat-buy-'.uniqid(),
         'is_active' => true,
     ]);
     $brand = Brand::create([
         'name' => 'برند تست خرید',
-        'slug' => 'brand-buy-' . uniqid(),
+        'slug' => 'brand-buy-'.uniqid(),
         'is_active' => true,
     ]);
     $product = Product::create([
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'سرم ویتامین سی تست',
-        'slug' => 'prod-buy-' . uniqid(),
+        'slug' => 'prod-buy-'.uniqid(),
         'is_active' => true,
     ]);
     $variant = ProductVariant::create([
         'product_id' => $product->id,
-        'sku' => 'SKU-REV-' . uniqid(),
+        'sku' => 'SKU-REV-'.uniqid(),
         'price' => 100000,
         'stock' => 10,
         'is_active' => true,

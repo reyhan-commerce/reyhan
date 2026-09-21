@@ -7,7 +7,7 @@ namespace App\Services\Payment\DTOs;
 readonly class PaymentVerifyResult
 {
     /**
-     * @param array<string, mixed> $rawResponse
+     * @param  array<string, mixed>  $rawResponse
      */
     public function __construct(
         public bool $success,

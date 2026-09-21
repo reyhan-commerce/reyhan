@@ -15,7 +15,7 @@ class SandboxDriver implements PaymentDriverInterface
 {
     public function request(Order $order, string $callbackUrl): PaymentRequestResult
     {
-        $authority = 'SB-' . strtoupper(Str::random(24));
+        $authority = 'SB-'.strtoupper(Str::random(24));
         $separator = str_contains($callbackUrl, '?') ? '&' : '?';
         $redirectUrl = "{$callbackUrl}{$separator}Authority={$authority}&Status=OK";
 
@@ -38,9 +38,9 @@ class SandboxDriver implements PaymentDriverInterface
             );
         }
 
-        $refId = 'REF-' . date('ymd') . '-' . random_int(100000, 999999);
+        $refId = 'REF-'.date('ymd').'-'.random_int(100000, 999999);
         $trackingCode = Payment::generateTrackingCode();
-        $cardPan = '502229******' . random_int(1000, 9999);
+        $cardPan = '502229******'.random_int(1000, 9999);
 
         return new PaymentVerifyResult(
             success: true,

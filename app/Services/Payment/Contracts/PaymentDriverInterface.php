@@ -19,7 +19,7 @@ interface PaymentDriverInterface
     /**
      * Verify payment transaction signature and settlement status.
      *
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function verify(Payment $payment, array $payload): PaymentVerifyResult;
 }

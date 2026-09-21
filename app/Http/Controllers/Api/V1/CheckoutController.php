@@ -12,7 +12,6 @@ use App\Models\Address;
 use App\Models\User;
 use App\Services\Cart\CartService;
 use App\Services\Pricing\PricingService;
-use App\Services\Shipping\ShippingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -77,8 +76,8 @@ class CheckoutController extends Controller
 
         $validated = $request->validate([
             'address_id' => ['required', 'integer', 'exists:addresses,id'],
-            'shipping_method' => ['required', 'string', 'in:' . implode(',', array_column(ShippingMethod::cases(), 'value'))],
-            'gateway' => ['required', 'string', 'in:' . implode(',', array_column(PaymentGateway::cases(), 'value'))],
+            'shipping_method' => ['required', 'string', 'in:'.implode(',', array_column(ShippingMethod::cases(), 'value'))],
+            'gateway' => ['required', 'string', 'in:'.implode(',', array_column(PaymentGateway::cases(), 'value'))],
             'callback_url' => ['required', 'url'],
             'notes' => ['nullable', 'string', 'max:500'],
         ], [

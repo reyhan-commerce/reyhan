@@ -28,7 +28,7 @@ class VerifyPaymentAction
     /**
      * Verify payment and settle order inventory.
      *
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      * @return array{
      *     success: bool,
      *     message: string,

@@ -67,7 +67,7 @@ class CreateOrderAction
         $finalPayable = $pricing['final_payable'];
 
         // Reserve Stock in Redis (Tier 1 Concurrency Locking)
-        $reservationId = 'order_res_' . Str::random(16);
+        $reservationId = 'order_res_'.Str::random(16);
         $reservedVariantIds = [];
 
         foreach ($cart->items as $item) {
@@ -196,7 +196,7 @@ class CreateOrderAction
     /**
      * Rollback partial Redis stock reservations if any reservation fails.
      *
-     * @param array<int, int> $reservedVariantIds
+     * @param  array<int, int>  $reservedVariantIds
      */
     protected function rollbackReservations(array $reservedVariantIds, string $reservationId): void
     {

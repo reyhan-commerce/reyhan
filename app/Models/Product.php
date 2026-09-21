@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\ReviewStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
 use Illuminate\Database\Eloquent\Model;
@@ -203,7 +204,7 @@ class Product extends Model implements HasMedia
 
     public function approvedReviews(): HasMany
     {
-        return $this->hasMany(Review::class)->where('status', \App\Enums\ReviewStatus::Approved)->latest();
+        return $this->hasMany(Review::class)->where('status', ReviewStatus::Approved)->latest();
     }
 
     public function wishlists(): HasMany

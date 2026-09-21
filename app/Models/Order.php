@@ -97,7 +97,7 @@ class Order extends Model
     public static function generateOrderNumber(): string
     {
         do {
-            $number = 'ORD-' . date('ymd') . '-' . strtoupper(Str::random(4));
+            $number = 'ORD-'.date('ymd').'-'.strtoupper(Str::random(4));
         } while (static::where('order_number', $number)->exists());
 
         return $number;

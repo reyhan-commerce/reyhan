@@ -19,14 +19,14 @@ beforeEach(function (): void {
 
     $this->province = Province::create([
         'name' => 'تهران',
-        'slug' => 'tehran-test-' . uniqid(),
+        'slug' => 'tehran-test-'.uniqid(),
         'order' => 1,
     ]);
 
     $this->city = City::create([
         'province_id' => $this->province->id,
         'name' => 'تهران',
-        'slug' => 'tehran-city-test-' . uniqid(),
+        'slug' => 'tehran-city-test-'.uniqid(),
         'postal_prefix' => '11',
         'order' => 1,
     ]);

@@ -36,7 +36,7 @@ test('authenticated user can update profile details', function () {
     Sanctum::actingAs($user);
 
     $newNationalCode = (string) rand(1000000000, 9999999999);
-    $newEmail = 'user_' . uniqid() . '@example.com';
+    $newEmail = 'user_'.uniqid().'@example.com';
 
     $response = $this->putJson('/api/v1/profile', [
         'first_name' => 'امیرعلی',

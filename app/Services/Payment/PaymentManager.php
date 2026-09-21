@@ -8,7 +8,6 @@ use App\Services\Payment\Contracts\PaymentDriverInterface;
 use App\Services\Payment\Drivers\SandboxDriver;
 use App\Services\Payment\Drivers\ZarinpalDriver;
 use Illuminate\Support\Manager;
-use InvalidArgumentException;
 
 class PaymentManager extends Manager
 {
@@ -25,7 +24,7 @@ class PaymentManager extends Manager
      */
     protected function createSandboxDriver(): PaymentDriverInterface
     {
-        return new SandboxDriver();
+        return new SandboxDriver;
     }
 
     /**
@@ -49,7 +48,7 @@ class PaymentManager extends Manager
     protected function createSamanDriver(): PaymentDriverInterface
     {
         // Fallback to sandbox if not configured
-        return new SandboxDriver();
+        return new SandboxDriver;
     }
 
     /**
@@ -58,7 +57,7 @@ class PaymentManager extends Manager
     protected function createMellatDriver(): PaymentDriverInterface
     {
         // Fallback to sandbox if not configured
-        return new SandboxDriver();
+        return new SandboxDriver;
     }
 
     /**

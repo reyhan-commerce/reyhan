@@ -24,14 +24,14 @@ beforeEach(function (): void {
 
     $this->province = Province::create([
         'name' => 'تهران',
-        'slug' => 'tehran-order-' . uniqid(),
+        'slug' => 'tehran-order-'.uniqid(),
         'order' => 1,
     ]);
 
     $this->city = City::create([
         'province_id' => $this->province->id,
         'name' => 'تهران',
-        'slug' => 'tehran-city-order-' . uniqid(),
+        'slug' => 'tehran-city-order-'.uniqid(),
         'order' => 1,
     ]);
 
@@ -48,13 +48,13 @@ beforeEach(function (): void {
 
     $category = Category::create([
         'name' => 'پوست',
-        'slug' => 'skin-' . uniqid(),
+        'slug' => 'skin-'.uniqid(),
         'is_active' => true,
     ]);
 
     $brand = Brand::create([
         'name' => 'برند تست',
-        'slug' => 'brand-' . uniqid(),
+        'slug' => 'brand-'.uniqid(),
         'is_active' => true,
     ]);
 
@@ -62,13 +62,13 @@ beforeEach(function (): void {
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'کرم مرطوب کننده سفارش',
-        'slug' => 'product-' . uniqid(),
+        'slug' => 'product-'.uniqid(),
         'is_active' => true,
     ]);
 
     $this->variant = ProductVariant::create([
         'product_id' => $this->product->id,
-        'sku' => 'SKU-' . strtoupper(uniqid()),
+        'sku' => 'SKU-'.strtoupper(uniqid()),
         'price' => 5000000,
         'compare_at_price' => 6000000,
         'stock' => 10,

@@ -13,12 +13,12 @@ test('authenticated user can toggle a product in wishlist', function () {
     $user = User::factory()->create();
     $category = Category::create([
         'name' => 'دسته تست',
-        'slug' => 'cat-wishlist-' . uniqid(),
+        'slug' => 'cat-wishlist-'.uniqid(),
         'is_active' => true,
     ]);
     $brand = Brand::create([
         'name' => 'برند تست',
-        'slug' => 'brand-wishlist-' . uniqid(),
+        'slug' => 'brand-wishlist-'.uniqid(),
         'is_active' => true,
     ]);
 
@@ -26,7 +26,7 @@ test('authenticated user can toggle a product in wishlist', function () {
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'محصول علاقه‌مندی',
-        'slug' => 'wishlist-prod-' . uniqid(),
+        'slug' => 'wishlist-prod-'.uniqid(),
         'is_active' => true,
     ]);
 
@@ -73,12 +73,12 @@ test('authenticated user can list wishlist items', function () {
     $user = User::factory()->create();
     $category = Category::create([
         'name' => 'دسته لیست',
-        'slug' => 'cat-list-' . uniqid(),
+        'slug' => 'cat-list-'.uniqid(),
         'is_active' => true,
     ]);
     $brand = Brand::create([
         'name' => 'برند لیست',
-        'slug' => 'brand-list-' . uniqid(),
+        'slug' => 'brand-list-'.uniqid(),
         'is_active' => true,
     ]);
 
@@ -86,7 +86,7 @@ test('authenticated user can list wishlist items', function () {
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'محصول لیست تست',
-        'slug' => 'list-prod-' . uniqid(),
+        'slug' => 'list-prod-'.uniqid(),
         'is_active' => true,
     ]);
 
