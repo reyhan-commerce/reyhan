@@ -5,6 +5,9 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\V1\AppSettingController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CaptchaController;
+use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\CategoryTreeController;
+use App\Http\Controllers\Api\V1\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,3 +38,8 @@ Route::prefix('auth')->name('auth.')->group(function () {
         Route::get('/me', [AuthController::class, 'me'])->name('me');
     });
 });
+
+// Product Catalog & Category Taxonomy
+Route::get('/categories/tree', CategoryTreeController::class)->name('categories.tree');
+Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+Route::apiResource('products', ProductController::class)->only(['index', 'show']);

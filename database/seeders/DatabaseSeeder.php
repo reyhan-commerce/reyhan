@@ -25,6 +25,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@easyshop.test',
         ]);
 
-        $this->call(AdminRoleSeeder::class);
+        $this->call([
+            AdminRoleSeeder::class,
+            CatalogSeeder::class,
+        ]);
     }
 }
