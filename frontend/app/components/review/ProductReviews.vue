@@ -261,7 +261,7 @@ function handleOpenModal() {
               <span
                 v-for="(wk, idx) in review.weaknesses"
                 :key="`wk-${idx}`"
-                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/50 dark:border-rose-800/30"
+                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300 border border-red-200/50 dark:border-red-800/30"
               >
                 <span>-</span>
                 <span>{{ wk }}</span>

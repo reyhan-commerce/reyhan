@@ -90,7 +90,7 @@ class ReviewResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('جزئیات دیدگاه و امتیازات آرایشی')
+                Section::make('جزئیات دیدگاه و شاخص‌های کیفی')
                     ->columns(3)
                     ->schema([
                         TextEntry::make('product.name')
@@ -115,20 +115,34 @@ class ReviewResource extends Resource
                             ->label('امتیاز کلی')
                             ->suffix(' / ۵'),
 
-                        TextEntry::make('longevity_rating')
-                            ->label('میزان ماندگاری')
-                            ->suffix(' / ۵')
-                            ->default('-'),
+                        TextEntry::make('criteria_ratings')
+                            ->label('شاخص‌های کیفی')
+                            ->formatStateUsing(function ($state, Review $record): string {
+                                $criteria = $state ?: [
+                                    'longevity' => $record->longevity_rating ?? 5,
+                                    'coverage' => $record->coverage_rating ?? 5,
+                                    'value' => $record->value_rating ?? 5,
+                                ];
+                                if (! is_array($criteria)) {
+                                    return '-';
+                                }
+                                $labels = [
+                                    'longevity' => 'ماندگاری / دوام',
+                                    'coverage' => 'کیفیت / پوشش',
+                                    'value' => 'ارزش خرید',
+                                    'quality' => 'کیفیت ساخت',
+                                    'durability' => 'استحکام',
+                                    'fit' => 'تطابق سایز',
+                                ];
+                                $items = [];
+                                foreach ($criteria as $k => $v) {
+                                    $name = $labels[$k] ?? (string) $k;
+                                    $items[] = "{$name}: {$v}/۵";
+                                }
 
-                        TextEntry::make('coverage_rating')
-                            ->label('میزان پوشش‌دهی')
-                            ->suffix(' / ۵')
-                            ->default('-'),
-
-                        TextEntry::make('value_rating')
-                            ->label('ارزش خرید نسبت به قیمت')
-                            ->suffix(' / ۵')
-                            ->default('-'),
+                                return implode(' | ', $items);
+                            })
+                            ->columnSpan(2),
 
                         IconEntry::make('is_verified_purchase')
                             ->label('خریدار قطعی این کالا')

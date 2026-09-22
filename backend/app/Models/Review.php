@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $user_id
  * @property int $product_id
  * @property int $rating
+ * @property array<string, int>|null $criteria_ratings
  * @property int|null $longevity_rating
  * @property int|null $coverage_rating
  * @property int|null $value_rating
@@ -39,6 +40,7 @@ class Review extends Model
         'user_id',
         'product_id',
         'rating',
+        'criteria_ratings',
         'longevity_rating',
         'coverage_rating',
         'value_rating',
@@ -55,6 +57,7 @@ class Review extends Model
     {
         return [
             'rating' => 'integer',
+            'criteria_ratings' => 'array',
             'longevity_rating' => 'integer',
             'coverage_rating' => 'integer',
             'value_rating' => 'integer',

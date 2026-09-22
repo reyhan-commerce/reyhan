@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { reviewSchema } from '~/utils/schemas'
+
 const props = defineProps<{
   productId: number
   productName: string
@@ -14,6 +16,11 @@ const toast = useToast()
 
 const form = reactive({
   rating: 5,
+  criteria_ratings: {
+    longevity: 5,
+    coverage: 5,
+    value: 5
+  },
   longevity_rating: 5,
   coverage_rating: 5,
   value_rating: 5,
@@ -51,10 +58,23 @@ function removeWeakness(index: number) {
 }
 
 async function handleSubmit() {
-  if (!form.comment.trim()) {
+  const validation = reviewSchema.safeParse({
+    rating: form.rating,
+    comment: form.comment.trim(),
+    criteria_ratings: {
+      longevity: form.longevity_rating,
+      coverage: form.coverage_rating,
+      value: form.value_rating
+    },
+    strengths: form.strengths,
+    weaknesses: form.weaknesses
+  })
+
+  if (!validation.success) {
+    const errorMsg = validation.error.issues[0]?.message || 'لطفاً فرم را به درستی تکمیل فرمایید.'
     toast.add({
       title: 'خطای اعتبارسنجی',
-      description: 'لطفاً متن نظر خود را یادداشت فرمایید.',
+      description: errorMsg,
       color: 'error',
     })
     return
@@ -66,6 +86,11 @@ async function handleSubmit() {
       method: 'POST',
       body: {
         rating: form.rating,
+        criteria_ratings: {
+          longevity: form.longevity_rating,
+          coverage: form.coverage_rating,
+          value: form.value_rating
+        },
         longevity_rating: form.longevity_rating,
         coverage_rating: form.coverage_rating,
         value_rating: form.value_rating,
@@ -249,7 +274,7 @@ async function handleSubmit() {
               <span>+ {{ str }}</span>
               <button
                 type="button"
-                class="hover:text-rose-600 transition-colors"
+                class="hover:text-red-600 transition-colors"
                 @click="removeStrength(idx)"
               >
                 <UIcon
@@ -293,12 +318,12 @@ async function handleSubmit() {
             <span
               v-for="(wk, idx) in form.weaknesses"
               :key="idx"
-              class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200/60 dark:border-rose-800/40"
+              class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-300 border border-red-200/60 dark:border-red-800/40"
             >
               <span>- {{ wk }}</span>
               <button
                 type="button"
-                class="hover:text-rose-900 transition-colors"
+                class="hover:text-red-900 transition-colors"
                 @click="removeWeakness(idx)"
               >
                 <UIcon
@@ -313,7 +338,7 @@ async function handleSubmit() {
         <!-- 5. Comment Text Area -->
         <div class="space-y-2">
           <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300">
-            متن تجربه و دیدگاه شما <span class="text-rose-500">*</span>
+            متن تجربه و دیدگاه شما <span class="text-red-500">*</span>
           </label>
           <UTextarea
             v-model="form.comment"

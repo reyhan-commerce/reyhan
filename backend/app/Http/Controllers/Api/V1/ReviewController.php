@@ -48,15 +48,32 @@ class ReviewController extends Controller
 
         $validated = $request->validate([
             'rating' => ['required', 'integer', 'between:1,5'],
-            'longevity_rating' => ['required', 'integer', 'between:1,5'],
-            'coverage_rating' => ['required', 'integer', 'between:1,5'],
-            'value_rating' => ['required', 'integer', 'between:1,5'],
+            'criteria_ratings' => ['nullable', 'array'],
+            'criteria_ratings.*' => ['integer', 'between:1,5'],
+            'longevity_rating' => ['nullable', 'integer', 'between:1,5'],
+            'coverage_rating' => ['nullable', 'integer', 'between:1,5'],
+            'value_rating' => ['nullable', 'integer', 'between:1,5'],
             'comment' => ['required', 'string', 'min:3', 'max:2000'],
             'strengths' => ['nullable', 'array', 'max:5'],
             'strengths.*' => ['string', 'max:100'],
             'weaknesses' => ['nullable', 'array', 'max:5'],
             'weaknesses.*' => ['string', 'max:100'],
         ]);
+
+        $criteriaRatings = is_array($validated['criteria_ratings'] ?? null) ? $validated['criteria_ratings'] : [];
+        if ($criteriaRatings === []) {
+            $fallback = [];
+            if (isset($validated['longevity_rating'])) {
+                $fallback['longevity'] = (int) $validated['longevity_rating'];
+            }
+            if (isset($validated['coverage_rating'])) {
+                $fallback['coverage'] = (int) $validated['coverage_rating'];
+            }
+            if (isset($validated['value_rating'])) {
+                $fallback['value'] = (int) $validated['value_rating'];
+            }
+            $criteriaRatings = $fallback;
+        }
 
         // Check if user has purchased this product in a confirmed order
         $isVerifiedPurchase = OrderItem::where('product_id', $product->id)
@@ -77,14 +94,15 @@ class ReviewController extends Controller
             ],
             [
                 'rating' => $validated['rating'],
-                'longevity_rating' => $validated['longevity_rating'],
-                'coverage_rating' => $validated['coverage_rating'],
-                'value_rating' => $validated['value_rating'],
+                'criteria_ratings' => $criteriaRatings,
+                'longevity_rating' => $validated['longevity_rating'] ?? ($criteriaRatings['longevity'] ?? 5),
+                'coverage_rating' => $validated['coverage_rating'] ?? ($criteriaRatings['coverage'] ?? 5),
+                'value_rating' => $validated['value_rating'] ?? ($criteriaRatings['value'] ?? 5),
                 'comment' => $validated['comment'],
                 'strengths' => $validated['strengths'] ?? [],
                 'weaknesses' => $validated['weaknesses'] ?? [],
                 'is_verified_purchase' => $isVerifiedPurchase,
-                'status' => ReviewStatus::Approved,
+                'status' => ReviewStatus::Pending,
             ]
         );
 

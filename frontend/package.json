@@ -25,7 +25,9 @@
     "pinia": "^4.0.3",
     "pinia-plugin-persistedstate": "^4.7.1",
     "playwright-core": "^1.63.0",
-    "tailwindcss": "^4.3.3"
+    "reka-ui": "^2.10.5",
+    "tailwindcss": "^4.3.3",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.17.0",

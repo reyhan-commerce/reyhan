@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\ReviewStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -228,15 +229,36 @@ class Product extends Model implements HasMedia
                 'average_longevity' => 5.0,
                 'average_coverage' => 5.0,
                 'average_value' => 5.0,
+                'criteria_averages' => [],
                 'total_reviews' => 0,
             ];
         }
 
+        /** @var Collection<int, Review> $allReviews */
+        $allReviews = $approved->get();
+        $criteriaSums = [];
+        $criteriaCounts = [];
+
+        foreach ($allReviews as $rev) {
+            if (is_array($rev->criteria_ratings)) {
+                foreach ($rev->criteria_ratings as $criterion => $val) {
+                    $criteriaSums[$criterion] = ($criteriaSums[$criterion] ?? 0) + (float) $val;
+                    $criteriaCounts[$criterion] = ($criteriaCounts[$criterion] ?? 0) + 1;
+                }
+            }
+        }
+
+        $criteriaAverages = [];
+        foreach ($criteriaSums as $criterion => $sum) {
+            $criteriaAverages[$criterion] = round($sum / $criteriaCounts[$criterion], 1);
+        }
+
         return [
             'average_rating' => round((float) $approved->avg('rating'), 1),
-            'average_longevity' => round((float) $approved->avg('longevity_rating'), 1),
-            'average_coverage' => round((float) $approved->avg('coverage_rating'), 1),
-            'average_value' => round((float) $approved->avg('value_rating'), 1),
+            'average_longevity' => round((float) ($approved->avg('longevity_rating') ?: ($criteriaAverages['longevity'] ?? 5.0)), 1),
+            'average_coverage' => round((float) ($approved->avg('coverage_rating') ?: ($criteriaAverages['coverage'] ?? 5.0)), 1),
+            'average_value' => round((float) ($approved->avg('value_rating') ?: ($criteriaAverages['value'] ?? 5.0)), 1),
+            'criteria_averages' => $criteriaAverages,
             'total_reviews' => $count,
         ];
     }
