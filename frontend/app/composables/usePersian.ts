@@ -16,6 +16,19 @@ export function usePersian() {
   }
 
   /**
+   * Convert Persian or Arabic digits to standard ASCII English digits (0-9).
+   */
+  function toEnglishDigits(value: string | number | null | undefined): string {
+    if (value === null || value === undefined) return ''
+    let str = String(value)
+    for (let i = 0; i < 10; i++) {
+      str = str.replace(new RegExp(persianDigits[i]!, 'g'), String(i))
+      str = str.replace(new RegExp(arabicDigits[i]!, 'g'), String(i))
+    }
+    return str
+  }
+
+  /**
    * Format prices: Converts Rial to Toman (divides by 10) with thousands separator and Persian digits.
    * e.g. 8500000 Rial -> "۸۵۰٬۰۰۰ تومان"
    */
@@ -38,6 +51,7 @@ export function usePersian() {
 
   return {
     toPersianDigits,
+    toEnglishDigits,
     formatPrice,
     formatDiscount
   }

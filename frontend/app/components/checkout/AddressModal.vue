@@ -8,6 +8,7 @@ const emit = defineEmits<{
 
 const checkoutStore = useCheckoutStore()
 const toast = useToast()
+const { toEnglishDigits } = usePersian()
 
 const isOpen = defineModel<boolean>('open', { default: false })
 
@@ -24,6 +25,35 @@ const form = reactive({
 })
 
 const isSubmitting = ref(false)
+
+// Auto-normalize numeric fields (accepts Persian, Hindi/Arabic and English digits)
+watch(() => form.recipient_mobile, (val) => {
+  if (val) {
+    const converted = toEnglishDigits(val)
+    if (converted !== val) form.recipient_mobile = converted
+  }
+})
+
+watch(() => form.postal_code, (val) => {
+  if (val) {
+    const converted = toEnglishDigits(val)
+    if (converted !== val) form.postal_code = converted
+  }
+})
+
+watch(() => form.building_number, (val) => {
+  if (val) {
+    const converted = toEnglishDigits(val)
+    if (converted !== val) form.building_number = converted
+  }
+})
+
+watch(() => form.unit, (val) => {
+  if (val) {
+    const converted = toEnglishDigits(val)
+    if (converted !== val) form.unit = converted
+  }
+})
 
 // Fetch provinces when opening
 watch(isOpen, async (val) => {
@@ -63,11 +93,17 @@ async function handleSubmit() {
     toast.add({ title: 'خطا', description: 'نام گیرنده الزامی است.', color: 'error' })
     return
   }
-  if (!/^09\d{9}$/.test(form.recipient_mobile)) {
+
+  const normalizedMobile = toEnglishDigits(form.recipient_mobile).trim()
+  const normalizedPostal = toEnglishDigits(form.postal_code).trim()
+  const normalizedBuilding = toEnglishDigits(form.building_number).trim()
+  const normalizedUnit = toEnglishDigits(form.unit).trim()
+
+  if (!/^09\d{9}$/.test(normalizedMobile)) {
     toast.add({ title: 'خطا', description: 'شماره موبایل باید با ۰۹ شروع شده و ۱۱ رقم باشد.', color: 'error' })
     return
   }
-  if (!/^\d{10}$/.test(form.postal_code)) {
+  if (!/^\d{10}$/.test(normalizedPostal)) {
     toast.add({ title: 'خطا', description: 'کد پستی باید دقیقاً ۱۰ رقم باشد.', color: 'error' })
     return
   }
@@ -82,11 +118,11 @@ async function handleSubmit() {
       province_id: form.province_id,
       city_id: form.city_id,
       recipient_name: form.recipient_name.trim(),
-      recipient_mobile: form.recipient_mobile.trim(),
-      postal_code: form.postal_code.trim(),
+      recipient_mobile: normalizedMobile,
+      postal_code: normalizedPostal,
       address_line: form.address_line.trim(),
-      building_number: form.building_number.trim() || undefined,
-      unit: form.unit.trim() || undefined,
+      building_number: normalizedBuilding || undefined,
+      unit: normalizedUnit || undefined,
       is_default: form.is_default,
     })
 

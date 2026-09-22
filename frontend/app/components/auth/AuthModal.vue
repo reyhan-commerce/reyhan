@@ -1,12 +1,40 @@
 <script setup lang="ts">
+import { ConfigProvider } from 'reka-ui'
+import { otpRequestSchema, normalizeDigitsString } from '~/utils/schemas'
+
 const authStore = useAuthStore()
 const toast = useToast()
+const { toEnglishDigits } = usePersian()
 
 const step = ref<'mobile' | 'otp'>('mobile')
 const mobile = ref('')
 const captchaToken = ref('')
 const otpValues = ref<string[]>([])
 const otpCode = computed(() => otpValues.value.join(''))
+
+// Auto-normalize mobile input (accepts Persian, Hindi/Arabic and English digits)
+watch(mobile, (val) => {
+  if (val) {
+    const converted = toEnglishDigits(val)
+    if (converted !== val) {
+      mobile.value = converted
+    }
+  }
+})
+
+// Auto-normalize OTP digits when entered/pasted
+watch(otpValues, (val) => {
+  if (Array.isArray(val)) {
+    val.forEach((digit, i) => {
+      if (digit) {
+        const converted = toEnglishDigits(digit)
+        if (converted !== digit) {
+          otpValues.value[i] = converted
+        }
+      }
+    })
+  }
+}, { deep: true })
 
 // Countdown timer for OTP resend (120 seconds)
 const countdown = ref(120)
@@ -32,10 +60,19 @@ const startTimer = () => {
 }
 
 const handleRequestOtp = async () => {
-  if (!mobile.value || !/^09\d{9}$/.test(mobile.value)) {
+  const normalizedMobile = normalizeDigitsString(mobile.value)
+  mobile.value = normalizedMobile
+
+  const result = otpRequestSchema.safeParse({
+    mobile: normalizedMobile,
+    captcha: captchaToken.value
+  })
+
+  if (!result.success) {
+    const errorMsg = result.error.issues[0]?.message || 'اطلاعات وارد شده نامعتبر است.'
     toast.add({
       title: 'خطای اعتبارسنجی',
-      description: 'لطفاً شماره موبایل معتبر ۱۱ رقمی (شروع با ۰۹) وارد نمایید.',
+      description: errorMsg,
       color: 'warning',
       icon: 'i-lucide-alert-triangle'
     })
@@ -66,7 +103,7 @@ const handleRequestOtp = async () => {
 }
 
 const handleVerifyOtp = async () => {
-  const code = otpCode.value
+  const code = toEnglishDigits(otpCode.value)
   if (!code || code.length !== 6) {
     toast.add({
       title: 'خطا',
@@ -180,19 +217,24 @@ onUnmounted(() => {
             کد تایید ۶ رقمی
           </label>
           <div
-            class="flex justify-center w-full py-2"
+            class="flex justify-center w-full py-2 dir-ltr"
             dir="ltr"
           >
-            <UPinInput
-              v-model="otpValues"
-              :length="6"
-              :separator="3"
-              otp
-              size="xl"
-              placeholder="○"
-              autofocus
-              @complete="handleVerifyOtp"
-            />
+            <ConfigProvider dir="ltr">
+              <UPinInput
+                v-model="otpValues"
+                :length="6"
+                :separator="3"
+                otp
+                type="text"
+                size="xl"
+                placeholder="○"
+                autofocus
+                class="font-mono font-en dir-ltr"
+                :ui="{ root: 'flex-row dir-ltr', base: 'font-mono font-en text-center text-lg' }"
+                @complete="handleVerifyOtp"
+              />
+            </ConfigProvider>
           </div>
         </div>
 
