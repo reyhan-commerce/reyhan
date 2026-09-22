@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\V1;
 
-use App\Models\Page;
+use App\Models\BlogCategory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin Page
+ * @mixin BlogCategory
  */
-class PageResource extends JsonResource
+class BlogCategoryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -22,13 +22,11 @@ class PageResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
+            'name' => $this->name,
             'slug' => $this->slug,
-            'content' => $this->content,
-            'metadata' => $this->metadata,
-            'meta_title' => $this->meta_title,
-            'meta_description' => $this->meta_description,
-            'updated_at' => $this->updated_at?->toIso8601String(),
+            'description' => $this->description,
+            'order' => $this->order,
+            'posts_count' => $this->whenCounted('posts'),
         ];
     }
 }

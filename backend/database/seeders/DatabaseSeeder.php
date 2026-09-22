@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
             CatalogSeeder::class,
             IranGeoSeeder::class,
             PageSeeder::class,
+            FaqSeeder::class,
+            BlogSeeder::class,
         ]);
     }
 }

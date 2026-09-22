@@ -1,44 +1,80 @@
 <script setup lang="ts">
-const { toPersianDigits } = usePersian()
+import type { CmsPage } from '~/types/content'
+
+const api = useApi()
+const settingsStore = useSettingsStore()
+
+const storeName = computed(() => settingsStore.settings.store_name || 'ایزیشاپ')
+
+const { data: pageResponse } = await useAsyncData('about-us-page', () =>
+  api<ApiResponse<CmsPage>>('/pages/about-us').catch(() => null)
+)
+
+const page = computed(() => pageResponse.value?.data)
 
 useSeoMeta({
-  title: 'درباره ما - فروشگاه اینترنتی ایزیشاپ',
-  description: 'آشنایی با داستان، اهداف و ماموریت ایزیشاپ در ارائه تخصصی‌ترین محصولات مراقبت از پوست و زیبایی.',
+  title: () => page.value?.meta_title || `درباره ما - فروشگاه اینترنتی ${storeName.value}`,
+  description: () => page.value?.meta_description || `آشنایی با تاریخچه، ارزش‌ها و ماموریت ${storeName.value} در ارائه محصولات تخصصی و اصیل.`,
 })
 
-const features = [
-  {
-    title: 'تضمین اصالت ۱۰۰٪ کالاها',
-    desc: 'تمامی محصولات مستقیماً از نمایندگی‌های رسمی داخلی و خارجی تامین شده و دارای برچسب اصالت سلامت هستند.',
-    icon: 'i-lucide-shield-check',
-    color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/40',
-  },
-  {
-    title: 'ارسال سریع و مطمئن',
-    desc: 'بسته‌بندی ایمن و مقاوم در برابر ضربه با ارسال اکسپرس در تهران و پست پیشتاز سراسری به تمام نقاط ایران.',
-    icon: 'i-lucide-truck',
-    color: 'text-primary-500 bg-primary-50 dark:bg-primary-950/40',
-  },
-  {
-    title: 'مشاوره تخصصی و همراهی',
-    desc: 'تیم کارشناسان و داروسازان ایزیشاپ برای انتخاب دقیق‌ترین روتین پوستی مناسب نوع پوست شما در کنارتان هستند.',
-    icon: 'i-lucide-sparkles',
-    color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/40',
-  },
-  {
-    title: 'ضمانت بازگشت ۷ روزه',
-    desc: 'در صورت وجود هرگونه مغایرت یا آسیب‌دیدگی در هنگام تحویل، کالا بدون هیچ قید و شرطی بازگردانده می‌شود.',
-    icon: 'i-lucide-refresh-cw',
-    color: 'text-rose-500 bg-rose-50 dark:bg-rose-950/40',
-  },
-]
+const badgeText = computed(() =>
+  page.value?.metadata?.badge || `داستان و تعهد ما در ${storeName.value}`
+)
 
-const stats = [
-  { value: '+۱۵,۰۰۰', label: 'مشتری وفادار و خریدار راضی' },
-  { value: '+۸۰', label: 'برند معتبر آرایشی و درمانی' },
-  { value: '+۱,۵۰۰', label: 'تنوع محصولات اصیل و باکیفیت' },
-  { value: '۹۹.۴٪', label: 'رضایت خریداران از تحویل به موقع' },
-]
+const heroHeading = computed(() =>
+  page.value?.metadata?.heading || page.value?.title || 'تجربه‌ای نو از خرید آنلاین محصولات اصیل و باکیفیت'
+)
+
+const storyContent = computed(() =>
+  page.value?.content ||
+  `${storeName.value} با چشم‌انداز ایجاد تحولی معتبر در شیوه انتخاب و خرید آنلاین محصولات اصل و باکیفیت متولد شد. باور ما این است که سلامت و زیبایی، حق طبیعی هر مصرف‌کننده است و دسترسی به اطلاعات شفاف، قیمت‌گذاری عادلانه و محصولات دارای اصالت قطعی، تعهد بی‌قید و شرط ماست.`
+)
+
+const stats = computed(() => {
+  const customStats = page.value?.metadata?.stats
+  if (Array.isArray(customStats) && customStats.length > 0) {
+    return customStats
+  }
+  return [
+    { value: '+۱۵,۰۰۰', label: 'مشتری وفادار و خریدار راضی' },
+    { value: '+۸۰', label: 'برند معتبر و شناخته‌شده' },
+    { value: '+۱,۵۰۰', label: 'تنوع محصولات اصیل و باکیفیت' },
+    { value: '۹۹.۴٪', label: 'رضایت خریداران از تحویل به‌موقع' },
+  ]
+})
+
+const features = computed(() => {
+  const customFeatures = page.value?.metadata?.features
+  if (Array.isArray(customFeatures) && customFeatures.length > 0) {
+    return customFeatures
+  }
+  return [
+    {
+      title: 'تضمین اصالت ۱۰۰٪ کالاها',
+      desc: 'تمامی محصولات مستقیماً از نمایندگی‌های رسمی تامین شده و دارای برچسب اصالت سلامت هستند.',
+      icon: 'i-lucide-shield-check',
+      color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/40',
+    },
+    {
+      title: 'ارسال سریع و مطمئن',
+      desc: 'بسته‌بندی ایمن و مقاوم در برابر ضربه با تحویل اکسپرس و پست پیشتاز سراسری به تمام نقاط کشور.',
+      icon: 'i-lucide-truck',
+      color: 'text-primary-500 bg-primary-50 dark:bg-primary-950/40',
+    },
+    {
+      title: 'مشاوره تخصصی و همراهی',
+      desc: 'تیم کارشناسان مجرب برای انتخاب دقیق‌ترین محصولات متناسب با نیاز و سلیقه شما در کنارتان هستند.',
+      icon: 'i-lucide-sparkles',
+      color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/40',
+    },
+    {
+      title: 'ضمانت بازگشت ۷ روزه',
+      desc: 'در صورت وجود هرگونه مغایرت یا آسیب‌دیدگی در هنگام تحویل، کالا بدون هیچ قید و شرطی بازگردانده می‌شود.',
+      icon: 'i-lucide-refresh-cw',
+      color: 'text-primary-500 bg-primary-50 dark:bg-primary-950/40',
+    },
+  ]
+})
 </script>
 
 <template>
@@ -58,18 +94,18 @@ const stats = [
     <!-- Hero Banner -->
     <div class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-8 sm:p-14 shadow-xs relative overflow-hidden text-center flex flex-col items-center gap-6">
       <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <span class="px-4 py-1.5 rounded-full bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400 text-xs font-bold border border-primary-100 dark:border-primary-900/50">
-        داستان و تعهد ما در ایزیشاپ
+        {{ badgeText }}
       </span>
 
       <h1 class="text-2xl sm:text-4xl font-black text-neutral-900 dark:text-white leading-tight max-w-2xl">
-        تجربه‌ای نو از خرید آنلاین محصولات پوستی و آرایشی اصیل
+        {{ heroHeading }}
       </h1>
 
       <p class="text-sm sm:text-base text-neutral-600 dark:text-neutral-300 leading-loose max-w-3xl">
-        ایزیشاپ با چشم‌انداز ایجاد تحولی معتبر در شیوه انتخاب و خرید آنلاین لوازم آرایشی، بهداشتی و مراقبت از پوست متولد شد. باور ما این است که سلامت و شادابی پوست، پایه‌ای‌ترین بخش زیبایی طبیعی هر فرد است و دسترسی به اطلاعات شفاف، قیمت‌گذاری عادلانه و محصولات دارای اصالت قطعی، حق بی‌قید و شرط همه است.
+        {{ storyContent }}
       </p>
     </div>
 
@@ -93,7 +129,7 @@ const stats = [
     <div class="flex flex-col gap-6">
       <div class="text-center max-w-lg mx-auto">
         <h2 class="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white mb-2">
-          چرا خریداران به ایزیشاپ اعتماد دارند؟
+          چرا خریداران به {{ storeName }} اعتماد دارند؟
         </h2>
         <p class="text-xs sm:text-sm text-neutral-400">
           تعهدات چهارگانه ما برای خلق بالاترین سطح آرامش‌خاطر در سفارش‌های شما
@@ -108,10 +144,10 @@ const stats = [
         >
           <div
             class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-            :class="f.color"
+            :class="f.color || 'text-primary-500 bg-primary-50 dark:bg-primary-950/40'"
           >
             <UIcon
-              :name="f.icon"
+              :name="f.icon || 'i-lucide-check-circle'"
               class="w-6 h-6"
             />
           </div>

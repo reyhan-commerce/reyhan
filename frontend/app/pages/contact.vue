@@ -1,10 +1,19 @@
 <script setup lang="ts">
-useSeoMeta({
-  title: 'تماس با ما - پشتیبانی ایزیشاپ',
-  description: 'راه‌های ارتباطی، نشانی پستی دفتر مرکزی و فرم ارسال پیام به واحد پشتیبانی ایزیشاپ.',
-})
-
+const settingsStore = useSettingsStore()
 const toast = useToast()
+const api = useApi()
+const { toEnglishDigits } = usePersian()
+
+const storeName = computed(() => settingsStore.settings.store_name || 'ایزیشاپ')
+const phone = computed(() => settingsStore.settings.support_phone || '۰۲۱-۸۸۸۸۹۹۹۹')
+const address = computed(() => settingsStore.settings.address || 'تهران، خیابان ولیعصر')
+const email = computed(() => settingsStore.settings.support_email || 'support@easyshop.ir')
+const workHours = computed(() => settingsStore.settings.work_hours || 'شنبه تا چهارشنبه ۹ الی ۱۸ • پنج‌شنبه ۹ الی ۱۴')
+
+useSeoMeta({
+  title: () => `تماس با ما - پشتیبانی ${storeName.value}`,
+  description: 'راه‌های ارتباطی، نشانی پستی دفتر مرکزی و فرم ارسال پیام به واحد پشتیبانی.',
+})
 
 const form = reactive({
   name: '',
@@ -13,10 +22,19 @@ const form = reactive({
   message: '',
 })
 
+// Auto-normalize mobile input (accepts Persian, Hindi/Arabic and English digits)
+watch(() => form.mobile, (val) => {
+  if (val) {
+    const converted = toEnglishDigits(val)
+    if (converted !== val) form.mobile = converted
+  }
+})
+
 const isSubmitting = ref(false)
 
-const handleSubmit = () => {
-  if (!form.name || !form.mobile || !form.message) {
+const handleSubmit = async () => {
+  const normalizedMobile = toEnglishDigits(form.mobile).trim()
+  if (!form.name.trim() || !normalizedMobile || !form.message.trim()) {
     toast.add({
       title: 'خطای اعتبارسنجی',
       description: 'لطفاً نام، شماره تماس و متن پیام خود را وارد نمایید.',
@@ -26,40 +44,59 @@ const handleSubmit = () => {
   }
 
   isSubmitting.value = true
-  setTimeout(() => {
-    isSubmitting.value = false
+  try {
+    const res = await api<{ success: boolean; message?: string }>('/contact', {
+      method: 'POST',
+      body: {
+        name: form.name.trim(),
+        mobile: normalizedMobile,
+        subject: form.subject.trim() || null,
+        message: form.message.trim(),
+      },
+    })
+
     toast.add({
       title: 'پیام دریافت شد',
-      description: 'پیام شما با موفقیت ثبت گردید. کارشناسان پشتیبانی به زودی با شما تماس خواهند گرفت.',
+      description: res.message || 'پیام شما با موفقیت ثبت گردید. کارشناسان پشتیبانی به زودی با شما تماس خواهند گرفت.',
       color: 'success',
     })
+
     form.name = ''
     form.mobile = ''
     form.subject = ''
     form.message = ''
-  }, 600)
+  } catch (error: any) {
+    const msg = error?.data?.message || 'خطا در ثبت پیام. لطفاً اطلاعات ورودی را بررسی کرده و مجدداً تلاش فرمایید.'
+    toast.add({
+      title: 'خطا در ارسال پیام',
+      description: msg,
+      color: 'error',
+    })
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
-const contactInfo = [
+const contactCards = computed(() => [
   {
     title: 'تلفن تماس پشتیبانی',
-    value: '۰۲۱-۸۸۸۸۹۹۹۹',
-    sub: 'پاسخگویی در تمامی روزهای هفته از ۹ الی ۱۸',
+    value: phone.value,
+    sub: workHours.value,
     icon: 'i-lucide-phone-call',
   },
   {
     title: 'نشانی دفتر مرکزی',
-    value: 'تهران، خیابان ولیعصر، برج تجارت، طبقه ۵',
+    value: address.value,
     sub: 'مراجعه حضوری با هماهنگی قبلی',
     icon: 'i-lucide-map-pin',
   },
   {
     title: 'پست الکترونیک',
-    value: 'support@easyshop.test',
+    value: email.value,
     sub: 'پاسخگویی حداکثر ظرف ۴ ساعت کاری',
     icon: 'i-lucide-mail',
   },
-]
+])
 </script>
 
 <template>
@@ -79,7 +116,7 @@ const contactInfo = [
     <!-- Header Section -->
     <div class="text-center max-w-xl mx-auto flex flex-col gap-3">
       <h1 class="text-2xl sm:text-3xl font-black text-neutral-900 dark:text-white">
-        ارتباط با پشتیبانی ایزیشاپ
+        ارتباط با پشتیبانی {{ storeName }}
       </h1>
       <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
         سوال، پیشنهاد یا نیاز به راهنمایی در ثبت سفارش دارید؟ تیم پشتیبانی ما همیشه مشتاق شنیدن صدای گرم شماست.
@@ -89,7 +126,7 @@ const contactInfo = [
     <!-- Contact Info Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div
-        v-for="(c, idx) in contactInfo"
+        v-for="(c, idx) in contactCards"
         :key="idx"
         class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 shadow-xs flex flex-col gap-3 text-center items-center"
       >
@@ -100,8 +137,8 @@ const contactInfo = [
           />
         </div>
         <span class="text-xs font-bold text-neutral-400">{{ c.title }}</span>
-        <span class="text-sm font-black text-neutral-900 dark:text-white">{{ c.value }}</span>
-        <span class="text-[11px] text-neutral-400">{{ c.sub }}</span>
+        <span class="text-sm font-black text-neutral-900 dark:text-white [direction:ltr]">{{ c.value }}</span>
+        <span class="text-[11px] text-neutral-400 leading-relaxed">{{ c.sub }}</span>
       </div>
     </div>
 
@@ -123,7 +160,7 @@ const contactInfo = [
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-2">
-              نام و نام خانوادگی <span class="text-rose-500">*</span>
+              نام و نام خانوادگی <span class="text-red-500">*</span>
             </label>
             <UInput
               v-model="form.name"
@@ -135,7 +172,7 @@ const contactInfo = [
 
           <div>
             <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-2">
-              شماره تلفن همراه <span class="text-rose-500">*</span>
+              شماره تلفن همراه <span class="text-red-500">*</span>
             </label>
             <UInput
               v-model="form.mobile"
@@ -160,7 +197,7 @@ const contactInfo = [
 
         <div>
           <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-2">
-            متن پیام شما <span class="text-rose-500">*</span>
+            متن پیام شما <span class="text-red-500">*</span>
           </label>
           <UTextarea
             v-model="form.message"

@@ -8,24 +8,22 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Page extends Model
+class Faq extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'slug',
-        'content',
-        'metadata',
-        'meta_title',
-        'meta_description',
+        'question',
+        'answer',
+        'category',
+        'order',
         'is_active',
     ];
 
     protected function casts(): array
     {
         return [
-            'metadata' => 'array',
+            'order' => 'integer',
             'is_active' => 'boolean',
         ];
     }

@@ -7,25 +7,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Page extends Model
+class BlogCategory extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'title',
+        'name',
         'slug',
-        'content',
-        'metadata',
-        'meta_title',
-        'meta_description',
+        'description',
+        'order',
         'is_active',
     ];
 
     protected function casts(): array
     {
         return [
-            'metadata' => 'array',
+            'order' => 'integer',
             'is_active' => 'boolean',
         ];
     }
@@ -33,5 +32,10 @@ class Page extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(BlogPost::class, 'category_id');
     }
 }
