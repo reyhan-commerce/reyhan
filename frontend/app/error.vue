@@ -19,7 +19,7 @@ const handleError = () => {
     <div class="w-full max-w-lg bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-8 sm:p-12 text-center shadow-xl flex flex-col items-center gap-6 relative overflow-hidden">
       <!-- Decorative background blur -->
       <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <!-- Big Status Badge / Code -->
       <div class="flex flex-col items-center gap-2">

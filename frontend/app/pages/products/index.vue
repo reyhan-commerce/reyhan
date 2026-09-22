@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import FilterSidebar from '~/components/catalog/FilterSidebar.vue'
 import ProductCard from '~/components/catalog/ProductCard.vue'
+import ProductCardSkeleton from '~/components/skeletons/ProductCardSkeleton.vue'
 
 const route = useRoute()
 const catalogStore = useCatalogStore()
@@ -112,11 +113,39 @@ useSeoMeta({
             فیلترها
           </UButton>
         </div>
+
+        <!-- Refresh Action Button -->
+        <UButton
+          color="neutral"
+          variant="subtle"
+          icon="i-lucide-rotate-cw"
+          size="md"
+          :loading="catalogStore.loading"
+          class="shrink-0"
+          title="بروزرسانی کاتالوگ"
+          @click="catalogStore.fetchProducts()"
+        >
+          <span class="hidden sm:inline">بروزرسانی</span>
+        </UButton>
       </div>
     </div>
 
-    <!-- Layout Grid: Filter Sidebar + Products Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 pt-2">
+    <!-- Layout: Filters + Products Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+      <!-- Mobile Filter Slideover Drawer -->
+      <USlideover
+        v-model:open="isFilterDrawerOpen"
+        title="فیلترهای جستجو"
+        description="انتخاب برند، دسته‌بندی و محدوده قیمت"
+        class="lg:hidden"
+      >
+        <template #body>
+          <div class="p-4">
+            <FilterSidebar @applied="isFilterDrawerOpen = false" />
+          </div>
+        </template>
+      </USlideover>
+
       <!-- Desktop Sidebar -->
       <aside class="hidden lg:block lg:col-span-1">
         <div class="sticky top-20 p-5 rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs">
@@ -126,15 +155,14 @@ useSeoMeta({
 
       <!-- Main Products View -->
       <main class="lg:col-span-3 flex flex-col gap-6">
-        <!-- Loading State -->
+        <!-- Loading State: Universal Skeleton -->
         <div
           v-if="catalogStore.loading"
           class="grid grid-cols-2 sm:grid-cols-3 gap-4 min-h-80"
         >
-          <div
+          <ProductCardSkeleton
             v-for="i in 6"
             :key="i"
-            class="h-72 rounded-2xl bg-neutral-100 dark:bg-neutral-800/50 animate-pulse"
           />
         </div>
 

@@ -62,7 +62,7 @@ const discountPercent = computed(() => {
       <div class="absolute top-3 start-3 flex flex-col gap-1.5 items-start z-10 pointer-events-none">
         <span
           v-if="discountPercent"
-          class="px-2.5 py-1 rounded-xl bg-rose-500 text-white font-black text-xs shadow-md shadow-rose-500/30 tracking-tight"
+          class="px-2.5 py-1 rounded-xl bg-primary-500 text-white font-black text-xs shadow-md shadow-primary-500/30 tracking-tight"
         >
           {{ discountPercent }}
         </span>
@@ -84,8 +84,8 @@ const discountPercent = computed(() => {
         class="absolute top-3 end-3 z-20 w-8 h-8 rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border border-neutral-200/70 dark:border-neutral-700/70 flex items-center justify-center shadow-xs transition-all active:scale-90 hover:scale-110 cursor-pointer"
         :class="[
           wishlistStore.isInWishlist(product.id)
-            ? 'text-rose-500'
-            : 'text-neutral-400 hover:text-rose-500'
+            ? 'text-primary'
+            : 'text-neutral-400 hover:text-primary'
         ]"
         title="علاقه‌مندی‌ها"
         @click.prevent.stop="wishlistStore.toggleWishlist(product.id)"
@@ -93,7 +93,7 @@ const discountPercent = computed(() => {
         <UIcon
           name="i-lucide-heart"
           class="w-4 h-4 transition-transform"
-          :class="{ 'fill-rose-500 text-rose-500': wishlistStore.isInWishlist(product.id) }"
+          :class="{ 'fill-primary text-primary': wishlistStore.isInWishlist(product.id) }"
         />
       </button>
 
@@ -156,7 +156,7 @@ const discountPercent = computed(() => {
         <div class="flex flex-col">
           <span
             v-if="compareAtPrice"
-            class="text-xs text-neutral-400 line-through decoration-rose-500/50"
+            class="text-xs text-neutral-400 line-through decoration-primary/50"
           >
             {{ compareAtPrice }}
           </span>

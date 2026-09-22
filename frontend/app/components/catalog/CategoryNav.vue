@@ -15,10 +15,10 @@ const iconMap: Record<string, string> = {
 }
 
 const colorMap: Record<string, { bg: string, text: string }> = {
-  skincare: { bg: 'bg-rose-500/10 dark:bg-rose-500/20', text: 'text-rose-600 dark:text-rose-400' },
-  makeup: { bg: 'bg-pink-500/10 dark:bg-pink-500/20', text: 'text-pink-600 dark:text-pink-400' },
-  haircare: { bg: 'bg-purple-500/10 dark:bg-purple-500/20', text: 'text-purple-600 dark:text-purple-400' },
-  fragrance: { bg: 'bg-amber-500/10 dark:bg-amber-500/20', text: 'text-amber-600 dark:text-amber-400' }
+  skincare: { bg: 'bg-primary-500/10 dark:bg-primary-500/20', text: 'text-primary-600 dark:text-primary-400' },
+  makeup: { bg: 'bg-primary-500/10 dark:bg-primary-500/20', text: 'text-primary-600 dark:text-primary-400' },
+  haircare: { bg: 'bg-primary-500/10 dark:bg-primary-500/20', text: 'text-primary-600 dark:text-primary-400' },
+  fragrance: { bg: 'bg-primary-500/10 dark:bg-primary-500/20', text: 'text-primary-600 dark:text-primary-400' }
 }
 </script>
 

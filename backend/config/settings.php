@@ -1,6 +1,8 @@
 <?php
 
+use App\Settings\GeneralSettings;
 use App\Settings\SmsSettings;
+use App\Settings\ThemeSettings;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelSettings\SettingsCasts\DataCast;
 use Spatie\LaravelSettings\SettingsCasts\DateTimeInterfaceCast;
@@ -16,6 +18,8 @@ return [
      */
     'settings' => [
         SmsSettings::class,
+        GeneralSettings::class,
+        ThemeSettings::class,
     ],
 
     /*

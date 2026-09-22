@@ -7,6 +7,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -55,6 +56,15 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->sidebarCollapsibleOnDesktop()
+            ->navigationGroups([
+                NavigationGroup::make('فروشگاه و کاتالوگ')->collapsed(),
+                NavigationGroup::make('سفارشات و مالی')->collapsed(),
+                NavigationGroup::make('مشتریان و بازخورد')->collapsed(),
+                NavigationGroup::make('محتوا و اطلاع‌رسانی')->collapsed(),
+                NavigationGroup::make('تنظیمات سیستم')->collapsed(),
+                NavigationGroup::make('دسترسی و پرسنل')->collapsed(),
             ])
             ->plugins([
                 FilamentShieldPlugin::make()

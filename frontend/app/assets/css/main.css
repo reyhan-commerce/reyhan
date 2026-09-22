@@ -79,18 +79,6 @@
   --font-sans: 'Vazirmatn FD', 'Vazirmatn Variable', 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-en: 'Vazirmatn Variable', 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Luxury Rose Palette */
-  --color-rose-50: #FFF1F2;
-  --color-rose-100: #FFE4E6;
-  --color-rose-200: #FECDD3;
-  --color-rose-300: #FDA4AF;
-  --color-rose-400: #FB7185;
-  --color-rose-500: #F43F5E;
-  --color-rose-600: #E11D48;
-  --color-rose-700: #BE185D;
-  --color-rose-800: #9F1239;
-  --color-rose-900: #881337;
-  --color-rose-950: #4C0519;
 
   /* 8pt Design System Spacing Tokens */
   --space-xs: 0.25rem;  /* 4px */
