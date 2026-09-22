@@ -111,4 +111,66 @@ class User extends Authenticatable
     {
         return $this->hasMany(Review::class)->latest();
     }
+
+    public function loyaltyTransactions(): HasMany
+    {
+        return $this->hasMany(LoyaltyTransaction::class)->latest();
+    }
+
+    public function getLoyaltyPointsBalanceAttribute(): int
+    {
+        return (int) $this->loyaltyTransactions()->sum('points');
+    }
+
+    /**
+     * @return array{key: string, label: string, color: string, icon: string, min_points: int, next_points: ?int, discount_percent: int}
+     */
+    public function getLoyaltyTierAttribute(): array
+    {
+        $points = $this->loyalty_points_balance;
+
+        if ($points >= 1500) {
+            return [
+                'key' => 'gold',
+                'label' => 'طلایی (VIP)',
+                'color' => 'amber',
+                'icon' => 'i-lucide-crown',
+                'min_points' => 1500,
+                'next_points' => null,
+                'discount_percent' => 10,
+            ];
+        }
+
+        if ($points >= 500) {
+            return [
+                'key' => 'silver',
+                'label' => 'نقره‌ای',
+                'color' => 'slate',
+                'icon' => 'i-lucide-award',
+                'min_points' => 500,
+                'next_points' => 1500,
+                'discount_percent' => 5,
+            ];
+        }
+
+        return [
+            'key' => 'bronze',
+            'label' => 'برنزی',
+            'color' => 'orange',
+            'icon' => 'i-lucide-shield',
+            'min_points' => 0,
+            'next_points' => 500,
+            'discount_percent' => 0,
+        ];
+    }
+
+    public function awardLoyaltyPoints(int $points, string $type, string $description, ?string $referenceId = null): LoyaltyTransaction
+    {
+        return $this->loyaltyTransactions()->create([
+            'points' => $points,
+            'type' => $type,
+            'description' => $description,
+            'reference_id' => $referenceId,
+        ]);
+    }
 }
