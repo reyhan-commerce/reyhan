@@ -7,6 +7,7 @@ import { useWishlistStore } from '~/stores/wishlist'
 const route = useRoute()
 const api = useApi()
 const wishlistStore = useWishlistStore()
+const features = useFeatures()
 const { formatPrice } = usePersian()
 
 const slug = computed(() => decodeURIComponent(String(route.params.slug || '')))
@@ -170,8 +171,8 @@ onMounted(() => {
               class="size-10 rounded-2xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-700/80 flex items-center justify-center shadow-md transition-all active:scale-90 hover:scale-110 cursor-pointer"
               :class="[
                 wishlistStore.isInWishlist(product.id)
-                  ? 'text-rose-500'
-                  : 'text-neutral-400 hover:text-rose-500'
+                  ? 'text-primary'
+                  : 'text-neutral-400 hover:text-primary'
               ]"
               title="افزودن به علاقه‌مندی‌ها"
               @click="wishlistStore.toggleWishlist(product.id)"
@@ -179,7 +180,7 @@ onMounted(() => {
               <UIcon
                 name="i-lucide-heart"
                 class="w-5 h-5 transition-transform"
-                :class="{ 'fill-rose-500 text-rose-500': wishlistStore.isInWishlist(product.id) }"
+                :class="{ 'fill-primary text-primary': wishlistStore.isInWishlist(product.id) }"
               />
             </button>
           </div>
@@ -330,7 +331,10 @@ onMounted(() => {
     </div>
 
     <!-- Product Reviews & Ratings Section -->
-    <div class="mt-8 pt-8 border-t border-neutral-200 dark:border-neutral-800 flex flex-col gap-6">
+    <div
+      v-if="features.hasFeature('reviews')"
+      class="mt-8 pt-8 border-t border-neutral-200 dark:border-neutral-800 flex flex-col gap-6"
+    >
       <div class="flex items-center gap-2">
         <div class="w-1.5 h-6 rounded-full bg-primary" />
         <h2 class="text-xl font-black text-neutral-900 dark:text-white">

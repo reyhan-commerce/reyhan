@@ -10,12 +10,16 @@ const cartStore = useCartStore()
 const catalogStore = useCatalogStore()
 const settingsStore = useSettingsStore()
 const { toPersianDigits } = usePersian()
+const features = useFeatures()
 
-// Fetch public store settings and category tree in SSR
+// Fetch public store settings, features and category tree in SSR
 await Promise.all([
   useAsyncData('app-settings', () => settingsStore.fetchSettings()),
+  useAsyncData('app-features', () => features.fetchFeatures()),
   useAsyncData('app-category-tree', () => catalogStore.fetchCategoryTree())
 ])
+
+const { themeCssVariables } = useTheme()
 
 useHead({
   htmlAttrs: {
@@ -24,10 +28,13 @@ useHead({
   },
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5' },
-    { name: 'description', content: 'خرید آنلاین باکیفیت‌ترین محصولات آرایشی، مراقبت پوست و مو با تضمین اصالت کالا و ارسال سریع' }
+    { name: 'description', content: 'خرید آنلاین با بهترین قیمت، تضمین اصالت کالا و ارسال سریع' }
   ],
   link: [
     { rel: 'icon', href: settingsStore.settings.store_favicon || '/favicon.ico' }
+  ],
+  style: [
+    { innerHTML: () => themeCssVariables.value, id: 'app-dynamic-theme' }
   ]
 })
 
@@ -48,10 +55,66 @@ onMounted(() => {
     authStore.fetchUser()
   }
 })
+
+const userDropdownItems = computed(() => {
+  const profileItems = [
+    {
+      label: 'سفارش‌های من',
+      description: 'پیگیری و مشاهده فاکتورها',
+      icon: 'i-lucide-package',
+      to: '/profile/orders'
+    },
+    ...(features.hasFeature('loyalty') ? [{
+      label: 'باشگاه مشتریان (VIP)',
+      description: 'امتیازات و سطوح وفاداری',
+      icon: 'i-lucide-crown',
+      to: '/profile/club'
+    }] : []),
+    {
+      label: 'لیست علاقه‌مندی‌ها',
+      description: 'کالاهای برگزیده شما',
+      icon: 'i-lucide-heart',
+      to: '/profile/wishlist'
+    },
+    {
+      label: 'آدرس‌های تحویل',
+      description: 'مدیریت مقاصد ارسال سفارش',
+      icon: 'i-lucide-map-pin',
+      to: '/profile/addresses'
+    },
+    {
+      label: 'اطلاعات حساب کاربری',
+      description: 'ویرایش مشخصات و امنیت',
+      icon: 'i-lucide-user-cog',
+      to: '/profile/settings'
+    }
+  ]
+
+  return [
+    profileItems,
+    [
+      {
+        label: 'خروج از حساب',
+        icon: 'i-lucide-log-out',
+        color: 'error' as const,
+        onSelect: () => authStore.logout()
+      }
+    ]
+  ]
+})
 </script>
 
 <template>
   <UApp :locale="fa_ir">
+    <!-- Nuxt Progress Bar Indicator (Themed) -->
+    <NuxtLoadingIndicator
+      color="repeating-linear-gradient(to right, var(--color-primary-500, #0284c7) 0%, var(--color-primary-400, #38bdf8) 50%, var(--color-primary-600, #0369a1) 100%)"
+      :height="3"
+      :duration="2000"
+      :throttle="100"
+      error-color="#ef4444"
+    />
+
     <!-- Top Announcement Bar -->
     <div class="bg-neutral-900 text-neutral-100 dark:bg-neutral-950 dark:border-b dark:border-neutral-800 text-xs py-2 px-4 transition-colors">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
@@ -92,7 +155,7 @@ onMounted(() => {
             to="/"
             class="flex items-center gap-2.5 shrink-0 focus-visible:outline-none"
           >
-            <div class="size-10 rounded-2xl bg-gradient-to-tr from-primary to-rose-400 flex items-center justify-center text-white font-black text-xl shadow-md shadow-primary/25">
+            <div class="size-10 rounded-2xl bg-gradient-to-tr from-primary-600 to-primary-400 flex items-center justify-center text-white font-black text-xl shadow-md shadow-primary/25">
               {{ settingsStore.settings.store_name?.charAt(0) || 'E' }}
             </div>
             <div class="flex flex-col">
@@ -100,7 +163,7 @@ onMounted(() => {
                 {{ settingsStore.settings.store_name || 'ایزیشاپ' }}
               </span>
               <span class="text-[10px] text-neutral-400 font-medium hidden sm:block">
-                فروشگاه تخصصی زیبایی و سلامت
+                {{ settingsStore.settings.store_slogan || 'فروشگاه اینترنتی مدرن' }}
               </span>
             </div>
           </NuxtLink>
@@ -140,42 +203,7 @@ onMounted(() => {
             <!-- User Auth / Profile Button -->
             <template v-if="authStore.isAuthenticated">
               <UDropdownMenu
-                :items="[
-                  [
-                    {
-                      label: 'سفارش‌های من',
-                      description: 'پیگیری و مشاهده فاکتورها',
-                      icon: 'i-lucide-package',
-                      to: '/profile/orders'
-                    },
-                    {
-                      label: 'لیست علاقه‌مندی‌ها',
-                      description: 'کالاهای برگزیده شما',
-                      icon: 'i-lucide-heart',
-                      to: '/profile/wishlist'
-                    },
-                    {
-                      label: 'آدرس‌های تحویل',
-                      description: 'مدیریت مقاصد ارسال سفارش',
-                      icon: 'i-lucide-map-pin',
-                      to: '/profile/addresses'
-                    },
-                    {
-                      label: 'اطلاعات حساب کاربری',
-                      description: 'ویرایش مشخصات و امنیت',
-                      icon: 'i-lucide-user-cog',
-                      to: '/profile/settings'
-                    }
-                  ],
-                  [
-                    {
-                      label: 'خروج از حساب',
-                      icon: 'i-lucide-log-out',
-                      color: 'error',
-                      onSelect: () => authStore.logout()
-                    }
-                  ]
-                ]"
+                :items="userDropdownItems"
                 :content="{ align: 'start', sideOffset: 8 }"
                 :ui="{
                   content: 'w-64 p-2 rounded-2xl shadow-xl shadow-neutral-900/10 dark:shadow-neutral-950/40 border border-neutral-200/80 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md',
@@ -189,7 +217,7 @@ onMounted(() => {
                   type="button"
                   class="group flex items-center gap-2.5 min-h-10 px-3 py-1.5 rounded-xl bg-neutral-100/80 dark:bg-neutral-800/80 hover:bg-neutral-200/80 dark:hover:bg-neutral-700/80 transition-all border border-neutral-200/50 dark:border-neutral-700/50 hidden sm:flex cursor-pointer text-start"
                 >
-                  <div class="size-6.5 rounded-lg bg-gradient-to-tr from-primary-600 to-rose-500 text-white flex items-center justify-center text-[11px] font-black shadow-xs shadow-primary-500/20 shrink-0">
+                  <div class="size-6.5 rounded-lg bg-gradient-to-tr from-primary-600 to-primary-400 text-white flex items-center justify-center text-[11px] font-black shadow-xs shadow-primary-500/20 shrink-0">
                     {{ authStore.user?.first_name?.[0] || 'ک' }}
                   </div>
                   <span class="text-xs font-bold text-neutral-800 dark:text-neutral-200 max-w-[100px] truncate">
@@ -206,7 +234,7 @@ onMounted(() => {
                     to="/profile"
                     class="flex items-center gap-3 p-2.5 mb-1.5 rounded-xl bg-neutral-50 dark:bg-neutral-800/50 hover:bg-primary-50/70 dark:hover:bg-primary-950/40 border border-neutral-100 dark:border-neutral-800/80 transition-colors group cursor-pointer"
                   >
-                    <div class="size-9 rounded-xl bg-gradient-to-tr from-primary-600 to-rose-500 text-white flex items-center justify-center text-sm font-black shadow-sm shadow-primary-500/25 shrink-0">
+                    <div class="size-9 rounded-xl bg-gradient-to-tr from-primary-600 to-primary-400 text-white flex items-center justify-center text-sm font-black shadow-sm shadow-primary-500/25 shrink-0">
                       {{ authStore.user?.first_name?.[0] || 'ک' }}
                     </div>
                     <div class="flex flex-col min-w-0 flex-1">
@@ -254,7 +282,7 @@ onMounted(() => {
             <nav class="flex items-center gap-5 text-xs font-bold text-neutral-600 dark:text-neutral-300">
               <NuxtLink
                 to="/products?sort=featured"
-                class="flex items-center gap-1.5 hover:text-primary transition-colors text-rose-600 dark:text-rose-400"
+                class="flex items-center gap-1.5 hover:text-primary transition-colors text-primary-600 dark:text-primary-400"
               >
                 <UIcon
                   name="i-lucide-flame"
@@ -294,6 +322,18 @@ onMounted(() => {
                   class="size-4"
                 />
                 <span>نقشه دسته‌بندی‌ها</span>
+              </NuxtLink>
+
+              <NuxtLink
+                v-if="features.hasFeature('blog')"
+                to="/blog"
+                class="flex items-center gap-1.5 hover:text-primary transition-colors"
+              >
+                <UIcon
+                  name="i-lucide-book-open"
+                  class="size-4"
+                />
+                <span>مجله و مقالات</span>
               </NuxtLink>
             </nav>
           </div>

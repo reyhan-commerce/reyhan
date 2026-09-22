@@ -7,6 +7,8 @@ const storeSlogan = computed(() => settingsStore.settings.store_slogan || 'مر�
 const phone = computed(() => settingsStore.settings.support_phone || '۰۲۱-۸۸۸۸۹۹۹۹')
 const email = computed(() => settingsStore.settings.support_email || 'support@easyshop.ir')
 
+const appFeatures = useFeatures()
+
 const features = [
   { icon: 'i-lucide-truck', title: 'ارسال سریع و مطمئن', desc: 'تحویل اکسپرس در تهران و پست پیشتاز سراسری' },
   { icon: 'i-lucide-shield-check', title: 'تضمین اصالت کالا', desc: 'تمامی کالاها با برچسب اصالت و ضمانت رسمی' },
@@ -14,21 +16,23 @@ const features = [
   { icon: 'i-lucide-headphones', title: 'پشتیبانی تخصصی پوستی', desc: 'مشاوره رایگان زیبایی توسط کارشناسان' }
 ]
 
-const quickLinks = [
+const quickLinks = computed(() => [
   { label: 'درباره ما', to: '/about' },
   { label: 'تماس با ما', to: '/contact' },
+  ...(appFeatures.hasFeature('blog') ? [{ label: 'مجله و وبلاگ', to: '/blog' }] : []),
   { label: 'کاتالوگ همه محصولات', to: '/products' },
   { label: 'پیشنهادات شگفت‌انگیز', to: '/products?sort=featured' },
   { label: 'سبد خرید من', to: '/cart' }
-]
+])
 
-const customerServiceLinks = [
+const customerServiceLinks = computed(() => [
   { label: 'پرسش‌های متداول (FAQ)', to: '/faq' },
+  ...(appFeatures.hasFeature('loyalty') ? [{ label: 'باشگاه مشتریان (VIP)', to: '/profile/club' }] : []),
   { label: 'رویه‌های بازگرداندن کالا', to: '/terms' },
   { label: 'شرایط و قوانین استفاده', to: '/terms' },
   { label: 'سفارش‌ها و پیگیری مرسوله', to: '/profile/orders' },
   { label: 'لیست علاقه‌مندی‌ها', to: '/profile/wishlist' }
-]
+])
 </script>
 
 <template>
@@ -174,7 +178,9 @@ const customerServiceLinks = [
         <!-- Social Media Links -->
         <div class="flex items-center gap-2 pt-2">
           <a
-            href="#"
+            :href="settingsStore.settings.instagram_url || '#'"
+            target="_blank"
+            rel="noopener noreferrer"
             class="size-9 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-primary/10 hover:text-primary text-neutral-600 dark:text-neutral-300 flex items-center justify-center transition-colors"
             aria-label="اینستاگرام"
           >
@@ -184,7 +190,9 @@ const customerServiceLinks = [
             />
           </a>
           <a
-            href="#"
+            :href="settingsStore.settings.telegram_url || '#'"
+            target="_blank"
+            rel="noopener noreferrer"
             class="size-9 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-primary/10 hover:text-primary text-neutral-600 dark:text-neutral-300 flex items-center justify-center transition-colors"
             aria-label="تلگرام"
           >
@@ -194,7 +202,9 @@ const customerServiceLinks = [
             />
           </a>
           <a
-            href="#"
+            :href="settingsStore.settings.whatsapp_url || '#'"
+            target="_blank"
+            rel="noopener noreferrer"
             class="size-9 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-primary/10 hover:text-primary text-neutral-600 dark:text-neutral-300 flex items-center justify-center transition-colors"
             aria-label="پشتیبانی واتساپ"
           >

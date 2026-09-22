@@ -46,28 +46,43 @@ onMounted(() => {
   wishlistStore.fetchWishlistIds()
 })
 
-const navItems = [
-  {
-    label: 'سفارش‌های من',
-    to: '/profile/orders',
-    icon: 'i-lucide-package',
-  },
-  {
-    label: 'آدرس‌های من',
-    to: '/profile/addresses',
-    icon: 'i-lucide-map-pin',
-  },
-  {
-    label: 'لیست علاقه‌مندی‌ها',
-    to: '/profile/wishlist',
-    icon: 'i-lucide-heart',
-  },
-  {
+const features = useFeatures()
+
+const navItems = computed(() => {
+  const items = [
+    {
+      label: 'سفارش‌های من',
+      to: '/profile/orders',
+      icon: 'i-lucide-package',
+    },
+    {
+      label: 'آدرس‌های من',
+      to: '/profile/addresses',
+      icon: 'i-lucide-map-pin',
+    },
+    {
+      label: 'لیست علاقه‌مندی‌ها',
+      to: '/profile/wishlist',
+      icon: 'i-lucide-heart',
+    },
+  ]
+
+  if (features.hasFeature('loyalty')) {
+    items.push({
+      label: 'باشگاه مشتریان (VIP)',
+      to: '/profile/club',
+      icon: 'i-lucide-crown',
+    })
+  }
+
+  items.push({
     label: 'اطلاعات حساب',
     to: '/profile/settings',
     icon: 'i-lucide-user-cog',
-  },
-]
+  })
+
+  return items
+})
 
 const handleLogout = async () => {
   if (confirm('آیا از خروج از حساب کاربری خود اطمینان دارید؟')) {
@@ -101,7 +116,7 @@ const handleLogout = async () => {
         <!-- User Info -->
         <div class="flex items-center gap-4">
           <div
-            class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-primary-600 to-rose-500 text-white flex items-center justify-center text-2xl font-black shadow-lg shadow-primary-500/25 shrink-0"
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-primary-600 to-primary-400 text-white flex items-center justify-center text-2xl font-black shadow-lg shadow-primary-500/25 shrink-0"
           >
             {{ authStore.user?.first_name?.[0] || 'ک' }}
           </div>
@@ -137,9 +152,9 @@ const handleLogout = async () => {
 
           <NuxtLink
             to="/profile/wishlist"
-            class="flex flex-col items-center justify-center p-3 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors group text-center"
+            class="flex flex-col items-center justify-center p-3 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-colors group text-center"
           >
-            <span class="text-lg sm:text-xl font-black text-neutral-900 dark:text-neutral-100 group-hover:text-rose-600 transition-colors">
+            <span class="text-lg sm:text-xl font-black text-neutral-900 dark:text-neutral-100 group-hover:text-primary-600 transition-colors">
               {{ toPersianDigits(stats.wishlist) }}
             </span>
             <span class="text-xs text-neutral-500 dark:text-neutral-400">علاقه‌مندی‌ها</span>
@@ -186,7 +201,7 @@ const handleLogout = async () => {
           <!-- Logout Button -->
           <button
             type="button"
-            class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors w-full text-right cursor-pointer"
+            class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors w-full text-right cursor-pointer"
             @click="handleLogout"
           >
             <UIcon

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\AddressController;
+use App\Http\Controllers\Api\V1\AppFeaturesController;
 use App\Http\Controllers\Api\V1\AppSettingController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CaptchaController;
@@ -13,7 +14,11 @@ use App\Http\Controllers\Api\V1\CartSyncController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CategoryTreeController;
 use App\Http\Controllers\Api\V1\CheckoutController;
+use App\Http\Controllers\Api\V1\BlogController;
+use App\Http\Controllers\Api\V1\ContactMessageController;
+use App\Http\Controllers\Api\V1\FaqController;
 use App\Http\Controllers\Api\V1\GeoController;
+use App\Http\Controllers\Api\V1\LoyaltyController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\PageController;
 use App\Http\Controllers\Api\V1\PaymentController;
@@ -33,8 +38,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Public Store Settings
+// Public Store Settings & Features
 Route::get('/app/settings', [AppSettingController::class, 'index'])->name('app.settings');
+Route::get('/app/theme', [AppSettingController::class, 'theme'])->name('app.theme');
+Route::get('/app/features', [AppFeaturesController::class, 'index'])->name('app.features');
 
 // Captcha
 Route::get('/captcha/generate', [CaptchaController::class, 'generate'])->name('captcha.generate');
@@ -53,6 +60,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 });
 
 // Product Catalog & Category Taxonomy
+Route::get('/search/suggestions', [\App\Http\Controllers\Api\V1\SearchSuggestionController::class, 'index'])->name('search.suggestions');
 Route::get('/categories/tree', CategoryTreeController::class)->name('categories.tree');
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
@@ -111,7 +119,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Submit Product Review
     Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
+    // Customer Loyalty Club (VIP)
+    Route::prefix('loyalty')->name('loyalty.')->group(function () {
+        Route::get('/summary', [LoyaltyController::class, 'summary'])->name('summary');
+        Route::get('/transactions', [LoyaltyController::class, 'transactions'])->name('transactions');
+        Route::post('/redeem', [LoyaltyController::class, 'redeem'])->name('redeem');
+    });
 });
+
+// Customer Loyalty Club Tiers (Public)
+Route::get('/loyalty/tiers', [LoyaltyController::class, 'tiers'])->name('loyalty.tiers');
 
 // Product Reviews (Public List)
 Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
@@ -119,3 +137,17 @@ Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->n
 // Static CMS Pages & Dynamic Sitemap
 Route::get('/pages/{slug}', [PageController::class, 'show'])->name('pages.show');
 Route::get('/sitemap/urls', [PageController::class, 'sitemap'])->name('sitemap.urls');
+
+// Frequently Asked Questions (FAQ)
+Route::get('/faqs', [FaqController::class, 'index'])->name('faqs.index');
+
+// Customer Contact Inquiries
+Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
+
+// Blog & Magazine
+Route::prefix('blog')->name('blog.')->group(function () {
+    Route::get('/categories', [BlogController::class, 'categories'])->name('categories');
+    Route::get('/featured', [BlogController::class, 'featured'])->name('featured');
+    Route::get('/posts', [BlogController::class, 'index'])->name('posts.index');
+    Route::get('/posts/{slug}', [BlogController::class, 'show'])->name('posts.show');
+});

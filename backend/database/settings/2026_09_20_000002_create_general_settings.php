@@ -19,6 +19,11 @@ return new class extends SettingsMigration
         $this->migrator->add('general.maintenance_message', null);
         $this->migrator->add('general.instagram_url', 'https://instagram.com/easyshop');
         $this->migrator->add('general.telegram_url', 'https://t.me/easyshop');
+        $this->migrator->add('general.work_hours', 'شنبه تا چهارشنبه ۹ الی ۱۸ • پنج‌شنبه ۹ الی ۱۴');
+        $this->migrator->add('general.whatsapp_url', null);
+        $this->migrator->add('general.loyalty_rate_amount_per_point', 10000);
+        $this->migrator->add('general.loyalty_point_redemption_value', 500);
+        $this->migrator->add('general.loyalty_signup_bonus', 50);
         $this->migrator->add('general.enamad_code', null);
     }
 };

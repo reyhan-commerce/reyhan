@@ -1,5 +1,19 @@
 import { defineStore } from 'pinia'
 
+export interface ThemeTokens {
+  primary_color: string
+  secondary_color: string
+  border_radius: string
+  spacing_scale: string
+  shadow_scale: string
+  blur_scale: string
+  font_family: string
+  font_scale: string
+  logo_light: string | null
+  logo_dark: string | null
+  favicon: string | null
+}
+
 export interface StoreSettings {
   store_name: string
   store_slogan: string | null
@@ -9,12 +23,15 @@ export interface StoreSettings {
   support_email: string | null
   address: string | null
   postal_code: string | null
+  work_hours: string | null
   free_shipping_threshold: number
   is_store_open: boolean
   maintenance_message: string | null
   instagram_url: string | null
   telegram_url: string | null
+  whatsapp_url: string | null
   enamad_code: string | null
+  theme?: ThemeTokens
 }
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -29,12 +46,27 @@ export const useSettingsStore = defineStore('settings', () => {
     support_email: 'support@easyshop.local',
     address: 'تهران، خیابان ولیعصر',
     postal_code: '1999999999',
+    work_hours: 'شنبه تا چهارشنبه ۹ الی ۱۸ • پنج‌شنبه ۹ الی ۱۴',
     free_shipping_threshold: 500000,
     is_store_open: true,
     maintenance_message: null,
     instagram_url: 'https://instagram.com/easyshop',
     telegram_url: 'https://t.me/easyshop',
-    enamad_code: null
+    whatsapp_url: null,
+    enamad_code: null,
+    theme: {
+      primary_color: '#e11d48',
+      secondary_color: '#0284c7',
+      border_radius: '0.25rem',
+      spacing_scale: 'normal',
+      shadow_scale: 'md',
+      blur_scale: 'md',
+      font_family: 'Vazirmatn',
+      font_scale: '1rem',
+      logo_light: null,
+      logo_dark: null,
+      favicon: null
+    }
   })
 
   const isLoading = ref(false)

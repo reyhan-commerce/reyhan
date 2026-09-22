@@ -24,11 +24,21 @@ class GeneralSettings extends Settings
 
     public ?string $postal_code;
 
+    public ?string $work_hours;
+
+    public ?string $whatsapp_url;
+
     public int $free_shipping_threshold;
 
     public bool $is_store_open;
 
     public ?string $maintenance_message;
+
+    public int $loyalty_rate_amount_per_point;
+
+    public int $loyalty_point_redemption_value;
+
+    public int $loyalty_signup_bonus;
 
     public ?string $instagram_url;
 

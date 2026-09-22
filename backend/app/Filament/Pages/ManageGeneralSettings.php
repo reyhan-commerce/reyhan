@@ -82,6 +82,11 @@ class ManageGeneralSettings extends SettingsPage
                                     ->label('کد پستی انبار مرکزی')
                                     ->maxLength(20),
 
+                                TextInput::make('work_hours')
+                                    ->label('ساعات کاری و پاسخگویی')
+                                    ->placeholder('شنبه تا چهارشنبه ۹ الی ۱۸ • پنج‌شنبه ۹ الی ۱۴')
+                                    ->maxLength(255),
+
                                 Textarea::make('address')
                                     ->label('آدرس فیزیکی دفتر یا انبار')
                                     ->rows(3)
@@ -124,10 +129,41 @@ class ManageGeneralSettings extends SettingsPage
                                     ->url()
                                     ->placeholder('https://t.me/easyshop'),
 
+                                TextInput::make('whatsapp_url')
+                                    ->label('لینک یا شماره واتساپ')
+                                    ->url()
+                                    ->placeholder('https://wa.me/989123456789'),
+
                                 Textarea::make('enamad_code')
                                     ->label('کد اسکریپت یا لوگوی اینماد (Enamad)')
                                     ->rows(3)
                                     ->columnSpanFull(),
+                            ]),
+
+                        Tab::make('باشگاه مشتریان و امتیازات')
+                            ->icon(Heroicon::OutlinedSparkles)
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('loyalty_signup_bonus')
+                                    ->label('امتیاز هدیه عضویت اولیه مشتری')
+                                    ->numeric()
+                                    ->required()
+                                    ->suffix('امتیاز')
+                                    ->helperText('هنگام ثبت‌نام به حساب مشتری واریز می‌شود'),
+
+                                TextInput::make('loyalty_rate_amount_per_point')
+                                    ->label('مبلغ خرید به ازای هر ۱ امتیاز پاداش')
+                                    ->numeric()
+                                    ->required()
+                                    ->suffix('تومان')
+                                    ->helperText('مثال: هر ۱۰,۰۰۰ تومان خرید موفق = ۱ امتیاز پاداش'),
+
+                                TextInput::make('loyalty_point_redemption_value')
+                                    ->label('ارزش هر امتیاز در تبدیل به تخفیف')
+                                    ->numeric()
+                                    ->required()
+                                    ->suffix('تومان')
+                                    ->helperText('مثال: هر ۱ امتیاز = ۵۰۰ تومان تخفیف در خرید بعدی'),
                             ]),
                     ])
                     ->columnSpanFull(),
