@@ -231,14 +231,14 @@ onMounted(async () => {
       <!-- 3. FAILURE / CANCEL STATE -->
       <div
         v-else
-        class="bg-white dark:bg-neutral-900 border border-rose-500/30 dark:border-rose-500/20 rounded-3xl p-6 sm:p-10 shadow-2xl shadow-rose-500/5 relative overflow-hidden"
+        class="bg-white dark:bg-neutral-900 border border-red-500/30 dark:border-red-500/20 rounded-3xl p-6 sm:p-10 shadow-2xl shadow-red-500/5 relative overflow-hidden"
       >
         <!-- Background decorative blur -->
-        <div class="absolute -top-24 -right-24 w-48 h-48 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-red-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div class="relative z-10 flex flex-col items-center text-center">
           <!-- Icon Badge -->
-          <div class="w-20 h-20 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-5 ring-8 ring-rose-500/10 shadow-lg shadow-rose-500/20">
+          <div class="w-20 h-20 rounded-full bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 flex items-center justify-center mb-5 ring-8 ring-red-500/10 shadow-lg shadow-red-500/20">
             <UIcon
               name="i-lucide-alert-triangle"
               class="w-11 h-11"

@@ -269,7 +269,7 @@ const copyToClipboard = async (text: string, key: string) => {
             </div>
             <div
               v-if="order.discount_amount || order.coupon_discount"
-              class="flex justify-between text-rose-500"
+              class="flex justify-between text-primary font-medium"
             >
               <span>مجموع تخفیف‌ها:</span>
               <span>{{ formatPrice((order.discount_amount || 0) + (order.coupon_discount || 0)) }}</span>

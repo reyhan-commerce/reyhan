@@ -314,7 +314,7 @@ async function handlePay() {
 
                 <button
                   type="button"
-                  class="text-rose-500 hover:underline text-xs"
+                  class="text-red-500 hover:underline text-xs"
                   @click.stop="checkoutStore.deleteAddress(addr.id)"
                 >
                   حذف آدرس
@@ -595,7 +595,7 @@ async function handlePay() {
 
             <div
               v-if="(checkoutStore.previewPricing?.catalog_discount || cartStore.pricing?.catalog_discount || 0) > 0"
-              class="flex justify-between items-center text-rose-500 font-bold"
+              class="flex justify-between items-center text-primary font-bold"
             >
               <span>تخفیف کالاها:</span>
               <span>

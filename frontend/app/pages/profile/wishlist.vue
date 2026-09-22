@@ -48,7 +48,7 @@ const handleAddToCart = async (product: any) => {
       v-else-if="wishlistStore.items.length === 0"
       class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-12 text-center shadow-xs flex flex-col items-center justify-center gap-4"
     >
-      <div class="w-16 h-16 rounded-full bg-rose-50 dark:bg-rose-950/30 text-rose-500 flex items-center justify-center">
+      <div class="w-16 h-16 rounded-full bg-primary-50 dark:bg-primary-950/30 text-primary flex items-center justify-center">
         <UIcon
           name="i-lucide-heart-off"
           class="w-8 h-8"
@@ -86,7 +86,7 @@ const handleAddToCart = async (product: any) => {
         <!-- Remove from wishlist button -->
         <button
           type="button"
-          class="absolute top-3 left-3 z-10 w-8 h-8 rounded-full bg-white/90 dark:bg-neutral-800/90 text-neutral-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors flex items-center justify-center shadow-xs cursor-pointer"
+          class="absolute top-3 left-3 z-10 w-8 h-8 rounded-full bg-white/90 dark:bg-neutral-800/90 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors flex items-center justify-center shadow-xs cursor-pointer"
           title="حذف از لیست علاقه‌مندی‌ها"
           @click="wishlistStore.toggleWishlist(item.product.id)"
         >
