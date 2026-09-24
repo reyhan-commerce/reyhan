@@ -10,10 +10,15 @@
 | :--- | :--- | :--- | :--- |
 | **Filament Shield** | `bezhansalleh/filament-shield` | مدیریت نقش‌ها، دسترسی‌ها و گیت‌های امنیتی ادمین‌ها | فعال ✅ |
 | **Spatie Laravel Backup** | `shuvroroy/filament-spatie-laravel-backup` | پشتیبان‌گیری خودکار/دستی دیتابیس PostgreSQL و فایل‌ها بر بستر صف Redis | فعال ✅ |
+| **Spatie Laravel Health** | `shuvroroy/filament-spatie-laravel-health` | پایش سلامت دیتابیس PostgreSQL، ردیس، دیسک ذخیره‌سازی، کش و محیط اجرایی | فعال ✅ |
 | **Filament Tree Table** | `alareqi/filament-tree` | ساختار جدول درختی یکپارچه با پشتیبانی از Reordering کشیدن و رها کردن و فیلد TreeSelect | فعال ✅ |
+| **Column Filters** | `zvizvi/filament-column-filters` | فیلترهای اکسلی روی سرستون‌های جدول (جستجو، انتخابی، بازه عددی و تاریخی) | فعال ✅ |
+| **Notifications Tabs** | `zvizvi/filament-notifications-tabs` | تب‌بندی اعلان‌ها («همه» و «خوانده‌نشده») و مدیریت تکی اعلان‌های بلادرنگ Reverb | فعال ✅ |
+| **Rankbeam SEO** | `rankbeam/laravel-seo-filament` | موتور پیشرفته سئو با پیش‌نمایش زنده در گوگل/سوشال و تولید متادیتای هماهنگ با Nuxt SEO | فعال ✅ |
 | **Realtime Driver** | `marcusvbda/filament-realtime-driver` | ارتباط وب‌سوکت بلادرنگ با Laravel Reverb برای به‌روزرسانی زنده سفارشات، ویجت‌ها و نوتیفیکیشن‌ها | فعال ✅ |
 | **Spatie Settings Plugin** | `filament/spatie-laravel-settings-plugin` | مدیریت تنظیمات سراسری، پیامک، درگاه‌ها و هویت بصری فروشگاه | فعال ✅ |
 | **Media Library Plugin** | `filament/spatie-laravel-media-library-plugin` | بارگذاری و مدیریت تصاویر و رسانه‌های محصولات و مقالات | فعال ✅ |
+| **Activity Timeline & Audit Log** | `bokshorn-it/filament-activity-timeline` | تایم‌لاین کشویی رویدادها، آودیت لاگ تغییرات رکوردها و یکپارچگی با Spatie Activitylog | فعال ✅ |
 
 ---
 

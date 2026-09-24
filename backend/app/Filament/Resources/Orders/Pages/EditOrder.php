@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Orders\Pages;
 
 use App\Filament\Resources\Orders\OrderResource;
+use BokshornIt\FilamentActivityTimeline\Actions\ActivityTimelineAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
@@ -18,6 +19,10 @@ class EditOrder extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ActivityTimelineAction::make()
+                ->withRelations(['items', 'payments'])
+                ->icon('heroicon-o-clock')
+                ->limit(30),
             ViewAction::make(),
             DeleteAction::make(),
             ForceDeleteAction::make(),

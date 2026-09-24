@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\StockStatus;
+use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\ProductVariantFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +16,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property int $id
@@ -35,12 +38,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read StockStatus $stock_status
  * @property-read int $discount_percent
  */
-class ProductVariant extends Model
+class ProductVariant extends Model implements ProvidesActivityTitle
 {
     /** @use HasFactory<ProductVariantFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     protected $guarded = ['id'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()
+            ->logExcept(['created_at', 'updated_at'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
+
+    public function activityTitle(): ?string
+    {
+        return $this->title ?: $this->sku;
+    }
 
     /**
      * @return array<string, string>

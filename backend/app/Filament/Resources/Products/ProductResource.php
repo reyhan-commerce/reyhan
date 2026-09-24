@@ -40,10 +40,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use Morilog\Jalali\Jalalian;
+use Rankbeam\Seo\Filament\Concerns\HasSEOFields;
 use UnitEnum;
+use Zvizvi\FilamentColumnFilters\Filters\ColumnFilter;
 
 class ProductResource extends Resource
 {
+    use HasSEOFields;
+
     protected static ?string $model = Product::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingBag;
@@ -107,19 +111,11 @@ class ProductResource extends Resource
                                             ->helperText('می‌توانید تا ۸ تصویر اضافه کنید. اولین تصویر به عنوان کاور اصلی استفاده خواهد شد.'),
                                     ]),
 
-                                Section::make('سئو و بهینه‌سازی موتورهای جستجو (SEO)')
-                                    ->description('اطلاعات متادیتا جهت ارتقای رتبه و پیش‌نمایش در گوگل')
+                                static::seoSection()
+                                    ->heading('سئو و بهینه‌سازی موتورهای جستجو (SEO)')
+                                    ->description('پیش‌نمایش زنده در گوگل و شبکه‌های اجتماعی، تگ‌های متا و تنظیمات سئو')
                                     ->collapsible()
-                                    ->collapsed()
-                                    ->schema([
-                                        TextInput::make('meta_title')
-                                            ->label('عنوان متا (Meta Title)')
-                                            ->maxLength(255),
-
-                                        Textarea::make('meta_description')
-                                            ->label('توضیحات متا (Meta Description)')
-                                            ->rows(3),
-                                    ]),
+                                    ->collapsed(),
                             ]),
 
                         // Sidebar Canvas (1 Col on Desktop)
@@ -196,6 +192,7 @@ class ProductResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
+                    ->columnFilter(ColumnFilter::search())
                     ->description(fn (Product $record): string => 'اسلاگ: '.$record->slug)
                     ->wrap(),
 
@@ -203,13 +200,15 @@ class ProductResource extends Resource
                     ->label('دسته‌بندی')
                     ->badge()
                     ->color('info')
-                    ->searchable(),
+                    ->searchable()
+                    ->columnFilter(ColumnFilter::select()),
 
                 TextColumn::make('brand.name')
                     ->label('برند')
                     ->badge()
                     ->color('gray')
-                    ->searchable(),
+                    ->searchable()
+                    ->columnFilter(ColumnFilter::select()),
 
                 TextColumn::make('price_range')
                     ->label('محدوده قیمت (تومان)')

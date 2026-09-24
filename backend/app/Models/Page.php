@@ -8,6 +8,7 @@ use Database\Factories\PageFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Rankbeam\Seo\Traits\HasSEO;
 
 /**
  * @property int $id
@@ -20,7 +21,7 @@ use Illuminate\Database\Eloquent\Model;
 class Page extends Model
 {
     /** @use HasFactory<PageFactory> */
-    use HasFactory;
+    use HasFactory, HasSEO;
 
     protected $guarded = ['id'];
 

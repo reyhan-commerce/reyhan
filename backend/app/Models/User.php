@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -15,6 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property int $id
@@ -30,12 +33,26 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read array{key: string, label: string, color: string, icon: string, min_points: int, next_points: ?int, discount_percent: int} $loyalty_tier
  * @property-read string $full_name
  */
-class User extends Authenticatable
+class User extends Authenticatable implements ProvidesActivityTitle
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, LogsActivity, Notifiable, SoftDeletes;
 
     protected $guarded = ['id'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()
+            ->logExcept(['created_at', 'updated_at', 'remember_token'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
+
+    public function activityTitle(): ?string
+    {
+        return $this->full_name ?: $this->mobile;
+    }
 
     /**
      * The attributes that should be hidden for serialization.

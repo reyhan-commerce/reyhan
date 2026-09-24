@@ -8,11 +8,20 @@ use App\Features\ShopFeature;
 use App\Http\Controllers\Api\V1\AppSettingController;
 use App\Models\Admin;
 use App\Services\Sms\SmsManager;
+use BokshornIt\FilamentActivityTimeline\Policies\ActivityPolicy;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pennant\Feature;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Checks\Checks\DebugModeCheck;
+use Spatie\Health\Checks\Checks\EnvironmentCheck;
+use Spatie\Health\Checks\Checks\OptimizedAppCheck;
+use Spatie\Health\Checks\Checks\RedisCheck;
+use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
+use Spatie\Health\Facades\Health;
 use Spatie\LaravelSettings\Events\SettingsSaved;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 
@@ -31,6 +40,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::policy(Activity::class, ActivityPolicy::class);
+
         // Grant all permissions unconditionally to super admins
         Gate::before(function ($user, string $ability): ?bool {
             if ($user instanceof Admin && ($user->hasRole('super_admin') || $user->hasRole('SuperAdmin'))) {
@@ -40,8 +51,8 @@ class AppServiceProvider extends ServiceProvider
             return null;
         });
 
-        // Backup management abilities
-        foreach (['view-backups', 'create-backup', 'download-backup', 'delete-backup'] as $ability) {
+        // Backup and health monitoring management abilities
+        foreach (['view-backups', 'create-backup', 'download-backup', 'delete-backup', 'view-health'] as $ability) {
             Gate::define($ability, function ($user) use ($ability): bool {
                 if (! $user instanceof Admin) {
                     return false;
@@ -54,6 +65,16 @@ class AppServiceProvider extends ServiceProvider
                 }
             });
         }
+
+        // Register system health checks
+        Health::checks([
+            DatabaseCheck::new(),
+            RedisCheck::new(),
+            UsedDiskSpaceCheck::new(),
+            DebugModeCheck::new(),
+            EnvironmentCheck::new(),
+            OptimizedAppCheck::new(),
+        ]);
 
         // Invalidate public settings cache and refresh dynamic driver state on settings save
         Event::listen(SettingsSaved::class, function (SettingsSaved $event) {

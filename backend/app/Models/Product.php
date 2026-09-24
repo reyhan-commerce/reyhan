@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ReviewStatus;
+use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +16,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Rankbeam\Seo\Traits\HasSEO;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Sluggable\HasSlug;
@@ -41,12 +45,26 @@ use Spatie\Sluggable\SlugOptions;
  * @property-read Collection<int, Wishlist> $wishlists
  * @property-read array{min: int|null, max: int|null} $price_range
  */
-class Product extends Model implements HasMedia
+class Product extends Model implements HasMedia, ProvidesActivityTitle
 {
     /** @use HasFactory<ProductFactory> */
-    use HasFactory, HasSlug, InteractsWithMedia, SoftDeletes;
+    use HasFactory, HasSEO, HasSlug, InteractsWithMedia, LogsActivity, SoftDeletes;
 
     protected $guarded = ['id'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()
+            ->logExcept(['created_at', 'updated_at'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
+
+    public function activityTitle(): ?string
+    {
+        return $this->name;
+    }
 
     /**
      * @return array<string, string>

@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\OrderStatus;
 use App\Enums\ShippingMethod;
+use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Marcusvbda\FilamentRealtimeDriver\RealtimeEvent;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property int $id
@@ -43,12 +46,26 @@ use Marcusvbda\FilamentRealtimeDriver\RealtimeEvent;
  * @property-read Collection<int, Payment> $payments
  * @property-read Payment|null $successfulPayment
  */
-class Order extends Model
+class Order extends Model implements ProvidesActivityTitle
 {
     /** @use HasFactory<OrderFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     protected $guarded = ['id'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()
+            ->logExcept(['created_at', 'updated_at'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
+
+    public function activityTitle(): ?string
+    {
+        return $this->order_number;
+    }
 
     protected static function booted(): void
     {

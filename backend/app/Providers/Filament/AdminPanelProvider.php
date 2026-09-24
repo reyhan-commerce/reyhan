@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
+use App\Models\Admin;
+use App\Models\User;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use BokshornIt\FilamentActivityTimeline\ActivityTimelinePlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -23,6 +26,9 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Marcusvbda\FilamentRealtimeDriver\FilamentRealtimeDriverPlugin;
 use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
+use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
+use Zvizvi\FilamentColumnFilters\FilamentColumnFiltersPlugin;
+use Zvizvi\FilamentNotificationsTabs\FilamentNotificationsTabsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -32,6 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->authGuard('admin')
             ->login()
             ->colors([
@@ -83,9 +90,34 @@ class AdminPanelProvider extends PanelProvider
                     ->usingQueue('default')
                     ->timeout(300)
                     ->authorize(fn (): bool => auth('admin')->user()?->can('view-backups') ?? false),
+                FilamentSpatieLaravelHealthPlugin::make()
+                    ->navigationGroup('تنظیمات سیستم')
+                    ->navigationSort(11)
+                    ->navigationIcon('heroicon-o-heart')
+                    ->navigationLabel('سلامت سیستم و سرور')
+                    ->authorize(fn (): bool => auth('admin')->user()?->can('view-health') ?? false),
+                FilamentColumnFiltersPlugin::make(),
+                FilamentNotificationsTabsPlugin::make(),
                 FilamentRealtimeDriverPlugin::make()
                     ->socket()
                     ->databaseNotifications(),
+                ActivityTimelinePlugin::make()
+                    ->navigationGroup('تنظیمات سیستم')
+                    ->navigationIcon('heroicon-o-clipboard-document-list')
+                    ->navigationSort(12)
+                    ->causerIcons([
+                        Admin::class => 'heroicon-m-shield-check',
+                        User::class => 'heroicon-m-user',
+                    ])
+                    ->systemCauserIcon('heroicon-m-cpu-chip')
+                    ->events([
+                        'paid' => ['icon' => 'heroicon-m-banknotes', 'color' => 'success'],
+                        'shipped' => ['icon' => 'heroicon-m-truck', 'color' => 'info'],
+                        'cancelled' => ['icon' => 'heroicon-m-x-circle', 'color' => 'danger'],
+                        'refunded' => ['icon' => 'heroicon-m-arrow-path', 'color' => 'warning'],
+                        'stock_changed' => ['icon' => 'heroicon-m-archive-box', 'color' => 'warning'],
+                        'price_changed' => ['icon' => 'heroicon-m-currency-dollar', 'color' => 'primary'],
+                    ]),
             ])
 
             ->authMiddleware([

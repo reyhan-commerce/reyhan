@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\PaymentGateway;
 use App\Enums\PaymentStatus;
+use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\PaymentFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property int $id
@@ -29,14 +32,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Order|null $order
  * @property-read User|null $user
  */
-class Payment extends Model
+class Payment extends Model implements ProvidesActivityTitle
 {
     /** @use HasFactory<PaymentFactory> */
-    use HasFactory;
-
-    use SoftDeletes;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     protected $guarded = ['id'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()
+            ->logExcept(['created_at', 'updated_at', 'gateway_response'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
+
+    public function activityTitle(): ?string
+    {
+        return ($this->tracking_code ?: $this->reference_id) ?? ('#'.$this->id);
+    }
 
     /**
      * @return array<string, string>

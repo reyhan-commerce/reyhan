@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Rankbeam\Seo\Traits\HasSEO;
 
 /**
  * @property Carbon|null $published_at
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class BlogPost extends Model
 {
     /** @use HasFactory<BlogPostFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, HasSEO, SoftDeletes;
 
     protected $guarded = ['id'];
 

@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Morilog\Jalali\Jalalian;
 use UnitEnum;
+use Zvizvi\FilamentColumnFilters\Filters\ColumnFilter;
 
 class OrderResource extends Resource
 {
@@ -227,6 +228,7 @@ class OrderResource extends Resource
                     ->searchable()
                     ->copyable()
                     ->sortable()
+                    ->columnFilter(ColumnFilter::search())
                     ->weight('bold'),
 
                 TextColumn::make('user.name')
@@ -246,6 +248,7 @@ class OrderResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn (OrderStatus $state): string => $state->label())
                     ->color(fn (OrderStatus $state): string => $state->color())
+                    ->columnFilter(ColumnFilter::select())
                     ->sortable(),
 
                 TextColumn::make('shipping_method')
@@ -258,11 +261,13 @@ class OrderResource extends Resource
                     ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)))
                     ->suffix(' تومان')
                     ->weight('medium')
+                    ->columnFilter(ColumnFilter::range())
                     ->sortable(),
 
                 TextColumn::make('created_at')
                     ->label('زمان ثبت')
                     ->formatStateUsing(fn (?string $state): string => $state ? Jalalian::fromDateTime($state)->format('Y/m/d H:i') : '-')
+                    ->columnFilter(ColumnFilter::date())
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')

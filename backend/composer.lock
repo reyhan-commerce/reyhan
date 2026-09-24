@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7d653731d0cb2b088f65e9fbe59c6659",
+    "content-hash": "1b3301c9e8200bae34db779ad8b6c67b",
     "packages": [
         {
             "name": "alareqi/filament-tree",
@@ -511,6 +511,74 @@
                 }
             ],
             "time": "2026-06-30T09:44:12+00:00"
+        },
+        {
+            "name": "bokshorn-it/filament-activity-timeline",
+            "version": "v1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Bokshorn-IT/filament-activity-timeline.git",
+                "reference": "38829a9d4e22c227d1cd9dbe70159baeaf1251ae"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Bokshorn-IT/filament-activity-timeline/zipball/38829a9d4e22c227d1cd9dbe70159baeaf1251ae",
+                "reference": "38829a9d4e22c227d1cd9dbe70159baeaf1251ae",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^5.0",
+                "illuminate/contracts": "^12.0|^13.0",
+                "php": "^8.3",
+                "spatie/laravel-activitylog": "^4.12|^5.0",
+                "spatie/laravel-package-tools": "^1.92"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.27",
+                "orchestra/testbench": "^10.0|^11.0",
+                "pestphp/pest": "^4.0",
+                "pestphp/pest-plugin-laravel": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "BokshornIt\\FilamentActivityTimeline\\FilamentActivityTimelineServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "BokshornIt\\FilamentActivityTimeline\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Johannes Bokshorn",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Filament plugin that turns spatie/laravel-activitylog into a readable audit trail: a record timeline, a filterable activity resource, and diffs that resolve enums, dates and foreign keys to human labels.",
+            "homepage": "https://bokshorn.it",
+            "keywords": [
+                "activitylog",
+                "audit-trail",
+                "filament",
+                "filament-plugin",
+                "filamentphp",
+                "laravel",
+                "timeline"
+            ],
+            "support": {
+                "issues": "https://github.com/Bokshorn-IT/filament-activity-timeline/issues",
+                "security": "https://github.com/Bokshorn-IT/filament-activity-timeline/security/policy",
+                "source": "https://github.com/Bokshorn-IT/filament-activity-timeline"
+            },
+            "time": "2026-09-22T08:35:56+00:00"
         },
         {
             "name": "brick/math",
@@ -6791,6 +6859,160 @@
             "time": "2026-09-16T11:39:30+00:00"
         },
         {
+            "name": "rankbeam/laravel-seo",
+            "version": "v3.21.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rankbeam/laravel-seo.git",
+                "reference": "54565aac8497b9a96346de0f50dd792d89221dc7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rankbeam/laravel-seo/zipball/54565aac8497b9a96346de0f50dd792d89221dc7",
+                "reference": "54565aac8497b9a96346de0f50dd792d89221dc7",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/cache": "^11.0|^12.0|^13.0",
+                "illuminate/console": "^11.0|^12.0|^13.0",
+                "illuminate/database": "^11.0|^12.0|^13.0",
+                "illuminate/filesystem": "^11.0|^12.0|^13.0",
+                "illuminate/http": "^11.0|^12.0|^13.0",
+                "illuminate/routing": "^11.0|^12.0|^13.0",
+                "illuminate/support": "^11.0|^12.0|^13.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "pestphp/pest": "^2.0|^3.0",
+                "spatie/browsershot": "^4.0|^5.0",
+                "spatie/laravel-sitemap": "^7.0|^8.0"
+            },
+            "suggest": {
+                "spatie/browsershot": "Generate 1200x630 OG images with a real browser (config seo.og_image)",
+                "spatie/laravel-sitemap": "Generate XML sitemaps for your models (^7.0|^8.0)"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "SEO": "Rankbeam\\Seo\\Facades\\SEO"
+                    },
+                    "providers": [
+                        "Rankbeam\\Seo\\SEOServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Rankbeam\\Seo\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Valentin Goxhaj",
+                    "email": "valentinogoxhaj@gmail.com"
+                }
+            ],
+            "description": "Laravel SEO package for metadata, canonical URLs, Open Graph, linked JSON-LD, XML sitemaps and crawler controls - free and MIT licensed.",
+            "homepage": "https://rankbeam.dev",
+            "keywords": [
+                "JSON-LD",
+                "Sitemap",
+                "canonical",
+                "laravel",
+                "meta-tags",
+                "open-graph",
+                "php",
+                "schema",
+                "seo",
+                "structured-data",
+                "twitter-cards"
+            ],
+            "support": {
+                "docs": "https://docs.rankbeam.dev",
+                "email": "hello@rankbeam.dev",
+                "issues": "https://github.com/rankbeam/laravel-seo/issues",
+                "source": "https://github.com/rankbeam/laravel-seo"
+            },
+            "time": "2026-09-11T13:53:11+00:00"
+        },
+        {
+            "name": "rankbeam/laravel-seo-filament",
+            "version": "v1.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rankbeam/laravel-seo-filament.git",
+                "reference": "f101288bb256df1d2111ad33edb09c1d2169a176"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rankbeam/laravel-seo-filament/zipball/f101288bb256df1d2111ad33edb09c1d2169a176",
+                "reference": "f101288bb256df1d2111ad33edb09c1d2169a176",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^4.0|^5.0",
+                "php": "^8.2",
+                "rankbeam/laravel-seo": "^3.17"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "pestphp/pest": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Rankbeam\\Seo\\Filament\\SeoFilamentServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Rankbeam\\Seo\\Filament\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Valentin Goxhaj",
+                    "email": "valentinogoxhaj@gmail.com"
+                }
+            ],
+            "description": "Laravel SEO package for Filament 4 and 5 - a complete editor with Google and social previews, canonical controls, and fallback-source indicators.",
+            "homepage": "https://rankbeam.dev",
+            "keywords": [
+                "filament",
+                "filament-plugin",
+                "laravel",
+                "meta-tags",
+                "seo"
+            ],
+            "support": {
+                "docs": "https://docs.rankbeam.dev/guide/filament",
+                "email": "hello@rankbeam.dev",
+                "issues": "https://github.com/rankbeam/laravel-seo-filament/issues",
+                "source": "https://github.com/rankbeam/laravel-seo-filament"
+            },
+            "time": "2026-09-09T16:03:32+00:00"
+        },
+        {
             "name": "ratchet/rfc6455",
             "version": "v0.4.1",
             "source": {
@@ -7613,6 +7835,82 @@
             "time": "2026-08-27T18:26:49+00:00"
         },
         {
+            "name": "shuvroroy/filament-spatie-laravel-health",
+            "version": "v3.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shuvroroy/filament-spatie-laravel-health.git",
+                "reference": "a638067a08ea29959f7bf6a0f615298e5ec571e4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shuvroroy/filament-spatie-laravel-health/zipball/a638067a08ea29959f7bf6a0f615298e5ec571e4",
+                "reference": "a638067a08ea29959f7bf6a0f615298e5ec571e4",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^4.0|^5.0",
+                "php": "^8.2",
+                "spatie/laravel-health": "^1.23",
+                "spatie/laravel-package-tools": "^1.9"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3.0",
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^7.0||^8.0||^9.0",
+                "orchestra/testbench": "^9.0||^10.0||^11.0",
+                "pestphp/pest": "^2.0||^3.0||^4.0",
+                "pestphp/pest-plugin-arch": "^2.0||^3.0||^4.0",
+                "pestphp/pest-plugin-laravel": "^2.0||^3.0||^4.0",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-deprecation-rules": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ShuvroRoy\\FilamentSpatieLaravelHealth\\FilamentSpatieLaravelHealthServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ShuvroRoy\\FilamentSpatieLaravelHealth\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shuvro Roy",
+                    "email": "shuvro.nsu.cse@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This plugin is built on top of Spatie's Laravel-health package",
+            "homepage": "https://github.com/shuvroroy/filament-spatie-laravel-health",
+            "keywords": [
+                "filament",
+                "filament-spatie-laravel-health",
+                "laravel-health"
+            ],
+            "support": {
+                "issues": "https://github.com/shuvroroy/filament-spatie-laravel-health/issues",
+                "source": "https://github.com/shuvroroy/filament-spatie-laravel-health/tree/v3.3.3"
+            },
+            "funding": [
+                {
+                    "url": "https://www.buymeacoffee.com/shuvroroy",
+                    "type": "buy_me_a_coffee"
+                }
+            ],
+            "time": "2026-08-27T17:34:15+00:00"
+        },
+        {
             "name": "spatie/db-dumper",
             "version": "4.1.1",
             "source": {
@@ -7675,6 +7973,82 @@
                 }
             ],
             "time": "2026-05-04T11:43:33+00:00"
+        },
+        {
+            "name": "spatie/enum",
+            "version": "3.13.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/enum.git",
+                "reference": "f1a0f464ba909491a53e60a955ce84ad7cd93a2c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/enum/zipball/f1a0f464ba909491a53e60a955ce84ad7cd93a2c",
+                "reference": "f1a0f464ba909491a53e60a955ce84ad7cd93a2c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "fakerphp/faker": "^1.9.1",
+                "larapack/dd": "^1.1",
+                "phpunit/phpunit": "^9.0",
+                "vimeo/psalm": "^4.3"
+            },
+            "suggest": {
+                "fakerphp/faker": "To use the enum faker provider",
+                "phpunit/phpunit": "To use the enum assertions"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Enum\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brent Roose",
+                    "email": "brent@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Tom Witkowski",
+                    "email": "dev@gummibeer.de",
+                    "homepage": "https://gummibeer.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Enums",
+            "homepage": "https://github.com/spatie/enum",
+            "keywords": [
+                "enum",
+                "enumerable",
+                "spatie"
+            ],
+            "support": {
+                "docs": "https://docs.spatie.be/enum",
+                "issues": "https://github.com/spatie/enum/issues",
+                "source": "https://github.com/spatie/enum"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-04-22T08:51:55+00:00"
         },
         {
             "name": "spatie/image",
@@ -7866,6 +8240,99 @@
             "time": "2026-08-24T12:39:05+00:00"
         },
         {
+            "name": "spatie/laravel-activitylog",
+            "version": "5.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-activitylog.git",
+                "reference": "8ce56d3b9d72f4e4551f4449d236a5ed06e71667"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-activitylog/zipball/8ce56d3b9d72f4e4551f4449d236a5ed06e71667",
+                "reference": "8ce56d3b9d72f4e4551f4449d236a5ed06e71667",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/config": "^12.0 || ^13.0",
+                "illuminate/database": "^12.0 || ^13.0",
+                "illuminate/support": "^12.0 || ^13.0",
+                "php": "^8.4",
+                "spatie/laravel-package-tools": "^1.6.3"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "larastan/larastan": "^3.0",
+                "laravel/pint": "^1.29",
+                "orchestra/testbench": "^10.0 || ^11.0",
+                "pestphp/pest": "^4.0 || ^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\Activitylog\\ActivitylogServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Spatie\\Activitylog\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastian@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Tom Witkowski",
+                    "email": "dev.gummibeer@gmail.com",
+                    "homepage": "https://gummibeer.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A very simple activity logger to monitor the users of your website or application",
+            "homepage": "https://github.com/spatie/laravel-activitylog",
+            "keywords": [
+                "activity",
+                "laravel",
+                "log",
+                "spatie",
+                "user"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-activitylog/issues",
+                "source": "https://github.com/spatie/laravel-activitylog/tree/5.1.1"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-09-08T12:16:25+00:00"
+        },
+        {
             "name": "spatie/laravel-backup",
             "version": "10.3.3",
             "source": {
@@ -8048,6 +8515,100 @@
                 }
             ],
             "time": "2026-05-08T14:41:13+00:00"
+        },
+        {
+            "name": "spatie/laravel-health",
+            "version": "1.40.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-health.git",
+                "reference": "45651079657bf723223a9ffc546449503816aef5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-health/zipball/45651079657bf723223a9ffc546449503816aef5",
+                "reference": "45651079657bf723223a9ffc546449503816aef5",
+                "shasum": ""
+            },
+            "require": {
+                "dragonmantank/cron-expression": "^3.3.1",
+                "guzzlehttp/guzzle": "^6.5|^7.4.5|^7.2|^8.0",
+                "illuminate/console": "^11.0|^12.0|^13.0",
+                "illuminate/contracts": "^11.0|^12.0|^13.0",
+                "illuminate/database": "^11.0|^12.0|^13.0",
+                "illuminate/notifications": "^11.0|^12.0|^13.0",
+                "illuminate/support": "^11.0|^12.0|^13.0",
+                "laravel/serializable-closure": "^1.3|^2.0",
+                "nunomaduro/termwind": "^1.0|^2.0",
+                "php": "^8.2",
+                "spatie/enum": "^3.13",
+                "spatie/laravel-package-tools": "^1.12.1",
+                "spatie/regex": "^3.1.1|^3.1",
+                "symfony/process": "^5.4|^6.0|^7.0|^8.0"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3.0",
+                "laravel/horizon": "^5.9.10",
+                "nunomaduro/collision": "^5.10|^6.2.1|^6.1|^8.0",
+                "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "pestphp/pest": "^2.34|^3.0|^4.0",
+                "pestphp/pest-plugin-laravel": "^2.3|^3.0|^4.0",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0|^2.0",
+                "phpstan/phpstan-phpunit": "^1.1.1|^2.0",
+                "phpunit/phpunit": "^9.5.21|^9.5.10|^10.5|^11.0|^12.0",
+                "spatie/laravel-ray": "^1.30",
+                "spatie/pest-plugin-snapshots": "^1.1|^2.3|^3.0",
+                "spatie/pest-plugin-test-time": "^1.1.1|^1.1|^2.0|^3.0",
+                "spatie/temporary-directory": "^2.2",
+                "spatie/test-time": "^1.3|^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Health": "Spatie\\Health\\Facades\\Health"
+                    },
+                    "providers": [
+                        "Spatie\\Health\\HealthServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Health\\": "src",
+                    "Spatie\\Health\\Database\\Factories\\": "database/factories"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Monitor the health of a Laravel application",
+            "homepage": "https://github.com/spatie/laravel-health",
+            "keywords": [
+                "laravel",
+                "laravel-health",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-health/issues",
+                "source": "https://github.com/spatie/laravel-health/tree/1.40.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-08-07T09:54:52+00:00"
         },
         {
             "name": "spatie/laravel-medialibrary",
@@ -8624,6 +9185,69 @@
                 }
             ],
             "time": "2026-06-15T07:14:32+00:00"
+        },
+        {
+            "name": "spatie/regex",
+            "version": "3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/regex.git",
+                "reference": "d543de2019a0068e7b80da0ba24f1c51c7469303"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/regex/zipball/d543de2019a0068e7b80da0ba24f1c51c7469303",
+                "reference": "d543de2019a0068e7b80da0ba24f1c51c7469303",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0|^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Regex\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastian@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A sane interface for php's built in preg_* functions",
+            "homepage": "https://github.com/spatie/regex",
+            "keywords": [
+                "expression",
+                "expressions",
+                "regex",
+                "regular",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/regex/issues",
+                "source": "https://github.com/spatie/regex/tree/3.1.1"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-11-30T21:13:59+00:00"
         },
         {
             "name": "spatie/shiki-php",
@@ -11817,6 +12441,155 @@
                 "source": "https://github.com/webmozarts/assert/tree/2.4.1"
             },
             "time": "2026-06-15T15:31:57+00:00"
+        },
+        {
+            "name": "zvizvi/filament-column-filters",
+            "version": "0.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zvizvi/filament-column-filters.git",
+                "reference": "eccb4f0878ba3e94bcada5080fd2e68d8ed5b5bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zvizvi/filament-column-filters/zipball/eccb4f0878ba3e94bcada5080fd2e68d8ed5b5bf",
+                "reference": "eccb4f0878ba3e94bcada5080fd2e68d8ed5b5bf",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^5.0",
+                "filament/forms": "^5.0",
+                "filament/tables": "^5.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3.0",
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^8.0",
+                "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "pestphp/pest": "^3.7|^4.0",
+                "pestphp/pest-plugin-arch": "^3.0|^4.0",
+                "pestphp/pest-plugin-laravel": "^3.0|^4.0",
+                "pestphp/pest-plugin-livewire": "^3.0|^4.0",
+                "rector/rector": "^2.0",
+                "spatie/laravel-ray": "^1.26"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Zvizvi\\FilamentColumnFilters\\FilamentColumnFiltersServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zvizvi\\FilamentColumnFilters\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "zvizvi",
+                    "email": "yaakov@workflow.co.il",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Excel-style column header filters for Filament tables, with search, date range and multi-select filter types that sync with regular table filters.",
+            "homepage": "https://github.com/zvizvi/filament-column-filters",
+            "keywords": [
+                "filament",
+                "filament-column-filters",
+                "filament-plugin",
+                "filamentphp",
+                "filters",
+                "laravel",
+                "table",
+                "zvizvi"
+            ],
+            "support": {
+                "issues": "https://github.com/zvizvi/filament-column-filters/issues",
+                "source": "https://github.com/zvizvi/filament-column-filters"
+            },
+            "time": "2026-08-03T01:58:02+00:00"
+        },
+        {
+            "name": "zvizvi/filament-notifications-tabs",
+            "version": "0.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zvizvi/filament-notifications-tabs.git",
+                "reference": "5ec03f3b2f5b03ec4366494bc22f92671c49b65f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zvizvi/filament-notifications-tabs/zipball/5ec03f3b2f5b03ec4366494bc22f92671c49b65f",
+                "reference": "5ec03f3b2f5b03ec4366494bc22f92671c49b65f",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^5.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^8.0",
+                "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "pestphp/pest": "^3.7|^4.0",
+                "pestphp/pest-plugin-arch": "^3.0|^4.0",
+                "pestphp/pest-plugin-laravel": "^3.0|^4.0",
+                "pestphp/pest-plugin-livewire": "^3.0|^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Zvizvi\\FilamentNotificationsTabs\\FilamentNotificationsTabsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zvizvi\\FilamentNotificationsTabs\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "zvizvi",
+                    "email": "5633910@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Tabs and per-notification actions (delete, toggle read status) for the Filament database notifications modal.",
+            "homepage": "https://github.com/zvizvi/filament-notifications-tabs",
+            "keywords": [
+                "filament",
+                "filament-notifications-tabs",
+                "filament-plugin",
+                "filamentphp",
+                "laravel",
+                "zvizvi"
+            ],
+            "support": {
+                "issues": "https://github.com/zvizvi/filament-notifications-tabs/issues",
+                "source": "https://github.com/zvizvi/filament-notifications-tabs"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/zvizvi",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-07-18T22:53:02+00:00"
         }
     ],
     "packages-dev": [

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Database\Factories\AdminFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
@@ -12,12 +13,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Permission\Traits\HasRoles;
 
-class Admin extends Authenticatable implements FilamentUser, HasName
+class Admin extends Authenticatable implements FilamentUser, HasName, ProvidesActivityTitle
 {
     /** @use HasFactory<AdminFactory> */
-    use HasFactory, HasRoles, Notifiable, SoftDeletes;
+    use HasFactory, HasRoles, LogsActivity, Notifiable, SoftDeletes;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()
+            ->logExcept(['created_at', 'updated_at', 'password', 'remember_token'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
+
+    public function activityTitle(): ?string
+    {
+        return $this->name.' ('.$this->email.')';
+    }
 
     /**
      * Determine if admin can access the Filament panel.

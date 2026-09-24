@@ -7,3 +7,7 @@ parameters:
 
     # Level 8 strictness
     level: 8
+
+    ignoreErrors:
+        - '#Call to an undefined method Filament\\Tables\\Table::(tree|socket)\(\)#'
+        - '#Call to an undefined method Filament\\Tables\\Columns\\TextColumn::columnFilter\(\)#'
