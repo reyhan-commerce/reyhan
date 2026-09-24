@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Enums\OrderStatus;
+use App\Actions\Review\StoreReviewAction;
 use App\Enums\ReviewStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Review\StoreReviewRequest;
 use App\Http\Resources\V1\ReviewResource;
-use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
@@ -41,76 +41,20 @@ class ReviewController extends Controller
     /**
      * Store or update a customer review for a product.
      */
-    public function store(Request $request, int $productId): JsonResponse
-    {
+    public function store(
+        StoreReviewRequest $request,
+        int $productId,
+        StoreReviewAction $action
+    ): JsonResponse {
+        /** @var User $user */
         $user = $request->user();
         $product = Product::findOrFail($productId);
 
-        $validated = $request->validate([
-            'rating' => ['required', 'integer', 'between:1,5'],
-            'criteria_ratings' => ['nullable', 'array'],
-            'criteria_ratings.*' => ['integer', 'between:1,5'],
-            'longevity_rating' => ['nullable', 'integer', 'between:1,5'],
-            'coverage_rating' => ['nullable', 'integer', 'between:1,5'],
-            'value_rating' => ['nullable', 'integer', 'between:1,5'],
-            'comment' => ['required', 'string', 'min:3', 'max:2000'],
-            'strengths' => ['nullable', 'array', 'max:5'],
-            'strengths.*' => ['string', 'max:100'],
-            'weaknesses' => ['nullable', 'array', 'max:5'],
-            'weaknesses.*' => ['string', 'max:100'],
-        ]);
-
-        $criteriaRatings = is_array($validated['criteria_ratings'] ?? null) ? $validated['criteria_ratings'] : [];
-        if ($criteriaRatings === []) {
-            $fallback = [];
-            if (isset($validated['longevity_rating'])) {
-                $fallback['longevity'] = (int) $validated['longevity_rating'];
-            }
-            if (isset($validated['coverage_rating'])) {
-                $fallback['coverage'] = (int) $validated['coverage_rating'];
-            }
-            if (isset($validated['value_rating'])) {
-                $fallback['value'] = (int) $validated['value_rating'];
-            }
-            $criteriaRatings = $fallback;
-        }
-
-        // Check if user has purchased this product in a confirmed order
-        $isVerifiedPurchase = OrderItem::where('product_id', $product->id)
-            ->whereHas('order', function ($query) use ($user) {
-                $query->where('user_id', $user->id)
-                    ->whereIn('status', [
-                        OrderStatus::Processing,
-                        OrderStatus::Shipped,
-                        OrderStatus::Delivered,
-                    ]);
-            })
-            ->exists();
-
-        $review = Review::updateOrCreate(
-            [
-                'user_id' => $user->id,
-                'product_id' => $product->id,
-            ],
-            [
-                'rating' => $validated['rating'],
-                'criteria_ratings' => $criteriaRatings,
-                'longevity_rating' => $validated['longevity_rating'] ?? ($criteriaRatings['longevity'] ?? 5),
-                'coverage_rating' => $validated['coverage_rating'] ?? ($criteriaRatings['coverage'] ?? 5),
-                'value_rating' => $validated['value_rating'] ?? ($criteriaRatings['value'] ?? 5),
-                'comment' => $validated['comment'],
-                'strengths' => $validated['strengths'] ?? [],
-                'weaknesses' => $validated['weaknesses'] ?? [],
-                'is_verified_purchase' => $isVerifiedPurchase,
-                'status' => ReviewStatus::Pending,
-            ]
-        );
-
-        $review->load('user');
+        $review = $action->execute($user, $product, $request->validated());
 
         return response()->json([
             'success' => true,
-            'message' => 'دیدگاه شما با موفقیت ثبت و منتشر گردید.',
+            'message' => __('Your review has been submitted successfully.'),
             'data' => new ReviewResource($review),
         ], 201);
     }

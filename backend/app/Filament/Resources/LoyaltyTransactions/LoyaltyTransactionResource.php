@@ -10,7 +10,6 @@ use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -42,13 +41,13 @@ class LoyaltyTransactionResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
-                    ->description(fn (LoyaltyTransaction $record): string => (string) $record->user?->mobile),
+                    ->description(fn (LoyaltyTransaction $record): string => (string) $record->user->mobile),
 
                 TextColumn::make('points')
                     ->label('امتیاز')
                     ->badge()
                     ->color(fn (int $state): string => $state >= 0 ? 'success' : 'danger')
-                    ->formatStateUsing(fn (int $state): string => ($state >= 0 ? '+' : '') . $state . ' امتیاز')
+                    ->formatStateUsing(fn (int $state): string => ($state >= 0 ? '+' : '').$state.' امتیاز')
                     ->sortable(),
 
                 TextColumn::make('type')

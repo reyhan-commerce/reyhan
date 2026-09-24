@@ -180,7 +180,7 @@ class CouponResource extends Resource
                     ->badge()
                     ->color('primary')
                     ->weight('bold')
-                    ->description(fn (Coupon $record): ?string => $record->title),
+                    ->description(fn (Coupon $record): string => $record->title),
 
                 TextColumn::make('type')
                     ->label('نوع')
@@ -188,7 +188,7 @@ class CouponResource extends Resource
 
                 TextColumn::make('value')
                     ->label('مقدار تخفیف')
-                    ->formatStateUsing(fn (int $state, Coupon $record): string => $record->type === CouponType::Percentage->value ? $state.'٪' : number_format((int) ($state / 10)).' تومان')
+                    ->formatStateUsing(fn (int $state, Coupon $record): string => $record->type === CouponType::Percentage ? $state.'٪' : number_format((int) ($state / 10)).' تومان')
                     ->sortable(),
 
                 TextColumn::make('scope')

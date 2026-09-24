@@ -44,6 +44,7 @@ class ContactMessageResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         $unreadCount = ContactMessage::query()->unread()->count();
+
         return $unreadCount > 0 ? (string) $unreadCount : null;
     }
 

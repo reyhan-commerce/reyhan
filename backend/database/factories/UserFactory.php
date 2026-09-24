@@ -25,9 +25,9 @@ class UserFactory extends Factory
         return [
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
-            'mobile' => '09'.fake()->numerify('#########'),
-            'national_code' => fake()->numerify('##########'),
-            'email' => fake()->unique()->safeEmail(),
+            'mobile' => '09'.fake()->unique()->numerify('#########'),
+            'national_code' => fake()->unique()->numerify('##########'),
+            'email' => fake()->unique()->userName().'.'.uniqid().'@example.com',
             'avatar' => null,
             'is_active' => true,
             'mobile_verified_at' => now(),

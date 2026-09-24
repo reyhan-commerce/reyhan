@@ -151,60 +151,6 @@ parameters:
 			path: app/Http/Controllers/Api/V1/GeoController.php
 
 		-
-			message: '#^Cannot access property \$id on App\\Models\\Admin\|App\\Models\\User\|null\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: app/Http/Controllers/Api/V1/ProfileController.php
-
-		-
-			message: '#^Cannot call method addresses\(\) on App\\Models\\Admin\|App\\Models\\User\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/Api/V1/ProfileController.php
-
-		-
-			message: '#^Cannot call method fresh\(\) on App\\Models\\Admin\|App\\Models\\User\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/Api/V1/ProfileController.php
-
-		-
-			message: '#^Cannot call method orders\(\) on App\\Models\\Admin\|App\\Models\\User\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/Api/V1/ProfileController.php
-
-		-
-			message: '#^Cannot call method reviews\(\) on App\\Models\\Admin\|App\\Models\\User\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/Api/V1/ProfileController.php
-
-		-
-			message: '#^Cannot call method update\(\) on App\\Models\\Admin\|App\\Models\\User\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/Api/V1/ProfileController.php
-
-		-
-			message: '#^Cannot call method wishlists\(\) on App\\Models\\Admin\|App\\Models\\User\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/Api/V1/ProfileController.php
-
-		-
-			message: '#^Cannot access property \$id on App\\Models\\Admin\|App\\Models\\User\|null\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: app/Http/Controllers/Api/V1/ReviewController.php
-
-		-
-			message: '#^Cannot access property \$id on App\\Models\\Admin\|App\\Models\\User\|null\.$#'
-			identifier: property.nonObject
-			count: 4
-			path: app/Http/Controllers/Api/V1/WishlistController.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 2
@@ -711,18 +657,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Coupon\:\:variants\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/Coupon.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between string and App\\Enums\\CouponType\:\:Fixed will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Models/Coupon.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between string and App\\Enums\\CouponType\:\:FreeShipping will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/Coupon.php
 
@@ -1305,29 +1239,5 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$coupon of method App\\Services\\Pricing\\PricingService\:\:calculateEligibleSubtotal\(\) expects App\\Models\\Coupon, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
-			count: 1
-			path: app/Services/Pricing/PricingService.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between string and App\\Enums\\CouponScope\:\:All will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Services/Pricing/PricingService.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between string and App\\Enums\\CouponScope\:\:Brands will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Services/Pricing/PricingService.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between string and App\\Enums\\CouponScope\:\:Categories will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Services/Pricing/PricingService.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between string and App\\Enums\\CouponScope\:\:Variants will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Services/Pricing/PricingService.php

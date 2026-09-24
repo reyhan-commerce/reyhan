@@ -6,12 +6,32 @@ namespace App\Models;
 
 use App\Enums\CouponScope;
 use App\Enums\CouponType;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property string $code
+ * @property string $title
+ * @property CouponType $type
+ * @property int $value
+ * @property int|null $min_order_amount
+ * @property int|null $max_discount_amount
+ * @property CouponScope $scope
+ * @property int|null $usage_limit
+ * @property int $used_count
+ * @property int|null $usage_limit_per_user
+ * @property Carbon|null $starts_at
+ * @property Carbon|null $expires_at
+ * @property bool $is_active
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ */
 class Coupon extends Model
 {
     use SoftDeletes;

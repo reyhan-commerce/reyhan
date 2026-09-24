@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AddressController;
 use App\Http\Controllers\Api\V1\AppFeaturesController;
 use App\Http\Controllers\Api\V1\AppSettingController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\BlogController;
 use App\Http\Controllers\Api\V1\CaptchaController;
 use App\Http\Controllers\Api\V1\CartController;
 use App\Http\Controllers\Api\V1\CartCouponController;
@@ -14,7 +15,6 @@ use App\Http\Controllers\Api\V1\CartSyncController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CategoryTreeController;
 use App\Http\Controllers\Api\V1\CheckoutController;
-use App\Http\Controllers\Api\V1\BlogController;
 use App\Http\Controllers\Api\V1\ContactMessageController;
 use App\Http\Controllers\Api\V1\FaqController;
 use App\Http\Controllers\Api\V1\GeoController;
@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\ReviewController;
+use App\Http\Controllers\Api\V1\SearchSuggestionController;
 use App\Http\Controllers\Api\V1\WishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -60,7 +61,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 });
 
 // Product Catalog & Category Taxonomy
-Route::get('/search/suggestions', [\App\Http\Controllers\Api\V1\SearchSuggestionController::class, 'index'])->name('search.suggestions');
+Route::get('/search/suggestions', [SearchSuggestionController::class, 'index'])->name('search.suggestions');
 Route::get('/categories/tree', CategoryTreeController::class)->name('categories.tree');
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);

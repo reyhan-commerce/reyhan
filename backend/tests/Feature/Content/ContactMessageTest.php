@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Models\ContactMessage;
-
 test('customer can submit a contact message with valid payload', function () {
     $payload = [
         'name' => 'مهدی رضایی',

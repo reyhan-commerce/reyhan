@@ -25,7 +25,7 @@ class BlogPostResource extends JsonResource
             'title' => $this->title,
             'slug' => $this->slug,
             'summary' => $this->summary,
-            'featured_image' => $this->featured_image ? (str_starts_with($this->featured_image, 'http') ? $this->featured_image : asset('storage/' . $this->featured_image)) : null,
+            'featured_image' => $this->featured_image ? (str_starts_with($this->featured_image, 'http') ? $this->featured_image : asset('storage/'.$this->featured_image)) : null,
             'reading_time' => $this->reading_time ?: $this->calculateReadingTime(),
             'views_count' => $this->views_count,
             'is_featured' => $this->is_featured,
@@ -33,10 +33,17 @@ class BlogPostResource extends JsonResource
             'created_at' => $this->created_at?->toIso8601String(),
             'tags' => $this->tags ?? [],
             'category' => $this->whenLoaded('category', fn () => new BlogCategoryResource($this->category)),
-            'author' => $this->whenLoaded('author', fn () => [
-                'name' => $this->author?->name ?? 'تحریریه فروشگاه',
-                'avatar' => $this->author?->avatar ? asset('storage/' . $this->author->avatar) : null,
-            ]),
+            'author' => $this->whenLoaded('author', function () {
+                $author = $this->author;
+
+                return $author ? [
+                    'name' => $author->name,
+                    'avatar' => $author->avatar ? asset('storage/'.$author->avatar) : null,
+                ] : [
+                    'name' => 'تحریریه فروشگاه',
+                    'avatar' => null,
+                ];
+            }),
         ];
     }
 }

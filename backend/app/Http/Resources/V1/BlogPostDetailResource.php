@@ -26,7 +26,7 @@ class BlogPostDetailResource extends JsonResource
             'slug' => $this->slug,
             'summary' => $this->summary,
             'content' => $this->content,
-            'featured_image' => $this->featured_image ? (str_starts_with($this->featured_image, 'http') ? $this->featured_image : asset('storage/' . $this->featured_image)) : null,
+            'featured_image' => $this->featured_image ? (str_starts_with($this->featured_image, 'http') ? $this->featured_image : asset('storage/'.$this->featured_image)) : null,
             'reading_time' => $this->reading_time ?: $this->calculateReadingTime(),
             'views_count' => $this->views_count,
             'is_featured' => $this->is_featured,
@@ -36,9 +36,12 @@ class BlogPostDetailResource extends JsonResource
             'meta_title' => $this->meta_title ?? $this->title,
             'meta_description' => $this->meta_description ?? $this->summary,
             'category' => $this->whenLoaded('category', fn () => new BlogCategoryResource($this->category)),
-            'author' => [
-                'name' => $this->author?->name ?? 'تیم تحریریه و کارشناسان زیبایی',
-                'avatar' => $this->author?->avatar ? asset('storage/' . $this->author->avatar) : null,
+            'author' => $this->author ? [
+                'name' => $this->author->name,
+                'avatar' => $this->author->avatar ? asset('storage/'.$this->author->avatar) : null,
+            ] : [
+                'name' => 'تیم تحریریه و کارشناسان زیبایی',
+                'avatar' => null,
             ],
         ];
     }

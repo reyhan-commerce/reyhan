@@ -10,6 +10,7 @@ use App\Http\Resources\V1\BlogPostDetailResource;
 use App\Http\Resources\V1\BlogPostResource;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
+use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -47,10 +48,11 @@ class BlogController extends Controller
         }
 
         if ($search = $request->query('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('summary', 'like', "%{$search}%")
-                    ->orWhere('content', 'like', "%{$search}%");
+            $cleanSearch = PersianNormalizer::normalizeSearchQuery((string) $search);
+            $query->where(function ($q) use ($cleanSearch) {
+                $q->where('title', 'like', "%{$cleanSearch}%")
+                    ->orWhere('summary', 'like', "%{$cleanSearch}%")
+                    ->orWhere('content', 'like', "%{$cleanSearch}%");
             });
         }
 

@@ -69,7 +69,7 @@ class LoyaltyService
             return;
         }
 
-        $points = (int) floor($order->total_amount / $rate);
+        $points = (int) floor($order->final_payable / $rate);
         if ($points > 0) {
             $user->awardLoyaltyPoints(
                 points: $points,
@@ -102,7 +102,7 @@ class LoyaltyService
         $discountAmount = $points * $rateValue;
 
         return DB::transaction(function () use ($user, $points, $discountAmount) {
-            $code = 'CLUB-' . strtoupper(Str::random(6));
+            $code = 'CLUB-'.strtoupper(Str::random(6));
 
             $coupon = Coupon::create([
                 'code' => $code,
@@ -127,5 +127,43 @@ class LoyaltyService
 
             return $coupon;
         });
+    }
+
+    public function getEarnedPoints(User $user): int
+    {
+        return (int) $user->loyaltyTransactions()->where('points', '>', 0)->sum('points');
+    }
+
+    public function getSpentPoints(User $user): int
+    {
+        return abs((int) $user->loyaltyTransactions()->where('points', '<', 0)->sum('points'));
+    }
+
+    /**
+     * @return array{balance: int, tier: array{key: string, label: string, color: string, icon: string, min_points: int, next_points: ?int, discount_percent: int}, progress: int, total_earned: int, total_spent: int, point_value: int, monetary_worth: int}
+     */
+    public function getSummary(User $user): array
+    {
+        $balance = $user->loyalty_points_balance;
+        $tier = $user->loyalty_tier;
+        $totalEarned = $this->getEarnedPoints($user);
+        $totalSpent = $this->getSpentPoints($user);
+
+        $progress = 100;
+        if ($tier['next_points']) {
+            $range = $tier['next_points'] - $tier['min_points'];
+            $currentInRange = $balance - $tier['min_points'];
+            $progress = min(100, max(0, (int) round(($currentInRange / $range) * 100)));
+        }
+
+        return [
+            'balance' => $balance,
+            'tier' => $tier,
+            'progress' => $progress,
+            'total_earned' => $totalEarned,
+            'total_spent' => $totalSpent,
+            'point_value' => $this->settings->loyalty_point_redemption_value,
+            'monetary_worth' => $balance * $this->settings->loyalty_point_redemption_value,
+        ];
     }
 }

@@ -8,7 +8,6 @@ use App\Filament\Resources\LoyaltyTransactions\LoyaltyTransactionResource;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
@@ -44,8 +43,9 @@ class ListLoyaltyTransactions extends ListRecords
                         ->required(),
                 ])
                 ->action(function (array $data): void {
-                    $user = User::find($data['user_id']);
-                    if (! $user) {
+                    /** @var User|null $user */
+                    $user = User::query()->find($data['user_id']);
+                    if (! $user instanceof User) {
                         return;
                     }
 
@@ -53,7 +53,7 @@ class ListLoyaltyTransactions extends ListRecords
                     $user->awardLoyaltyPoints(
                         points: $points,
                         type: 'manual_adjustment',
-                        description: $data['description']
+                        description: (string) $data['description']
                     );
 
                     Notification::make()

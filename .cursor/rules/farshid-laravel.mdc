@@ -1,0 +1,26 @@
+---
+description: Farshid Laravel & PHP Coding Standards (Actions, Thin Controllers, Strict Typing, No Repositories, Pest)
+globs: **/*.php
+alwaysApply: true
+---
+
+# Farshid's Laravel Coding Rules
+
+- **Framework Native**: Prefer Laravel native features over custom abstractions.
+- **Typing**: 100% strict parameter and return types across all methods. Avoid `mixed` and untyped arrays.
+- **Architecture**:
+  - Thin Controllers (FormRequest -> Action -> ApiResource).
+  - Business logic lives in `final class [Verb][Noun]Action` with `execute()`.
+  - Services only for grouping tightly coupled operations around a domain concept.
+  - Strictly **NO Repositories**. Use Eloquent queries and Scopes directly.
+  - Models: Use `protected function casts(): array` and `$guarded = ['id']`. No external I/O in models.
+  - DTOs: Use `final readonly class` for typed structured contracts.
+  - Enums: Use backed Enums with UPPERCASE cases (`OrderStatusEnum::PAID`).
+- **Resilience**:
+  - Never hold a `DB::transaction` open during external HTTP calls (e.g. Stripe).
+  - Always guard against race conditions using `lockForUpdate()`, atomic locks, or DB constraints.
+  - Implement business-level idempotency on mutating operations.
+- **Testing**:
+  - Use Pest (`it(...)`) with `RefreshDatabase`.
+  - Feature tests for Actions (`tests/Feature/Actions/`) and HTTP APIs (`tests/Feature/Api/`).
+  - Use `Http::fake()` for third-party endpoints.

@@ -112,6 +112,9 @@ class User extends Authenticatable
         return $this->hasMany(Review::class)->latest();
     }
 
+    /**
+     * @return HasMany<LoyaltyTransaction, $this>
+     */
     public function loyaltyTransactions(): HasMany
     {
         return $this->hasMany(LoyaltyTransaction::class)->latest();
@@ -172,5 +175,16 @@ class User extends Authenticatable
             'description' => $description,
             'reference_id' => $referenceId,
         ]);
+    }
+
+    /**
+     * Compatibility guard for FilamentShield's global Gate::before callback.
+     * End-users do not have Spatie roles.
+     *
+     * @param  mixed  ...$args
+     */
+    public function hasRole(...$args): bool
+    {
+        return false;
     }
 }

@@ -127,3 +127,33 @@ it('sets address as default and unsets others', function (): void {
     expect($addr1->fresh()->is_default)->toBeFalse();
     expect($addr2->fresh()->is_default)->toBeTrue();
 });
+
+it('forbids updating or deleting an address belonging to another user', function (): void {
+    $otherUser = User::factory()->create([
+        'mobile' => '09987654321',
+        'is_active' => true,
+    ]);
+
+    $foreignAddress = Address::create([
+        'user_id' => $otherUser->id,
+        'province_id' => $this->province->id,
+        'city_id' => $this->city->id,
+        'recipient_name' => 'کاربر دیگر',
+        'recipient_mobile' => '09987654321',
+        'postal_code' => '9999999999',
+        'address_line' => 'نشانی کاربر دیگر',
+        'is_default' => true,
+    ]);
+
+    Sanctum::actingAs($this->user);
+
+    $this->putJson(route('addresses.update', $foreignAddress->id), [
+        'recipient_name' => 'تغییر غیرمجاز',
+    ])->assertForbidden();
+
+    $this->deleteJson(route('addresses.destroy', $foreignAddress->id))
+        ->assertForbidden();
+
+    $this->patchJson(route('addresses.default', $foreignAddress->id))
+        ->assertForbidden();
+});

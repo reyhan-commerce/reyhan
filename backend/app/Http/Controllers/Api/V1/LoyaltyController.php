@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Exceptions\Feature\FeatureDisabledException;
 use App\Features\ShopFeature;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Loyalty\RedeemLoyaltyPointsRequest;
 use App\Models\User;
 use App\Services\Loyalty\LoyaltyService;
 use App\Settings\GeneralSettings;
@@ -21,44 +23,26 @@ class LoyaltyController extends Controller
         protected GeneralSettings $settings
     ) {}
 
+    protected function ensureFeatureActive(): void
+    {
+        if (! Feature::active(ShopFeature::LOYALTY)) {
+            throw new FeatureDisabledException;
+        }
+    }
+
     /**
      * Get user loyalty club summary.
      */
     public function summary(Request $request): JsonResponse
     {
-        if (! Feature::active(ShopFeature::LOYALTY)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'باشگاه مشتریان در حال حاضر غیرفعال است.',
-            ], 403);
-        }
+        $this->ensureFeatureActive();
 
         /** @var User $user */
         $user = $request->user();
-        $balance = $user->loyalty_points_balance;
-        $tier = $user->loyalty_tier;
-
-        $totalEarned = (int) $user->loyaltyTransactions()->earned()->sum('points');
-        $totalSpent = abs((int) $user->loyaltyTransactions()->spent()->sum('points'));
-
-        $progress = 100;
-        if ($tier['next_points']) {
-            $range = $tier['next_points'] - $tier['min_points'];
-            $currentInRange = $balance - $tier['min_points'];
-            $progress = min(100, max(0, (int) round(($currentInRange / $range) * 100)));
-        }
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'balance' => $balance,
-                'tier' => $tier,
-                'progress' => $progress,
-                'total_earned' => $totalEarned,
-                'total_spent' => $totalSpent,
-                'point_value' => $this->settings->loyalty_point_redemption_value,
-                'monetary_worth' => $balance * $this->settings->loyalty_point_redemption_value,
-            ],
+            'data' => $this->loyaltyService->getSummary($user),
         ]);
     }
 
@@ -67,12 +51,7 @@ class LoyaltyController extends Controller
      */
     public function transactions(Request $request): JsonResponse
     {
-        if (! Feature::active(ShopFeature::LOYALTY)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'باشگاه مشتریان در حال حاضر غیرفعال است.',
-            ], 403);
-        }
+        $this->ensureFeatureActive();
 
         /** @var User $user */
         $user = $request->user();
@@ -95,37 +74,25 @@ class LoyaltyController extends Controller
     /**
      * Redeem points into a discount coupon.
      */
-    public function redeem(Request $request): JsonResponse
+    public function redeem(RedeemLoyaltyPointsRequest $request): JsonResponse
     {
-        if (! Feature::active(ShopFeature::LOYALTY)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'باشگاه مشتریان در حال حاضر غیرفعال است.',
-            ], 403);
-        }
-
-        $validated = $request->validate([
-            'points' => ['required', 'integer', 'min:10'],
-        ], [
-            'points.required' => 'تعداد امتیاز الزامی است.',
-            'points.min' => 'حداقل امتیاز مجاز برای تبدیل ۱۰ امتیاز است.',
-        ]);
+        $this->ensureFeatureActive();
 
         /** @var User $user */
         $user = $request->user();
 
         try {
-            $coupon = $this->loyaltyService->redeemPoints($user, (int) $validated['points']);
+            $coupon = $this->loyaltyService->redeemPoints($user, (int) $request->validated('points'));
 
             return response()->json([
                 'success' => true,
-                'message' => "کد تخفیف {$coupon->code} با موفقیت صادر شد!",
+                'message' => __('Discount coupon :code issued successfully!', ['code' => $coupon->code]),
                 'data' => [
                     'code' => $coupon->code,
                     'discount_amount' => $coupon->value,
                     'min_order_amount' => $coupon->min_order_amount,
                     'expires_at' => $coupon->expires_at?->toIso8601String(),
-                    'new_balance' => $user->fresh()->loyalty_points_balance,
+                    'new_balance' => $user->refresh()->loyalty_points_balance,
                 ],
             ]);
         } catch (InvalidArgumentException $e) {

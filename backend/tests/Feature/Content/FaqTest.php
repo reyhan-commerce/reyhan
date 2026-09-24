@@ -58,7 +58,7 @@ test('faqs endpoint filters by category parameter', function () {
         'order' => 1,
     ]);
 
-    $response = $this->getJson('/api/v1/faqs?category=' . urlencode('حساب کاربری'));
+    $response = $this->getJson('/api/v1/faqs?category='.urlencode('حساب کاربری'));
 
     $response->assertOk();
     $items = $response->json('data.items');

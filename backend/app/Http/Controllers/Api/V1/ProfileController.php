@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Profile\UpdateProfileRequest;
 use App\Http\Resources\V1\UserResource;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
@@ -17,6 +18,7 @@ class ProfileController extends Controller
      */
     public function show(Request $request): JsonResponse
     {
+        /** @var User $user */
         $user = $request->user();
 
         return response()->json([
@@ -36,23 +38,16 @@ class ProfileController extends Controller
     /**
      * Update customer profile details.
      */
-    public function update(Request $request): JsonResponse
+    public function update(UpdateProfileRequest $request): JsonResponse
     {
+        /** @var User $user */
         $user = $request->user();
-
-        $validated = $request->validate([
-            'first_name' => ['nullable', 'string', 'max:100'],
-            'last_name' => ['nullable', 'string', 'max:100'],
-            'national_code' => ['nullable', 'digits:10', Rule::unique('users', 'national_code')->ignore($user->id)],
-            'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
-        ]);
-
-        $user->update($validated);
+        $user->update($request->validated());
 
         return response()->json([
             'success' => true,
-            'message' => 'اطلاعات حساب کاربری با موفقیت ویرایش شد.',
-            'data' => new UserResource($user->fresh()),
+            'message' => __('Account details updated successfully.'),
+            'data' => new UserResource($user->refresh()),
         ]);
     }
 }

@@ -1,0 +1,10 @@
+# Farshid Laravel Standards for Windsurf Cascade
+
+1. **Framework-First**: Leverage Laravel native capabilities directly (`DB::transaction`, `FormRequest`, `Policy`, `ApiResource`, `Eloquent`, `Http::fake`).
+2. **Type Safety**: Strictly declare types on every function parameter, return type, and property.
+3. **No Repositories**: Eloquent is the data layer. Never introduce Repositories.
+4. **Actions for Business Logic**: Implement use cases in `final class [Verb][Noun]Action` with `execute()`.
+5. **Thin Controllers**: Controllers orchestrate HTTP concerns only: FormRequest -> Action -> ApiResource.
+6. **Models**: Use `protected function casts(): array` and `$guarded = ['id']`. Never call external HTTP services inside models.
+7. **Transactions**: Never wrap external HTTP calls in database transactions.
+8. **Testing**: Write Pest feature tests for all Actions and endpoints. Test against real database state using `RefreshDatabase`.
