@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Actions\Wishlist;
 
+use App\Data\Wishlist\WishlistToggleResultData;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Wishlist;
 
 final class ToggleWishlistAction
 {
-    /**
-     * @return array{in_wishlist: bool, message: string}
-     */
-    public function execute(User $user, Product $product): array
+    public function execute(User $user, Product $product): WishlistToggleResultData
     {
         $existing = Wishlist::where('user_id', $user->id)
             ->where('product_id', $product->id)
@@ -22,10 +20,10 @@ final class ToggleWishlistAction
         if ($existing) {
             $existing->delete();
 
-            return [
-                'in_wishlist' => false,
-                'message' => __('Product removed from wishlist.'),
-            ];
+            return new WishlistToggleResultData(
+                inWishlist: false,
+                message: __('Product removed from wishlist.'),
+            );
         }
 
         Wishlist::create([
@@ -33,9 +31,9 @@ final class ToggleWishlistAction
             'product_id' => $product->id,
         ]);
 
-        return [
-            'in_wishlist' => true,
-            'message' => __('Product added to wishlist.'),
-        ];
+        return new WishlistToggleResultData(
+            inWishlist: true,
+            message: __('Product added to wishlist.'),
+        );
     }
 }

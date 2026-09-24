@@ -54,7 +54,7 @@ class CategoryService
     /**
      * Get paginated active categories.
      *
-     * @return LengthAwarePaginator<Category>
+     * @return LengthAwarePaginator<int, Category>
      */
     public function listActive(int $perPage = 15): LengthAwarePaginator
     {

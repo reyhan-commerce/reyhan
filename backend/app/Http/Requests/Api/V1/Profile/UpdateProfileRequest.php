@@ -9,7 +9,7 @@ use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateProfileRequest extends FormRequest
+final class UpdateProfileRequest extends FormRequest
 {
     public function authorize(): bool
     {

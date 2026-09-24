@@ -51,7 +51,7 @@ class ShippingService
                 'free_shipping_threshold' => $threshold,
                 'remaining_for_free_shipping' => 0,
                 'progress_percent' => 100,
-                'method_title' => 'ارسال رایگان اکسپرس',
+                'method_title' => __('Free Express Delivery'),
             ];
         }
 
@@ -73,7 +73,7 @@ class ShippingService
             'free_shipping_threshold' => $threshold,
             'remaining_for_free_shipping' => $remaining,
             'progress_percent' => $progress,
-            'method_title' => 'پست پیشتاز سراسری',
+            'method_title' => __('Nationwide Pishtaz Post'),
         ];
     }
 }

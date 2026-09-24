@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Pricing;
 
+use App\Data\Pricing\CartPricingData;
 use App\Enums\CouponScope;
 use App\Enums\CouponType;
 use App\Models\Cart;
@@ -13,7 +14,7 @@ use App\Models\Coupon;
 use App\Services\Shipping\ShippingService;
 use Illuminate\Database\Eloquent\Collection;
 
-class PricingService
+final class PricingService
 {
     public function __construct(
         protected ShippingService $shippingService,
@@ -21,25 +22,8 @@ class PricingService
 
     /**
      * Compute full pricing breakdown for a given Cart.
-     *
-     * @return array{
-     *     original_items_subtotal: int,
-     *     items_subtotal: int,
-     *     catalog_discount: int,
-     *     coupon_discount: int,
-     *     total_discount: int,
-     *     shipping_fee: int,
-     *     is_free_shipping: bool,
-     *     free_shipping_threshold: int,
-     *     remaining_for_free_shipping: int,
-     *     free_shipping_progress: int,
-     *     final_payable: int,
-     *     total_items_count: int,
-     *     total_weight_grams: int,
-     *     applied_coupon: array{code: string, title: string|null, type: string, value: int}|null,
-     * }
      */
-    public function calculateCart(Cart $cart, ?City $destinationCity = null): array
+    public function calculateCart(Cart $cart, ?City $destinationCity = null): CartPricingData
     {
         $items = $cart->items()->with(['variant.product.category', 'variant.product.brand'])->get();
 
@@ -102,22 +86,22 @@ class PricingService
         $finalPayable = $subtotalAfterCoupon + $shipping['shipping_fee'];
         $totalDiscount = $catalogDiscount + $couponDiscount;
 
-        return [
-            'original_items_subtotal' => $originalItemsSubtotal,
-            'items_subtotal' => $itemsSubtotal,
-            'catalog_discount' => $catalogDiscount,
-            'coupon_discount' => $couponDiscount,
-            'total_discount' => $totalDiscount,
-            'shipping_fee' => $shipping['shipping_fee'],
-            'is_free_shipping' => $shipping['is_free'],
-            'free_shipping_threshold' => $shipping['free_shipping_threshold'],
-            'remaining_for_free_shipping' => $shipping['remaining_for_free_shipping'],
-            'free_shipping_progress' => $shipping['progress_percent'],
-            'final_payable' => $finalPayable,
-            'total_items_count' => $totalItemsCount,
-            'total_weight_grams' => $totalWeight,
-            'applied_coupon' => $appliedCouponData,
-        ];
+        return new CartPricingData(
+            originalItemsSubtotal: $originalItemsSubtotal,
+            itemsSubtotal: $itemsSubtotal,
+            catalogDiscount: $catalogDiscount,
+            couponDiscount: $couponDiscount,
+            totalDiscount: $totalDiscount,
+            shippingFee: $shipping['shipping_fee'],
+            isFreeShipping: $shipping['is_free'],
+            freeShippingThreshold: $shipping['free_shipping_threshold'],
+            remainingForFreeShipping: $shipping['remaining_for_free_shipping'],
+            freeShippingProgress: $shipping['progress_percent'],
+            finalPayable: $finalPayable,
+            totalItemsCount: $totalItemsCount,
+            totalWeightGrams: $totalWeight,
+            appliedCoupon: $appliedCouponData,
+        );
     }
 
     /**

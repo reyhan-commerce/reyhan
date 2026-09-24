@@ -7,7 +7,7 @@ namespace App\Http\Requests\Api\V1\Loyalty;
 use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RedeemLoyaltyPointsRequest extends FormRequest
+final class RedeemLoyaltyPointsRequest extends FormRequest
 {
     public function authorize(): bool
     {

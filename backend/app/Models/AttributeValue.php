@@ -6,26 +6,29 @@ namespace App\Models;
 
 use Database\Factories\AttributeValueFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property int $id
+ * @property int $attribute_id
+ * @property string $value
+ * @property string|null $label
+ * @property string|null $hex_code
+ * @property int $order
+ * @property-read Attribute|null $attribute
+ * @property-read Collection<int, ProductVariant> $productVariants
+ * @property-read string $display_label
+ */
 class AttributeValue extends Model
 {
     /** @use HasFactory<AttributeValueFactory> */
     use HasFactory;
 
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'attribute_id',
-        'value',
-        'label',
-        'hex_code',
-        'order',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -37,11 +40,17 @@ class AttributeValue extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Attribute, $this>
+     */
     public function attribute(): BelongsTo
     {
         return $this->belongsTo(Attribute::class);
     }
 
+    /**
+     * @return BelongsToMany<ProductVariant, $this>
+     */
     public function productVariants(): BelongsToMany
     {
         return $this->belongsToMany(ProductVariant::class, 'product_variant_values');

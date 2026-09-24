@@ -41,7 +41,7 @@ class LoyaltyTransactionResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
-                    ->description(fn (LoyaltyTransaction $record): string => (string) $record->user->mobile),
+                    ->description(fn (LoyaltyTransaction $record): string => $record->user ? (string) $record->user->mobile : '—'),
 
                 TextColumn::make('points')
                     ->label('امتیاز')

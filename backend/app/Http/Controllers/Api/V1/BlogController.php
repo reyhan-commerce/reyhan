@@ -14,7 +14,7 @@ use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class BlogController extends Controller
+final class BlogController extends Controller
 {
     /**
      * Get active blog categories.

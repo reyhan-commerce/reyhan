@@ -4,24 +4,29 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\PageFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string|null $content
+ * @property array<string, mixed>|null $metadata
+ * @property bool $is_active
+ */
 class Page extends Model
 {
+    /** @use HasFactory<PageFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'title',
-        'slug',
-        'content',
-        'metadata',
-        'meta_title',
-        'meta_description',
-        'is_active',
-    ];
+    protected $guarded = ['id'];
 
+    /**
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
@@ -30,8 +35,11 @@ class Page extends Model
         ];
     }
 
-    public function scopeActive(Builder $query): Builder
+    /**
+     * @param  Builder<Page>  $query
+     */
+    public function scopeActive(Builder $query): void
     {
-        return $query->where('is_active', true);
+        $query->where('is_active', true);
     }
 }

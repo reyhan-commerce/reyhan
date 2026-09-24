@@ -16,12 +16,12 @@ enum OrderStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::PendingPayment => 'در انتظار پرداخت',
-            self::Processing => 'در حال پردازش',
-            self::Shipped => 'تحویل به پست / پیک',
-            self::Delivered => 'تحویل داده شده',
-            self::Cancelled => 'لغو شده',
-            self::Refunded => 'مرجوع شده',
+            self::PendingPayment => __('Pending Payment'),
+            self::Processing => __('Processing'),
+            self::Shipped => __('Shipped'),
+            self::Delivered => __('Delivered'),
+            self::Cancelled => __('Cancelled'),
+            self::Refunded => __('Refunded'),
         };
     }
 

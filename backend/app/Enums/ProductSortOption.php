@@ -16,10 +16,10 @@ enum ProductSortOption: string implements HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::Latest => 'جدیدترین',
-            self::Cheapest => 'ارزان‌ترین',
-            self::Expensive => 'گران‌ترین',
-            self::Featured => 'محصولات برگزیده',
+            self::Latest => __('Latest'),
+            self::Cheapest => __('Cheapest'),
+            self::Expensive => __('Most Expensive'),
+            self::Featured => __('Featured Products'),
         };
     }
 

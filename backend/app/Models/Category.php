@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,27 +18,25 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
+/**
+ * @property int $id
+ * @property int|null $parent_id
+ * @property string $name
+ * @property string $slug
+ * @property string|null $description
+ * @property bool $is_active
+ * @property int $order
+ * @property-read Category|null $parent
+ * @property-read EloquentCollection<int, Category> $children
+ * @property-read EloquentCollection<int, Product> $products
+ * @property-read EloquentCollection<int, Attribute> $attributes
+ */
 class Category extends Model implements HasMedia
 {
     /** @use HasFactory<CategoryFactory> */
-    use HasFactory;
+    use HasFactory, HasSlug, InteractsWithMedia;
 
-    use HasSlug;
-    use InteractsWithMedia;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'parent_id',
-        'name',
-        'slug',
-        'description',
-        'icon',
-        'image',
-        'order',
-        'is_active',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -63,21 +62,33 @@ class Category extends Model implements HasMedia
         return 'slug';
     }
 
+    /**
+     * @return BelongsTo<Category, $this>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
 
+    /**
+     * @return HasMany<Category, $this>
+     */
     public function children(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id')->ordered();
     }
 
+    /**
+     * @return HasMany<Product, $this>
+     */
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
     }
 
+    /**
+     * @return BelongsToMany<Attribute, $this>
+     */
     public function attributes(): BelongsToMany
     {
         return $this->belongsToMany(Attribute::class, 'category_attributes')
@@ -103,19 +114,28 @@ class Category extends Model implements HasMedia
         return $ancestors;
     }
 
-    public function scopeActive(Builder $query): Builder
+    /**
+     * @param  Builder<Category>  $query
+     */
+    public function scopeActive(Builder $query): void
     {
-        return $query->where('is_active', true);
+        $query->where('is_active', true);
     }
 
-    public function scopeRoot(Builder $query): Builder
+    /**
+     * @param  Builder<Category>  $query
+     */
+    public function scopeRoot(Builder $query): void
     {
-        return $query->whereNull('parent_id');
+        $query->whereNull('parent_id');
     }
 
-    public function scopeOrdered(Builder $query): Builder
+    /**
+     * @param  Builder<Category>  $query
+     */
+    public function scopeOrdered(Builder $query): void
     {
-        return $query->orderBy('order');
+        $query->orderBy('order');
     }
 
     public function registerMediaCollections(): void

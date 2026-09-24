@@ -24,8 +24,8 @@ class OrderResource extends JsonResource
             'status' => $this->status->value,
             'status_label' => $this->status->label(),
             'status_color' => $this->status->color(),
-            'shipping_method' => $this->shipping_method->value,
-            'shipping_method_title' => $this->shipping_method->title(),
+            'shipping_method' => $this->shipping_method?->value,
+            'shipping_method_title' => $this->shipping_method?->title(),
             'shipping_address' => $this->shipping_address,
             'items_subtotal' => $this->items_subtotal,
             'discount_amount' => $this->discount_amount,
@@ -35,7 +35,7 @@ class OrderResource extends JsonResource
             'final_payable' => $this->final_payable,
             'items_count' => $this->items_count ?? $this->items->count(),
             'paid_at' => $this->paid_at?->toIso8601String(),
-            'created_at' => $this->created_at?->toIso8601String(),
+            'created_at' => $this->created_at->toIso8601String(),
             'items' => OrderItemResource::collection($this->whenLoaded('items')),
         ];
     }

@@ -11,7 +11,7 @@ use App\Services\Cart\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CartCouponController extends Controller
+final class CartCouponController extends Controller
 {
     use ResolvesCart;
 
@@ -24,7 +24,7 @@ class CartCouponController extends Controller
         $cart = $this->getCart($request);
         $this->cartService->applyCoupon($cart, (string) $request->validated('code'));
 
-        return $this->cartResponse($cart->fresh());
+        return $this->cartResponse($cart->refresh());
     }
 
     public function destroy(Request $request): JsonResponse
@@ -32,6 +32,6 @@ class CartCouponController extends Controller
         $cart = $this->getCart($request);
         $this->cartService->removeCoupon($cart);
 
-        return $this->cartResponse($cart->fresh());
+        return $this->cartResponse($cart->refresh());
     }
 }

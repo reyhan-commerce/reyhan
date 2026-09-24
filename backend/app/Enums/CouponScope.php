@@ -17,10 +17,10 @@ enum CouponScope: string implements HasColor, HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::All => 'کل فروشگاه و سبد خرید',
-            self::Categories => 'دسته‌بندی‌های خاص',
-            self::Brands => 'برندهای خاص',
-            self::Variants => 'کالاهای منتخب',
+            self::All => __('Entire Store & Cart'),
+            self::Categories => __('Specific Categories'),
+            self::Brands => __('Specific Brands'),
+            self::Variants => __('Selected Products'),
         };
     }
 

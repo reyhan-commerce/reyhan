@@ -140,7 +140,7 @@ class CategoryResource extends Resource
                     ->sortable()
                     ->weight(fn (Category $record): string => $record->parent_id ? 'medium' : 'bold')
                     ->formatStateUsing(fn (string $state, Category $record): string => $record->parent_id ? '↳ '.$state : '📁 '.$state)
-                    ->description(function (Category $record): ?string {
+                    ->description(function (Category $record): string {
                         $ancestors = $record->getAncestors();
                         if ($ancestors->isEmpty()) {
                             return 'دسته‌بندی اصلی (سطح ۱)';

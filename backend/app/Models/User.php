@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,26 +16,26 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property int $id
+ * @property string|null $first_name
+ * @property string|null $last_name
+ * @property string|null $national_code
+ * @property string $mobile
+ * @property string|null $email
+ * @property string|null $avatar
+ * @property bool $is_active
+ * @property Carbon|null $mobile_verified_at
+ * @property-read int $loyalty_points_balance
+ * @property-read array{key: string, label: string, color: string, icon: string, min_points: int, next_points: ?int, discount_percent: int} $loyalty_tier
+ * @property-read string $full_name
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'national_code',
-        'mobile',
-        'email',
-        'avatar',
-        'is_active',
-        'mobile_verified_at',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -77,36 +78,54 @@ class User extends Authenticatable
             get: function (): string {
                 $parts = array_filter([$this->first_name, $this->last_name]);
 
-                return empty($parts) ? 'کاربر گرامی' : implode(' ', $parts);
+                return empty($parts) ? __('Dear User') : implode(' ', $parts);
             }
         );
     }
 
+    /**
+     * @return HasMany<Address, $this>
+     */
     public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);
     }
 
+    /**
+     * @return HasOne<Address, $this>
+     */
     public function defaultAddress(): HasOne
     {
         return $this->hasOne(Address::class)->where('is_default', true);
     }
 
+    /**
+     * @return HasMany<Order, $this>
+     */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class)->latest();
     }
 
+    /**
+     * @return HasMany<Wishlist, $this>
+     */
     public function wishlists(): HasMany
     {
         return $this->hasMany(Wishlist::class);
     }
 
+    /**
+     * @return BelongsToMany<Product, $this>
+     */
     public function wishlistProducts(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'wishlists')->withTimestamps();
     }
 
+    /**
+     * @return HasMany<Review, $this>
+     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class)->latest();
@@ -120,51 +139,74 @@ class User extends Authenticatable
         return $this->hasMany(LoyaltyTransaction::class)->latest();
     }
 
-    public function getLoyaltyPointsBalanceAttribute(): int
+    /**
+     * @return Attribute<int, never>
+     */
+    protected function loyaltyPointsBalance(): Attribute
     {
-        return (int) $this->loyaltyTransactions()->sum('points');
+        return Attribute::make(
+            get: fn (): int => (int) $this->loyaltyTransactions()->sum('points'),
+        );
     }
 
     /**
-     * @return array{key: string, label: string, color: string, icon: string, min_points: int, next_points: ?int, discount_percent: int}
+     * @return Attribute<array{key: string, label: string, color: string, icon: string, min_points: int, next_points: ?int, discount_percent: int}, never>
      */
-    public function getLoyaltyTierAttribute(): array
+    protected function loyaltyTier(): Attribute
     {
-        $points = $this->loyalty_points_balance;
+        return Attribute::make(
+            get: function (): array {
+                $points = (int) $this->loyalty_points_balance;
 
-        if ($points >= 1500) {
-            return [
-                'key' => 'gold',
-                'label' => 'طلایی (VIP)',
-                'color' => 'amber',
-                'icon' => 'i-lucide-crown',
-                'min_points' => 1500,
-                'next_points' => null,
-                'discount_percent' => 10,
-            ];
+                if ($points >= 1500) {
+                    return [
+                        'key' => 'gold',
+                        'label' => __('Gold (VIP)'),
+                        'color' => 'amber',
+                        'icon' => 'i-lucide-crown',
+                        'min_points' => 1500,
+                        'next_points' => null,
+                        'discount_percent' => 10,
+                    ];
+                }
+
+                if ($points >= 500) {
+                    return [
+                        'key' => 'silver',
+                        'label' => __('Silver'),
+                        'color' => 'slate',
+                        'icon' => 'i-lucide-award',
+                        'min_points' => 500,
+                        'next_points' => 1500,
+                        'discount_percent' => 5,
+                    ];
+                }
+
+                return [
+                    'key' => 'bronze',
+                    'label' => __('Bronze'),
+                    'color' => 'orange',
+                    'icon' => 'i-lucide-shield',
+                    'min_points' => 0,
+                    'next_points' => 500,
+                    'discount_percent' => 0,
+                ];
+            }
+        );
+    }
+
+    public function isActive(): bool
+    {
+        return (bool) $this->is_active;
+    }
+
+    public function markMobileAsVerified(): self
+    {
+        if ($this->mobile_verified_at === null) {
+            $this->forceFill(['mobile_verified_at' => now()])->save();
         }
 
-        if ($points >= 500) {
-            return [
-                'key' => 'silver',
-                'label' => 'نقره‌ای',
-                'color' => 'slate',
-                'icon' => 'i-lucide-award',
-                'min_points' => 500,
-                'next_points' => 1500,
-                'discount_percent' => 5,
-            ];
-        }
-
-        return [
-            'key' => 'bronze',
-            'label' => 'برنزی',
-            'color' => 'orange',
-            'icon' => 'i-lucide-shield',
-            'min_points' => 0,
-            'next_points' => 500,
-            'discount_percent' => 0,
-        ];
+        return $this;
     }
 
     public function awardLoyaltyPoints(int $points, string $type, string $description, ?string $referenceId = null): LoyaltyTransaction

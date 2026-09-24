@@ -7,7 +7,7 @@ namespace App\Http\Requests\Api\V1\Cart;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SyncCartRequest extends FormRequest
+final class SyncCartRequest extends FormRequest
 {
     public function authorize(): bool
     {

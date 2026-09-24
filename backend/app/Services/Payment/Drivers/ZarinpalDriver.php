@@ -27,7 +27,7 @@ class ZarinpalDriver implements PaymentDriverInterface
 
     public function request(Order $order, string $callbackUrl): PaymentRequestResult
     {
-        $isSandbox = $this->config['sandbox'] ?? false;
+        $isSandbox = (bool) $this->config['sandbox'];
         $baseUrl = $isSandbox
             ? 'https://sandbox.zarinpal.com/pg/v4/payment'
             : 'https://payment.zarinpal.com/pg/v4/payment';
@@ -37,11 +37,11 @@ class ZarinpalDriver implements PaymentDriverInterface
                 'merchant_id' => $this->config['merchant_id'],
                 // Zarinpal v4 expects amount in Toman (order final_payable is in Rial)
                 'amount' => (int) ($order->final_payable / 10),
-                'description' => "پرداخت سفارش شماره {$order->order_number}",
+                'description' => __('Payment for order #:order_number', ['order_number' => $order->order_number]),
                 'callback_url' => $callbackUrl,
                 'metadata' => [
-                    'mobile' => $order->user->mobile,
-                    'email' => $order->user->email,
+                    'mobile' => $order->user?->mobile,
+                    'email' => $order->user?->email,
                     'order_id' => $order->id,
                 ],
             ]);
@@ -62,7 +62,7 @@ class ZarinpalDriver implements PaymentDriverInterface
             }
 
             $errors = $response->json('errors') ?? [];
-            $errorMsg = is_array($errors) ? ($errors['message'] ?? 'خطا در ارتباط با درگاه زرین‌پال') : 'خطا در ارتباط با درگاه زرین‌پال';
+            $errorMsg = is_array($errors) ? ($errors['message'] ?? __('Error communicating with Zarinpal gateway.')) : __('Error communicating with Zarinpal gateway.');
 
             return new PaymentRequestResult(
                 success: false,
@@ -71,7 +71,7 @@ class ZarinpalDriver implements PaymentDriverInterface
         } catch (Throwable $e) {
             return new PaymentRequestResult(
                 success: false,
-                errorMessage: 'خطای سیستمی در برقراری ارتباط با زرین‌پال: '.$e->getMessage(),
+                errorMessage: __('System error communicating with Zarinpal: :error', ['error' => $e->getMessage()]),
             );
         }
     }
@@ -83,13 +83,13 @@ class ZarinpalDriver implements PaymentDriverInterface
         if ($status !== 'OK') {
             return new PaymentVerifyResult(
                 success: false,
-                errorMessage: 'تراکنش توسط کاربر لغو شد یا ناموفق بود.',
+                errorMessage: __('Transaction was cancelled by user or failed.'),
                 rawResponse: $payload,
             );
         }
 
         $authority = $payload['Authority'] ?? $payment->authority;
-        $isSandbox = $this->config['sandbox'] ?? false;
+        $isSandbox = (bool) $this->config['sandbox'];
         $baseUrl = $isSandbox
             ? 'https://sandbox.zarinpal.com/pg/v4/payment'
             : 'https://payment.zarinpal.com/pg/v4/payment';
@@ -118,7 +118,7 @@ class ZarinpalDriver implements PaymentDriverInterface
             }
 
             $errors = $response->json('errors') ?? [];
-            $msg = is_array($errors) ? ($errors['message'] ?? 'کد وضعیت نامعتبر از زرین‌پال') : 'کد وضعیت نامعتبر از زرین‌پال';
+            $msg = is_array($errors) ? ($errors['message'] ?? __('Invalid status code from Zarinpal.')) : __('Invalid status code from Zarinpal.');
 
             return new PaymentVerifyResult(
                 success: false,
@@ -128,7 +128,7 @@ class ZarinpalDriver implements PaymentDriverInterface
         } catch (Throwable $e) {
             return new PaymentVerifyResult(
                 success: false,
-                errorMessage: 'خطا در تایید تراکنش: '.$e->getMessage(),
+                errorMessage: __('Error verifying transaction: :error', ['error' => $e->getMessage()]),
             );
         }
     }

@@ -12,16 +12,16 @@ enum ShippingMethod: string
     public function title(): string
     {
         return match ($this) {
-            self::Express => 'پیک موتوری اکسپرس (تهران و حومه)',
-            self::Pishtaz => 'پست پیشتاز سراسری',
+            self::Express => __('Express Courier (Tehran & Suburbs)'),
+            self::Pishtaz => __('Nationwide Pishtaz Post'),
         };
     }
 
     public function deliveryTime(): string
     {
         return match ($this) {
-            self::Express => 'تحویل ۱ تا ۳ ساعته',
-            self::Pishtaz => '۲ تا ۴ روز کاری',
+            self::Express => __('Delivery in 1 to 3 hours'),
+            self::Pishtaz => __('2 to 4 business days'),
         };
     }
 

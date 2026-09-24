@@ -58,7 +58,7 @@ class StockReservationService
             end
         LUA;
 
-        $result = Redis::eval($lua, 2, $reservedKey, $reservationKey, $variant->stock, $quantity, $ttlSeconds);
+        $result = Redis::connection()->command('eval', [$lua, [$reservedKey, $reservationKey, $variant->stock, $quantity, $ttlSeconds], 2]);
 
         return (bool) $result;
     }
@@ -85,7 +85,7 @@ class StockReservationService
             return 1
         LUA;
 
-        Redis::eval($lua, 2, $reservedKey, $reservationKey, $quantity);
+        Redis::connection()->command('eval', [$lua, [$reservedKey, $reservationKey, $quantity], 2]);
     }
 
     /**

@@ -4,25 +4,35 @@ declare(strict_types=1);
 
 namespace App\Actions\Address;
 
+use App\Data\Address\UpdateAddressData;
 use App\Models\Address;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 final class UpdateAddressAction
 {
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function execute(User $user, Address $address, array $data): Address
+    public function execute(User $user, Address $address, UpdateAddressData $data): Address
     {
-        $isDefault = isset($data['is_default']) ? (bool) $data['is_default'] : null;
+        $isDefault = $data->isDefault;
 
         DB::transaction(function () use ($user, $address, $data, $isDefault) {
             if ($isDefault === true) {
                 $user->addresses()->where('id', '!=', $address->id)->update(['is_default' => false]);
             }
 
-            $address->update($data);
+            $updatePayload = array_filter([
+                'province_id' => $data->provinceId,
+                'city_id' => $data->cityId,
+                'recipient_name' => $data->recipientName,
+                'recipient_mobile' => $data->recipientMobile,
+                'postal_code' => $data->postalCode,
+                'address_line' => $data->addressLine,
+                'building_number' => $data->buildingNumber,
+                'unit' => $data->unit,
+                'is_default' => $data->isDefault,
+            ], fn ($val) => $val !== null);
+
+            $address->update($updatePayload);
         });
 
         $address->load(['province', 'city']);

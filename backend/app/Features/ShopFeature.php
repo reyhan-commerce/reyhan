@@ -28,14 +28,14 @@ final class ShopFeature
     public static function all(): array
     {
         return [
-            self::REVIEWS => 'سیستم نظرات و امتیازات کاربران',
-            self::COUPONS => 'سیستم کدهای تخفیف و پروموشن',
-            self::WISHLIST => 'لیست علاقه‌مندی‌ها و بوک‌مارک کالا',
-            self::BRANDS => 'ویترین و فیلتر برندها',
-            self::STOCK_ALERTS => 'اطلاع‌رسانی پیامکی موجود شدن کالا',
-            self::COMPARISON => 'مقایسه مشخصات و ویژگی‌های کالاها',
-            self::BLOG => 'سیستم وبلاگ و مجله تخصصی',
-            self::LOYALTY => 'باشگاه مشتریان و سیستم وفاداری (Loyalty Club)',
+            self::REVIEWS => __('User reviews and ratings system'),
+            self::COUPONS => __('Discount coupons and promotions system'),
+            self::WISHLIST => __('Wishlist and product bookmarks'),
+            self::BRANDS => __('Brands showcase and filtering'),
+            self::STOCK_ALERTS => __('SMS alerts for restocked items'),
+            self::COMPARISON => __('Product specification comparison'),
+            self::BLOG => __('Blog and editorial magazine'),
+            self::LOYALTY => __('Customer loyalty club'),
         ];
     }
 

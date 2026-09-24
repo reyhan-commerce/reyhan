@@ -5,37 +5,42 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\StockStatus;
+use Carbon\Carbon;
 use Database\Factories\ProductVariantFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property int $product_id
+ * @property string $title
+ * @property string $sku
+ * @property string|null $barcode
+ * @property int $price
+ * @property int|null $compare_at_price
+ * @property int $stock
+ * @property int $low_stock_threshold
+ * @property int|null $weight
+ * @property bool $is_active
+ * @property Carbon|null $expiry_date
+ * @property int $order
+ * @property-read Product|null $product
+ * @property-read Collection<int, AttributeValue> $attributeValues
+ * @property-read StockStatus $stock_status
+ * @property-read int $discount_percent
+ */
 class ProductVariant extends Model
 {
     /** @use HasFactory<ProductVariantFactory> */
     use HasFactory, SoftDeletes;
 
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'product_id',
-        'sku',
-        'barcode',
-        'price',
-        'compare_at_price',
-        'stock',
-        'low_stock_threshold',
-        'batch_number',
-        'expiry_date',
-        'weight',
-        'is_active',
-        'order',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -54,24 +59,36 @@ class ProductVariant extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * @return BelongsToMany<AttributeValue, $this>
+     */
     public function attributeValues(): BelongsToMany
     {
         return $this->belongsToMany(AttributeValue::class, 'product_variant_values');
     }
 
-    public function scopeActive(Builder $query): Builder
+    /**
+     * @param  Builder<ProductVariant>  $query
+     */
+    public function scopeActive(Builder $query): void
     {
-        return $query->where('is_active', true);
+        $query->where('is_active', true);
     }
 
-    public function scopeInStock(Builder $query): Builder
+    /**
+     * @param  Builder<ProductVariant>  $query
+     */
+    public function scopeInStock(Builder $query): void
     {
-        return $query->where('stock', '>', 0);
+        $query->where('stock', '>', 0);
     }
 
     /**

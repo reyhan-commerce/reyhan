@@ -4,35 +4,18 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Database\Factories\BlogCategoryFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * @property int $id
- * @property string $name
- * @property string $slug
- * @property string|null $description
- * @property int $order
- * @property bool $is_active
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- */
 class BlogCategory extends Model
 {
     /** @use HasFactory<BlogCategoryFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'slug',
-        'description',
-        'order',
-        'is_active',
-    ];
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {

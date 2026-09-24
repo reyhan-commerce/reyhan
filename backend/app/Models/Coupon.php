@@ -9,6 +9,7 @@ use App\Enums\CouponType;
 use Carbon\Carbon;
 use Database\Factories\CouponFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -30,33 +31,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $starts_at
  * @property Carbon|null $expires_at
  * @property bool $is_active
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
+ * @property-read Collection<int, CouponUsage> $usages
+ * @property-read Collection<int, Category> $categories
+ * @property-read Collection<int, Brand> $brands
+ * @property-read Collection<int, ProductVariant> $variants
  */
 class Coupon extends Model
 {
     /** @use HasFactory<CouponFactory> */
     use HasFactory, SoftDeletes;
 
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'code',
-        'title',
-        'type',
-        'value',
-        'min_order_amount',
-        'max_discount_amount',
-        'scope',
-        'usage_limit',
-        'used_count',
-        'usage_limit_per_user',
-        'starts_at',
-        'expires_at',
-        'is_active',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -78,29 +63,44 @@ class Coupon extends Model
         ];
     }
 
+    /**
+     * @return HasMany<CouponUsage, $this>
+     */
     public function usages(): HasMany
     {
         return $this->hasMany(CouponUsage::class);
     }
 
+    /**
+     * @return BelongsToMany<Category, $this>
+     */
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'coupon_categories');
     }
 
+    /**
+     * @return BelongsToMany<Brand, $this>
+     */
     public function brands(): BelongsToMany
     {
         return $this->belongsToMany(Brand::class, 'coupon_brands');
     }
 
+    /**
+     * @return BelongsToMany<ProductVariant, $this>
+     */
     public function variants(): BelongsToMany
     {
         return $this->belongsToMany(ProductVariant::class, 'coupon_variants');
     }
 
-    public function scopeActive(Builder $query): Builder
+    /**
+     * @param  Builder<Coupon>  $query
+     */
+    public function scopeActive(Builder $query): void
     {
-        return $query->where('is_active', true)
+        $query->where('is_active', true)
             ->where(function (Builder $q): void {
                 $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
             })

@@ -10,7 +10,7 @@ use App\Services\Cart\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CartController extends Controller
+final class CartController extends Controller
 {
     use ResolvesCart;
 
@@ -30,6 +30,6 @@ class CartController extends Controller
         $cart = $this->getCart($request);
         $this->cartService->clearCart($cart);
 
-        return $this->cartResponse($cart->fresh());
+        return $this->cartResponse($cart->refresh());
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Data\Catalog\ProductFilterData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Catalog\ListProductsRequest;
 use App\Http\Resources\V1\ProductDetailResource;
@@ -11,7 +12,7 @@ use App\Http\Resources\V1\ProductResource;
 use App\Services\Catalog\ProductService;
 use Illuminate\Http\JsonResponse;
 
-class ProductController extends Controller
+final class ProductController extends Controller
 {
     public function __construct(
         protected ProductService $productService,
@@ -22,8 +23,7 @@ class ProductController extends Controller
      */
     public function index(ListProductsRequest $request): JsonResponse
     {
-        /** @var array<string, mixed> $filters */
-        $filters = $request->validated();
+        $filters = ProductFilterData::from($request->validated());
         $perPage = (int) $request->input('per_page', 15);
 
         $products = $this->productService->list($filters, $perPage);

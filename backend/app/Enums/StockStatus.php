@@ -17,9 +17,9 @@ enum StockStatus: string implements HasColor, HasIcon, HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::InStock => 'موجود در انبار',
-            self::LowStock => 'رو به اتمام',
-            self::OutOfStock => 'ناموجود',
+            self::InStock => __('In Stock'),
+            self::LowStock => __('Low Stock'),
+            self::OutOfStock => __('Out of Stock'),
         };
     }
 

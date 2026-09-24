@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\Profile\UpdateProfileAction;
+use App\Data\Profile\UpdateProfileData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Profile\UpdateProfileRequest;
 use App\Http\Resources\V1\UserResource;
@@ -11,7 +13,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ProfileController extends Controller
+final class ProfileController extends Controller
 {
     /**
      * Get the authenticated user profile along with summary counts.
@@ -38,16 +40,18 @@ class ProfileController extends Controller
     /**
      * Update customer profile details.
      */
-    public function update(UpdateProfileRequest $request): JsonResponse
-    {
+    public function update(
+        UpdateProfileRequest $request,
+        UpdateProfileAction $action
+    ): JsonResponse {
         /** @var User $user */
         $user = $request->user();
-        $user->update($request->validated());
+        $updatedUser = $action->execute($user, UpdateProfileData::from($request->validated()));
 
         return response()->json([
             'success' => true,
             'message' => __('Account details updated successfully.'),
-            'data' => new UserResource($user->refresh()),
+            'data' => new UserResource($updatedUser),
         ]);
     }
 }

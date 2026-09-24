@@ -62,6 +62,11 @@ export const useApi = () => {
   const apiBase = config.public.apiBase || 'http://localhost:8000/api/v1'
   const toast = useToast()
   const tokenCookie = useCookie<string | null>('auth_token')
+  const localeCookie = useCookie<string>('app_locale', {
+    default: () => 'fa',
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production'
+  })
   const cartSessionCookie = useCookie<string | null>('cart_session', {
     maxAge: 60 * 60 * 24 * 365,
     sameSite: 'lax',
@@ -90,6 +95,9 @@ export const useApi = () => {
         options.headers.set('X-Cart-Session', cartSessionCookie.value)
       }
 
+      // Send requested language to backend via standard Accept-Language header
+      const requestedLocale = localeCookie.value || 'fa'
+      options.headers.set('Accept-Language', requestedLocale)
       options.headers.set('Accept', 'application/json')
     },
     onResponse({ response }) {

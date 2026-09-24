@@ -13,9 +13,9 @@ enum PaymentStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Pending => 'در انتظار پرداخت',
-            self::Success => 'موفق',
-            self::Failed => 'ناموفق',
+            self::Pending => __('Pending Payment'),
+            self::Success => __('Successful'),
+            self::Failed => __('Failed'),
         };
     }
 

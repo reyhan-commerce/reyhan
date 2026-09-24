@@ -10,19 +10,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $cart_id
+ * @property int $product_variant_id
+ * @property int $quantity
+ * @property-read Cart|null $cart
+ * @property-read ProductVariant|null $variant
+ * @property-read ProductVariant|null $productVariant
+ * @property-read int $subtotal
+ * @property-read int $original_subtotal
+ */
 class CartItem extends Model
 {
     /** @use HasFactory<CartItemFactory> */
     use HasFactory;
 
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'cart_id',
-        'product_variant_id',
-        'quantity',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -34,16 +38,25 @@ class CartItem extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Cart, $this>
+     */
     public function cart(): BelongsTo
     {
         return $this->belongsTo(Cart::class);
     }
 
+    /**
+     * @return BelongsTo<ProductVariant, $this>
+     */
     public function variant(): BelongsTo
     {
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
+    /**
+     * @return BelongsTo<ProductVariant, $this>
+     */
     public function productVariant(): BelongsTo
     {
         return $this->variant();
@@ -55,7 +68,12 @@ class CartItem extends Model
     protected function subtotal(): Attribute
     {
         return Attribute::make(
-            get: fn (): int => (int) (($this->variant?->price ?? 0) * $this->quantity),
+            get: function (): int {
+                $variant = $this->variant;
+                $price = $variant ? $variant->price : 0;
+
+                return (int) ($price * $this->quantity);
+            },
         );
     }
 
@@ -66,7 +84,8 @@ class CartItem extends Model
     {
         return Attribute::make(
             get: function (): int {
-                $compare = $this->variant?->compare_at_price ?? $this->variant?->price ?? 0;
+                $variant = $this->variant;
+                $compare = $variant ? ($variant->compare_at_price ?? $variant->price) : 0;
 
                 return (int) ($compare * $this->quantity);
             },

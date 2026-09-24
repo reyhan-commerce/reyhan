@@ -13,9 +13,9 @@ enum ReviewStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Pending => 'در انتظار تایید',
-            self::Approved => 'تایید شده',
-            self::Rejected => 'رد شده',
+            self::Pending => __('Pending Approval'),
+            self::Approved => __('Approved'),
+            self::Rejected => __('Rejected'),
         };
     }
 

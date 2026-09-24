@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\Review\StoreReviewAction;
+use App\Data\Review\StoreReviewData;
 use App\Enums\ReviewStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Review\StoreReviewRequest;
@@ -14,7 +15,7 @@ use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
-class ReviewController extends Controller
+final class ReviewController extends Controller
 {
     /**
      * Get approved reviews and rating statistics for a product.
@@ -50,7 +51,7 @@ class ReviewController extends Controller
         $user = $request->user();
         $product = Product::findOrFail($productId);
 
-        $review = $action->execute($user, $product, $request->validated());
+        $review = $action->execute($user, $product, StoreReviewData::from($request->validated()));
 
         return response()->json([
             'success' => true,

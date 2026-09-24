@@ -7,7 +7,7 @@ namespace App\Http\Requests\Api\V1\Review;
 use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreReviewRequest extends FormRequest
+final class StoreReviewRequest extends FormRequest
 {
     public function authorize(): bool
     {

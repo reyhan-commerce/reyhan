@@ -6,30 +6,29 @@ namespace App\Models;
 
 use Database\Factories\ProvinceFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @property bool $is_active
+ * @property int $order
+ * @property float|null $latitude
+ * @property float|null $longitude
+ * @property-read Collection<int, City> $cities
+ */
 class Province extends Model
 {
     /** @use HasFactory<ProvinceFactory> */
-    use HasFactory;
+    use HasFactory, HasSlug;
 
-    use HasSlug;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'name',
-        'slug',
-        'latitude',
-        'longitude',
-        'is_active',
-        'order',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -51,13 +50,19 @@ class Province extends Model
             ->saveSlugsTo('slug');
     }
 
+    /**
+     * @return HasMany<City, $this>
+     */
     public function cities(): HasMany
     {
         return $this->hasMany(City::class)->orderBy('order');
     }
 
-    public function scopeActive(Builder $query): Builder
+    /**
+     * @param  Builder<Province>  $query
+     */
+    public function scopeActive(Builder $query): void
     {
-        return $query->where('is_active', true);
+        $query->where('is_active', true);
     }
 }

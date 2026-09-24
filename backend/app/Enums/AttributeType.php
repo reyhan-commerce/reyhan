@@ -18,10 +18,10 @@ enum AttributeType: string implements HasColor, HasIcon, HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::Text => 'متن ساده (Text)',
-            self::Color => 'رنگ انتخابی با کد هگز (Color Swatch)',
-            self::Number => 'عدد و مقیاس (Number)',
-            self::Select => 'منوی کشویی / لیست گزینه‌ای (Select)',
+            self::Text => __('Plain Text (Text)'),
+            self::Color => __('Color (Hex Swatch)'),
+            self::Number => __('Number & Scale'),
+            self::Select => __('Dropdown / Select List'),
         };
     }
 

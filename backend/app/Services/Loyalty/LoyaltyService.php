@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-class LoyaltyService
+final class LoyaltyService
 {
     public function __construct(
         protected GeneralSettings $settings
@@ -39,7 +39,7 @@ class LoyaltyService
             $user->awardLoyaltyPoints(
                 points: $bonus,
                 type: 'signup_bonus',
-                description: 'هدیه خوش‌آمدگویی و عضویت در ایزیشاپ'
+                description: __('Welcome bonus and membership gift')
             );
         }
     }
@@ -74,7 +74,7 @@ class LoyaltyService
             $user->awardLoyaltyPoints(
                 points: $points,
                 type: 'order_reward',
-                description: "پاداش ثبت موفق سفارش شماره {$order->order_number}",
+                description: __('Reward for successful placement of order #:order_number', ['order_number' => $order->order_number]),
                 referenceId: (string) $order->order_number
             );
         }
@@ -86,12 +86,7 @@ class LoyaltyService
     public function redeemPoints(User $user, int $points): Coupon
     {
         if ($points <= 0) {
-            throw new InvalidArgumentException('تعداد امتیاز برای تبدیل باید بزرگتر از صفر باشد.');
-        }
-
-        $currentBalance = $user->loyalty_points_balance;
-        if ($currentBalance < $points) {
-            throw new InvalidArgumentException("امتیاز کافی نیست. موجودی شما {$currentBalance} امتیاز است.");
+            throw new InvalidArgumentException(__('The number of points to redeem must be greater than zero.'));
         }
 
         $rateValue = $this->settings->loyalty_point_redemption_value;
@@ -101,12 +96,21 @@ class LoyaltyService
 
         $discountAmount = $points * $rateValue;
 
-        return DB::transaction(function () use ($user, $points, $discountAmount) {
+        // Farshid Rule 5 / Red Flag 5: Concurrency Guard with user row lockForUpdate inside transaction boundary
+        return DB::transaction(function () use ($user, $points, $discountAmount): Coupon {
+            /** @var User $lockedUser */
+            $lockedUser = User::query()->where('id', $user->id)->lockForUpdate()->firstOrFail();
+
+            $currentBalance = (int) $lockedUser->loyaltyTransactions()->sum('points');
+            if ($currentBalance < $points) {
+                throw new InvalidArgumentException(__('Insufficient points. Your current balance is :balance points.', ['balance' => $currentBalance]));
+            }
+
             $code = 'CLUB-'.strtoupper(Str::random(6));
 
             $coupon = Coupon::create([
                 'code' => $code,
-                'title' => "کوپن پاداش باشگاه مشتریان ({$points} امتیاز)",
+                'title' => __('Customer Club Reward Coupon (:points points)', ['points' => $points]),
                 'type' => CouponType::Fixed,
                 'value' => $discountAmount,
                 'min_order_amount' => $discountAmount * 2, // e.g. min purchase 2x discount
@@ -118,10 +122,10 @@ class LoyaltyService
                 'is_active' => true,
             ]);
 
-            $user->awardLoyaltyPoints(
+            $lockedUser->awardLoyaltyPoints(
                 points: -$points,
                 type: 'coupon_redemption',
-                description: "تبدیل {$points} امتیاز به کد تخفیف {$code}",
+                description: __('Converted :points points to discount coupon :code', ['points' => $points, 'code' => $code]),
                 referenceId: $code
             );
 

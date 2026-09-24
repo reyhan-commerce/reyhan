@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\Address\DeleteAddressAction;
 use App\Actions\Address\SetDefaultAddressAction;
 use App\Actions\Address\StoreAddressAction;
 use App\Actions\Address\UpdateAddressAction;
+use App\Data\Address\StoreAddressData;
+use App\Data\Address\UpdateAddressData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Address\StoreAddressRequest;
 use App\Http\Requests\Api\V1\Address\UpdateAddressRequest;
@@ -18,7 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Gate;
 
-class AddressController extends Controller
+final class AddressController extends Controller
 {
     /**
      * List authenticated user's addresses.
@@ -44,7 +47,7 @@ class AddressController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
-        $address = $action->execute($user, $request->validated());
+        $address = $action->execute($user, StoreAddressData::from($request->validated()));
 
         return response()->json([
             'success' => true,
@@ -65,7 +68,7 @@ class AddressController extends Controller
 
         /** @var User $user */
         $user = $request->user();
-        $updatedAddress = $action->execute($user, $address, $request->validated());
+        $updatedAddress = $action->execute($user, $address, UpdateAddressData::from($request->validated()));
 
         return response()->json([
             'success' => true,
@@ -77,19 +80,16 @@ class AddressController extends Controller
     /**
      * Delete an address.
      */
-    public function destroy(Request $request, Address $address): JsonResponse
-    {
+    public function destroy(
+        Request $request,
+        Address $address,
+        DeleteAddressAction $action
+    ): JsonResponse {
         Gate::authorize('delete', $address);
 
         /** @var User $user */
         $user = $request->user();
-        $wasDefault = $address->is_default;
-        $address->delete();
-
-        if ($wasDefault) {
-            $latest = $user->addresses()->latest()->first();
-            $latest?->update(['is_default' => true]);
-        }
+        $action->execute($user, $address);
 
         return response()->json([
             'success' => true,

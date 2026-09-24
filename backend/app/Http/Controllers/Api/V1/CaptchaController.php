@@ -10,7 +10,7 @@ use App\Services\Captcha\CaptchaService;
 use Illuminate\Http\JsonResponse;
 use JsonException;
 
-class CaptchaController extends Controller
+final class CaptchaController extends Controller
 {
     public function __construct(
         protected CaptchaService $captchaService

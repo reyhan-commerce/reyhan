@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Database\Factories\BrandFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,26 +15,22 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @property string|null $description
+ * @property string|null $website
+ * @property bool $is_active
+ * @property int $order
+ * @property-read Collection<int, Product> $products
+ */
 class Brand extends Model implements HasMedia
 {
     /** @use HasFactory<BrandFactory> */
-    use HasFactory;
+    use HasFactory, HasSlug, InteractsWithMedia;
 
-    use HasSlug;
-    use InteractsWithMedia;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'name',
-        'slug',
-        'name_en',
-        'logo',
-        'description',
-        'is_active',
-        'order',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -58,19 +55,28 @@ class Brand extends Model implements HasMedia
         return 'slug';
     }
 
+    /**
+     * @return HasMany<Product, $this>
+     */
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
     }
 
-    public function scopeActive(Builder $query): Builder
+    /**
+     * @param  Builder<Brand>  $query
+     */
+    public function scopeActive(Builder $query): void
     {
-        return $query->where('is_active', true);
+        $query->where('is_active', true);
     }
 
-    public function scopeOrdered(Builder $query): Builder
+    /**
+     * @param  Builder<Brand>  $query
+     */
+    public function scopeOrdered(Builder $query): void
     {
-        return $query->orderBy('order');
+        $query->orderBy('order');
     }
 
     public function registerMediaCollections(): void

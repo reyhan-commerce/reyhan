@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\Checkout\CreateOrderAction;
+use App\Data\Checkout\CreateOrderData;
 use App\Exceptions\Cart\EmptyCartException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Checkout\CreateOrderRequest;
@@ -15,7 +16,7 @@ use App\Services\Pricing\PricingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CheckoutController extends Controller
+final class CheckoutController extends Controller
 {
     /**
      * Preview checkout summary (subtotal, shipping, discounts, payable).
@@ -41,7 +42,8 @@ class CheckoutController extends Controller
         if ($addressId) {
             $address = Address::where('user_id', $user->id)
                 ->with('city')
-                ->find($addressId);
+                ->whereKey($addressId)
+                ->first();
         }
 
         if (! $address) {
@@ -53,10 +55,10 @@ class CheckoutController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'pricing' => $pricing,
-                'final_payable' => $pricing['final_payable'],
+                'pricing' => $pricing->toArray(),
+                'final_payable' => $pricing->finalPayable,
                 'selected_address_id' => $address?->id,
-                'items_count' => $pricing['total_items_count'],
+                'items_count' => $pricing->totalItemsCount,
             ],
         ]);
     }
@@ -73,22 +75,18 @@ class CheckoutController extends Controller
 
         $result = $createOrderAction->execute(
             user: $user,
-            addressId: (int) $request->validated('address_id'),
-            shippingMethodValue: (string) $request->validated('shipping_method'),
-            gatewayValue: (string) $request->validated('gateway'),
-            callbackUrl: (string) $request->validated('callback_url'),
-            notes: $request->validated('notes')
+            data: CreateOrderData::from($request->validated()),
         );
 
         return response()->json([
             'success' => true,
             'message' => __('Order created successfully and awaiting payment.'),
             'data' => [
-                'order_id' => $result['order']->id,
-                'order_number' => $result['order']->order_number,
-                'final_payable' => $result['order']->final_payable,
-                'authority' => $result['payment']->authority,
-                'redirect_url' => $result['redirect_url'],
+                'order_id' => $result->order->id,
+                'order_number' => $result->order->order_number,
+                'final_payable' => $result->order->final_payable,
+                'authority' => $result->payment->authority,
+                'redirect_url' => $result->redirectUrl,
             ],
         ], 201);
     }

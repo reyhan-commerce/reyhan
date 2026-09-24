@@ -33,7 +33,7 @@ class SandboxDriver implements PaymentDriverInterface
         if (strtoupper((string) $status) !== 'OK') {
             return new PaymentVerifyResult(
                 success: false,
-                errorMessage: 'پرداخت در درگاه شبیه‌ساز لغو یا ناموفق شد.',
+                errorMessage: __('Payment was cancelled or failed in the sandbox gateway.'),
                 rawResponse: $payload,
             );
         }

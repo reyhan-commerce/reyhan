@@ -25,7 +25,7 @@ class CartItemResource extends JsonResource
         return [
             'id' => $this->id,
             'quantity' => $this->quantity,
-            'unit_price' => $variant?->price ?? 0,
+            'unit_price' => $variant->price ?? 0,
             'subtotal' => $this->subtotal,
             'original_subtotal' => $this->original_subtotal,
             'discount_amount' => max(0, $this->original_subtotal - $this->subtotal),

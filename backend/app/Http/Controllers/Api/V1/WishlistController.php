@@ -13,7 +13,7 @@ use App\Models\Wishlist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class WishlistController extends Controller
+final class WishlistController extends Controller
 {
     /**
      * List current user's wishlist products.
@@ -74,8 +74,8 @@ class WishlistController extends Controller
 
         return response()->json([
             'success' => true,
-            'in_wishlist' => $result['in_wishlist'],
-            'message' => $result['message'],
+            'in_wishlist' => $result->inWishlist,
+            'message' => $result->message,
         ]);
     }
 }

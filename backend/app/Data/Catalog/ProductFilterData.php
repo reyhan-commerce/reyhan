@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Data\Catalog;
+
+use Spatie\LaravelData\Attributes\MapInputName;
+use Spatie\LaravelData\Data;
+
+final class ProductFilterData extends Data
+{
+    /**
+     * @param  string|array<string>|null  $brand
+     */
+    public function __construct(
+        public ?string $category = null,
+        public string|array|null $brand = null,
+        #[MapInputName('min_price')]
+        public int|string|null $minPrice = null,
+        #[MapInputName('max_price')]
+        public int|string|null $maxPrice = null,
+        #[MapInputName('in_stock')]
+        public bool|string|null $inStock = null,
+        public ?string $search = null,
+        public ?string $sort = null,
+    ) {}
+}

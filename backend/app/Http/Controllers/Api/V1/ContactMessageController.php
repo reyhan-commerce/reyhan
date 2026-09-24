@@ -9,7 +9,7 @@ use App\Http\Requests\Api\V1\Content\StoreContactMessageRequest;
 use App\Models\ContactMessage;
 use Illuminate\Http\JsonResponse;
 
-class ContactMessageController extends Controller
+final class ContactMessageController extends Controller
 {
     /**
      * Store a customer contact message.

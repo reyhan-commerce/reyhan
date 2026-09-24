@@ -8,7 +8,7 @@ use App\Models\Product;
 use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Database\Eloquent\Builder;
 
-class SearchProductsAction
+final class SearchProductsAction
 {
     /**
      * Apply typo-tolerant PostgreSQL pg_trgm fuzzy search and ILIKE matching on products.

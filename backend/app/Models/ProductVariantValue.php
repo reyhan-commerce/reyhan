@@ -18,11 +18,17 @@ class ProductVariantValue extends Pivot
 
     public $incrementing = true;
 
+    /**
+     * @return BelongsTo<ProductVariant, $this>
+     */
     public function productVariant(): BelongsTo
     {
         return $this->belongsTo(ProductVariant::class);
     }
 
+    /**
+     * @return BelongsTo<AttributeValue, $this>
+     */
     public function attributeValue(): BelongsTo
     {
         return $this->belongsTo(AttributeValue::class);

@@ -10,7 +10,7 @@ use App\Services\Payment\PaymentManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PaymentController extends Controller
+final class PaymentController extends Controller
 {
     /**
      * List available active payment gateways for customer.
@@ -35,16 +35,16 @@ class PaymentController extends Controller
         if (empty($authority)) {
             return response()->json([
                 'success' => false,
-                'message' => 'شناسه پیگیری پرداخت (Authority) در درخواست یافت نشد.',
+                'message' => __('Payment authority tracking ID was not found in the request.'),
             ], 422);
         }
 
         $result = $verifyPaymentAction->execute($authority, $request->all());
 
         return response()->json([
-            'success' => $result['success'],
-            'message' => $result['message'],
-            'data' => $result,
-        ], $result['success'] ? 200 : 400);
+            'success' => $result->success,
+            'message' => $result->message,
+            'data' => $result->toArray(),
+        ], $result->success ? 200 : 400);
     }
 }

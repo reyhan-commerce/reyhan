@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Actions\Checkout;
 
+use App\Data\Checkout\CreateOrderData;
+use App\Data\Checkout\CreateOrderResultData;
 use App\Enums\OrderStatus;
-use App\Enums\PaymentGateway;
 use App\Enums\PaymentStatus;
-use App\Enums\ShippingMethod;
 use App\Models\Address;
+use App\Models\AttributeValue;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
@@ -22,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
-class CreateOrderAction
+final class CreateOrderAction
 {
     public function __construct(
         protected CartService $cartService,
@@ -34,37 +35,31 @@ class CreateOrderAction
 
     /**
      * Execute checkout and order creation.
-     *
-     * @return array{order: Order, payment: Payment, redirect_url: string}
      */
     public function execute(
         User $user,
-        int $addressId,
-        string $shippingMethodValue,
-        string $gatewayValue,
-        string $callbackUrl,
-        ?string $notes = null
-    ): array {
+        CreateOrderData $data,
+    ): CreateOrderResultData {
         $address = Address::where('user_id', $user->id)
             ->with(['province', 'city'])
-            ->findOrFail($addressId);
+            ->findOrFail($data->addressId);
 
         $cart = $this->cartService->resolveCart($user);
         $cart->load(['items.productVariant.product', 'coupon']);
 
         if ($cart->items->isEmpty()) {
             throw ValidationException::withMessages([
-                'cart' => ['سبد خرید شما خالی است.'],
+                'cart' => [__('Your shopping cart is empty.')],
             ]);
         }
 
-        $shippingMethod = ShippingMethod::tryFrom($shippingMethodValue) ?? ShippingMethod::Pishtaz;
-        $gateway = PaymentGateway::tryFrom($gatewayValue) ?? PaymentGateway::Sandbox;
+        $shippingMethod = $data->shippingMethod;
+        $gateway = $data->gateway;
 
-        // Calculate Pricing
+        // Calculate Pricing using DTO
         $pricing = $this->pricingService->calculateCart($cart, $address->city);
-        $shippingFee = $pricing['shipping_fee'];
-        $finalPayable = $pricing['final_payable'];
+        $shippingFee = $pricing->shippingFee;
+        $finalPayable = $pricing->finalPayable;
 
         // Reserve Stock in Redis (Tier 1 Concurrency Locking)
         $reservationId = 'order_res_'.Str::random(16);
@@ -76,7 +71,7 @@ class CreateOrderAction
             if (! $variant || ! $variant->is_active) {
                 $this->rollbackReservations($reservedVariantIds, $reservationId);
                 throw ValidationException::withMessages([
-                    'stock' => ["محصول «{$item->productVariant?->product?->name}» در حال حاضر فعال نیست."],
+                    'stock' => [__('Product \':product\' is currently not active.', ['product' => $item->productVariant?->product?->name])],
                 ]);
             }
 
@@ -90,26 +85,24 @@ class CreateOrderAction
             if (! $reserved) {
                 $this->rollbackReservations($reservedVariantIds, $reservationId);
                 throw ValidationException::withMessages([
-                    'stock' => ["موجودی تنوع «{$variant->title}» کافی نیست."],
+                    'stock' => [__('Insufficient stock for variant \':variant\'.', ['variant' => $variant->title])],
                 ]);
             }
 
             $reservedVariantIds[$variant->id] = $item->quantity;
         }
 
-        // Create Order & OrderItems in DB Transaction
-        return DB::transaction(function () use (
+        // 1. Create Order & OrderItems in DB Transaction and commit immediately
+        $order = DB::transaction(function () use (
             $user,
             $address,
             $cart,
             $shippingMethod,
-            $gateway,
             $pricing,
             $shippingFee,
             $finalPayable,
-            $notes,
-            $callbackUrl
-        ) {
+            $data
+        ): Order {
             $order = Order::create([
                 'order_number' => Order::generateOrderNumber(),
                 'user_id' => $user->id,
@@ -128,19 +121,26 @@ class CreateOrderAction
                     'unit' => $address->unit,
                     'full_address' => $address->full_address,
                 ],
-                'items_subtotal' => $pricing['items_subtotal'],
-                'discount_amount' => $pricing['catalog_discount'],
-                'coupon_discount' => $pricing['coupon_discount'],
-                'coupon_code' => $pricing['applied_coupon']['code'] ?? null,
+                'items_subtotal' => $pricing->itemsSubtotal,
+                'discount_amount' => $pricing->catalogDiscount,
+                'coupon_discount' => $pricing->couponDiscount,
+                'coupon_code' => $pricing->appliedCoupon['code'] ?? null,
                 'shipping_fee' => $shippingFee,
                 'final_payable' => $finalPayable,
-                'notes' => $notes,
+                'notes' => $data->notes,
             ]);
 
             // Save immutable item snapshots
             foreach ($cart->items as $item) {
                 $variant = $item->productVariant;
+                if (! $variant) {
+                    continue;
+                }
+
                 $product = $variant->product;
+                if (! $product) {
+                    continue;
+                }
 
                 $unitPrice = $variant->compare_at_price ?? $variant->price;
                 $finalPrice = $variant->price;
@@ -158,39 +158,45 @@ class CreateOrderAction
                     'final_price' => $finalPrice,
                     'quantity' => $item->quantity,
                     'total_price' => $finalPrice * $item->quantity,
-                    'attributes_snapshot' => $variant->attributeValues->map(fn ($av) => [
+                    'attributes_snapshot' => $variant->attributeValues->map(fn (AttributeValue $av): array => [
                         'attribute' => $av->attribute?->name,
                         'value' => $av->value,
                         'label' => $av->label,
-                    ])->toArray(),
+                    ])->all(),
                 ]);
             }
 
-            // Initiate payment via PaymentManager
-            $driver = $this->paymentManager->driver($gateway->value);
-            $payResult = $driver->request($order, $callbackUrl);
-
-            if (! $payResult->success || ! $payResult->authority) {
-                throw ValidationException::withMessages([
-                    'payment' => [$payResult->errorMessage ?? 'خطا در ارتباط با درگاه پرداخت بانکی.'],
-                ]);
-            }
-
-            $payment = Payment::create([
-                'order_id' => $order->id,
-                'user_id' => $user->id,
-                'gateway' => $gateway,
-                'status' => PaymentStatus::Pending,
-                'amount' => $finalPayable,
-                'authority' => $payResult->authority,
-            ]);
-
-            return [
-                'order' => $order,
-                'payment' => $payment,
-                'redirect_url' => (string) $payResult->redirectUrl,
-            ];
+            return $order;
         });
+
+        // 2. Initiate payment via PaymentManager OUTSIDE the database transaction (Farshid Rule 5 / Red Flag 3)
+        $driver = $this->paymentManager->driver($gateway->value);
+        $payResult = $driver->request($order, $data->callbackUrl);
+
+        if (! $payResult->success || ! $payResult->authority) {
+            $this->rollbackReservations($reservedVariantIds, $reservationId);
+            $order->update(['status' => OrderStatus::Cancelled]);
+
+            throw ValidationException::withMessages([
+                'payment' => [$payResult->errorMessage ?? __('Error communicating with the payment gateway.')],
+            ]);
+        }
+
+        // 3. Record pending Payment in DB
+        $payment = Payment::create([
+            'order_id' => $order->id,
+            'user_id' => $user->id,
+            'gateway' => $gateway,
+            'status' => PaymentStatus::Pending,
+            'amount' => $finalPayable,
+            'authority' => $payResult->authority,
+        ]);
+
+        return new CreateOrderResultData(
+            order: $order,
+            payment: $payment,
+            redirectUrl: (string) $payResult->redirectUrl,
+        );
     }
 
     /**

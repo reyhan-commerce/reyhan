@@ -6,33 +6,37 @@ namespace App\Models;
 
 use App\Enums\PaymentGateway;
 use App\Enums\PaymentStatus;
+use Carbon\Carbon;
+use Database\Factories\PaymentFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property int $order_id
+ * @property int|null $user_id
+ * @property PaymentGateway $gateway
+ * @property PaymentStatus $status
+ * @property int $amount
+ * @property string|null $reference_id
+ * @property string|null $tracking_code
+ * @property string|null $card_pan
+ * @property array<string, mixed>|null $gateway_response
+ * @property Carbon|null $paid_at
+ * @property-read Order|null $order
+ * @property-read User|null $user
+ */
 class Payment extends Model
 {
+    /** @use HasFactory<PaymentFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'order_id',
-        'user_id',
-        'gateway',
-        'status',
-        'amount',
-        'authority',
-        'reference_id',
-        'tracking_code',
-        'card_pan',
-        'gateway_response',
-        'paid_at',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -48,19 +52,28 @@ class Payment extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Order, $this>
+     */
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function scopeSuccess(Builder $query): Builder
+    /**
+     * @param  Builder<Payment>  $query
+     */
+    public function scopeSuccess(Builder $query): void
     {
-        return $query->where('status', PaymentStatus::Success);
+        $query->where('status', PaymentStatus::Success);
     }
 
     public static function generateTrackingCode(): string

@@ -13,7 +13,7 @@ use App\Services\Cart\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CartItemController extends Controller
+final class CartItemController extends Controller
 {
     use ResolvesCart;
 
@@ -30,7 +30,7 @@ class CartItemController extends Controller
             (int) $request->input('quantity', 1)
         );
 
-        return $this->cartResponse($cart->fresh(), 201);
+        return $this->cartResponse($cart->refresh(), 201);
     }
 
     public function update(UpdateCartItemRequest $request, CartItem $cartItem): JsonResponse
@@ -40,7 +40,7 @@ class CartItemController extends Controller
 
         $this->cartService->updateQuantity($cartItem, (int) $request->validated('quantity'));
 
-        return $this->cartResponse($cart->fresh());
+        return $this->cartResponse($cart->refresh());
     }
 
     public function destroy(Request $request, CartItem $cartItem): JsonResponse
@@ -50,6 +50,6 @@ class CartItemController extends Controller
 
         $this->cartService->removeItem($cartItem);
 
-        return $this->cartResponse($cart->fresh());
+        return $this->cartResponse($cart->refresh());
     }
 }

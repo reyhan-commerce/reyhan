@@ -8,7 +8,7 @@ use App\Pipelines\Normalizer\PersianNormalizer;
 use App\Rules\ValidCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RequestOtpRequest extends FormRequest
+final class RequestOtpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

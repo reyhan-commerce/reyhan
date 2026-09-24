@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace App\Actions\Address;
 
+use App\Data\Address\StoreAddressData;
 use App\Models\Address;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 final class StoreAddressAction
 {
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function execute(User $user, array $data): Address
+    public function execute(User $user, StoreAddressData $data): Address
     {
-        $isDefault = (bool) ($data['is_default'] ?? false);
+        $isDefault = (bool) ($data->isDefault ?? false);
         $hasExisting = $user->addresses()->exists();
 
         if (! $hasExisting) {
@@ -30,7 +28,14 @@ final class StoreAddressAction
 
             /** @var Address $newAddress */
             $newAddress = $user->addresses()->create([
-                ...$data,
+                'province_id' => $data->provinceId,
+                'city_id' => $data->cityId,
+                'recipient_name' => $data->recipientName,
+                'recipient_mobile' => $data->recipientMobile,
+                'postal_code' => $data->postalCode,
+                'address_line' => $data->addressLine,
+                'building_number' => $data->buildingNumber,
+                'unit' => $data->unit,
                 'is_default' => $isDefault,
             ]);
 

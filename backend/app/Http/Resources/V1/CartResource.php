@@ -29,7 +29,7 @@ class CartResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'items_count' => $pricing['total_items_count'],
+            'items_count' => $pricing->totalItemsCount,
             'items' => CartItemResource::collection($items),
             'pricing' => $pricing,
         ];

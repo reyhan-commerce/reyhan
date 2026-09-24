@@ -10,7 +10,7 @@ use App\Http\Resources\V1\ProvinceResource;
 use App\Models\Province;
 use Illuminate\Http\JsonResponse;
 
-class GeoController extends Controller
+final class GeoController extends Controller
 {
     public function provinces(): JsonResponse
     {

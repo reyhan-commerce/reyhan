@@ -7,7 +7,7 @@ namespace App\Http\Requests\Api\V1\Address;
 use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAddressRequest extends FormRequest
+final class StoreAddressRequest extends FormRequest
 {
     public function authorize(): bool
     {

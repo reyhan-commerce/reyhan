@@ -4,31 +4,35 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\OrderItemFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $order_id
+ * @property int $product_id
+ * @property int $product_variant_id
+ * @property string $product_name
+ * @property string $variant_title
+ * @property string $sku
+ * @property int $unit_price
+ * @property int $discount_amount
+ * @property int $final_price
+ * @property int $quantity
+ * @property int $total_price
+ * @property array<string, mixed>|null $attributes_snapshot
+ * @property-read Order|null $order
+ * @property-read Product|null $product
+ * @property-read ProductVariant|null $productVariant
+ */
 class OrderItem extends Model
 {
+    /** @use HasFactory<OrderItemFactory> */
     use HasFactory;
 
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'order_id',
-        'product_id',
-        'product_variant_id',
-        'product_name',
-        'variant_title',
-        'sku',
-        'unit_price',
-        'discount_amount',
-        'final_price',
-        'quantity',
-        'total_price',
-        'attributes_snapshot',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -45,16 +49,25 @@ class OrderItem extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Order, $this>
+     */
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * @return BelongsTo<ProductVariant, $this>
+     */
     public function productVariant(): BelongsTo
     {
         return $this->belongsTo(ProductVariant::class);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ReviewStatus;
+use Carbon\Carbon;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
@@ -19,31 +20,33 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
+/**
+ * @property int $id
+ * @property int|null $category_id
+ * @property int|null $brand_id
+ * @property string $name
+ * @property string $slug
+ * @property string|null $sku
+ * @property string|null $description
+ * @property string|null $short_description
+ * @property bool $is_active
+ * @property bool $is_featured
+ * @property Carbon|null $published_at
+ * @property-read Category|null $category
+ * @property-read Brand|null $brand
+ * @property-read Collection<int, ProductVariant> $variants
+ * @property-read Collection<int, ProductVariant> $activeVariants
+ * @property-read Collection<int, Review> $reviews
+ * @property-read Collection<int, Review> $approvedReviews
+ * @property-read Collection<int, Wishlist> $wishlists
+ * @property-read array{min: int|null, max: int|null} $price_range
+ */
 class Product extends Model implements HasMedia
 {
     /** @use HasFactory<ProductFactory> */
-    use HasFactory;
+    use HasFactory, HasSlug, InteractsWithMedia, SoftDeletes;
 
-    use HasSlug;
-    use InteractsWithMedia;
-    use SoftDeletes;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'category_id',
-        'brand_id',
-        'name',
-        'slug',
-        'description',
-        'short_description',
-        'is_active',
-        'is_featured',
-        'meta_title',
-        'meta_description',
-        'published_at',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -70,43 +73,64 @@ class Product extends Model implements HasMedia
         return 'slug';
     }
 
+    /**
+     * @return BelongsTo<Category, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+    /**
+     * @return BelongsTo<Brand, $this>
+     */
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
     }
 
+    /**
+     * @return HasMany<ProductVariant, $this>
+     */
     public function variants(): HasMany
     {
         return $this->hasMany(ProductVariant::class)->orderBy('order');
     }
 
+    /**
+     * @return HasMany<ProductVariant, $this>
+     */
     public function activeVariants(): HasMany
     {
         return $this->hasMany(ProductVariant::class)->where('is_active', true);
     }
 
-    public function scopeActive(Builder $query): Builder
+    /**
+     * @param  Builder<Product>  $query
+     */
+    public function scopeActive(Builder $query): void
     {
-        return $query->where('is_active', true)
+        $query->where('is_active', true)
             ->where(function (Builder $q): void {
                 $q->whereNull('published_at')
                     ->orWhere('published_at', '<=', now());
             });
     }
 
-    public function scopeFeatured(Builder $query): Builder
+    /**
+     * @param  Builder<Product>  $query
+     */
+    public function scopeFeatured(Builder $query): void
     {
-        return $query->where('is_featured', true);
+        $query->where('is_featured', true);
     }
 
-    public function scopePublished(Builder $query): Builder
+    /**
+     * @param  Builder<Product>  $query
+     */
+    public function scopePublished(Builder $query): void
     {
-        return $query->whereNotNull('published_at')
+        $query->whereNotNull('published_at')
             ->where('published_at', '<=', now());
     }
 
@@ -203,16 +227,25 @@ class Product extends Model implements HasMedia
         return $matrix;
     }
 
+    /**
+     * @return HasMany<Review, $this>
+     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class)->latest();
     }
 
+    /**
+     * @return HasMany<Review, $this>
+     */
     public function approvedReviews(): HasMany
     {
         return $this->hasMany(Review::class)->where('status', ReviewStatus::Approved)->latest();
     }
 
+    /**
+     * @return HasMany<Wishlist, $this>
+     */
     public function wishlists(): HasMany
     {
         return $this->hasMany(Wishlist::class);

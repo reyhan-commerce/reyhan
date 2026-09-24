@@ -14,20 +14,25 @@ enum PaymentGateway: string
     public function title(): string
     {
         return match ($this) {
-            self::Sandbox => 'درگاه پرداخت تستی (سندباکس)',
-            self::Zarinpal => 'درگاه پرداخت زرین‌پال',
-            self::Saman => 'درگاه پرداخت اینترنتی بانک سامان (سپ)',
-            self::Mellat => 'درگاه پرداخت اینترنتی به پرداخت ملت',
+            self::Sandbox => __('Test Sandbox Gateway'),
+            self::Zarinpal => __('Zarinpal Gateway'),
+            self::Saman => __('Saman Bank (SEP) Online Gateway'),
+            self::Mellat => __('Behpardakht Mellat Online Gateway'),
         };
+    }
+
+    public function label(): string
+    {
+        return $this->title();
     }
 
     public function description(): string
     {
         return match ($this) {
-            self::Sandbox => 'شبیه‌ساز پرداخت جهت تست بدون نیاز به کارت واقعی',
-            self::Zarinpal => 'پرداخت امن با کلیه کارت‌های عضو شتاب',
-            self::Saman => 'اتصال مستقیم به درگاه پرداخت سپ',
-            self::Mellat => 'پرداخت اینترنتی سریع با کلیه کارت‌های شتاب',
+            self::Sandbox => __('Payment simulator for testing without real card'),
+            self::Zarinpal => __('Secure payment with all Shetab cards'),
+            self::Saman => __('Direct connection to SEP gateway'),
+            self::Mellat => __('Fast online payment with all Shetab cards'),
         };
     }
 }

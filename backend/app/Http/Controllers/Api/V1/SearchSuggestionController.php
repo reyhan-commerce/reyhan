@@ -14,7 +14,7 @@ use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class SearchSuggestionController extends Controller
+final class SearchSuggestionController extends Controller
 {
     public function __construct(
         protected SearchProductsAction $searchAction,

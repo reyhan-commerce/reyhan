@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Pennant\Feature;
 
-class AppFeaturesController extends Controller
+final class AppFeaturesController extends Controller
 {
     public const string CACHE_KEY = 'app:features:active';
 

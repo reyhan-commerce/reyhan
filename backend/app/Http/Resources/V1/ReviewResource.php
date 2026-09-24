@@ -20,7 +20,7 @@ class ReviewResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $userName = 'کاربر گرامی';
+        $userName = __('Dear User');
         if ($this->user) {
             $firstName = $this->user->first_name ?: '';
             $lastName = $this->user->last_name ?: '';
@@ -50,7 +50,7 @@ class ReviewResource extends JsonResource
             'status' => $this->status->value,
             'admin_reply' => $this->admin_reply,
             'admin_reply_at' => $this->admin_reply_at?->toIso8601String(),
-            'created_at' => $this->created_at->toIso8601String(),
+            'created_at' => $this->created_at?->toIso8601String(),
         ];
 
     }

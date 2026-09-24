@@ -17,9 +17,9 @@ enum CouponType: string implements HasColor, HasIcon, HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::Percentage => 'درصدی (%)',
-            self::Fixed => 'مبلغ ثابت (ریال)',
-            self::FreeShipping => 'ارسال رایگان',
+            self::Percentage => __('Percentage (%)'),
+            self::Fixed => __('Fixed Amount (Rials)'),
+            self::FreeShipping => __('Free Shipping'),
         };
     }
 

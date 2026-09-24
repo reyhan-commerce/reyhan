@@ -4,39 +4,18 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Database\Factories\LoyaltyTransactionFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @property int $id
- * @property int $user_id
- * @property int $points
- * @property string $type
- * @property string $description
- * @property string|null $reference_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property-read User $user
- *
- * @method static Builder<static> earned()
- * @method static Builder<static> spent()
- */
 class LoyaltyTransaction extends Model
 {
     /** @use HasFactory<LoyaltyTransactionFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'points',
-        'type',
-        'description',
-        'reference_id',
-    ];
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {

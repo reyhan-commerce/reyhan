@@ -13,49 +13,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $id
- * @property int $category_id
- * @property int|null $author_id
- * @property string $title
- * @property string $slug
- * @property string|null $summary
- * @property string $content
- * @property string|null $featured_image
- * @property int $reading_time
- * @property int $views_count
- * @property bool $is_featured
- * @property bool $is_published
  * @property Carbon|null $published_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property array<string>|null $tags
- * @property string|null $meta_title
- * @property string|null $meta_description
- * @property-read BlogCategory $category
- * @property-read Admin|null $author
  */
 class BlogPost extends Model
 {
     /** @use HasFactory<BlogPostFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
-        'category_id',
-        'author_id',
-        'title',
-        'slug',
-        'summary',
-        'content',
-        'featured_image',
-        'reading_time',
-        'views_count',
-        'is_featured',
-        'is_published',
-        'published_at',
-        'tags',
-        'meta_title',
-        'meta_description',
-    ];
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {

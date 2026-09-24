@@ -17,9 +17,10 @@ trait ResolvesCart
         /** @var CartService $cartService */
         $cartService = app(CartService::class);
         $user = $request->user('sanctum');
-        $sessionId = $request->header('X-Cart-Session') ?: $request->cookie('cart_session');
+        $rawSessionId = $request->header('X-Cart-Session') ?: $request->cookie('cart_session');
+        $sessionId = is_string($rawSessionId) ? $rawSessionId : null;
 
-        return $cartService->resolveCart($user, $sessionId ? (string) $sessionId : null);
+        return $cartService->resolveCart($user, $sessionId);
     }
 
     protected function cartResponse(Cart $cart, int $status = 200): JsonResponse

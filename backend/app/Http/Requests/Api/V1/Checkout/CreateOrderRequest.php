@@ -10,7 +10,7 @@ use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
-class CreateOrderRequest extends FormRequest
+final class CreateOrderRequest extends FormRequest
 {
     public function authorize(): bool
     {

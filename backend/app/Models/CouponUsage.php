@@ -9,20 +9,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $coupon_id
+ * @property int $user_id
+ * @property int $discount_amount
+ * @property-read Coupon|null $coupon
+ * @property-read User|null $user
+ */
 class CouponUsage extends Model
 {
     /** @use HasFactory<CouponUsageFactory> */
     use HasFactory;
 
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'coupon_id',
-        'user_id',
-        'order_id',
-        'discount_amount',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -34,11 +34,17 @@ class CouponUsage extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Coupon, $this>
+     */
     public function coupon(): BelongsTo
     {
         return $this->belongsTo(Coupon::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

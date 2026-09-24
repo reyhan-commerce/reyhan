@@ -12,26 +12,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
+/**
+ * @property int $id
+ * @property int $province_id
+ * @property string $name
+ * @property string $slug
+ * @property bool $is_active
+ * @property int $order
+ * @property float|null $latitude
+ * @property float|null $longitude
+ * @property-read Province|null $province
+ */
 class City extends Model
 {
     /** @use HasFactory<CityFactory> */
-    use HasFactory;
+    use HasFactory, HasSlug;
 
-    use HasSlug;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'province_id',
-        'name',
-        'slug',
-        'latitude',
-        'longitude',
-        'postal_prefix',
-        'is_active',
-        'order',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -54,13 +51,19 @@ class City extends Model
             ->saveSlugsTo('slug');
     }
 
+    /**
+     * @return BelongsTo<Province, $this>
+     */
     public function province(): BelongsTo
     {
         return $this->belongsTo(Province::class);
     }
 
-    public function scopeActive(Builder $query): Builder
+    /**
+     * @param  Builder<City>  $query
+     */
+    public function scopeActive(Builder $query): void
     {
-        return $query->where('is_active', true);
+        $query->where('is_active', true);
     }
 }

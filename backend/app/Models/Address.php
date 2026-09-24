@@ -4,32 +4,38 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\AddressFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $province_id
+ * @property int $city_id
+ * @property string $recipient_name
+ * @property string $recipient_mobile
+ * @property string $postal_code
+ * @property string $address_line
+ * @property string|null $building_number
+ * @property string|null $unit
+ * @property bool $is_default
+ * @property-read string $full_address
+ * @property-read Province|null $province
+ * @property-read City|null $city
+ */
 class Address extends Model
 {
+    /** @use HasFactory<AddressFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'user_id',
-        'province_id',
-        'city_id',
-        'recipient_name',
-        'recipient_mobile',
-        'postal_code',
-        'address_line',
-        'building_number',
-        'unit',
-        'is_default',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -41,45 +47,65 @@ class Address extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Province, $this>
+     */
     public function province(): BelongsTo
     {
         return $this->belongsTo(Province::class);
     }
 
+    /**
+     * @return BelongsTo<City, $this>
+     */
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
     }
 
-    public function scopeDefault(Builder $query): Builder
+    /**
+     * @param  Builder<Address>  $query
+     */
+    public function scopeDefault(Builder $query): void
     {
-        return $query->where('is_default', true);
+        $query->where('is_default', true);
     }
 
     /**
      * Format full human-readable address.
+     *
+     * @return Attribute<string, never>
      */
-    public function getFullAddressAttribute(): string
+    protected function fullAddress(): Attribute
     {
-        $parts = [
-            $this->province?->name,
-            $this->city?->name,
-            $this->address_line,
-        ];
+        return Attribute::make(
+            get: function (): string {
+                $parts = [
+                    $this->province?->name,
+                    $this->city?->name,
+                    $this->address_line,
+                ];
 
-        if ($this->building_number) {
-            $parts[] = "پلاک {$this->building_number}";
-        }
+                if ($this->building_number) {
+                    $parts[] = __('No. :number', ['number' => $this->building_number]);
+                }
 
-        if ($this->unit) {
-            $parts[] = "واحد {$this->unit}";
-        }
+                if ($this->unit) {
+                    $parts[] = __('Unit :unit', ['unit' => $this->unit]);
+                }
 
-        return implode('، ', array_filter($parts));
+                $separator = app()->getLocale() === 'fa' ? '، ' : ', ';
+
+                return implode($separator, array_filter($parts));
+            }
+        );
     }
 }

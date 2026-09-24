@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 use InvalidArgumentException;
 use Laravel\Pennant\Feature;
 
-class LoyaltyController extends Controller
+final class LoyaltyController extends Controller
 {
     public function __construct(
         protected LoyaltyService $loyaltyService,
@@ -113,38 +113,38 @@ class LoyaltyController extends Controller
             'data' => [
                 [
                     'key' => 'bronze',
-                    'label' => 'سطح برنزی',
+                    'label' => __('Bronze Tier'),
                     'min_points' => 0,
                     'max_points' => 499,
                     'icon' => 'i-lucide-shield',
                     'perks' => [
-                        'کسب امتیاز با هر خرید و نظر',
-                        'دریافت هدیه خوش‌آمدگویی',
+                        __('Earn points with every purchase and review'),
+                        __('Receive welcome gift'),
                     ],
                 ],
                 [
                     'key' => 'silver',
-                    'label' => 'سطح نقره‌ای',
+                    'label' => __('Silver Tier'),
                     'min_points' => 500,
                     'max_points' => 1499,
                     'icon' => 'i-lucide-award',
                     'perks' => [
-                        '۵٪ تخفیف مازاد دائمی روی سفارش‌ها',
-                        'اولویت در ارسال و بسته‌بندی مرسولات',
-                        'کد تخفیف ویژه سالروز تولد',
+                        __('5% permanent additional discount on orders'),
+                        __('Priority packaging and shipping'),
+                        __('Special birthday discount coupon'),
                     ],
                 ],
                 [
                     'key' => 'gold',
-                    'label' => 'سطح طلایی (VIP)',
+                    'label' => __('Gold Tier (VIP)'),
                     'min_points' => 1500,
                     'max_points' => null,
                     'icon' => 'i-lucide-crown',
                     'perks' => [
-                        'ارسال رایگان برای تمامی سفارش‌ها بدون قید و شرط',
-                        '۱۰٪ تخفیف مازاد VIP',
-                        'دسترسی زودهنگام به حراجی‌های فصلی',
-                        'پشتیبانی تلفنی و مشاور پوستی اختصاصی',
+                        __('Unconditional free shipping on all orders'),
+                        __('10% additional VIP discount'),
+                        __('Early access to seasonal sales'),
+                        __('Dedicated phone support and skin consultation'),
                     ],
                 ],
             ],

@@ -12,7 +12,7 @@ use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 
-class PageController extends Controller
+final class PageController extends Controller
 {
     /**
      * Get an active CMS static page by slug.

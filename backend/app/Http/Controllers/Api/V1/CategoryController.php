@@ -9,7 +9,7 @@ use App\Http\Resources\V1\CategoryResource;
 use App\Services\Catalog\CategoryService;
 use Illuminate\Http\JsonResponse;
 
-class CategoryController extends Controller
+final class CategoryController extends Controller
 {
     public function __construct(
         protected CategoryService $categoryService,

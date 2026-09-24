@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ReviewStatus;
-use Carbon\CarbonImmutable;
+use Carbon\Carbon;
+use Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,43 +17,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $user_id
  * @property int $product_id
  * @property int $rating
- * @property array<string, int>|null $criteria_ratings
+ * @property array<string, mixed>|null $criteria_ratings
  * @property int|null $longevity_rating
  * @property int|null $coverage_rating
  * @property int|null $value_rating
- * @property string $comment
- * @property array<string>|null $strengths
- * @property array<string>|null $weaknesses
+ * @property string|null $title
+ * @property string|null $comment
+ * @property array<int, string>|null $strengths
+ * @property array<int, string>|null $weaknesses
  * @property bool $is_verified_purchase
  * @property ReviewStatus $status
  * @property string|null $admin_reply
- * @property CarbonImmutable|null $admin_reply_at
- * @property CarbonImmutable $created_at
- * @property CarbonImmutable $updated_at
+ * @property Carbon|null $admin_reply_at
  * @property-read User|null $user
- * @property-read Product $product
+ * @property-read Product|null $product
  */
 class Review extends Model
 {
+    /** @use HasFactory<ReviewFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'product_id',
-        'rating',
-        'criteria_ratings',
-        'longevity_rating',
-        'coverage_rating',
-        'value_rating',
-        'comment',
-        'strengths',
-        'weaknesses',
-        'is_verified_purchase',
-        'status',
-        'admin_reply',
-        'admin_reply_at',
-    ];
+    protected $guarded = ['id'];
 
+    /**
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
@@ -69,18 +58,27 @@ class Review extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function scopeApproved(Builder $query): Builder
+    /**
+     * @param  Builder<Review>  $query
+     */
+    public function scopeApproved(Builder $query): void
     {
-        return $query->where('status', ReviewStatus::Approved);
+        $query->where('status', ReviewStatus::Approved);
     }
 }

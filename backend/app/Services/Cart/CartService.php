@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class CartService
 {
@@ -21,25 +22,19 @@ class CartService
     public function resolveCart(?User $user = null, ?string $sessionId = null): Cart
     {
         if ($user) {
-            /** @var Cart $cart */
-            $cart = Cart::firstOrCreate(
+            return Cart::firstOrCreate(
                 ['user_id' => $user->id],
                 ['session_id' => $sessionId]
             );
-
-            return $cart;
         }
 
         if (! $sessionId) {
             $sessionId = (string) Str::uuid();
         }
 
-        /** @var Cart $cart */
-        $cart = Cart::firstOrCreate(
+        return Cart::firstOrCreate(
             ['session_id' => $sessionId, 'user_id' => null]
         );
-
-        return $cart;
     }
 
     /**
@@ -51,13 +46,13 @@ class CartService
 
         if ($variant->stock <= 0) {
             throw ValidationException::withMessages([
-                'variant_id' => ['این مدل از محصول در حال حاضر در انبار موجود نیست.'],
+                'variant_id' => [__('This product variant is currently out of stock.')],
             ]);
         }
 
         /** @var CartItem|null $existing */
         $existing = $cart->items()->where('product_variant_id', $variantId)->first();
-        $targetQty = ($existing?->quantity ?? 0) + $quantity;
+        $targetQty = ($existing ? $existing->quantity : 0) + $quantity;
 
         // Cap at variant stock or max 10
         $maxAllowed = min($variant->stock, 10);
@@ -68,7 +63,7 @@ class CartService
         if ($existing) {
             $existing->update(['quantity' => $targetQty]);
 
-            return $existing->fresh(['variant.product.category', 'variant.attributeValues']);
+            return $existing->fresh(['variant.product.category', 'variant.attributeValues']) ?? $existing;
         }
 
         /** @var CartItem $item */
@@ -129,7 +124,7 @@ class CartService
 
         if (! $coupon) {
             throw ValidationException::withMessages([
-                'code' => ['کد تخفیف وارد شده معتبر نیست یا منقضی شده است.'],
+                'code' => [__('The entered discount coupon is invalid or has expired.')],
             ]);
         }
 
@@ -139,12 +134,12 @@ class CartService
             if ($coupon->min_order_amount && $itemsSubtotal < $coupon->min_order_amount) {
                 $minToman = number_format((float) ($coupon->min_order_amount / 10));
                 throw ValidationException::withMessages([
-                    'code' => ["حداقل مبلغ سفارش برای استفاده از این کد {$minToman} تومان می‌باشد."],
+                    'code' => [__('The minimum order amount to use this coupon is :amount Tomans.', ['amount' => $minToman])],
                 ]);
             }
 
             throw ValidationException::withMessages([
-                'code' => ['شرایط استفاده از این کد تخفیف برای سفارش شما برقرار نیست.'],
+                'code' => [__('The conditions for using this discount coupon are not met for your order.')],
             ]);
         }
 
@@ -163,6 +158,8 @@ class CartService
 
     /**
      * Merge guest cart into user cart after OTP login.
+     *
+     * @throws Throwable
      */
     public function syncGuestCart(User $user, string $sessionId): Cart
     {
@@ -202,7 +199,7 @@ class CartService
             $guestCart->items()->delete();
             $guestCart->delete();
 
-            return $userCart->fresh(['items.variant.product', 'coupon']);
+            return $userCart->fresh(['items.variant.product', 'coupon']) ?? $userCart;
         });
     }
 }

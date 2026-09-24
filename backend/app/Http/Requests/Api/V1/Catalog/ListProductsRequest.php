@@ -9,7 +9,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
-class ListProductsRequest extends FormRequest
+final class ListProductsRequest extends FormRequest
 {
     public function authorize(): bool
     {

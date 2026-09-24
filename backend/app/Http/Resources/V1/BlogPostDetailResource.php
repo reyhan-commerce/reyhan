@@ -40,7 +40,7 @@ class BlogPostDetailResource extends JsonResource
                 'name' => $this->author->name,
                 'avatar' => $this->author->avatar ? asset('storage/'.$this->author->avatar) : null,
             ] : [
-                'name' => 'تیم تحریریه و کارشناسان زیبایی',
+                'name' => __('Editorial Team & Beauty Experts'),
                 'avatar' => null,
             ],
         ];

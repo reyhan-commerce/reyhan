@@ -6,7 +6,8 @@ namespace App\Models;
 
 use App\Enums\OrderStatus;
 use App\Enums\ShippingMethod;
-use Carbon\CarbonImmutable;
+use Carbon\Carbon;
+use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,39 +32,22 @@ use Illuminate\Support\Str;
  * @property int $shipping_fee
  * @property int $final_payable
  * @property string|null $notes
- * @property CarbonImmutable|null $paid_at
- * @property CarbonImmutable|null $shipped_at
- * @property CarbonImmutable|null $cancelled_at
- * @property CarbonImmutable $created_at
- * @property CarbonImmutable $updated_at
+ * @property Carbon|null $paid_at
+ * @property Carbon|null $shipped_at
+ * @property Carbon|null $cancelled_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read User|null $user
  * @property-read Collection<int, OrderItem> $items
+ * @property-read Collection<int, Payment> $payments
+ * @property-read Payment|null $successfulPayment
  */
 class Order extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    /** @use HasFactory<OrderFactory> */
+    use HasFactory, SoftDeletes;
 
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'order_number',
-        'user_id',
-        'status',
-        'shipping_method',
-        'shipping_address',
-        'items_subtotal',
-        'discount_amount',
-        'coupon_discount',
-        'coupon_code',
-        'shipping_fee',
-        'final_payable',
-        'notes',
-        'paid_at',
-        'shipped_at',
-        'cancelled_at',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -85,34 +69,52 @@ class Order extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return HasMany<OrderItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
+    /**
+     * @return HasMany<Payment, $this>
+     */
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
 
+    /**
+     * @return HasOne<Payment, $this>
+     */
     public function successfulPayment(): HasOne
     {
         return $this->hasOne(Payment::class)->where('status', 'success');
     }
 
-    public function scopePendingPayment(Builder $query): Builder
+    /**
+     * @param  Builder<Order>  $query
+     */
+    public function scopePendingPayment(Builder $query): void
     {
-        return $query->where('status', OrderStatus::PendingPayment);
+        $query->where('status', OrderStatus::PendingPayment);
     }
 
-    public function scopeProcessing(Builder $query): Builder
+    /**
+     * @param  Builder<Order>  $query
+     */
+    public function scopeProcessing(Builder $query): void
     {
-        return $query->where('status', OrderStatus::Processing);
+        $query->where('status', OrderStatus::Processing);
     }
 
     /**

@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Settings\AppSettingService;
 use Illuminate\Http\JsonResponse;
 
-class AppSettingController extends Controller
+final class AppSettingController extends Controller
 {
     public const string CACHE_KEY = AppSettingService::CACHE_KEY;
 

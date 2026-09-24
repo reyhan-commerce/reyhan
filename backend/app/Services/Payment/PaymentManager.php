@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Payment;
 
+use App\Enums\PaymentGateway;
 use App\Services\Payment\Contracts\PaymentDriverInterface;
 use App\Services\Payment\Drivers\SandboxDriver;
 use App\Services\Payment\Drivers\ZarinpalDriver;
@@ -72,15 +73,16 @@ class PaymentManager extends Manager
 
         foreach ($configured as $key => $options) {
             if (! empty($options['active'])) {
+                $enum = PaymentGateway::tryFrom((string) $key);
                 $gateways[] = [
-                    'id' => $key,
-                    'name' => (string) ($options['name'] ?? $key),
-                    'description' => match ($key) {
-                        'sandbox' => 'شبیه‌ساز پرداخت آزمایشی (بدون کسر پول)',
-                        'zarinpal' => 'پرداخت امن زرین‌پال با کلیه کارت‌های شتاب',
-                        'saman' => 'درگاه پرداخت مستقیم اینترنتی بانک سامان',
-                        'mellat' => 'درگاه پرداخت اینترنتی به پرداخت ملت',
-                        default => 'درگاه پرداخت شتابی',
+                    'id' => (string) $key,
+                    'name' => $enum ? $enum->label() : __((string) ($options['name'] ?? $key)),
+                    'description' => $enum ? $enum->description() : match ((string) $key) {
+                        'sandbox' => __('Test payment simulator (no actual charge)'),
+                        'zarinpal' => __('Secure Zarinpal payment with all Shetab cards'),
+                        'saman' => __('Saman Bank direct online payment gateway'),
+                        'mellat' => __('Behpardakht Mellat online payment gateway'),
+                        default => __('Shetab payment gateway'),
                     },
                 ];
             }

@@ -8,7 +8,7 @@ use App\Pipelines\Normalizer\PersianNormalizer;
 use App\Rules\ValidOtp;
 use Illuminate\Foundation\Http\FormRequest;
 
-class VerifyOtpRequest extends FormRequest
+final class VerifyOtpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
