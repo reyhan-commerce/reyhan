@@ -1,0 +1,72 @@
+<?php
+
+return [
+
+    'components' => [
+        'backup_destination_list' => [
+            'table' => [
+                'actions' => [
+                    'download' => 'Download',
+                    'delete' => 'Delete',
+                ],
+
+                'fields' => [
+                    'path' => 'Path',
+                    'disk' => 'Disk',
+                    'date' => 'Date',
+                    'size' => 'Size',
+                ],
+
+                'filters' => [
+                    'disk' => 'Disk',
+                    'type' => 'Backup Type',
+                ],
+            ],
+        ],
+
+        'backup_destination_status_list' => [
+            'table' => [
+                'fields' => [
+                    'name' => 'Name',
+                    'disk' => 'Disk',
+                    'healthy' => 'Healthy',
+                    'amount' => 'Amount',
+                    'newest' => 'Newest',
+                    'used_storage' => 'Used Storage',
+                    'no_backups_present' => 'No backups present',
+                ],
+            ],
+        ],
+    ],
+
+    'pages' => [
+        'backups' => [
+            'actions' => [
+                'create_backup' => 'Create Backup',
+            ],
+
+            'heading' => 'Backups',
+
+            'messages' => [
+                'backup_success' => 'Creating a new backup in background.',
+                'backup_delete_success' => 'Backup deleted successfully.',
+            ],
+
+            'modal' => [
+                'buttons' => [
+                    'only_db' => 'Only DB',
+                    'only_files' => 'Only Files',
+                    'db_and_files' => 'DB & Files',
+                ],
+
+                'label' => 'Please choose an option',
+            ],
+
+            'navigation' => [
+                'group' => 'Settings',
+                'label' => 'Backups',
+            ],
+        ],
+    ],
+
+];

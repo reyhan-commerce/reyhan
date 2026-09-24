@@ -6,7 +6,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "bezhansalleh/filament-shield": "^4.3",
         "filament/filament": "^5.8",
         "filament/spatie-laravel-media-library-plugin": "^5.8",
@@ -19,6 +19,7 @@
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
         "morilog/jalali": "^3.4",
+        "shuvroroy/filament-spatie-laravel-backup": "^4.0",
         "solution-forest/filament-tree": "^4.0",
         "spatie/laravel-data": "^4.23",
         "spatie/laravel-medialibrary": "^11.0",

@@ -27,7 +27,7 @@ return [
             'pages' => true,
             'widgets' => true,
             'resources' => true,
-            'custom_permissions' => false,
+            'custom_permissions' => true,
         ],
     ],
 
@@ -120,7 +120,7 @@ return [
         'separator' => ':',
         'case' => 'pascal',
         'generate' => true,
-        'format_custom_permission_keys' => true,
+        'format_custom_permission_keys' => false,
     ],
 
     /*
@@ -252,7 +252,12 @@ return [
     |
     */
 
-    'custom_permissions' => [],
+    'custom_permissions' => [
+        'view-backups',
+        'create-backup',
+        'download-backup',
+        'delete-backup',
+    ],
 
     /*
     |--------------------------------------------------------------------------

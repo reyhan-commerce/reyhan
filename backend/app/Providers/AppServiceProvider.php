@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pennant\Feature;
 use Spatie\LaravelSettings\Events\SettingsSaved;
+use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,6 +39,21 @@ class AppServiceProvider extends ServiceProvider
 
             return null;
         });
+
+        // Backup management abilities
+        foreach (['view-backups', 'create-backup', 'download-backup', 'delete-backup'] as $ability) {
+            Gate::define($ability, function ($user) use ($ability): bool {
+                if (! $user instanceof Admin) {
+                    return false;
+                }
+
+                try {
+                    return $user->hasPermissionTo($ability, 'admin');
+                } catch (PermissionDoesNotExist) {
+                    return false;
+                }
+            });
+        }
 
         // Invalidate public settings cache and refresh dynamic driver state on settings save
         Event::listen(SettingsSaved::class, function (SettingsSaved $event) {
