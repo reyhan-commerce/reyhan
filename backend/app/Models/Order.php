@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Marcusvbda\FilamentRealtimeDriver\RealtimeEvent;
 
 /**
  * @property int $id
@@ -48,6 +49,25 @@ class Order extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = ['id'];
+
+    protected static function booted(): void
+    {
+        static::created(function (self $order): void {
+            RealtimeEvent::dispatch('orders', 'OrderCreated', [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'status' => $order->status->value,
+            ]);
+        });
+
+        static::updated(function (self $order): void {
+            RealtimeEvent::dispatch('orders', 'OrderUpdated', [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'status' => $order->status->value,
+            ]);
+        });
+    }
 
     /**
      * @return array<string, string>

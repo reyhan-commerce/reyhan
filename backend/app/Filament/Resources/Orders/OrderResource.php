@@ -315,7 +315,9 @@ class OrderResource extends Resource
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->socket(channel: 'orders', event: 'OrderCreated')
+            ->socket(channel: 'orders', event: 'OrderUpdated');
     }
 
     public static function getRelations(): array

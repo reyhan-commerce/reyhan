@@ -51,6 +51,8 @@ class LatestOrdersWidget extends BaseWidget
                     ->label('زمان ثبت')
                     ->formatStateUsing(fn (?string $state): string => $state ? Jalalian::fromDateTime($state)->format('Y/m/d H:i') : '-'),
             ])
-            ->paginated(false);
+            ->paginated(false)
+            ->socket(channel: 'orders', event: 'OrderCreated')
+            ->socket(channel: 'orders', event: 'OrderUpdated');
     }
 }

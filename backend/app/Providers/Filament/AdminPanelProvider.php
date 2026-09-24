@@ -21,6 +21,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Marcusvbda\FilamentRealtimeDriver\FilamentRealtimeDriverPlugin;
 use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 
 class AdminPanelProvider extends PanelProvider
@@ -82,6 +83,9 @@ class AdminPanelProvider extends PanelProvider
                     ->usingQueue('default')
                     ->timeout(300)
                     ->authorize(fn (): bool => auth('admin')->user()?->can('view-backups') ?? false),
+                FilamentRealtimeDriverPlugin::make()
+                    ->socket()
+                    ->databaseNotifications(),
             ])
 
             ->authMiddleware([
