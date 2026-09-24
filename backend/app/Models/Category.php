@@ -132,6 +132,44 @@ class Category extends Model implements HasMedia
     }
 
     /**
+     * Get flat associative array of categories formatted as tree for Select dropdowns.
+     *
+     * @return array<int, string>
+     */
+    public static function treeOptions(?int $excludeId = null): array
+    {
+        $all = self::query()->orderBy('order')->orderBy('name')->get();
+        $excludedIds = collect();
+
+        if ($excludeId !== null) {
+            $excludeRecord = $all->firstWhere('id', $excludeId);
+            if ($excludeRecord) {
+                $excludedIds = $excludeRecord->getDescendantIds()->push($excludeId);
+            }
+        }
+
+        $options = [];
+        $byParent = $all->groupBy('parent_id');
+
+        $traverse = function (?int $parentId, string $prefix = '') use (&$traverse, &$options, $byParent, $excludedIds): void {
+            $children = $byParent->get($parentId, collect());
+
+            foreach ($children as $child) {
+                if ($excludedIds->contains($child->id)) {
+                    continue;
+                }
+
+                $options[$child->id] = $prefix ? $prefix.' '.$child->name : $child->name;
+                $traverse($child->id, $prefix ? $prefix.'↳ ' : '↳ ');
+            }
+        };
+
+        $traverse(null);
+
+        return $options;
+    }
+
+    /**
      * @param  Builder<Category>  $query
      */
     public function scopeActive(Builder $query): void
