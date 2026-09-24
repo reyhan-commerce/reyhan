@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Products;
 
+use Alareqi\FilamentTree\Forms\Components\TreeSelect;
 use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Resources\Products\RelationManagers\VariantsRelationManager;
+use App\Models\Category;
 use App\Models\Product;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
@@ -143,12 +145,21 @@ class ProductResource extends Resource
 
                                 Section::make('دسته‌بندی و سازنده')
                                     ->schema([
-                                        Select::make('category_id')
+                                        TreeSelect::make('category_id')
                                             ->label('دسته‌بندی اصلی')
-                                            ->relationship('category', 'name')
+                                            ->placeholder('انتخاب دسته‌بندی...')
                                             ->searchable()
-                                            ->preload()
-                                            ->required(),
+                                            ->required()
+                                            ->treeOptions(fn (): array => Category::query()
+                                                ->orderBy('order')
+                                                ->get()
+                                                ->map(fn (Category $c): array => [
+                                                    'value' => $c->getKey(),
+                                                    'parent' => $c->parent_id,
+                                                    'label' => $c->name,
+                                                ])
+                                                ->all()
+                                            ),
 
                                         Select::make('brand_id')
                                             ->label('برند سازنده')

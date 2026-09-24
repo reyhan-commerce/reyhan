@@ -115,6 +115,23 @@ class Category extends Model implements HasMedia
     }
 
     /**
+     * Get all descendant category IDs recursively.
+     *
+     * @return Collection<int, int>
+     */
+    public function getDescendantIds(): Collection
+    {
+        $ids = collect();
+
+        foreach ($this->children as $child) {
+            $ids->push($child->id);
+            $ids = $ids->merge($child->getDescendantIds());
+        }
+
+        return $ids;
+    }
+
+    /**
      * @param  Builder<Category>  $query
      */
     public function scopeActive(Builder $query): void

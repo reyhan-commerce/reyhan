@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Categories;
 
+use Alareqi\FilamentTree\Columns\TreeColumn;
+use Alareqi\FilamentTree\Forms\Components\TreeSelect;
 use App\Filament\Resources\Categories\Pages\CreateCategory;
 use App\Filament\Resources\Categories\Pages\EditCategory;
 use App\Filament\Resources\Categories\Pages\ListCategories;
@@ -13,7 +15,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -27,7 +28,6 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
-use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use UnitEnum;
@@ -91,12 +91,26 @@ class CategoryResource extends Resource
                             ->schema([
                                 Section::make('سلسله‌مراتب و وضعیت')
                                     ->schema([
-                                        Select::make('parent_id')
+                                        TreeSelect::make('parent_id')
                                             ->label('دسته‌بندی والد')
-                                            ->relationship('parent', 'name')
+                                            ->placeholder('دسته‌بندی اصلی (ریشه)')
                                             ->searchable()
-                                            ->preload()
-                                            ->placeholder('دسته‌بندی اصلی (ریشه)'),
+                                            ->treeOptions(function (?Category $record): array {
+                                                $excludedIds = $record?->exists
+                                                    ? array_merge([$record->id], $record->getDescendantIds()->all())
+                                                    : [];
+
+                                                return Category::query()
+                                                    ->when(! empty($excludedIds), fn ($query) => $query->whereNotIn('id', $excludedIds))
+                                                    ->orderBy('order')
+                                                    ->get()
+                                                    ->map(fn (Category $category): array => [
+                                                        'value' => $category->getKey(),
+                                                        'parent' => $category->parent_id,
+                                                        'label' => $category->name,
+                                                    ])
+                                                    ->all();
+                                            }),
 
                                         TextInput::make('order')
                                             ->label('ترتیب اولویت نمایش')
@@ -134,20 +148,11 @@ class CategoryResource extends Resource
                     ->circular()
                     ->size(40),
 
-                TextColumn::make('name')
-                    ->label('نام دسته‌بندی و مسیر')
+                TreeColumn::make('name')
+                    ->label('نام دسته‌بندی')
                     ->searchable()
                     ->sortable()
-                    ->weight(fn (Category $record): string => $record->parent_id ? 'medium' : 'bold')
-                    ->formatStateUsing(fn (string $state, Category $record): string => $record->parent_id ? '↳ '.$state : '📁 '.$state)
-                    ->description(function (Category $record): string {
-                        $ancestors = $record->getAncestors();
-                        if ($ancestors->isEmpty()) {
-                            return 'دسته‌بندی اصلی (سطح ۱)';
-                        }
-
-                        return 'مسیر والد: '.$ancestors->pluck('name')->implode(' > ');
-                    }),
+                    ->weight(fn (Category $record): string => $record->parent_id ? 'medium' : 'bold'),
 
                 TextColumn::make('slug')
                     ->label('نامک')
@@ -176,16 +181,13 @@ class CategoryResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->reorderable('order')
+            ->tree(parentColumn: 'parent_id', treeColumn: 'name')
             ->defaultSort('order')
             ->emptyStateHeading('هنوز دسته‌بندی ثبت نشده است')
             ->emptyStateDescription('برای شروع ساختار درختی کاتالوگ، اولین دسته‌بندی را ایجاد کنید.')
             ->emptyStateIcon(Heroicon::OutlinedFolder)
             ->filtersFormColumns(2)
-            ->groups([
-                Group::make('parent.name')
-                    ->label('دسته‌بندی والد')
-                    ->collapsible(),
-            ])
             ->filters([
                 TernaryFilter::make('is_active')
                     ->label('وضعیت فعال/غیرفعال'),
@@ -214,7 +216,6 @@ class CategoryResource extends Resource
     {
         return [
             'index' => ListCategories::route('/'),
-            'tree' => Pages\CategoryTreePage::route('/tree'),
             'create' => CreateCategory::route('/create'),
             'edit' => EditCategory::route('/{record}/edit'),
         ];

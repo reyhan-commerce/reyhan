@@ -10,7 +10,7 @@
 | :--- | :--- | :--- | :--- |
 | **Filament Shield** | `bezhansalleh/filament-shield` | مدیریت نقش‌ها، دسترسی‌ها و گیت‌های امنیتی ادمین‌ها | فعال ✅ |
 | **Spatie Laravel Backup** | `shuvroroy/filament-spatie-laravel-backup` | پشتیبان‌گیری خودکار/دستی دیتابیس PostgreSQL و فایل‌ها بر بستر صف Redis | فعال ✅ |
-| **Filament Tree** | `solution-forest/filament-tree` | نمایش درختی و مرتب‌سازی کشیدن و رها کردن (Drag & Drop) دسته‌بندی‌ها | فعال ✅ |
+| **Filament Tree Table** | `alareqi/filament-tree` | ساختار جدول درختی یکپارچه با پشتیبانی از Reordering کشیدن و رها کردن و فیلد TreeSelect | فعال ✅ |
 | **Spatie Settings Plugin** | `filament/spatie-laravel-settings-plugin` | مدیریت تنظیمات سراسری، پیامک، درگاه‌ها و هویت بصری فروشگاه | فعال ✅ |
 | **Media Library Plugin** | `filament/spatie-laravel-media-library-plugin` | بارگذاری و مدیریت تصاویر و رسانه‌های محصولات و مقالات | فعال ✅ |
 
