@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\AttributeType;
+use Database\Factories\AttributeFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,6 +15,9 @@ use Spatie\Sluggable\SlugOptions;
 
 class Attribute extends Model
 {
+    /** @use HasFactory<AttributeFactory> */
+    use HasFactory;
+
     use HasSlug;
 
     /**

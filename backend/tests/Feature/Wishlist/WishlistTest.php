@@ -11,23 +11,20 @@ use Laravel\Sanctum\Sanctum;
 
 test('authenticated user can toggle a product in wishlist', function () {
     $user = User::factory()->create();
-    $category = Category::create([
+    $category = Category::factory()->create([
         'name' => 'دسته تست',
         'slug' => 'cat-wishlist-'.uniqid(),
-        'is_active' => true,
     ]);
-    $brand = Brand::create([
+    $brand = Brand::factory()->create([
         'name' => 'برند تست',
         'slug' => 'brand-wishlist-'.uniqid(),
-        'is_active' => true,
     ]);
 
-    $product = Product::create([
+    $product = Product::factory()->create([
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'محصول علاقه‌مندی',
         'slug' => 'wishlist-prod-'.uniqid(),
-        'is_active' => true,
     ]);
 
     Sanctum::actingAs($user);
@@ -71,26 +68,23 @@ test('authenticated user can toggle a product in wishlist', function () {
 
 test('authenticated user can list wishlist items', function () {
     $user = User::factory()->create();
-    $category = Category::create([
+    $category = Category::factory()->create([
         'name' => 'دسته لیست',
         'slug' => 'cat-list-'.uniqid(),
-        'is_active' => true,
     ]);
-    $brand = Brand::create([
+    $brand = Brand::factory()->create([
         'name' => 'برند لیست',
         'slug' => 'brand-list-'.uniqid(),
-        'is_active' => true,
     ]);
 
-    $product = Product::create([
+    $product = Product::factory()->create([
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'محصول لیست تست',
         'slug' => 'list-prod-'.uniqid(),
-        'is_active' => true,
     ]);
 
-    Wishlist::create([
+    Wishlist::factory()->create([
         'user_id' => $user->id,
         'product_id' => $product->id,
     ]);

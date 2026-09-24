@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Enums\AttributeType;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\Brand;
@@ -19,33 +18,29 @@ beforeEach(function (): void {
 });
 
 it('returns paginated active products', function (): void {
-    $category = Category::create([
+    $category = Category::factory()->create([
         'name' => 'پوست',
         'slug' => 'skin',
-        'is_active' => true,
     ]);
 
-    $brand = Brand::create([
+    $brand = Brand::factory()->create([
         'name' => 'برند تستی',
         'slug' => 'test-brand',
-        'is_active' => true,
     ]);
 
-    $product = Product::create([
+    $product = Product::factory()->create([
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'کرم مرطوب کننده تستی',
         'slug' => 'test-moisturizer',
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
 
-    ProductVariant::create([
+    ProductVariant::factory()->create([
         'product_id' => $product->id,
         'sku' => 'TEST-MOI-01',
         'price' => 5000000,
         'stock' => 10,
-        'is_active' => true,
     ]);
 
     $response = $this->getJson(route('products.index'));
@@ -65,26 +60,24 @@ it('returns paginated active products', function (): void {
 });
 
 it('filters products by category slug', function (): void {
-    $cat1 = Category::create(['name' => 'دسته‌بندی یک', 'slug' => 'cat-one', 'is_active' => true]);
-    $cat2 = Category::create(['name' => 'دسته‌بندی دو', 'slug' => 'cat-two', 'is_active' => true]);
+    $cat1 = Category::factory()->create(['name' => 'دسته‌بندی یک', 'slug' => 'cat-one']);
+    $cat2 = Category::factory()->create(['name' => 'دسته‌بندی دو', 'slug' => 'cat-two']);
 
-    $p1 = Product::create([
+    $p1 = Product::factory()->create([
         'category_id' => $cat1->id,
         'name' => 'کالای اول',
         'slug' => 'product-one',
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
-    ProductVariant::create(['product_id' => $p1->id, 'sku' => 'SKU-001', 'price' => 1000, 'stock' => 5, 'is_active' => true]);
+    ProductVariant::factory()->create(['product_id' => $p1->id, 'sku' => 'SKU-001', 'price' => 1000, 'stock' => 5]);
 
-    $p2 = Product::create([
+    $p2 = Product::factory()->create([
         'category_id' => $cat2->id,
         'name' => 'کالای دوم',
         'slug' => 'product-two',
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
-    ProductVariant::create(['product_id' => $p2->id, 'sku' => 'SKU-002', 'price' => 2000, 'stock' => 5, 'is_active' => true]);
+    ProductVariant::factory()->create(['product_id' => $p2->id, 'sku' => 'SKU-002', 'price' => 2000, 'stock' => 5]);
 
     $response = $this->getJson(route('products.index', ['category' => 'cat-one']));
 
@@ -95,29 +88,27 @@ it('filters products by category slug', function (): void {
 });
 
 it('filters products by brand slug', function (): void {
-    $cat = Category::create(['name' => 'دسته‌بندی', 'slug' => 'cat-filter-brand', 'is_active' => true]);
-    $b1 = Brand::create(['name' => 'برند الف', 'slug' => 'brand-a', 'is_active' => true]);
-    $b2 = Brand::create(['name' => 'برند ب', 'slug' => 'brand-b', 'is_active' => true]);
+    $cat = Category::factory()->create(['name' => 'دسته‌بندی', 'slug' => 'cat-filter-brand']);
+    $b1 = Brand::factory()->create(['name' => 'برند الف', 'slug' => 'brand-a']);
+    $b2 = Brand::factory()->create(['name' => 'برند ب', 'slug' => 'brand-b']);
 
-    $p1 = Product::create([
+    $p1 = Product::factory()->create([
         'category_id' => $cat->id,
         'brand_id' => $b1->id,
         'name' => 'کالای برند الف',
         'slug' => 'prod-brand-a',
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
-    ProductVariant::create(['product_id' => $p1->id, 'sku' => 'SKU-A', 'price' => 1000, 'stock' => 5, 'is_active' => true]);
+    ProductVariant::factory()->create(['product_id' => $p1->id, 'sku' => 'SKU-A', 'price' => 1000, 'stock' => 5]);
 
-    $p2 = Product::create([
+    $p2 = Product::factory()->create([
         'category_id' => $cat->id,
         'brand_id' => $b2->id,
         'name' => 'کالای برند ب',
         'slug' => 'prod-brand-b',
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
-    ProductVariant::create(['product_id' => $p2->id, 'sku' => 'SKU-B', 'price' => 1000, 'stock' => 5, 'is_active' => true]);
+    ProductVariant::factory()->create(['product_id' => $p2->id, 'sku' => 'SKU-B', 'price' => 1000, 'stock' => 5]);
 
     $response = $this->getJson(route('products.index', ['brand' => 'brand-a']));
 
@@ -128,25 +119,23 @@ it('filters products by brand slug', function (): void {
 });
 
 it('searches products with pg_trgm fuzzy matching', function (): void {
-    $cat = Category::create(['name' => 'آرایشی', 'slug' => 'search-cat', 'is_active' => true]);
+    $cat = Category::factory()->create(['name' => 'آرایشی', 'slug' => 'search-cat']);
 
-    $p1 = Product::create([
+    $p1 = Product::factory()->create([
         'category_id' => $cat->id,
         'name' => 'کرم‌پودر اینفالیبل لورآل',
         'slug' => 'loreal-infallible-search',
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
-    ProductVariant::create(['product_id' => $p1->id, 'sku' => 'SKU-SEARCH-1', 'price' => 5000, 'stock' => 5, 'is_active' => true]);
+    ProductVariant::factory()->create(['product_id' => $p1->id, 'sku' => 'SKU-SEARCH-1', 'price' => 5000, 'stock' => 5]);
 
-    $p2 = Product::create([
+    $p2 = Product::factory()->create([
         'category_id' => $cat->id,
         'name' => 'ریمل حجم دهنده چشم',
         'slug' => 'mascara-search',
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
-    ProductVariant::create(['product_id' => $p2->id, 'sku' => 'SKU-SEARCH-2', 'price' => 5000, 'stock' => 5, 'is_active' => true]);
+    ProductVariant::factory()->create(['product_id' => $p2->id, 'sku' => 'SKU-SEARCH-2', 'price' => 5000, 'stock' => 5]);
 
     // Persian query with slight typo: "کرم پودر اینفلیبل"
     $response = $this->getJson(route('products.index', ['search' => 'اینفالیبل']));
@@ -158,44 +147,39 @@ it('searches products with pg_trgm fuzzy matching', function (): void {
 });
 
 it('returns product detail with available variants and scoped matrix', function (): void {
-    $cat = Category::create(['name' => 'رژلب‌ها', 'slug' => 'lipsticks-detail', 'is_active' => true]);
+    $cat = Category::factory()->create(['name' => 'رژلب‌ها', 'slug' => 'lipsticks-detail']);
 
-    $colorAttr = Attribute::create([
+    $colorAttr = Attribute::factory()->color()->create([
         'name' => 'رنگ',
         'slug' => 'lipstick-color',
-        'type' => AttributeType::Color,
         'order' => 1,
     ]);
 
-    $valRed = AttributeValue::create(['attribute_id' => $colorAttr->id, 'value' => 'قرمز آلبالویی', 'hex_code' => '#FF0000']);
-    $valNude = AttributeValue::create(['attribute_id' => $colorAttr->id, 'value' => 'کالباسی', 'hex_code' => '#DEB887']);
+    $valRed = AttributeValue::factory()->color('#FF0000', 'قرمز آلبالویی')->create(['attribute_id' => $colorAttr->id]);
+    $valNude = AttributeValue::factory()->color('#DEB887', 'کالباسی')->create(['attribute_id' => $colorAttr->id]);
 
     $cat->attributes()->attach($colorAttr->id, ['is_variant_maker' => true, 'is_filterable' => true, 'order' => 1]);
 
-    $product = Product::create([
+    $product = Product::factory()->create([
         'category_id' => $cat->id,
         'name' => 'رژلب مات هیدراته',
         'slug' => 'matte-lipstick-hydrate',
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
 
-    $v1 = ProductVariant::create([
+    $v1 = ProductVariant::factory()->create([
         'product_id' => $product->id,
         'sku' => 'LIP-RED-01',
         'price' => 3500000,
         'compare_at_price' => 4200000,
         'stock' => 15,
-        'is_active' => true,
     ]);
     $v1->attributeValues()->attach($valRed->id);
 
-    $v2 = ProductVariant::create([
+    $v2 = ProductVariant::factory()->outOfStock()->create([
         'product_id' => $product->id,
         'sku' => 'LIP-NUD-01',
         'price' => 3500000,
-        'stock' => 0, // out of stock
-        'is_active' => true,
     ]);
     $v2->attributeValues()->attach($valNude->id);
 
@@ -233,25 +217,23 @@ it('returns product detail with available variants and scoped matrix', function 
 });
 
 it('excludes inactive products from public listing', function (): void {
-    $cat = Category::create(['name' => 'تستی', 'slug' => 'inactive-test-cat', 'is_active' => true]);
+    $cat = Category::factory()->create(['name' => 'تستی', 'slug' => 'inactive-test-cat']);
 
-    $active = Product::create([
+    $active = Product::factory()->create([
         'category_id' => $cat->id,
         'name' => 'کالای فعال',
         'slug' => 'active-product',
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
-    ProductVariant::create(['product_id' => $active->id, 'sku' => 'SKU-ACT', 'price' => 1000, 'stock' => 5, 'is_active' => true]);
+    ProductVariant::factory()->create(['product_id' => $active->id, 'sku' => 'SKU-ACT', 'price' => 1000, 'stock' => 5]);
 
-    $inactive = Product::create([
+    $inactive = Product::factory()->inactive()->create([
         'category_id' => $cat->id,
         'name' => 'کالای غیرفعال',
         'slug' => 'inactive-product',
-        'is_active' => false,
         'published_at' => now()->subMinute(),
     ]);
-    ProductVariant::create(['product_id' => $inactive->id, 'sku' => 'SKU-INACT', 'price' => 1000, 'stock' => 5, 'is_active' => true]);
+    ProductVariant::factory()->create(['product_id' => $inactive->id, 'sku' => 'SKU-INACT', 'price' => 1000, 'stock' => 5]);
 
     $response = $this->getJson(route('products.index'));
 

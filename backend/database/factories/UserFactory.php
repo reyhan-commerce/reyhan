@@ -43,4 +43,18 @@ class UserFactory extends Factory
             'mobile_verified_at' => null,
         ]);
     }
+
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => false,
+        ]);
+    }
+
+    public function withLoyaltyPoints(int $points = 100): static
+    {
+        return $this->afterCreating(function (User $user) use ($points) {
+            $user->awardLoyaltyPoints($points, 'initial_bonus', 'امتیاز اولیه کاربر');
+        });
+    }
 }

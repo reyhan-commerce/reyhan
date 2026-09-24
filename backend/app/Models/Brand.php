@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\BrandFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
@@ -14,6 +16,9 @@ use Spatie\Sluggable\SlugOptions;
 
 class Brand extends Model implements HasMedia
 {
+    /** @use HasFactory<BrandFactory> */
+    use HasFactory;
+
     use HasSlug;
     use InteractsWithMedia;
 

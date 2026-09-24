@@ -16,33 +16,28 @@ uses(DatabaseTransactions::class);
 beforeEach(function (): void {
     Redis::flushdb();
 
-    $category = Category::create([
+    $category = Category::factory()->create([
         'name' => 'تست انبار',
         'slug' => 'inv-cat-'.Str::random(6),
-        'is_active' => true,
     ]);
 
-    $brand = Brand::create([
+    $brand = Brand::factory()->create([
         'name' => 'تست برند',
         'slug' => 'inv-brand-'.Str::random(6),
-        'is_active' => true,
     ]);
 
-    $product = Product::create([
+    $product = Product::factory()->create([
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'محصول انبارداری',
         'slug' => 'inv-prod-'.Str::random(6),
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
 
-    $this->variant = ProductVariant::create([
+    $this->variant = ProductVariant::factory()->inStock(5)->create([
         'product_id' => $product->id,
         'sku' => 'INV-TEST-01',
         'price' => 1000000,
-        'stock' => 5, // 5 items in stock
-        'is_active' => true,
     ]);
 
     $this->inventoryService = app(StockReservationService::class);

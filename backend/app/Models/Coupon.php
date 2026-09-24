@@ -7,7 +7,9 @@ namespace App\Models;
 use App\Enums\CouponScope;
 use App\Enums\CouponType;
 use Carbon\Carbon;
+use Database\Factories\CouponFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,7 +36,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Coupon extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<CouponFactory> */
+    use HasFactory, SoftDeletes;
 
     /**
      * @var list<string>

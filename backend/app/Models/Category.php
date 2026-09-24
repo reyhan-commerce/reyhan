@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,6 +19,9 @@ use Spatie\Sluggable\SlugOptions;
 
 class Category extends Model implements HasMedia
 {
+    /** @use HasFactory<CategoryFactory> */
+    use HasFactory;
+
     use HasSlug;
     use InteractsWithMedia;
 

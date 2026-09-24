@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Enums\CouponScope;
-use App\Enums\CouponType;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Coupon;
@@ -15,68 +14,57 @@ use Illuminate\Support\Str;
 uses(DatabaseTransactions::class);
 
 beforeEach(function (): void {
-    $this->categoryA = Category::create([
+    $this->categoryA = Category::factory()->create([
         'name' => 'پوست',
         'slug' => 'skin-'.Str::random(6),
-        'is_active' => true,
     ]);
 
-    $this->categoryB = Category::create([
+    $this->categoryB = Category::factory()->create([
         'name' => 'مو',
         'slug' => 'hair-'.Str::random(6),
-        'is_active' => true,
     ]);
 
-    $this->brand = Brand::create([
+    $this->brand = Brand::factory()->create([
         'name' => 'سینره',
         'slug' => 'cinere-'.Str::random(6),
-        'is_active' => true,
     ]);
 
-    $this->productA = Product::create([
+    $this->productA = Product::factory()->create([
         'category_id' => $this->categoryA->id,
         'brand_id' => $this->brand->id,
         'name' => 'کرم ضد آفتاب سینره',
         'slug' => 'sunscreen-'.Str::random(6),
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
 
-    $this->variantA = ProductVariant::create([
+    $this->variantA = ProductVariant::factory()->create([
         'product_id' => $this->productA->id,
         'sku' => 'CIN-SUN-50',
         'price' => 20000000, // 2,000,000 Toman
         'stock' => 10,
-        'is_active' => true,
     ]);
 
-    $this->productB = Product::create([
+    $this->productB = Product::factory()->create([
         'category_id' => $this->categoryB->id,
         'brand_id' => $this->brand->id,
         'name' => 'شامپو تقویتی سینره',
         'slug' => 'shampoo-'.Str::random(6),
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
 
-    $this->variantB = ProductVariant::create([
+    $this->variantB = ProductVariant::factory()->create([
         'product_id' => $this->productB->id,
         'sku' => 'CIN-SHAM-250',
         'price' => 10000000, // 1,000,000 Toman
         'stock' => 10,
-        'is_active' => true,
     ]);
 });
 
 it('applies percentage coupon with max discount cap', function (): void {
-    $coupon = Coupon::create([
+    $coupon = Coupon::factory()->percentage(20)->create([
         'code' => 'DISCOUNT20',
         'title' => '۲۰ درصد تخفیف',
-        'type' => CouponType::Percentage,
-        'value' => 20,
-        'scope' => CouponScope::All,
         'max_discount_amount' => 3000000, // Max 300,000 Toman discount
-        'is_active' => true,
     ]);
 
     $sessionId = (string) Str::uuid();
@@ -99,14 +87,10 @@ it('applies percentage coupon with max discount cap', function (): void {
 });
 
 it('rejects coupon when minimum order amount is not met', function (): void {
-    Coupon::create([
+    Coupon::factory()->fixed(5000000)->create([
         'code' => 'MIN50M',
         'title' => 'تخفیف خریدهای بالای ۵ میلیون تومان',
-        'type' => CouponType::Fixed,
-        'value' => 5000000,
-        'scope' => CouponScope::All,
         'min_order_amount' => 50000000, // 5,000,000 Toman min order
-        'is_active' => true,
     ]);
 
     $sessionId = (string) Str::uuid();
@@ -128,13 +112,10 @@ it('rejects coupon when minimum order amount is not met', function (): void {
 });
 
 it('applies category-scoped coupon only to items in that category', function (): void {
-    $coupon = Coupon::create([
+    $coupon = Coupon::factory()->percentage(10)->create([
         'code' => 'SKINONLY',
         'title' => 'فقط محصولات پوست',
-        'type' => CouponType::Percentage,
-        'value' => 10,
         'scope' => CouponScope::Categories,
-        'is_active' => true,
     ]);
     $coupon->categories()->attach($this->categoryA->id);
 
@@ -156,12 +137,8 @@ it('applies category-scoped coupon only to items in that category', function ():
 });
 
 it('can remove an applied coupon', function (): void {
-    Coupon::create([
+    Coupon::factory()->fixed(1000000)->create([
         'code' => 'REMOVEME',
-        'type' => CouponType::Fixed,
-        'value' => 1000000,
-        'scope' => CouponScope::All,
-        'is_active' => true,
     ]);
 
     $sessionId = (string) Str::uuid();

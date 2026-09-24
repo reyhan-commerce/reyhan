@@ -22,20 +22,20 @@ beforeEach(function (): void {
         'is_active' => true,
     ]);
 
-    $this->province = Province::create([
+    $this->province = Province::factory()->create([
         'name' => 'تهران',
         'slug' => 'tehran-order-'.uniqid(),
         'order' => 1,
     ]);
 
-    $this->city = City::create([
+    $this->city = City::factory()->create([
         'province_id' => $this->province->id,
         'name' => 'تهران',
         'slug' => 'tehran-city-order-'.uniqid(),
         'order' => 1,
     ]);
 
-    $this->address = Address::create([
+    $this->address = Address::factory()->default()->create([
         'user_id' => $this->user->id,
         'province_id' => $this->province->id,
         'city_id' => $this->city->id,
@@ -43,43 +43,38 @@ beforeEach(function (): void {
         'recipient_mobile' => '09121112233',
         'postal_code' => '1234567890',
         'address_line' => 'خیابان تست، پلاک ۱',
-        'is_default' => true,
     ]);
 
-    $category = Category::create([
+    $category = Category::factory()->create([
         'name' => 'پوست',
         'slug' => 'skin-'.uniqid(),
-        'is_active' => true,
     ]);
 
-    $brand = Brand::create([
+    $brand = Brand::factory()->create([
         'name' => 'برند تست',
         'slug' => 'brand-'.uniqid(),
-        'is_active' => true,
     ]);
 
-    $this->product = Product::create([
+    $this->product = Product::factory()->create([
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'کرم مرطوب کننده سفارش',
         'slug' => 'product-'.uniqid(),
-        'is_active' => true,
     ]);
 
-    $this->variant = ProductVariant::create([
+    $this->variant = ProductVariant::factory()->create([
         'product_id' => $this->product->id,
         'sku' => 'SKU-'.strtoupper(uniqid()),
         'price' => 5000000,
         'compare_at_price' => 6000000,
         'stock' => 10,
-        'is_active' => true,
     ]);
 });
 
 it('previews checkout pricing and shipping fee', function (): void {
     Sanctum::actingAs($this->user);
 
-    $cart = Cart::create(['user_id' => $this->user->id]);
+    $cart = Cart::factory()->create(['user_id' => $this->user->id]);
     $cart->items()->create([
         'product_variant_id' => $this->variant->id,
         'quantity' => 2,
@@ -97,7 +92,7 @@ it('previews checkout pricing and shipping fee', function (): void {
 it('creates order from cart, reserves stock and generates payment redirect', function (): void {
     Sanctum::actingAs($this->user);
 
-    $cart = Cart::create(['user_id' => $this->user->id]);
+    $cart = Cart::factory()->create(['user_id' => $this->user->id]);
     $cart->items()->create([
         'product_variant_id' => $this->variant->id,
         'quantity' => 2,

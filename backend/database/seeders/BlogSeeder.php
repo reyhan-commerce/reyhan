@@ -16,7 +16,7 @@ class BlogSeeder extends Seeder
      */
     public function run(): void
     {
-        $author = Admin::first();
+        $author = Admin::first() ?? Admin::factory()->create();
 
         $categories = [
             [

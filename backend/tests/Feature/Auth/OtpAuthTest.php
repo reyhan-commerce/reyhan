@@ -181,9 +181,8 @@ test('otp verify fails when code is incorrect or expired', function () {
 });
 
 test('otp verify fails with 403 when user is deactivated', function () {
-    User::create([
+    User::factory()->inactive()->create([
         'mobile' => '09121112233',
-        'is_active' => false,
     ]);
 
     $code = '123456';
@@ -202,10 +201,8 @@ test('otp verify fails with 403 when user is deactivated', function () {
 });
 
 test('authenticated user can view profile and logout', function () {
-    $user = User::create([
+    $user = User::factory()->create([
         'mobile' => '09129876543',
-        'is_active' => true,
-        'mobile_verified_at' => now(),
     ]);
 
     $token = $user->createToken('test')->plainTextToken;

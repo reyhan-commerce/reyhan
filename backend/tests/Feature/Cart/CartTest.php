@@ -13,36 +13,31 @@ use Illuminate\Support\Str;
 uses(DatabaseTransactions::class);
 
 beforeEach(function (): void {
-    $this->category = Category::create([
+    $this->category = Category::factory()->create([
         'name' => 'مراقبت پوست',
         'slug' => 'skin-care-'.Str::random(6),
-        'is_active' => true,
     ]);
 
-    $this->brand = Brand::create([
+    $this->brand = Brand::factory()->create([
         'name' => 'لاروش پوزای',
         'slug' => 'laroche-'.Str::random(6),
-        'is_active' => true,
     ]);
 
-    $this->product = Product::create([
+    $this->product = Product::factory()->create([
         'category_id' => $this->category->id,
         'brand_id' => $this->brand->id,
         'name' => 'ژل شستشو افاکلار لاروش پوزای',
         'slug' => 'effaclar-gel-'.Str::random(6),
-        'is_active' => true,
         'published_at' => now()->subMinute(),
     ]);
 
-    $this->variant = ProductVariant::create([
+    $this->variant = ProductVariant::factory()->create([
         'product_id' => $this->product->id,
         'sku' => 'LRP-EFF-200',
-        'title' => 'حجم ۲۰۰ میلی‌لیتر',
         'price' => 12500000,
         'compare_at_price' => 14000000,
         'stock' => 15,
         'weight' => 250,
-        'is_active' => true,
     ]);
 });
 
@@ -93,13 +88,10 @@ it('can add an item to the guest cart', function (): void {
 });
 
 it('cannot add out of stock variant to cart', function (): void {
-    $outOfStockVariant = ProductVariant::create([
+    $outOfStockVariant = ProductVariant::factory()->outOfStock()->create([
         'product_id' => $this->product->id,
         'sku' => 'LRP-EFF-OOS',
-        'title' => 'ناموجود',
         'price' => 10000000,
-        'stock' => 0,
-        'is_active' => true,
     ]);
 
     $sessionId = (string) Str::uuid();

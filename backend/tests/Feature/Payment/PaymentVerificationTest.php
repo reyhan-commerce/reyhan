@@ -25,49 +25,39 @@ beforeEach(function (): void {
         'is_active' => true,
     ]);
 
-    $category = Category::create([
+    $category = Category::factory()->create([
         'name' => 'زیبایی',
         'slug' => 'beauty-'.uniqid(),
-        'is_active' => true,
     ]);
 
-    $brand = Brand::create([
+    $brand = Brand::factory()->create([
         'name' => 'برند تایید',
         'slug' => 'brand-v-'.uniqid(),
-        'is_active' => true,
     ]);
 
-    $product = Product::create([
+    $product = Product::factory()->create([
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'محصول پرداخت تستی',
         'slug' => 'prod-v-'.uniqid(),
-        'is_active' => true,
     ]);
 
-    $this->variant = ProductVariant::create([
+    $this->variant = ProductVariant::factory()->create([
         'product_id' => $product->id,
         'sku' => 'SKU-V-'.strtoupper(uniqid()),
         'price' => 2000000,
         'stock' => 10,
-        'is_active' => true,
     ]);
 
-    $this->order = Order::create([
-        'order_number' => Order::generateOrderNumber(),
+    $this->order = Order::factory()->create([
         'user_id' => $this->user->id,
         'status' => OrderStatus::PendingPayment,
         'shipping_method' => ShippingMethod::Pishtaz,
-        'shipping_address' => [
-            'recipient_name' => 'تست کننده',
-            'recipient_mobile' => '09129998877',
-            'full_address' => 'تهران، خیابان آزادی',
-        ],
         'items_subtotal' => 2000000,
         'final_payable' => 2650000,
     ]);
 
-    $this->orderItem = OrderItem::create([
+    $this->orderItem = OrderItem::factory()->create([
         'order_id' => $this->order->id,
         'product_id' => $product->id,
         'product_variant_id' => $this->variant->id,
@@ -81,7 +71,7 @@ beforeEach(function (): void {
 
     $this->authority = 'SB-'.uniqid();
 
-    $this->payment = Payment::create([
+    $this->payment = Payment::factory()->create([
         'order_id' => $this->order->id,
         'user_id' => $this->user->id,
         'gateway' => PaymentGateway::Sandbox,
@@ -93,7 +83,7 @@ beforeEach(function (): void {
 
 it('verifies sandbox payment successfully, executes Tier 2 stock decrement and updates order to processing', function (): void {
     // Populate user cart
-    $cart = Cart::create(['user_id' => $this->user->id]);
+    $cart = Cart::factory()->create(['user_id' => $this->user->id]);
     $cart->items()->create([
         'product_variant_id' => $this->variant->id,
         'quantity' => 1,

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Carbon\Carbon;
+use Database\Factories\AdminFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,7 +26,8 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class Admin extends Authenticatable implements FilamentUser, HasName
 {
-    use HasRoles, Notifiable, SoftDeletes;
+    /** @use HasFactory<AdminFactory> */
+    use HasFactory, HasRoles, Notifiable, SoftDeletes;
 
     /**
      * Determine if admin can access the Filament panel.

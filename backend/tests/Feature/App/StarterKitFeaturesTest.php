@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Enums\ReviewStatus;
 use App\Models\Admin;
 use App\Models\Brand;
 use App\Models\Category;
@@ -52,18 +51,16 @@ test('public theme endpoint returns theme design tokens', function () {
 
 test('reviews support dynamic criteria ratings and compute averages', function () {
     $user = User::factory()->create();
-    $category = Category::create(['name' => 'تست', 'slug' => 'test-cat', 'is_active' => true]);
-    $brand = Brand::create(['name' => 'برند تست', 'slug' => 'test-brand', 'is_active' => true]);
-    $product = Product::create([
+    $category = Category::factory()->create(['name' => 'تست', 'slug' => 'test-cat']);
+    $brand = Brand::factory()->create(['name' => 'برند تست', 'slug' => 'test-brand']);
+    $product = Product::factory()->create([
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'کالای تست',
         'slug' => 'test-product-criteria',
-        'base_price' => 1000000,
-        'is_active' => true,
     ]);
 
-    $review = Review::create([
+    $review = Review::factory()->approved()->create([
         'user_id' => $user->id,
         'product_id' => $product->id,
         'rating' => 5,
@@ -73,7 +70,6 @@ test('reviews support dynamic criteria ratings and compute averages', function (
             'value' => 5,
         ],
         'comment' => 'عالی و باکیفیت',
-        'status' => ReviewStatus::Approved,
     ]);
 
     expect($review->criteria_ratings['quality'])->toBe(5);

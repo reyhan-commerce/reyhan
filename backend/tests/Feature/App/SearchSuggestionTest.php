@@ -23,34 +23,30 @@ test('search suggestions returns empty arrays when query is too short', function
 });
 
 test('search suggestions finds products, categories, and brands', function () {
-    $category = Category::create([
+    $category = Category::factory()->create([
         'name' => 'گوشی هوشمند سامسونگ',
         'slug' => 'test-cat-'.uniqid(),
-        'is_active' => true,
     ]);
 
-    $brand = Brand::create([
+    $brand = Brand::factory()->create([
         'name' => 'سامسونگ تست',
         'name_en' => 'Samsung Test',
         'slug' => 'test-brand-'.uniqid(),
     ]);
 
-    $product = Product::create([
+    $product = Product::factory()->create([
         'category_id' => $category->id,
         'brand_id' => $brand->id,
         'name' => 'گوشی سامسونگ تست الترا',
         'slug' => 'test-galaxy-'.uniqid(),
-        'base_price' => 50000000,
-        'is_active' => true,
         'published_at' => now()->subDay(),
     ]);
 
-    ProductVariant::create([
+    ProductVariant::factory()->create([
         'product_id' => $product->id,
         'sku' => 'TEST-SKU-'.uniqid(),
         'price' => 50000000,
         'stock' => 10,
-        'is_active' => true,
     ]);
 
     $response = $this->getJson('/api/v1/search/suggestions?q=سامسونگ');

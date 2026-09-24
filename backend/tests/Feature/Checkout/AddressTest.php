@@ -17,13 +17,13 @@ beforeEach(function (): void {
         'is_active' => true,
     ]);
 
-    $this->province = Province::create([
+    $this->province = Province::factory()->create([
         'name' => 'تهران',
         'slug' => 'tehran-test-'.uniqid(),
         'order' => 1,
     ]);
 
-    $this->city = City::create([
+    $this->city = City::factory()->create([
         'province_id' => $this->province->id,
         'name' => 'تهران',
         'slug' => 'tehran-city-test-'.uniqid(),
@@ -35,7 +35,7 @@ beforeEach(function (): void {
 it('lists user addresses with default first', function (): void {
     Sanctum::actingAs($this->user);
 
-    Address::create([
+    Address::factory()->create([
         'user_id' => $this->user->id,
         'province_id' => $this->province->id,
         'city_id' => $this->city->id,
@@ -46,7 +46,7 @@ it('lists user addresses with default first', function (): void {
         'is_default' => false,
     ]);
 
-    $defaultAddress = Address::create([
+    $defaultAddress = Address::factory()->default()->create([
         'user_id' => $this->user->id,
         'province_id' => $this->province->id,
         'city_id' => $this->city->id,
@@ -54,7 +54,6 @@ it('lists user addresses with default first', function (): void {
         'recipient_mobile' => '09123456789',
         'postal_code' => '1234567891',
         'address_line' => 'خیابان تست ۲',
-        'is_default' => true,
     ]);
 
     $response = $this->getJson(route('addresses.index'));
@@ -96,7 +95,7 @@ it('creates address and sets default automatically if first address', function (
 it('sets address as default and unsets others', function (): void {
     Sanctum::actingAs($this->user);
 
-    $addr1 = Address::create([
+    $addr1 = Address::factory()->default()->create([
         'user_id' => $this->user->id,
         'province_id' => $this->province->id,
         'city_id' => $this->city->id,
@@ -104,10 +103,9 @@ it('sets address as default and unsets others', function (): void {
         'recipient_mobile' => '09123456789',
         'postal_code' => '1111111111',
         'address_line' => 'آدرس ۱',
-        'is_default' => true,
     ]);
 
-    $addr2 = Address::create([
+    $addr2 = Address::factory()->create([
         'user_id' => $this->user->id,
         'province_id' => $this->province->id,
         'city_id' => $this->city->id,
@@ -134,7 +132,7 @@ it('forbids updating or deleting an address belonging to another user', function
         'is_active' => true,
     ]);
 
-    $foreignAddress = Address::create([
+    $foreignAddress = Address::factory()->default()->create([
         'user_id' => $otherUser->id,
         'province_id' => $this->province->id,
         'city_id' => $this->city->id,
@@ -142,7 +140,6 @@ it('forbids updating or deleting an address belonging to another user', function
         'recipient_mobile' => '09987654321',
         'postal_code' => '9999999999',
         'address_line' => 'نشانی کاربر دیگر',
-        'is_default' => true,
     ]);
 
     Sanctum::actingAs($this->user);

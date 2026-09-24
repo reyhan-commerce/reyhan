@@ -26,12 +26,7 @@ test('regular users cannot access admin panel', function () {
 });
 
 test('active admin can access admin panel', function () {
-    $admin = Admin::create([
-        'name' => 'ادمین تست',
-        'email' => 'test-admin@easyshop.local',
-        'password' => bcrypt('password'),
-        'is_active' => true,
-    ]);
+    $admin = Admin::factory()->create();
 
     $response = $this->actingAs($admin, 'admin')->get('/admin');
 
@@ -39,12 +34,7 @@ test('active admin can access admin panel', function () {
 });
 
 test('deactivated admin cannot access admin panel', function () {
-    $admin = Admin::create([
-        'name' => 'ادمین مسدود',
-        'email' => 'blocked-admin@easyshop.local',
-        'password' => bcrypt('password'),
-        'is_active' => false,
-    ]);
+    $admin = Admin::factory()->inactive()->create();
 
     $response = $this->actingAs($admin, 'admin')->get('/admin');
 
@@ -52,12 +42,7 @@ test('deactivated admin cannot access admin panel', function () {
 });
 
 test('admin can access general settings page', function () {
-    $admin = Admin::create([
-        'name' => 'ادمین تنظیمات',
-        'email' => 'settings-admin@easyshop.local',
-        'password' => bcrypt('password'),
-        'is_active' => true,
-    ]);
+    $admin = Admin::factory()->create();
 
     $response = $this->actingAs($admin, 'admin')->get('/admin/manage-general-settings');
 
@@ -65,12 +50,7 @@ test('admin can access general settings page', function () {
 });
 
 test('admin can access sms settings page', function () {
-    $admin = Admin::create([
-        'name' => 'ادمین پیامک',
-        'email' => 'sms-admin@easyshop.local',
-        'password' => bcrypt('password'),
-        'is_active' => true,
-    ]);
+    $admin = Admin::factory()->create();
 
     $response = $this->actingAs($admin, 'admin')->get('/admin/manage-sms-settings');
 

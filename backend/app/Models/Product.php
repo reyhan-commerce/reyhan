@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ReviewStatus;
+use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,6 +21,9 @@ use Spatie\Sluggable\SlugOptions;
 
 class Product extends Model implements HasMedia
 {
+    /** @use HasFactory<ProductFactory> */
+    use HasFactory;
+
     use HasSlug;
     use InteractsWithMedia;
     use SoftDeletes;

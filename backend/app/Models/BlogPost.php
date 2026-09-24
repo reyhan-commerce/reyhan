@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Carbon\Carbon;
+use Database\Factories\BlogPostFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,7 +36,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class BlogPost extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<BlogPostFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'category_id',

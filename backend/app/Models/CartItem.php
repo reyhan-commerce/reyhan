@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\CartItemFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CartItem extends Model
 {
+    /** @use HasFactory<CartItemFactory> */
+    use HasFactory;
+
     /**
      * @var list<string>
      */

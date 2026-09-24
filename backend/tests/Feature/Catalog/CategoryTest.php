@@ -14,18 +14,15 @@ beforeEach(function (): void {
 });
 
 it('returns category tree cached in redis', function (): void {
-    $parent = Category::create([
+    $parent = Category::factory()->create([
         'name' => 'مراقبت پوست',
         'slug' => 'skincare-tree',
-        'is_active' => true,
         'order' => 1,
     ]);
 
-    Category::create([
-        'parent_id' => $parent->id,
+    Category::factory()->childOf($parent)->create([
         'name' => 'ضدآفتاب',
         'slug' => 'sunscreen-tree',
-        'is_active' => true,
         'order' => 1,
     ]);
 
@@ -48,18 +45,15 @@ it('returns category tree cached in redis', function (): void {
 });
 
 it('returns category tree with correct hierarchy', function (): void {
-    $parent = Category::create([
+    $parent = Category::factory()->create([
         'name' => 'آرایشی',
         'slug' => 'makeup-root',
-        'is_active' => true,
         'order' => 1,
     ]);
 
-    $child = Category::create([
-        'parent_id' => $parent->id,
+    Category::factory()->childOf($parent)->create([
         'name' => 'رژلب',
         'slug' => 'lipstick-child',
-        'is_active' => true,
         'order' => 1,
     ]);
 
@@ -75,10 +69,9 @@ it('returns category tree with correct hierarchy', function (): void {
 });
 
 it('returns paginated active categories', function (): void {
-    Category::create([
+    Category::factory()->create([
         'name' => 'عطر و ادکلن',
         'slug' => 'fragrance-cat',
-        'is_active' => true,
     ]);
 
     $response = $this->getJson(route('categories.index'));
@@ -95,10 +88,9 @@ it('returns paginated active categories', function (): void {
 });
 
 it('shows single category with children and attributes', function (): void {
-    $cat = Category::create([
+    $cat = Category::factory()->create([
         'name' => 'مراقبت مو',
         'slug' => 'haircare-detail',
-        'is_active' => true,
     ]);
 
     $response = $this->getJson(route('categories.show', ['category' => 'haircare-detail']));

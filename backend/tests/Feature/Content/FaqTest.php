@@ -5,26 +5,23 @@ declare(strict_types=1);
 use App\Models\Faq;
 
 test('faqs endpoint returns active faqs ordered by order column', function () {
-    Faq::create([
+    Faq::factory()->inactive()->create([
         'question' => 'سوال تستی غیرفعال',
         'answer' => 'پاسخ تستی',
-        'is_active' => false,
         'order' => 1,
     ]);
 
-    Faq::create([
+    Faq::factory()->create([
         'question' => 'سوال اول فعال',
         'answer' => 'پاسخ اول',
         'category' => 'سفارش',
-        'is_active' => true,
         'order' => 10,
     ]);
 
-    Faq::create([
+    Faq::factory()->create([
         'question' => 'سوال دوم با اولویت بالاتر',
         'answer' => 'پاسخ دوم',
         'category' => 'ارسال',
-        'is_active' => true,
         'order' => 2,
     ]);
 
@@ -50,11 +47,10 @@ test('faqs endpoint returns active faqs ordered by order column', function () {
 });
 
 test('faqs endpoint filters by category parameter', function () {
-    Faq::create([
+    Faq::factory()->create([
         'question' => 'سوال اختصاصی حساب',
         'answer' => 'پاسخ حساب',
         'category' => 'حساب کاربری',
-        'is_active' => true,
         'order' => 1,
     ]);
 
