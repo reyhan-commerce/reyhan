@@ -7,6 +7,7 @@ namespace App\Filament\Pages;
 use App\Settings\GeneralSettings;
 use BackedEnum;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -164,6 +165,122 @@ class ManageGeneralSettings extends SettingsPage
                                     ->required()
                                     ->suffix('تومان')
                                     ->helperText('مثال: هر ۱ امتیاز = ۵۰۰ تومان تخفیف در خرید بعدی'),
+                            ]),
+
+                        Tab::make('نوار اعلان و هدر')
+                            ->icon(Heroicon::OutlinedMegaphone)
+                            ->columns(2)
+                            ->schema([
+                                Toggle::make('announcement_enabled')
+                                    ->label('نمایش نوار اعلان بالای سایت')
+                                    ->default(true)
+                                    ->columnSpanFull(),
+
+                                TextInput::make('announcement_text')
+                                    ->label('متن نوار اعلان')
+                                    ->placeholder('ارسال رایگان برای خریدهای بالای ۵۰۰ هزار تومان • تضمین ۱۰۰٪ اصالت کالا')
+                                    ->columnSpanFull(),
+
+                                TextInput::make('announcement_link')
+                                    ->label('لینک مقصد نوار اعلان (اختیاری)')
+                                    ->placeholder('/products یا https://...')
+                                    ->columnSpanFull(),
+                            ]),
+
+                        Tab::make('صفحه اصلی و سکشن‌ها')
+                            ->icon(Heroicon::OutlinedHome)
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('hero_badge_text')
+                                    ->label('متن نشان بالای هیرو')
+                                    ->placeholder('تخفیف‌های ویژه و محصولات برگزیده'),
+
+                                TextInput::make('hero_primary_button_text')
+                                    ->label('متن دکمه اصلی هیرو')
+                                    ->placeholder('مشاهده کل کاتالوگ'),
+
+                                TextInput::make('hero_secondary_button_text')
+                                    ->label('متن دکمه دوم هیرو')
+                                    ->placeholder('دسته‌بندی‌های کالا'),
+
+                                TextInput::make('categories_title')
+                                    ->label('عنوان بخش دسته‌بندی‌ها')
+                                    ->placeholder('دسته‌بندی‌های تخصصی'),
+
+                                TextInput::make('categories_button_text')
+                                    ->label('متن دکمه بخش دسته‌بندی‌ها')
+                                    ->placeholder('مشاهده نقشه کامل'),
+
+                                TextInput::make('flash_deals_title')
+                                    ->label('عنوان بخش شگفت‌انگیزها')
+                                    ->placeholder('پیشنهادات شگفت‌انگیز روز'),
+
+                                TextInput::make('flash_deals_subtitle')
+                                    ->label('زیرعنوان بخش شگفت‌انگیزها')
+                                    ->placeholder('فرصت محدود با تخفیف‌های ویژه تا پایان امروز'),
+
+                                TextInput::make('featured_products_title')
+                                    ->label('عنوان بخش محصولات برگزیده')
+                                    ->placeholder('محصولات برگزیده فروشگاه'),
+
+                                TextInput::make('featured_products_button_text')
+                                    ->label('متن دکمه محصولات برگزیده')
+                                    ->placeholder('مشاهده همه کاتالوگ'),
+
+                                TextInput::make('blog_title')
+                                    ->label('عنوان بخش مقالات و وبلاگ')
+                                    ->placeholder('مجله تخصصی و تازه‌ترین مقالات'),
+
+                                TextInput::make('blog_button_text')
+                                    ->label('متن دکمه وبلاگ')
+                                    ->placeholder('ورود به وبلاگ'),
+
+                                TextInput::make('brands_title')
+                                    ->label('عنوان بخش برندها')
+                                    ->placeholder('اصیل‌ترین برندهای معتبر جهانی و ایرانی'),
+
+                                Repeater::make('trust_badges')
+                                    ->label('نشان‌های اعتماد و تعهدات فروشگاه (Trust Badges)')
+                                    ->schema([
+                                        TextInput::make('icon')
+                                            ->label('آیکون (Lucide)')
+                                            ->placeholder('i-lucide-shield-check')
+                                            ->required(),
+
+                                        TextInput::make('title')
+                                            ->label('عنوان شاخص')
+                                            ->placeholder('ضمانت ۱۰۰٪ اصالت کالا')
+                                            ->required(),
+
+                                        TextInput::make('desc')
+                                            ->label('توضیح کوتاه')
+                                            ->placeholder('تمامی کالاها با برچسب اصالت')
+                                            ->required(),
+                                    ])
+                                    ->columns(3)
+                                    ->collapsible()
+                                    ->columnSpanFull(),
+                            ]),
+
+                        Tab::make('فوتر و حقوقی')
+                            ->icon(Heroicon::OutlinedDocumentText)
+                            ->columns(2)
+                            ->schema([
+                                Textarea::make('footer_about_text')
+                                    ->label('متن معرفی درباره ما در فوتر')
+                                    ->helperText('اگر خالی باشد از شعار فروشگاه استفاده می‌شود.')
+                                    ->rows(3)
+                                    ->columnSpanFull(),
+
+                                TextInput::make('footer_copyright_text')
+                                    ->label('متن کپی‌رایت انتهای فوتر')
+                                    ->placeholder('تمامی حقوق مادی و معنوی محفوظ می‌باشد.')
+                                    ->columnSpanFull(),
+
+                                TextInput::make('footer_designer_credit')
+                                    ->label('متن امضای طراحی و توسعه')
+                                    ->placeholder('طراحی شده با رعایت استانداردهای تجربه کاربری و تجارت الکترونیک')
+                                    ->columnSpanFull(),
                             ]),
                     ])
                     ->columnSpanFull(),

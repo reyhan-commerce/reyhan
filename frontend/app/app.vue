@@ -38,13 +38,19 @@ useHead({
   ]
 })
 
-const title = computed(() => settingsStore.settings.store_name || 'ایزیشاپ')
-const description = computed(() => settingsStore.settings.store_slogan || 'خرید آنلاین باکیفیت‌ترین محصولات آرایشی، مراقبت پوست و مو با تضمین اصالت کالا و ارسال سریع')
+const storeName = computed(() => settingsStore.settings.store_name || 'فروشگاه آنلاین')
+const description = computed(() => settingsStore.settings.store_slogan || 'خرید آنلاین با تضمین اصالت کالا و ارسال سریع')
+
+// Global title template: every page just provides its own chunk,
+// this appends store name automatically — no more hardcoded ایزیشاپ in pages.
+useHead({
+  titleTemplate: (titleChunk) => titleChunk ? `${titleChunk} | ${storeName.value}` : storeName.value
+})
 
 useSeoMeta({
-  title,
+  title: storeName,
   description,
-  ogTitle: title,
+  ogTitle: storeName,
   ogDescription: description
 })
 </script>

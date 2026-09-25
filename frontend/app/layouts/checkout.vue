@@ -17,7 +17,7 @@ const settingsStore = useSettingsStore()
           </div>
           <div class="flex flex-col">
             <span class="font-black text-lg sm:text-xl text-neutral-900 dark:text-white tracking-tight leading-tight">
-              {{ settingsStore.settings.store_name || 'ایزیشاپ' }}
+              {{ settingsStore.settings.store_name }}
             </span>
             <span class="text-[10px] text-neutral-400 font-medium">
               تسویه‌حساب امن

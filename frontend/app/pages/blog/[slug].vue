@@ -19,7 +19,7 @@ const settingsStore = useSettingsStore()
 const { toPersianDigits } = usePersian()
 
 const slug = computed(() => route.params.slug as string)
-const storeName = computed(() => settingsStore.settings.store_name || 'ایزیشاپ')
+const storeName = computed(() => settingsStore.settings.store_name || settingsStore.settings.store_name)
 
 const { data: postResponse, error } = await useAsyncData(`blog-post-${slug.value}`, () =>
   api<BlogPostDetailResponse>(`/blog/posts/${slug.value}`)
@@ -36,7 +36,7 @@ const post = computed(() => postResponse.value?.data)
 const relatedPosts = computed(() => postResponse.value?.related ?? [])
 
 useSeoMeta({
-  title: () => `${post.value?.meta_title || post.value?.title} - وبلاگ ${storeName.value}`,
+  title: () => post.value?.meta_title || post.value?.title || '',
   description: () => post.value?.meta_description || post.value?.summary || '',
   ogTitle: () => post.value?.title,
   ogDescription: () => post.value?.summary || '',

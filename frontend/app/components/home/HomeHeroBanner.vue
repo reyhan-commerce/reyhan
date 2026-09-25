@@ -2,6 +2,9 @@
 interface Props {
   storeName: string
   storeSlogan?: string | null
+  badgeText?: string | null
+  primaryButtonText?: string | null
+  secondaryButtonText?: string | null
 }
 
 defineProps<Props>()
@@ -19,7 +22,7 @@ defineProps<Props>()
           name="i-lucide-sparkles"
           class="size-4 animate-pulse"
         />
-        <span>تخفیف‌های ویژه و محصولات برگزیده</span>
+        <span>{{ badgeText || 'تخفیف‌های ویژه و محصولات برگزیده' }}</span>
       </div>
 
       <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-neutral-900 dark:text-white leading-[1.15] tracking-tight">
@@ -39,7 +42,7 @@ defineProps<Props>()
           icon="i-lucide-shopping-bag"
           class="min-h-12 px-7 font-black rounded-2xl shadow-md shadow-primary/25"
         >
-          مشاهده کل کاتالوگ
+          {{ primaryButtonText || 'مشاهده کل کاتالوگ' }}
         </UButton>
         <UButton
           to="/categories"
@@ -49,7 +52,7 @@ defineProps<Props>()
           icon="i-lucide-layout-grid"
           class="min-h-12 px-6 font-bold rounded-2xl"
         >
-          دسته‌بندی‌های کالا
+          {{ secondaryButtonText || 'دسته‌بندی‌های کالا' }}
         </UButton>
       </div>
     </div>

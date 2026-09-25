@@ -63,10 +63,13 @@ const brands = computed<BrandDisplayItem[]>(() => {
     <HomeHeroBanner
       :store-name="settingsStore.settings.store_name"
       :store-slogan="settingsStore.settings.store_slogan"
+      :badge-text="settingsStore.settings.hero_badge_text"
+      :primary-button-text="settingsStore.settings.hero_primary_button_text"
+      :secondary-button-text="settingsStore.settings.hero_secondary_button_text"
     />
 
     <!-- Trust Badges Strip -->
-    <HomeTrustBadges />
+    <HomeTrustBadges :badges="settingsStore.settings.trust_badges" />
 
     <!-- Visual Category Navigation Section -->
     <section class="flex flex-col gap-6">
@@ -74,7 +77,7 @@ const brands = computed<BrandDisplayItem[]>(() => {
         <div class="flex items-center gap-3">
           <div class="w-1.5 h-6 rounded-full bg-primary" />
           <h2 class="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white">
-            دسته‌بندی‌های تخصصی
+            {{ settingsStore.settings.categories_title || 'دسته‌بندی‌های تخصصی' }}
           </h2>
         </div>
         <UButton
@@ -85,7 +88,7 @@ const brands = computed<BrandDisplayItem[]>(() => {
           size="sm"
           class="font-bold hover:text-primary"
         >
-          مشاهده نقشه کامل
+          {{ settingsStore.settings.categories_button_text || 'مشاهده نقشه کامل' }}
         </UButton>
       </div>
 
@@ -96,24 +99,31 @@ const brands = computed<BrandDisplayItem[]>(() => {
     <HomeFlashDeals
       :deals="flashDeals"
       :loading="catalogStore.loading"
+      :section-title="settingsStore.settings.flash_deals_title"
+      :section-subtitle="settingsStore.settings.flash_deals_subtitle"
     />
 
     <!-- Best Sellers / Featured Products -->
     <HomeFeaturedProducts
       :products="featuredProducts"
       :loading="catalogStore.loading"
+      :section-title="settingsStore.settings.featured_products_title"
+      :button-text="settingsStore.settings.featured_products_button_text"
     />
 
     <!-- Latest Blog Articles Showcase -->
     <HomeBlogSection
       v-if="features.hasFeature('blog') && featuredArticles.length > 0"
       :articles="featuredArticles"
+      :section-title="settingsStore.settings.blog_title"
+      :button-text="settingsStore.settings.blog_button_text"
     />
 
     <!-- Brand Showcase Strip -->
     <HomeBrandsSection
       v-if="features.hasFeature('brands')"
       :brands="brands"
+      :section-title="settingsStore.settings.brands_title"
     />
   </div>
 </template>

@@ -5,7 +5,7 @@ const api = useApi()
 const { formatPrice, toPersianDigits } = usePersian()
 
 useSeoMeta({
-  title: 'سفارش‌های من - ایزیشاپ'
+  title: 'سفارش‌های من'
 })
 
 const isLoading = ref(true)

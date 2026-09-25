@@ -4,10 +4,10 @@ import type { FaqResponse } from '~/types/content'
 const api = useApi()
 const settingsStore = useSettingsStore()
 
-const storeName = computed(() => settingsStore.settings.store_name || 'ایزیشاپ')
+const storeName = computed(() => settingsStore.settings.store_name || settingsStore.settings.store_name)
 
 useSeoMeta({
-  title: () => `پرسش‌های متداول (FAQ) - ${storeName.value}`,
+  title: () => 'پرسش‌های متداول (FAQ)',
   description: 'پاسخ به سوالات متداول مشتریان پیرامون شیوه ارسال، درگاه‌های پرداخت، اصالت کالا و مرجوعی.'
 })
 

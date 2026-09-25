@@ -18,10 +18,10 @@ const route = useRoute()
 const router = useRouter()
 const { toPersianDigits } = usePersian()
 
-const storeName = computed(() => settingsStore.settings.store_name || 'ایزیشاپ')
+const storeName = computed(() => settingsStore.settings.store_name || settingsStore.settings.store_name)
 
 useSeoMeta({
-  title: () => `مجله و مقالات تخصصی - ${storeName.value}`,
+  title: () => 'مجله و مقالات تخصصی',
   description: 'جدیدترین مقالات، راهنماهای تخصصی انتخاب محصول، نکات مراقبت و آموزش‌های کاربردی.'
 })
 

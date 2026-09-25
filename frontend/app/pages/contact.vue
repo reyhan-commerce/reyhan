@@ -4,14 +4,14 @@ const toast = useToast()
 const api = useApi()
 const { toEnglishDigits } = usePersian()
 
-const storeName = computed(() => settingsStore.settings.store_name || 'ایزیشاپ')
+const storeName = computed(() => settingsStore.settings.store_name)
 const phone = computed(() => settingsStore.settings.support_phone || '۰۲۱-۸۸۸۸۹۹۹۹')
 const address = computed(() => settingsStore.settings.address || 'تهران، خیابان ولیعصر')
-const email = computed(() => settingsStore.settings.support_email || 'support@easyshop.ir')
+const email = computed(() => settingsStore.settings.support_email)
 const workHours = computed(() => settingsStore.settings.work_hours || 'شنبه تا چهارشنبه ۹ الی ۱۸ • پنج‌شنبه ۹ الی ۱۴')
 
 useSeoMeta({
-  title: () => `تماس با ما - پشتیبانی ${storeName.value}`,
+  title: () => 'تماس با ما',
   description: 'راه‌های ارتباطی، نشانی پستی دفتر مرکزی و فرم ارسال پیام به واحد پشتیبانی.'
 })
 

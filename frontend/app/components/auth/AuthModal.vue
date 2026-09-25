@@ -3,8 +3,11 @@ import { ConfigProvider } from 'reka-ui'
 import { otpRequestSchema, normalizeDigitsString } from '~/utils/schemas'
 
 const authStore = useAuthStore()
+const settingsStore = useSettingsStore()
 const toast = useToast()
 const { toEnglishDigits } = usePersian()
+
+const storeName = computed(() => settingsStore.settings.store_name)
 
 const step = ref<'mobile' | 'otp'>('mobile')
 const mobile = ref('')
@@ -149,7 +152,7 @@ onUnmounted(() => {
 <template>
   <UModal
     v-model:open="authStore.isAuthModalOpen"
-    :title="step === 'mobile' ? 'ورود / ثبت‌نام در ایزیشاپ' : 'تایید شماره موبایل'"
+    :title="step === 'mobile' ? `ورود / ثبت‌نام در ${storeName}` : 'تایید شماره موبایل'"
     :description="step === 'mobile' ? 'جهت ورود یا ایجاد حساب کاربری، شماره موبایل خود را وارد نمایید.' : `کد پیامک‌شده به شماره ${mobile} را وارد فرمایید.`"
     dir="rtl"
   >

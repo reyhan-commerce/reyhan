@@ -73,10 +73,13 @@ const userDropdownItems = computed(() => {
 
 <template>
   <div class="min-h-screen flex flex-col bg-stone-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors">
-    <!-- Top Announcement Bar -->
-    <aside
+    <!-- Top Announcement Bar (fully dynamic from backend) -->
+    <component
+      :is="settingsStore.settings.announcement_link ? 'a' : 'aside'"
+      v-if="settingsStore.settings.announcement_enabled && settingsStore.settings.announcement_text"
+      :href="settingsStore.settings.announcement_link || undefined"
       aria-label="اعلان‌های ویژه"
-      class="bg-neutral-900 text-neutral-100 dark:bg-neutral-950 dark:border-b dark:border-neutral-800 text-xs py-2 px-4 transition-colors"
+      class="bg-neutral-900 text-neutral-100 dark:bg-neutral-950 dark:border-b dark:border-neutral-800 text-xs py-2 px-4 transition-colors block"
     >
       <div class="max-w-7xl mx-auto flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -85,16 +88,19 @@ const userDropdownItems = computed(() => {
             class="size-4 text-primary animate-pulse"
           />
           <span class="font-medium text-[11px] sm:text-xs">
-            ارسال رایگان برای خریدهای بالای ۵۰۰ هزار تومان • تضمین ۱۰۰٪ اصالت کالا
+            {{ settingsStore.settings.announcement_text }}
           </span>
         </div>
         <div class="hidden md:flex items-center gap-6 text-[11px] text-neutral-400">
-          <span class="flex items-center gap-1.5">
+          <span
+            v-if="settingsStore.settings.support_phone"
+            class="flex items-center gap-1.5"
+          >
             <UIcon
               name="i-lucide-headphones"
               class="size-3.5 text-primary"
             />
-            مشاوره پوستی رایگان: ۰۲۱-۸۸۸۸۹۹۹۹
+            {{ settingsStore.settings.support_phone }}
           </span>
           <NuxtLink
             to="/cart"
@@ -104,7 +110,7 @@ const userDropdownItems = computed(() => {
           </NuxtLink>
         </div>
       </div>
-    </aside>
+    </component>
 
     <!-- Sticky Main Header -->
     <header class="sticky top-0 z-40 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border-b border-neutral-200/80 dark:border-neutral-800 transition-colors">
@@ -121,7 +127,7 @@ const userDropdownItems = computed(() => {
             </div>
             <div class="flex flex-col">
               <span class="font-black text-lg sm:text-xl text-neutral-900 dark:text-white tracking-tight leading-tight">
-                {{ settingsStore.settings.store_name || 'ایزیشاپ' }}
+                {{ settingsStore.settings.store_name }}
               </span>
               <span class="text-[10px] text-neutral-400 font-medium hidden sm:block">
                 {{ settingsStore.settings.store_slogan || 'فروشگاه اینترنتی مدرن' }}

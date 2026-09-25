@@ -8,6 +8,7 @@ export interface BrandDisplayItem {
 
 interface Props {
   brands: BrandDisplayItem[]
+  sectionTitle?: string | null
 }
 
 defineProps<Props>()
@@ -19,7 +20,7 @@ defineProps<Props>()
     class="flex flex-col gap-5 py-6 border-t border-neutral-200/80 dark:border-neutral-800"
   >
     <h3 class="text-center font-black text-xs sm:text-sm text-neutral-400">
-      اصیل‌ترین برندهای معتبر جهانی و ایرانی
+      {{ sectionTitle || 'اصیل‌ترین برندهای معتبر جهانی و ایرانی' }}
     </h3>
     <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
       <NuxtLink

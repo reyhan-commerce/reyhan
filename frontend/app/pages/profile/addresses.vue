@@ -7,7 +7,7 @@ const toast = useToast()
 const { toPersianDigits } = usePersian()
 
 useSeoMeta({
-  title: 'آدرس‌های من - ایزیشاپ'
+  title: 'آدرس‌های من'
 })
 
 const isAddressModalOpen = ref(false)

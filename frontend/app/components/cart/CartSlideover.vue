@@ -30,6 +30,7 @@ const handleRemoveCoupon = async () => {
     v-model:open="isOpen"
     side="left"
     dir="rtl"
+    inset
     :title="`سبد خرید شما (${toPersianDigits(cartStore.itemsCount)} کالا)`"
     :description="cartStore.isEmpty ? 'سبد خرید شما در حال حاضر خالی است' : `${toPersianDigits(cartStore.itemsCount)} قلم کالا در سبد خرید شما موجود است`"
   >

@@ -6,6 +6,8 @@ import ProductCardSkeleton from '~/components/skeletons/ProductCardSkeleton.vue'
 interface Props {
   deals: ProductCardItem[]
   loading?: boolean
+  sectionTitle?: string | null
+  sectionSubtitle?: string | null
 }
 
 defineProps<Props>()
@@ -51,10 +53,10 @@ onUnmounted(() => {
         </div>
         <div>
           <h2 class="text-lg sm:text-2xl font-black text-neutral-900 dark:text-white">
-            پیشنهادات شگفت‌انگیز روز
+            {{ sectionTitle || 'پیشنهادات شگفت‌انگیز روز' }}
           </h2>
           <p class="text-xs text-neutral-500">
-            فرصت محدود با تخفیف‌های ویژه تا پایان امروز
+            {{ sectionSubtitle || 'فرصت محدود با تخفیف‌های ویژه تا پایان امروز' }}
           </p>
         </div>
       </div>

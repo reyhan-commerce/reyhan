@@ -3,6 +3,8 @@ import type { BlogPost } from '~/types/blog'
 
 interface Props {
   articles: BlogPost[]
+  sectionTitle?: string | null
+  buttonText?: string | null
 }
 
 defineProps<Props>()
@@ -16,7 +18,7 @@ const { toPersianDigits } = usePersian()
       <div class="flex items-center gap-3">
         <div class="w-1.5 h-6 rounded-full bg-primary" />
         <h2 class="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white">
-          مجله تخصصی و تازه‌ترین مقالات
+          {{ sectionTitle || 'مجله تخصصی و تازه‌ترین مقالات' }}
         </h2>
       </div>
       <UButton
@@ -27,7 +29,7 @@ const { toPersianDigits } = usePersian()
         size="sm"
         class="font-bold hover:text-primary cursor-pointer"
       >
-        ورود به وبلاگ
+        {{ buttonText || 'ورود به وبلاگ' }}
       </UButton>
     </div>
 

@@ -23,7 +23,7 @@ const { data: categoryData } = await useAsyncData(`category-${slug.value}`, asyn
 const currentCategory = computed(() => categoryData.value)
 
 useSeoMeta({
-  title: computed(() => currentCategory.value ? `${currentCategory.value.name} - ایزیشاپ` : 'دسته‌بندی کالا - ایزیشاپ'),
+  title: computed(() => currentCategory.value ? currentCategory.value.name : 'دسته‌بندی کالا'),
   description: computed(() => currentCategory.value?.name ? `خرید آنلاین انواع محصولات ${currentCategory.value.name} با ضمانت اصالت کالا و ارسال سریع` : '')
 })
 </script>

@@ -2,19 +2,28 @@
 const settingsStore = useSettingsStore()
 const currentYear = new Date().getFullYear()
 
-const storeName = computed(() => settingsStore.settings.store_name || 'ایزیشاپ')
-const storeSlogan = computed(() => settingsStore.settings.store_slogan || 'مرجع تخصصی خرید آنلاین محصولات آرایشی، مراقبت پوست و مو')
-const phone = computed(() => settingsStore.settings.support_phone || '۰۲۱-۸۸۸۸۹۹۹۹')
-const email = computed(() => settingsStore.settings.support_email || 'support@easyshop.ir')
+const storeName = computed(() => settingsStore.settings.store_name)
+const storeAbout = computed(() => settingsStore.settings.footer_about_text || settingsStore.settings.store_slogan || 'مرجع تخصصی خرید آنلاین')
+const phone = computed(() => settingsStore.settings.support_phone)
+const email = computed(() => settingsStore.settings.support_email)
+const workHours = computed(() => settingsStore.settings.work_hours)
+const copyrightText = computed(() => settingsStore.settings.footer_copyright_text || `تمامی حقوق مادی و معنوی متعلق به فروشگاه ${storeName.value} می‌باشد.`)
+const designerCredit = computed(() => settingsStore.settings.footer_designer_credit || 'طراحی شده با رعایت استانداردهای تجربه کاربری و تجارت الکترونیک')
 
 const appFeatures = useFeatures()
 
-const features = [
+const DEFAULT_TRUST_BADGES = [
   { icon: 'i-lucide-truck', title: 'ارسال سریع و مطمئن', desc: 'تحویل اکسپرس در تهران و پست پیشتاز سراسری' },
   { icon: 'i-lucide-shield-check', title: 'تضمین اصالت کالا', desc: 'تمامی کالاها با برچسب اصالت و ضمانت رسمی' },
   { icon: 'i-lucide-rotate-ccw', title: '۷ روز ضمانت بازگشت', desc: 'امکان عودت کالا در صورت عدم رضایت یا مغایرت' },
-  { icon: 'i-lucide-headphones', title: 'پشتیبانی تخصصی پوستی', desc: 'مشاوره رایگان زیبایی توسط کارشناسان' }
+  { icon: 'i-lucide-headphones', title: 'پشتیبانی تخصصی', desc: 'مشاوره رایگان توسط کارشناسان' }
 ]
+
+const features = computed(() =>
+  settingsStore.settings.trust_badges?.length > 0
+    ? settingsStore.settings.trust_badges
+    : DEFAULT_TRUST_BADGES
+)
 
 const quickLinks = computed(() => [
   { label: 'درباره ما', to: '/about' },
@@ -73,22 +82,31 @@ const customerServiceLinks = computed(() => [
         </div>
 
         <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
-          {{ storeSlogan }}
+          {{ storeAbout }}
         </p>
 
         <!-- Contact Points -->
         <div class="flex flex-col gap-2 pt-2 text-xs text-neutral-600 dark:text-neutral-300">
-          <div class="flex items-center gap-2">
+          <div
+            v-if="phone"
+            class="flex items-center gap-2"
+          >
             <UIcon
               name="i-lucide-phone-call"
               class="size-4 text-primary shrink-0"
             />
             <span class="font-medium">پشتیبانی تلفنی:</span>
             <span class="font-bold font-mono [direction:ltr] text-neutral-800 dark:text-neutral-200">{{ phone }}</span>
-            <span class="text-[11px] text-neutral-400">(شنبه تا پنج‌شنبه ۹ الی ۱۸)</span>
+            <span
+              v-if="workHours"
+              class="text-[11px] text-neutral-400"
+            >({{ workHours }})</span>
           </div>
 
-          <div class="flex items-center gap-2">
+          <div
+            v-if="email"
+            class="flex items-center gap-2"
+          >
             <UIcon
               name="i-lucide-mail"
               class="size-4 text-primary shrink-0"
@@ -221,10 +239,10 @@ const customerServiceLinks = computed(() => [
     <div class="border-t border-neutral-200/60 dark:border-neutral-800 py-4 px-4 sm:px-6 lg:px-8 text-center text-xs text-neutral-400">
       <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
         <p>
-          تمامی حقوق مادی و معنوی متعلق به فروشگاه {{ storeName }} می‌باشد • © {{ currentYear }}
+          {{ copyrightText }} • © {{ currentYear }}
         </p>
         <p class="text-[11px] flex items-center gap-1">
-          <span>طراحی شده با رعایت استانداردهای تجربه کاربری و تجارت الکترونیک</span>
+          <span>{{ designerCredit }}</span>
           <UIcon
             name="i-lucide-heart"
             class="size-3.5 text-primary fill-primary"

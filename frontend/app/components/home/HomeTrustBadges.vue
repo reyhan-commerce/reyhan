@@ -1,22 +1,28 @@
 <script setup lang="ts">
-interface TrustBadge {
-  icon: string
-  title: string
-  desc: string
+import type { TrustBadge } from '~/stores/settings'
+
+interface Props {
+  badges?: TrustBadge[]
 }
 
-const trustBadges: TrustBadge[] = [
+const props = withDefaults(defineProps<Props>(), {
+  badges: () => []
+})
+
+const DEFAULT_BADGES: TrustBadge[] = [
   { icon: 'i-lucide-shield-check', title: 'ضمانت ۱۰۰٪ اصالت کالا', desc: 'تمامی کالاها با برچسب اصالت و ضمانت سلامت' },
   { icon: 'i-lucide-truck', title: 'ارسال سریع به سراسر ایران', desc: 'پست پیشتاز و تیپاکس اکسپرس' },
   { icon: 'i-lucide-rotate-ccw', title: '۷ روز ضمانت بازگشت', desc: 'امکان عودت کالا در صورت نارضایتی' },
   { icon: 'i-lucide-headphones', title: 'مشاوره و پشتیبانی خرید', desc: 'پاسخگویی سریع و راهنمایی تخصصی انتخاب محصول' }
 ]
+
+const displayBadges = computed(() => props.badges.length > 0 ? props.badges : DEFAULT_BADGES)
 </script>
 
 <template>
   <section class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
     <div
-      v-for="badge in trustBadges"
+      v-for="badge in displayBadges"
       :key="badge.title"
       class="flex items-center gap-3.5 p-4 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200/70 dark:border-neutral-800 shadow-xs"
     >

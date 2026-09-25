@@ -5,7 +5,7 @@ const wishlistStore = useWishlistStore()
 const { formatPrice } = usePersian()
 
 useSeoMeta({
-  title: 'لیست علاقه‌مندی‌ها - ایزیشاپ'
+  title: 'لیست علاقه‌مندی‌ها'
 })
 
 onMounted(async () => {

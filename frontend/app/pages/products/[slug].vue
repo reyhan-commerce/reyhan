@@ -30,7 +30,7 @@ if (error.value || !product.value) {
 
 // SEO Meta
 useSeoMeta({
-  title: computed(() => `${product.value?.meta_title || product.value?.name} - ایزیشاپ`),
+  title: computed(() => product.value?.meta_title || product.value?.name),
   description: computed(() => product.value?.meta_description || product.value?.short_description || ''),
   ogTitle: computed(() => product.value?.name),
   ogDescription: computed(() => product.value?.short_description || '')
@@ -50,7 +50,7 @@ useSchemaOrg([
         availability: product.value.variants?.some(v => v.stock > 0)
           ? 'https://schema.org/InStock'
           : 'https://schema.org/OutOfStock',
-        url: `https://easyshop.ir/products/${product.value.slug}`
+        url: `/products/${product.value.slug}`
       })
     ]
   }),

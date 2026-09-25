@@ -4,7 +4,7 @@ import type { CmsPage } from '~/types/content'
 const api = useApi()
 const settingsStore = useSettingsStore()
 
-const storeName = computed(() => settingsStore.settings.store_name || 'ایزیشاپ')
+const storeName = computed(() => settingsStore.settings.store_name || settingsStore.settings.store_name)
 
 const { data: pageResponse } = await useAsyncData('about-us-page', () =>
   api<ApiResponse<CmsPage>>('/pages/about-us').catch(() => null)
@@ -13,7 +13,7 @@ const { data: pageResponse } = await useAsyncData('about-us-page', () =>
 const page = computed(() => pageResponse.value?.data)
 
 useSeoMeta({
-  title: () => page.value?.meta_title || `درباره ما - فروشگاه اینترنتی ${storeName.value}`,
+  title: () => page.value?.meta_title || 'درباره ما',
   description: () => page.value?.meta_description || `آشنایی با تاریخچه، ارزش‌ها و ماموریت ${storeName.value} در ارائه محصولات تخصصی و اصیل.`
 })
 

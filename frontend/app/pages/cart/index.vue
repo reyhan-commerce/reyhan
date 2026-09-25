@@ -1,6 +1,6 @@
 <script setup lang="ts">
 useHead({
-  title: 'سبد خرید | ایزیشاپ'
+  title: 'سبد خرید'
 })
 
 const cartStore = useCartStore()

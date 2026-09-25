@@ -3,6 +3,9 @@ import SubmitReviewModal from '~/components/review/SubmitReviewModal.vue'
 import { useAuthStore } from '~/stores/auth'
 import type { ReviewItem } from '~/types/review'
 
+const settingsStore = useSettingsStore()
+const storeName = computed(() => settingsStore.settings.store_name)
+
 const props = defineProps<{
   productId: number
   productName: string
@@ -285,7 +288,7 @@ function handleOpenModal() {
                   name="i-lucide-shield-check"
                   class="w-4 h-4"
                 />
-                پاسخ کارشناس پشتیبانی ایزیشاپ:
+                پاسخ کارشناس پشتیبانی {{ storeName }}:
               </span>
               <p class="text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {{ review.admin_reply }}

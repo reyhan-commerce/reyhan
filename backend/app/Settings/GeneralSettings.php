@@ -46,6 +46,44 @@ class GeneralSettings extends Settings
 
     public ?string $enamad_code;
 
+    public bool $announcement_enabled;
+
+    public ?string $announcement_text;
+
+    public ?string $announcement_link;
+
+    public ?string $hero_badge_text;
+
+    public ?string $hero_primary_button_text;
+
+    public ?string $hero_secondary_button_text;
+
+    public ?array $trust_badges;
+
+    public ?string $categories_title;
+
+    public ?string $categories_button_text;
+
+    public ?string $flash_deals_title;
+
+    public ?string $flash_deals_subtitle;
+
+    public ?string $featured_products_title;
+
+    public ?string $featured_products_button_text;
+
+    public ?string $blog_title;
+
+    public ?string $blog_button_text;
+
+    public ?string $brands_title;
+
+    public ?string $footer_about_text;
+
+    public ?string $footer_copyright_text;
+
+    public ?string $footer_designer_credit;
+
     public static function group(): string
     {
         return 'general';

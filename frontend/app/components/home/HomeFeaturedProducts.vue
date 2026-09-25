@@ -6,6 +6,8 @@ import ProductCardSkeleton from '~/components/skeletons/ProductCardSkeleton.vue'
 interface Props {
   products: ProductCardItem[]
   loading?: boolean
+  sectionTitle?: string | null
+  buttonText?: string | null
 }
 
 defineProps<Props>()
@@ -17,7 +19,7 @@ defineProps<Props>()
       <div class="flex items-center gap-3">
         <div class="w-1.5 h-6 rounded-full bg-primary" />
         <h2 class="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white">
-          محصولات برگزیده فروشگاه
+          {{ sectionTitle || 'محصولات برگزیده فروشگاه' }}
         </h2>
       </div>
       <UButton
@@ -28,7 +30,7 @@ defineProps<Props>()
         size="sm"
         class="font-bold hover:text-primary"
       >
-        مشاهده همه کاتالوگ
+        {{ buttonText || 'مشاهده همه کاتالوگ' }}
       </UButton>
     </div>
 

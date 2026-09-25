@@ -1,13 +1,26 @@
 <script setup lang="ts">
+import type { CmsPage } from '~/types/content'
+
+const api = useApi()
+const settingsStore = useSettingsStore()
+const storeName = computed(() => settingsStore.settings.store_name)
+
+const { data: pageResponse } = await useAsyncData('terms-page', () =>
+  api<ApiResponse<CmsPage>>('/pages/terms').catch(() => null)
+)
+
+const page = computed(() => pageResponse.value?.data)
+
 useSeoMeta({
-  title: 'قوانین و رویه بازگشت کالا - ایزیشاپ',
-  description: 'شرایط و ضوابط خرید اینترنتی، رویه مرجوعی ۷ روزه و استانداردهای بهداشتی محصولات در ایزیشاپ.'
+  title: () => page.value?.meta_title || 'قوانین و رویه بازگشت کالا',
+  description: () => page.value?.meta_description || 'شرایط و قوانین خرید اینترنتی، رویه بازگشت ۷ روزه کالا و حفظ حریم خصوصی کاربران.'
 })
 
-const sections = [
+// Fallback static sections when CMS content is not structured
+const fallbackSections = [
   {
     title: '۱. قوانین عمومی و شرایط ثبت سفارش',
-    content: 'تمامی فعالیت‌های فروشگاه ایزیشاپ منطبق بر قوانین جمهوری اسلامی ایران، قانون تجارت الکترونیک و قانون حمایت از مصرف‌کننده است. کاربر موظف است هنگام ثبت سفارش، اطلاعات هویتی و نشانی پستی خود را به صورت دقیق و کامل وارد نماید.'
+    content: `تمامی فعالیت‌های فروشگاه ${storeName.value} منطبق بر قوانین جمهوری اسلامی ایران، قانون تجارت الکترونیک و قانون حمایت از مصرف‌کننده است. کاربر موظف است هنگام ثبت سفارش، اطلاعات هویتی و نشانی پستی خود را به صورت دقیق و کامل وارد نماید.`
   },
   {
     title: '۲. ضوابط بهداشتی و سلامت کالاها',
@@ -15,15 +28,15 @@ const sections = [
   },
   {
     title: '۳. رویه بازگرداندن ۷ روزه در صورت مغایرت یا آسیب',
-    content: 'در صورتی که کالای تحویل گرفته شده با سفارش ثبت شده مغایرت داشته باشد، یا دارای آسیب‌دیدگی فیزیکی ناشی از حمل و نقل باشد، مشتری گرامی می‌تواند حداکثر ظرف مدت ۷ روز کاری پس از تحویل، با ارائه عکس یا فاکتور، مراتب را به پشتیبانی اطلاع داده و کالا را عودت دهد. کلیه هزینه‌های بازگشت کالا در این شرایط بر عهده ایزیشاپ خواهد بود.'
+    content: `در صورتی که کالای تحویل گرفته شده با سفارش ثبت شده مغایرت داشته باشد، یا دارای آسیب‌دیدگی فیزیکی ناشی از حمل و نقل باشد، مشتری گرامی می‌تواند حداکثر ظرف مدت ۷ روز کاری پس از تحویل، مراتب را به پشتیبانی اطلاع داده و کالا را عودت دهد. کلیه هزینه‌های بازگشت کالا در این شرایط بر عهده ${storeName.value} خواهد بود.`
   },
   {
     title: '۴. سیاست قیمت‌گذاری و اصالت کالا',
-    content: 'ایزیشاپ تضمین می‌کند که کلیه محصولات ارائه شده دارای فاکتور رسمی و برچسب اصالت بوده و با قیمت مصوب نمایندگی‌ها عرضه می‌گردند. در صورت تغییر قیمت‌های رسمی پیش از تایید نهایی سفارش، موضوع به اطلاع خریدار خواهد رسید.'
+    content: `${storeName.value} تضمین می‌کند که کلیه محصولات ارائه شده دارای فاکتور رسمی و برچسب اصالت بوده و با قیمت مصوب نمایندگی‌ها عرضه می‌گردند.`
   },
   {
     title: '۵. حفظ حریم خصوصی کاربران',
-    content: 'ایزیشاپ متعهد می‌شود که از اطلاعات هویتی، نشانی‌ها و شماره‌های تماس کاربران محافظت کرده و از آن صرفاً جهت فرآیندهای لجستیکی، پردازش سفارش و ارسال اطلاع‌رسانی استفاده نماید.'
+    content: `${storeName.value} متعهد می‌شود که از اطلاعات هویتی، نشانی‌ها و شماره‌های تماس کاربران محافظت کرده و از آن صرفاً جهت فرآیندهای لجستیکی، پردازش سفارش و ارسال اطلاع‌رسانی استفاده نماید.`
   }
 ]
 </script>
@@ -48,28 +61,41 @@ const sections = [
         شفافیت و حقوق مصرف‌کننده
       </span>
       <h1 class="text-2xl sm:text-3xl font-black text-neutral-900 dark:text-white">
-        قوانین، مقررات و رویه بازگشت کالا
+        {{ page?.title || 'قوانین، مقررات و رویه بازگشت کالا' }}
       </h1>
       <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
         ضوابط خرید، استانداردهای بهداشتی و فرآیند تضمین رضایت ۷ روزه خریداران
       </p>
     </div>
 
-    <!-- Terms Content Cards -->
-    <div class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 sm:p-10 shadow-xs flex flex-col gap-8">
-      <div
-        v-for="(sec, idx) in sections"
-        :key="idx"
-        class="flex flex-col gap-2.5 pb-6 border-b border-neutral-100 dark:border-neutral-800 last:border-0 last:pb-0"
-      >
-        <h2 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-primary-500 shrink-0" />
-          {{ sec.title }}
-        </h2>
-        <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-loose pr-4">
-          {{ sec.content }}
-        </p>
+    <!-- CMS Content (when available from backend) -->
+    <template v-if="page?.content && page.content.length > 200">
+      <div class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 sm:p-10 shadow-xs">
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <div
+          class="prose dark:prose-invert prose-sm sm:prose-base max-w-none"
+          v-html="page.content"
+        />
       </div>
-    </div>
+    </template>
+
+    <!-- Fallback Static Sections (when no CMS content) -->
+    <template v-else>
+      <div class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 sm:p-10 shadow-xs flex flex-col gap-8">
+        <div
+          v-for="section in fallbackSections"
+          :key="section.title"
+          class="flex flex-col gap-3 pb-8 border-b border-neutral-100 dark:border-neutral-800 last:border-0 last:pb-0"
+        >
+          <h2 class="text-sm sm:text-base font-black text-neutral-900 dark:text-white flex items-center gap-2">
+            <span class="w-1 h-5 rounded-full bg-primary shrink-0" />
+            {{ section.title }}
+          </h2>
+          <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed pr-3">
+            {{ section.content }}
+          </p>
+        </div>
+      </div>
+    </template>
   </div>
 </template>

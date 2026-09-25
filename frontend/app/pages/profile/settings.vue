@@ -7,7 +7,7 @@ const api = useApi()
 const toast = useToast()
 
 useSeoMeta({
-  title: 'تنظیمات حساب کاربری - ایزیشاپ'
+  title: 'تنظیمات حساب کاربری'
 })
 
 const form = reactive({

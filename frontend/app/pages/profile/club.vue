@@ -19,10 +19,10 @@ const settingsStore = useSettingsStore()
 const toast = useToast()
 const { toPersianDigits, formatPrice } = usePersian()
 
-const storeName = computed(() => settingsStore.settings.store_name || 'ایزیشاپ')
+const storeName = computed(() => settingsStore.settings.store_name || settingsStore.settings.store_name)
 
 useSeoMeta({
-  title: () => `باشگاه مشتریان و امتیازات - ${storeName.value}`,
+  title: () => 'باشگاه مشتریان و امتیازات',
   description: 'کسب امتیاز با هر خرید، ارتقای سطح عضویت به طلایی و تبدیل امتیاز به کدهای تخفیف شگفت‌انگیز.'
 })
 
