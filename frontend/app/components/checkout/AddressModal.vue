@@ -21,7 +21,7 @@ const form = reactive({
   address_line: '',
   building_number: '',
   unit: '',
-  is_default: true,
+  is_default: true
 })
 
 const isSubmitting = ref(false)
@@ -73,14 +73,14 @@ watch(() => form.province_id, async (provId) => {
 const provinceOptions = computed(() => {
   return checkoutStore.provinces.map(p => ({
     label: p.name,
-    value: p.id,
+    value: p.id
   }))
 })
 
 const cityOptions = computed(() => {
   return checkoutStore.cities.map(c => ({
     label: c.name,
-    value: c.id,
+    value: c.id
   }))
 })
 
@@ -123,22 +123,23 @@ async function handleSubmit() {
       address_line: form.address_line.trim(),
       building_number: normalizedBuilding || undefined,
       unit: normalizedUnit || undefined,
-      is_default: form.is_default,
+      is_default: form.is_default
     })
 
     toast.add({
       title: 'موفقیت',
       description: 'آدرس جدید با موفقیت ثبت شد.',
-      color: 'success',
+      color: 'success'
     })
 
     isOpen.value = false
     emit('saved', created.id)
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errObj = err as { data?: { message?: string }, message?: string }
     toast.add({
       title: 'خطا در ثبت آدرس',
-      description: err?.data?.message || err?.message || 'اطلاعات وارد شده نامعتبر است.',
-      color: 'error',
+      description: errObj?.data?.message || errObj?.message || 'اطلاعات وارد شده نامعتبر است.',
+      color: 'error'
     })
   } finally {
     isSubmitting.value = false
@@ -232,7 +233,7 @@ async function handleSubmit() {
               dir="ltr"
               maxlength="11"
               size="md"
-              class="w-full font-mono font-en text-end"
+              class="w-full font-mono text-end"
             />
           </div>
         </div>
@@ -246,7 +247,7 @@ async function handleSubmit() {
             dir="ltr"
             maxlength="10"
             size="md"
-            class="w-full font-mono font-en text-end"
+            class="w-full font-mono text-end"
           />
         </div>
 

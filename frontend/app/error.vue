@@ -15,7 +15,10 @@ const handleError = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex items-center justify-center p-4 font-sans dir-rtl">
+  <div
+    dir="rtl"
+    class="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex items-center justify-center p-4 font-sans [direction:rtl]"
+  >
     <div class="w-full max-w-lg bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-8 sm:p-12 text-center shadow-xl flex flex-col items-center gap-6 relative overflow-hidden">
       <!-- Decorative background blur -->
       <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />

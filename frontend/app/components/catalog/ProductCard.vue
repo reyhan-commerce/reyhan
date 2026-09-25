@@ -41,13 +41,15 @@ const discountPercent = computed(() => {
   >
     <!-- Product Thumbnail & Badges -->
     <div class="relative aspect-square w-full overflow-hidden bg-neutral-100 dark:bg-neutral-800/80 border-b border-neutral-100 dark:border-neutral-800/60 flex items-center justify-center">
-      <img
+      <NuxtImg
         v-if="product.thumbnail"
         :src="product.thumbnail"
         :alt="product.name"
-        class="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-106"
+        format="webp"
         loading="lazy"
-      >
+        sizes="xs:100vw sm:50vw md:33vw lg:280px"
+        class="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-106"
+      />
       <div
         v-else
         class="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-2xl font-black"

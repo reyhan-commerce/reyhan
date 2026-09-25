@@ -88,11 +88,17 @@ function handleUserClick() {
       <!-- 5. Profile / Auth -->
       <template v-if="authStore.isAuthenticated">
         <UDropdownMenu
+          v-if="authStore.user"
           :items="[
             [{
-              label: authStore.user?.full_name || 'کاربر گرامی',
+              label: authStore.user.full_name,
               icon: 'i-lucide-user',
               disabled: true
+            }],
+            [{
+              label: 'پنل کاربری',
+              icon: 'i-lucide-layout-dashboard',
+              onSelect: () => navigateTo('/profile')
             }],
             [{
               label: 'خروج از حساب',
@@ -109,10 +115,20 @@ function handleUserClick() {
               name="i-lucide-user-check"
               class="size-5.5 text-primary"
             />
-            <span class="text-[10px] font-bold mt-1 truncate max-w-16">پروفایل</span>
+            <span class="text-[10px] font-bold mt-1 truncate max-w-16">
+              {{ authStore.user.first_name || 'پروفایل' }}
+            </span>
           </button>
         </UDropdownMenu>
+        <div
+          v-else
+          class="flex flex-col items-center justify-center min-h-12 py-1"
+        >
+          <USkeleton class="size-5.5 rounded-full" />
+          <USkeleton class="w-8 h-2 rounded mt-1.5" />
+        </div>
       </template>
+
       <template v-else>
         <button
           type="button"

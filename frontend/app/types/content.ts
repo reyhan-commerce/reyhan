@@ -28,7 +28,7 @@ export interface CmsPageMetadata {
   heading?: string
   stats?: CmsPageStat[]
   features?: CmsPageFeature[]
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface CmsPage {

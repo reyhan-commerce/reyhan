@@ -1,68 +1,12 @@
 import { defineStore } from 'pinia'
+import type { CartData, CartItem, CartVariant, CartPricing, AppliedCoupon } from '~/types/cart'
+import { useCartService } from '~/services/cartService'
 
-export interface CartProduct {
-  id: number
-  name: string
-  slug: string
-  thumbnail?: string | null
-  brand?: string | null
-}
-
-export interface CartVariant {
-  id: number
-  sku: string
-  title: string
-  price: number
-  compare_at_price: number | null
-  stock: number
-  is_in_stock: boolean
-  is_low_stock: boolean
-  product: CartProduct | null
-}
-
-export interface CartItem {
-  id: number
-  quantity: number
-  unit_price: number
-  subtotal: number
-  original_subtotal: number
-  discount_amount: number
-  variant: CartVariant | null
-}
-
-export interface AppliedCoupon {
-  code: string
-  title: string | null
-  type: string
-  value: number
-}
-
-export interface CartPricing {
-  original_items_subtotal: number
-  items_subtotal: number
-  catalog_discount: number
-  coupon_discount: number
-  total_discount: number
-  shipping_fee: number
-  is_free_shipping: boolean
-  free_shipping_threshold: number
-  remaining_for_free_shipping: number
-  free_shipping_progress: number
-  final_payable: number
-  total_items_count: number
-  total_weight_grams: number
-  applied_coupon: AppliedCoupon | null
-}
-
-export interface CartData {
-  id: number
-  items_count: number
-  items: CartItem[]
-  pricing: CartPricing
-}
+// Re-export types for backward compatibility
+export type { CartData, CartItem, CartVariant, CartPricing, AppliedCoupon }
 
 export const useCartStore = defineStore('cart', () => {
-  const api = useApi()
+  const cartService = useCartService()
   const toast = useToast()
   const cartSessionCookie = useCookie<string | null>('cart_session')
 
@@ -87,9 +31,9 @@ export const useCartStore = defineStore('cart', () => {
   const fetchCart = async (): Promise<void> => {
     isLoading.value = true
     try {
-      const res = await api<ApiResponse<CartData>>('/cart')
-      if (res.data) {
-        cart.value = res.data
+      const data = await cartService.getCart()
+      if (data) {
+        cart.value = data
       }
     } catch {
       // Ignored: silent failure on initial fetch
@@ -101,16 +45,9 @@ export const useCartStore = defineStore('cart', () => {
   const addItem = async (variantId: number, quantity = 1): Promise<boolean> => {
     isLoading.value = true
     try {
-      const res = await api<ApiResponse<CartData>>('/cart/items', {
-        method: 'POST',
-        body: {
-          variant_id: variantId,
-          quantity
-        }
-      })
-
-      if (res.data) {
-        cart.value = res.data
+      const data = await cartService.addItem(variantId, quantity)
+      if (data) {
+        cart.value = data
         toast.add({
           title: 'به سبد خرید اضافه شد',
           description: 'کالای انتخابی با موفقیت در سبد خرید شما قرار گرفت.',
@@ -140,13 +77,9 @@ export const useCartStore = defineStore('cart', () => {
     }
 
     try {
-      const res = await api<ApiResponse<CartData>>(`/cart/items/${itemId}`, {
-        method: 'PUT',
-        body: { quantity }
-      })
-
-      if (res.data) {
-        cart.value = res.data
+      const data = await cartService.updateItem(itemId, quantity)
+      if (data) {
+        cart.value = data
         return true
       }
       return false
@@ -164,12 +97,9 @@ export const useCartStore = defineStore('cart', () => {
   const removeItem = async (itemId: number): Promise<boolean> => {
     isUpdatingItem.value = itemId
     try {
-      const res = await api<ApiResponse<CartData>>(`/cart/items/${itemId}`, {
-        method: 'DELETE'
-      })
-
-      if (res.data) {
-        cart.value = res.data
+      const data = await cartService.removeItem(itemId)
+      if (data) {
+        cart.value = data
         toast.add({
           title: 'حذف از سبد خرید',
           description: 'کالا از سبد خرید شما حذف گردید.',
@@ -189,12 +119,9 @@ export const useCartStore = defineStore('cart', () => {
   const clearCart = async (): Promise<boolean> => {
     isLoading.value = true
     try {
-      const res = await api<ApiResponse<CartData>>('/cart', {
-        method: 'DELETE'
-      })
-
-      if (res.data) {
-        cart.value = res.data
+      const data = await cartService.clearCart()
+      if (data) {
+        cart.value = data
         toast.add({
           title: 'سبد خرید خالی شد',
           color: 'neutral',
@@ -215,13 +142,9 @@ export const useCartStore = defineStore('cart', () => {
 
     isApplyingCoupon.value = true
     try {
-      const res = await api<ApiResponse<CartData>>('/cart/coupon', {
-        method: 'POST',
-        body: { code: code.trim() }
-      })
-
-      if (res.data) {
-        cart.value = res.data
+      const data = await cartService.applyCoupon(code)
+      if (data) {
+        cart.value = data
         toast.add({
           title: 'کد تخفیف اعمال شد',
           description: 'تخفیف کوپن بر روی سفارش شما لحاظ گردید.',
@@ -241,12 +164,9 @@ export const useCartStore = defineStore('cart', () => {
   const removeCoupon = async (): Promise<boolean> => {
     isApplyingCoupon.value = true
     try {
-      const res = await api<ApiResponse<CartData>>('/cart/coupon', {
-        method: 'DELETE'
-      })
-
-      if (res.data) {
-        cart.value = res.data
+      const data = await cartService.removeCoupon()
+      if (data) {
+        cart.value = data
         toast.add({
           title: 'کد تخفیف حذف شد',
           color: 'neutral',
@@ -266,14 +186,20 @@ export const useCartStore = defineStore('cart', () => {
     const sessionId = cartSessionCookie.value
     if (!sessionId) return
 
-    try {
-      const res = await api<ApiResponse<CartData>>('/cart/sync', {
-        method: 'POST',
-        body: { session_id: sessionId }
-      })
+    // /cart/sync requires auth:sanctum — skip if not authenticated
+    const authStore = useAuthStore()
+    if (!authStore.isAuthenticated) return
 
-      if (res.data) {
-        cart.value = res.data
+    // Read token directly from the auth store ref (source of truth).
+    // Do NOT rely on the $fetch interceptor's tokenCookie — it may lag
+    // due to reactive closure timing when called right after login.
+    const token = authStore.token
+    if (!token) return
+
+    try {
+      const data = await cartService.syncGuestCart(sessionId, token)
+      if (data) {
+        cart.value = data
       }
     } catch {
       // Ignored if sync fails

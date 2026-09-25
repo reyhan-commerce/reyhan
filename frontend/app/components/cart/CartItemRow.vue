@@ -39,13 +39,15 @@ const handleRemove = () => {
   <div class="flex items-center gap-3 py-3 border-b border-gray-100 dark:border-gray-800 last:border-b-0">
     <!-- Thumbnail -->
     <div class="relative w-16 h-16 shrink-0 rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700/60 flex items-center justify-center">
-      <img
+      <NuxtImg
         v-if="item.variant?.product?.thumbnail"
         :src="item.variant.product.thumbnail"
         :alt="item.variant.product.name"
-        class="w-full h-full object-cover"
+        format="webp"
         loading="lazy"
-      >
+        sizes="64px"
+        class="w-full h-full object-cover"
+      />
       <UIcon
         v-else
         name="i-lucide-package"

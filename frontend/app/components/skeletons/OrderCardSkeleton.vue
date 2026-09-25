@@ -13,7 +13,11 @@
     </div>
 
     <div class="flex items-center gap-3">
-      <USkeleton v-for="i in 3" :key="i" class="h-14 w-14 rounded-md shrink-0" />
+      <USkeleton
+        v-for="i in 3"
+        :key="i"
+        class="h-14 w-14 rounded-md shrink-0"
+      />
     </div>
 
     <div class="flex items-center justify-between pt-2">

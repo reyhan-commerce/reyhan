@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { BlogPost, BlogPostDetailResponse } from '~/types/blog'
+import type { BlogPostDetailResponse } from '~/types/blog'
 
 definePageMeta({
   middleware: [
@@ -9,7 +9,7 @@ definePageMeta({
         return navigateTo('/')
       }
     }
-  ],
+  ]
 })
 
 const route = useRoute()
@@ -28,7 +28,7 @@ const { data: postResponse, error } = await useAsyncData(`blog-post-${slug.value
 if (error.value || !postResponse.value?.data) {
   throw createError({
     statusCode: 404,
-    statusMessage: 'مقاله مورد نظر یافت نشد',
+    statusMessage: 'مقاله مورد نظر یافت نشد'
   })
 }
 
@@ -40,7 +40,7 @@ useSeoMeta({
   description: () => post.value?.meta_description || post.value?.summary || '',
   ogTitle: () => post.value?.title,
   ogDescription: () => post.value?.summary || '',
-  ogImage: () => post.value?.featured_image,
+  ogImage: () => post.value?.featured_image
 })
 
 const formatJalaliDate = (isoString?: string | null) => {
@@ -50,7 +50,7 @@ const formatJalaliDate = (isoString?: string | null) => {
     return new Intl.DateTimeFormat('fa-IR', {
       day: 'numeric',
       month: 'long',
-      year: 'numeric',
+      year: 'numeric'
     }).format(d)
   } catch {
     return ''
@@ -64,13 +64,13 @@ const copyShareLink = async () => {
       toast.add({
         title: 'لینک کپی شد',
         description: 'پیوند این مقاله در حافظه موقت شما کپی گردید.',
-        color: 'success',
+        color: 'success'
       })
     } catch {
       toast.add({
         title: 'خطا در کپی',
         description: 'امکان کپی کردن پیوند وجود ندارد.',
-        color: 'error',
+        color: 'error'
       })
     }
   }
@@ -185,7 +185,7 @@ const shareWhatsappUrl = computed(() => {
         :src="post.featured_image"
         :alt="post.title"
         class="w-full h-full object-cover"
-      />
+      >
     </div>
 
     <!-- Article Body -->
@@ -315,7 +315,7 @@ const shareWhatsappUrl = computed(() => {
               :src="rel.featured_image"
               :alt="rel.title"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
+            >
           </div>
           <h4 class="text-xs font-bold text-neutral-900 dark:text-white line-clamp-2 group-hover:text-primary transition-colors leading-snug">
             {{ rel.title }}

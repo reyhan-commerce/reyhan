@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { ProductCardItem } from './catalog'
+import type { ProductCardItem } from '~/types/product'
 
 export interface WishlistItem {
   id: number
@@ -45,13 +45,13 @@ export const useWishlistStore = defineStore('wishlist', () => {
       const res = await api<{ success: boolean, data: { data: WishlistItem[] } }>('/wishlist')
       if (res.data?.data) {
         items.value = res.data.data
-        wishlistIds.value = res.data.data.map((item) => item.product.id)
+        wishlistIds.value = res.data.data.map(item => item.product.id)
       }
     } catch {
       toast.add({
         title: 'خطا',
         description: 'خطا در دریافت لیست علاقه‌مندی‌ها',
-        color: 'error',
+        color: 'error'
       })
     } finally {
       isLoading.value = false
@@ -68,8 +68,8 @@ export const useWishlistStore = defineStore('wishlist', () => {
 
     // Optimistic UI update
     if (exists) {
-      wishlistIds.value = wishlistIds.value.filter((id) => id !== productId)
-      items.value = items.value.filter((i) => i.product?.id !== productId)
+      wishlistIds.value = wishlistIds.value.filter(id => id !== productId)
+      items.value = items.value.filter(i => i.product?.id !== productId)
     } else {
       wishlistIds.value.push(productId)
     }
@@ -83,22 +83,23 @@ export const useWishlistStore = defineStore('wishlist', () => {
       toast.add({
         title: res.in_wishlist ? 'افزودن به علاقه‌مندی‌ها' : 'حذف از علاقه‌مندی‌ها',
         description: res.message,
-        color: res.in_wishlist ? 'success' : 'neutral',
+        color: res.in_wishlist ? 'success' : 'neutral'
       })
 
       return res.in_wishlist
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Rollback on failure
       if (exists) {
         wishlistIds.value.push(productId)
       } else {
-        wishlistIds.value = wishlistIds.value.filter((id) => id !== productId)
+        wishlistIds.value = wishlistIds.value.filter(id => id !== productId)
       }
 
+      const errorMessage = (err as { data?: { message?: string } })?.data?.message || 'مشکلی در به‌روزرسانی لیست علاقه‌مندی‌ها رخ داد.'
       toast.add({
         title: 'خطا',
-        description: err?.data?.message || 'مشکلی در به‌روزرسانی لیست علاقه‌مندی‌ها رخ داد.',
-        color: 'error',
+        description: errorMessage,
+        color: 'error'
       })
       return exists
     }
@@ -111,6 +112,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     isInWishlist,
     fetchWishlistIds,
     fetchWishlist,
-    toggleWishlist,
+    toggleWishlist
   }
 })

@@ -10,21 +10,20 @@ definePageMeta({
         return navigateTo('/profile')
       }
     }
-  ],
+  ]
 })
 
 const api = useApi()
 const authStore = useAuthStore()
 const settingsStore = useSettingsStore()
 const toast = useToast()
-const features = useFeatures()
 const { toPersianDigits, formatPrice } = usePersian()
 
 const storeName = computed(() => settingsStore.settings.store_name || 'ایزیشاپ')
 
 useSeoMeta({
   title: () => `باشگاه مشتریان و امتیازات - ${storeName.value}`,
-  description: 'کسب امتیاز با هر خرید، ارتقای سطح عضویت به طلایی و تبدیل امتیاز به کدهای تخفیف شگفت‌انگیز.',
+  description: 'کسب امتیاز با هر خرید، ارتقای سطح عضویت به طلایی و تبدیل امتیاز به کدهای تخفیف شگفت‌انگیز.'
 })
 
 // Fetch summary and tiers
@@ -60,7 +59,7 @@ const handleRedeem = async () => {
     toast.add({
       title: 'خطای تبدیل',
       description: 'حداقل امتیاز مجاز برای تبدیل ۱۰ امتیاز است.',
-      color: 'error',
+      color: 'error'
     })
     return
   }
@@ -69,18 +68,18 @@ const handleRedeem = async () => {
     toast.add({
       title: 'امتیاز ناکافی',
       description: `موجودی امتیاز شما (${toPersianDigits(currentBalance)}) برای تبدیل این مقدار کافی نیست.`,
-      color: 'error',
+      color: 'error'
     })
     return
   }
 
   isRedeeming.value = true
   try {
-    const res = await api<{ success: boolean; message: string; data: RedeemResult }>('/loyalty/redeem', {
+    const res = await api<{ success: boolean, message: string, data: RedeemResult }>('/loyalty/redeem', {
       method: 'POST',
       body: {
-        points: pointsToRedeem.value,
-      },
+        points: pointsToRedeem.value
+      }
     })
 
     if (res.data) {
@@ -88,16 +87,16 @@ const handleRedeem = async () => {
       toast.add({
         title: 'کد تخفیف صادر شد! 🎉',
         description: `کد تخفیف ${res.data.code} با مبلغ ${formatPrice(res.data.discount_amount)} برای شما فعال گردید.`,
-        color: 'success',
+        color: 'success'
       })
       await Promise.all([refreshSummary(), refreshTransactions()])
     }
-  } catch (error: any) {
-    const msg = error?.data?.message || 'خطا در تبدیل امتیاز. لطفاً مجدداً تلاش فرمایید.'
+  } catch (error: unknown) {
+    const msg = (error as { data?: { message?: string } })?.data?.message || 'خطا در تبدیل امتیاز. لطفاً مجدداً تلاش فرمایید.'
     toast.add({
       title: 'خطای صدور کد تخفیف',
       description: msg,
-      color: 'error',
+      color: 'error'
     })
   } finally {
     isRedeeming.value = false
@@ -111,7 +110,7 @@ const copyCouponCode = async (code: string) => {
       toast.add({
         title: 'کد کپی شد',
         description: `کد تخفیف ${code} در حافظه موقت کپی گردید.`,
-        color: 'success',
+        color: 'success'
       })
     } catch {
       // fallback
@@ -126,7 +125,7 @@ const formatJalaliDate = (isoString?: string | null) => {
     return new Intl.DateTimeFormat('fa-IR', {
       day: 'numeric',
       month: 'long',
-      year: 'numeric',
+      year: 'numeric'
     }).format(d)
   } catch {
     return ''
@@ -153,7 +152,7 @@ const formatJalaliDate = (isoString?: string | null) => {
     <!-- VIP Loyalty Member Card -->
     <div
       v-if="summary"
-      class="relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-tr from-neutral-950 via-neutral-900 to-neutral-850 text-white shadow-2xl border border-neutral-800"
+      class="relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-tr from-neutral-950 via-neutral-900 to-neutral-800 text-white shadow-2xl border border-neutral-800"
     >
       <!-- Decorative background lighting -->
       <div class="absolute -top-20 -left-20 size-60 rounded-full bg-amber-500/15 blur-3xl pointer-events-none" />
@@ -219,8 +218,14 @@ const formatJalaliDate = (isoString?: string | null) => {
         <!-- Card Bottom Bar: Member Name & Chip -->
         <div class="flex items-center justify-between pt-4 border-t border-neutral-800/80 text-xs">
           <div class="flex flex-col text-right">
-            <span class="font-bold text-neutral-200">{{ authStore.user?.full_name || 'کاربر گرامی' }}</span>
-            <span class="text-[11px] text-neutral-500 font-mono [direction:ltr] text-right">{{ authStore.user?.mobile }}</span>
+            <template v-if="authStore.user">
+              <span class="font-bold text-neutral-200">{{ authStore.user.full_name }}</span>
+              <span class="text-[11px] text-neutral-500 font-mono [direction:ltr] text-right">{{ authStore.user.mobile }}</span>
+            </template>
+            <template v-else>
+              <USkeleton class="w-24 h-4 rounded mb-1 bg-neutral-800" />
+              <USkeleton class="w-20 h-3 rounded bg-neutral-800" />
+            </template>
           </div>
 
           <div class="flex items-center gap-1.5 opacity-60">
@@ -441,9 +446,15 @@ const formatJalaliDate = (isoString?: string | null) => {
         <table class="w-full text-xs text-right">
           <thead>
             <tr class="border-b border-neutral-100 dark:border-neutral-800 text-neutral-400">
-              <th class="py-3 px-2 font-medium">تاریخ</th>
-              <th class="py-3 px-2 font-medium">شرح رویداد</th>
-              <th class="py-3 px-2 font-medium text-left">تغییر امتیاز</th>
+              <th class="py-3 px-2 font-medium">
+                تاریخ
+              </th>
+              <th class="py-3 px-2 font-medium">
+                شرح رویداد
+              </th>
+              <th class="py-3 px-2 font-medium text-left">
+                تغییر امتیاز
+              </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
@@ -479,7 +490,9 @@ const formatJalaliDate = (isoString?: string | null) => {
           class="size-8 text-neutral-300 dark:text-neutral-700"
         />
         <p>هنوز تراکنش امتیازی در حساب شما ثبت نشده است.</p>
-        <p class="text-[11px]">با ثبت اولین سفارش یا دیدگاه، امتیاز دریافت کنید!</p>
+        <p class="text-[11px]">
+          با ثبت اولین سفارش یا دیدگاه، امتیاز دریافت کنید!
+        </p>
       </div>
     </div>
   </div>

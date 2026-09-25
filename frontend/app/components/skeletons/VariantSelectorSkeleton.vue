@@ -11,7 +11,11 @@
         <USkeleton class="h-4 w-16 rounded-md" />
       </div>
       <div class="flex items-center gap-2">
-        <USkeleton v-for="i in 4" :key="i" class="h-9 w-9 rounded-full" />
+        <USkeleton
+          v-for="i in 4"
+          :key="i"
+          class="h-9 w-9 rounded-full"
+        />
       </div>
     </div>
 
@@ -22,7 +26,11 @@
         <USkeleton class="h-4 w-12 rounded-md" />
       </div>
       <div class="flex items-center gap-2">
-        <USkeleton v-for="i in 3" :key="i" class="h-9 w-16 rounded-md" />
+        <USkeleton
+          v-for="i in 3"
+          :key="i"
+          class="h-9 w-16 rounded-md"
+        />
       </div>
     </div>
   </div>

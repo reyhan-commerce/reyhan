@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CartItemSkeleton from '~/components/skeletons/CartItemSkeleton.vue'
+
 const cartStore = useCartStore()
 const { formatPrice, toPersianDigits } = usePersian()
 const couponInput = ref('')
@@ -70,8 +71,14 @@ const handleRemoveCoupon = async () => {
       </div>
 
       <!-- Loading Skeleton State -->
-      <div v-if="cartStore.isLoading && cartStore.isEmpty" class="space-y-3 p-1">
-        <CartItemSkeleton v-for="i in 3" :key="i" />
+      <div
+        v-if="cartStore.isLoading && cartStore.isEmpty"
+        class="space-y-3 p-1"
+      >
+        <CartItemSkeleton
+          v-for="i in 3"
+          :key="i"
+        />
       </div>
 
       <!-- Empty State -->
@@ -126,7 +133,7 @@ const handleRemoveCoupon = async () => {
                 class="w-4 h-4 text-emerald-600 dark:text-emerald-400"
               />
               <div class="text-xs">
-                <span class="font-bold font-mono font-en text-emerald-700 dark:text-emerald-300">
+                <span class="font-bold font-mono text-emerald-700 dark:text-emerald-300">
                   {{ cartStore.pricing.applied_coupon.code }}
                 </span>
                 <span class="text-emerald-600 dark:text-emerald-400 mr-2">

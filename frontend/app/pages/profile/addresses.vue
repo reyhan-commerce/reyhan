@@ -7,7 +7,7 @@ const toast = useToast()
 const { toPersianDigits } = usePersian()
 
 useSeoMeta({
-  title: 'آدرس‌های من - ایزیشاپ',
+  title: 'آدرس‌های من - ایزیشاپ'
 })
 
 const isAddressModalOpen = ref(false)
@@ -22,7 +22,7 @@ const handleSetDefault = async (addressId: number) => {
     toast.add({
       title: 'موفقیت‌آمیز',
       description: 'آدرس پیش‌فرض شما با موفقیت تغییر یافت.',
-      color: 'success',
+      color: 'success'
     })
   } catch {
     // handled
@@ -36,7 +36,7 @@ const handleDelete = async (addressId: number) => {
       toast.add({
         title: 'حذف آدرس',
         description: 'آدرس مورد نظر با موفقیت حذف گردید.',
-        color: 'neutral',
+        color: 'neutral'
       })
     } catch {
       // handled
@@ -152,7 +152,7 @@ const handleDelete = async (addressId: number) => {
                 name="i-lucide-phone"
                 class="w-3.5 h-3.5"
               />
-              <span class="font-mono font-en dir-ltr">{{ addr.recipient_mobile }}</span>
+              <span class="font-mono [direction:ltr]">{{ addr.recipient_mobile }}</span>
             </span>
             <span>•</span>
             <span class="flex items-center gap-1">

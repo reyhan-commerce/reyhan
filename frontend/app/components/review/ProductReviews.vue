@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SubmitReviewModal from '~/components/review/SubmitReviewModal.vue'
 import { useAuthStore } from '~/stores/auth'
+import type { ReviewItem } from '~/types/review'
 
 const props = defineProps<{
   productId: number
@@ -13,20 +14,26 @@ const { toPersianDigits } = usePersian()
 
 const isLoading = ref(true)
 const isModalOpen = ref(false)
-const reviews = ref<any[]>([])
+const reviews = ref<ReviewItem[]>([])
 const stats = ref({
   average_rating: 5,
   average_longevity: 5,
   average_coverage: 5,
   average_value: 5,
-  total_reviews: 0,
+  total_reviews: 0
 })
 
 const fetchReviews = async () => {
   isLoading.value = true
   try {
-    const res = await api<any>(`/products/${props.productId}/reviews`)
-    if (res.data) {
+    const res = await api<{
+      success: boolean
+      data?: {
+        stats?: typeof stats.value
+        reviews?: { data: ReviewItem[] }
+      }
+    }>(`/products/${props.productId}/reviews`)
+    if (res?.data) {
       stats.value = res.data.stats || stats.value
       reviews.value = res.data.reviews?.data || []
     }
@@ -72,7 +79,7 @@ function handleOpenModal() {
         </div>
 
         <!-- Stars Row -->
-        <div class="flex items-center gap-1 dir-ltr text-amber-400">
+        <div class="flex items-center gap-1 [direction:ltr] text-amber-400">
           <UIcon
             v-for="i in 5"
             :key="i"
@@ -224,7 +231,7 @@ function handleOpenModal() {
               </div>
 
               <!-- Rating Stars -->
-              <div class="flex items-center gap-0.5 dir-ltr text-amber-400">
+              <div class="flex items-center gap-0.5 [direction:ltr] text-amber-400">
                 <UIcon
                   v-for="s in 5"
                   :key="s"

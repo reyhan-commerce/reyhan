@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ProductCardItem } from '~/types/product'
+
 const router = useRouter()
 const route = useRoute()
 const catalogStore = useCatalogStore()
@@ -15,9 +17,9 @@ const containerRef = ref<HTMLElement | null>(null)
 const isLoading = ref(false)
 const hasSearched = ref(false)
 const suggestions = ref<{
-  products: any[]
-  categories: { id: number; name: string; slug: string }[]
-  brands: { id: number; name: string; slug: string }[]
+  products: ProductCardItem[]
+  categories: { id: number, name: string, slug: string }[]
+  brands: { id: number, name: string, slug: string }[]
 }>({
   products: [],
   categories: [],
@@ -28,7 +30,7 @@ let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
 // Dynamic categories from catalog store (100% real, no hardcoding)
 const popularCategories = computed(() => {
-  const list: { id: number; name: string; slug: string }[] = []
+  const list: { id: number, name: string, slug: string }[] = []
   const seen = new Set<string>()
 
   for (const cat of catalogStore.categoryTree) {
@@ -69,9 +71,9 @@ watch(searchQuery, (newVal) => {
   debounceTimer = setTimeout(async () => {
     try {
       const res = await api<ApiResponse<{
-        products: any[]
-        categories: { id: number; name: string; slug: string }[]
-        brands: { id: number; name: string; slug: string }[]
+        products: ProductCardItem[]
+        categories: { id: number, name: string, slug: string }[]
+        brands: { id: number, name: string, slug: string }[]
       }>>('/search/suggestions', {
         params: { q: trimmed }
       })
@@ -94,9 +96,9 @@ watch(searchQuery, (newVal) => {
 
 const hasSuggestions = computed(() => {
   return (
-    suggestions.value.products.length > 0 ||
-    suggestions.value.categories.length > 0 ||
-    suggestions.value.brands.length > 0
+    suggestions.value.products.length > 0
+    || suggestions.value.categories.length > 0
+    || suggestions.value.brands.length > 0
   )
 })
 
@@ -118,19 +120,19 @@ function handleSelectRecent(term: string) {
   handleSearch()
 }
 
-function handleSelectCategory(cat: { name: string; slug: string }) {
+function handleSelectCategory(cat: { name: string, slug: string }) {
   addRecentSearch(cat.name)
   isFocused.value = false
   router.push({ path: '/products', query: { category: cat.slug } })
 }
 
-function handleSelectBrand(brand: { name: string; slug: string }) {
+function handleSelectBrand(brand: { name: string, slug: string }) {
   addRecentSearch(brand.name)
   isFocused.value = false
   router.push({ path: '/products', query: { brand: brand.slug } })
 }
 
-function handleSelectProduct(prod: any) {
+function handleSelectProduct(prod: { name: string, slug: string }) {
   addRecentSearch(prod.name)
   isFocused.value = false
   router.push(`/products/${prod.slug}`)
@@ -206,7 +208,7 @@ function onBlur() {
       >
         <div
           v-show="isFocused"
-          class="absolute top-full mt-2 inset-x-0 bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 rounded-3xl shadow-2xl p-4 z-50 flex flex-col gap-4 max-h-[460px] overflow-y-auto no-scrollbar"
+          class="absolute top-full mt-2 inset-x-0 bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 rounded-3xl shadow-2xl p-4 z-50 flex flex-col gap-4 max-h-[460px] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           <!-- ============================================== -->
           <!-- STATE 1: RECENT SEARCHES & REAL CATEGORIES     -->

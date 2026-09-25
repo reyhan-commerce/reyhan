@@ -215,7 +215,7 @@ const handleClearCart = async () => {
               class="flex items-center justify-between p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50"
             >
               <div>
-                <div class="font-mono font-en font-bold text-emerald-700 dark:text-emerald-300 text-sm">
+                <div class="font-mono font-bold text-emerald-700 dark:text-emerald-300 text-sm">
                   {{ cartStore.pricing.applied_coupon.code }}
                 </div>
                 <div class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">

@@ -12,14 +12,14 @@ const workHours = computed(() => settingsStore.settings.work_hours || 'شنبه 
 
 useSeoMeta({
   title: () => `تماس با ما - پشتیبانی ${storeName.value}`,
-  description: 'راه‌های ارتباطی، نشانی پستی دفتر مرکزی و فرم ارسال پیام به واحد پشتیبانی.',
+  description: 'راه‌های ارتباطی، نشانی پستی دفتر مرکزی و فرم ارسال پیام به واحد پشتیبانی.'
 })
 
 const form = reactive({
   name: '',
   mobile: '',
   subject: '',
-  message: '',
+  message: ''
 })
 
 // Auto-normalize mobile input (accepts Persian, Hindi/Arabic and English digits)
@@ -38,39 +38,39 @@ const handleSubmit = async () => {
     toast.add({
       title: 'خطای اعتبارسنجی',
       description: 'لطفاً نام، شماره تماس و متن پیام خود را وارد نمایید.',
-      color: 'error',
+      color: 'error'
     })
     return
   }
 
   isSubmitting.value = true
   try {
-    const res = await api<{ success: boolean; message?: string }>('/contact', {
+    const res = await api<{ success: boolean, message?: string }>('/contact', {
       method: 'POST',
       body: {
         name: form.name.trim(),
         mobile: normalizedMobile,
         subject: form.subject.trim() || null,
-        message: form.message.trim(),
-      },
+        message: form.message.trim()
+      }
     })
 
     toast.add({
       title: 'پیام دریافت شد',
       description: res.message || 'پیام شما با موفقیت ثبت گردید. کارشناسان پشتیبانی به زودی با شما تماس خواهند گرفت.',
-      color: 'success',
+      color: 'success'
     })
 
     form.name = ''
     form.mobile = ''
     form.subject = ''
     form.message = ''
-  } catch (error: any) {
-    const msg = error?.data?.message || 'خطا در ثبت پیام. لطفاً اطلاعات ورودی را بررسی کرده و مجدداً تلاش فرمایید.'
+  } catch (error: unknown) {
+    const msg = (error as { data?: { message?: string } })?.data?.message || 'خطا در ثبت پیام. لطفاً اطلاعات ورودی را بررسی کرده و مجدداً تلاش فرمایید.'
     toast.add({
       title: 'خطا در ارسال پیام',
       description: msg,
-      color: 'error',
+      color: 'error'
     })
   } finally {
     isSubmitting.value = false
@@ -82,20 +82,20 @@ const contactCards = computed(() => [
     title: 'تلفن تماس پشتیبانی',
     value: phone.value,
     sub: workHours.value,
-    icon: 'i-lucide-phone-call',
+    icon: 'i-lucide-phone-call'
   },
   {
     title: 'نشانی دفتر مرکزی',
     value: address.value,
     sub: 'مراجعه حضوری با هماهنگی قبلی',
-    icon: 'i-lucide-map-pin',
+    icon: 'i-lucide-map-pin'
   },
   {
     title: 'پست الکترونیک',
     value: email.value,
     sub: 'پاسخگویی حداکثر ظرف ۴ ساعت کاری',
-    icon: 'i-lucide-mail',
-  },
+    icon: 'i-lucide-mail'
+  }
 ])
 </script>
 
@@ -178,7 +178,7 @@ const contactCards = computed(() => [
               v-model="form.mobile"
               placeholder="۰۹۱۲۳۴۵۶۷۸۹"
               size="lg"
-              class="w-full font-mono font-en text-left"
+              class="w-full font-mono text-left"
             />
           </div>
         </div>

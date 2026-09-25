@@ -60,7 +60,7 @@ onClickOutside(menuContainerRef, () => {
       leave-to-class="opacity-0 translate-y-2 scale-95"
     >
       <div
-        v-if="isOpen"
+        v-show="isOpen"
         class="absolute right-0 top-full mt-2 w-[680px] rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-2xl z-50 overflow-hidden flex"
       >
         <!-- Categories List (Right Sidebar in RTL) -->

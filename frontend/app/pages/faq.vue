@@ -8,7 +8,7 @@ const storeName = computed(() => settingsStore.settings.store_name || 'ایزی�
 
 useSeoMeta({
   title: () => `پرسش‌های متداول (FAQ) - ${storeName.value}`,
-  description: 'پاسخ به سوالات متداول مشتریان پیرامون شیوه ارسال، درگاه‌های پرداخت، اصالت کالا و مرجوعی.',
+  description: 'پاسخ به سوالات متداول مشتریان پیرامون شیوه ارسال، درگاه‌های پرداخت، اصالت کالا و مرجوعی.'
 })
 
 const selectedCategory = ref<string>('all')
@@ -27,13 +27,13 @@ const filteredFaqs = computed(() => {
   if (selectedCategory.value === 'all') {
     return items
   }
-  return items.filter((f) => f.category === selectedCategory.value)
+  return items.filter(f => f.category === selectedCategory.value)
 })
 
 const accordionItems = computed(() =>
-  filteredFaqs.value.map((f) => ({
+  filteredFaqs.value.map(f => ({
     label: f.question,
-    content: f.answer,
+    content: f.answer
   }))
 )
 </script>
@@ -110,7 +110,7 @@ const accordionItems = computed(() =>
         :ui="{
           item: 'border-b border-neutral-100 dark:border-neutral-800 last:border-0 py-4',
           trigger: 'text-sm font-bold text-neutral-800 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-2 text-right cursor-pointer',
-          content: 'text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-loose pt-2 pb-4 text-right',
+          content: 'text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-loose pt-2 pb-4 text-right'
         }"
       />
 

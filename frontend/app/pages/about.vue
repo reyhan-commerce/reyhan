@@ -14,7 +14,7 @@ const page = computed(() => pageResponse.value?.data)
 
 useSeoMeta({
   title: () => page.value?.meta_title || `درباره ما - فروشگاه اینترنتی ${storeName.value}`,
-  description: () => page.value?.meta_description || `آشنایی با تاریخچه، ارزش‌ها و ماموریت ${storeName.value} در ارائه محصولات تخصصی و اصیل.`,
+  description: () => page.value?.meta_description || `آشنایی با تاریخچه، ارزش‌ها و ماموریت ${storeName.value} در ارائه محصولات تخصصی و اصیل.`
 })
 
 const badgeText = computed(() =>
@@ -26,8 +26,8 @@ const heroHeading = computed(() =>
 )
 
 const storyContent = computed(() =>
-  page.value?.content ||
-  `${storeName.value} با چشم‌انداز ایجاد تحولی معتبر در شیوه انتخاب و خرید آنلاین محصولات اصل و باکیفیت متولد شد. باور ما این است که سلامت و زیبایی، حق طبیعی هر مصرف‌کننده است و دسترسی به اطلاعات شفاف، قیمت‌گذاری عادلانه و محصولات دارای اصالت قطعی، تعهد بی‌قید و شرط ماست.`
+  page.value?.content
+  || `${storeName.value} با چشم‌انداز ایجاد تحولی معتبر در شیوه انتخاب و خرید آنلاین محصولات اصل و باکیفیت متولد شد. باور ما این است که سلامت و زیبایی، حق طبیعی هر مصرف‌کننده است و دسترسی به اطلاعات شفاف، قیمت‌گذاری عادلانه و محصولات دارای اصالت قطعی، تعهد بی‌قید و شرط ماست.`
 )
 
 const stats = computed(() => {
@@ -39,7 +39,7 @@ const stats = computed(() => {
     { value: '+۱۵,۰۰۰', label: 'مشتری وفادار و خریدار راضی' },
     { value: '+۸۰', label: 'برند معتبر و شناخته‌شده' },
     { value: '+۱,۵۰۰', label: 'تنوع محصولات اصیل و باکیفیت' },
-    { value: '۹۹.۴٪', label: 'رضایت خریداران از تحویل به‌موقع' },
+    { value: '۹۹.۴٪', label: 'رضایت خریداران از تحویل به‌موقع' }
   ]
 })
 
@@ -53,26 +53,26 @@ const features = computed(() => {
       title: 'تضمین اصالت ۱۰۰٪ کالاها',
       desc: 'تمامی محصولات مستقیماً از نمایندگی‌های رسمی تامین شده و دارای برچسب اصالت سلامت هستند.',
       icon: 'i-lucide-shield-check',
-      color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/40',
+      color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/40'
     },
     {
       title: 'ارسال سریع و مطمئن',
       desc: 'بسته‌بندی ایمن و مقاوم در برابر ضربه با تحویل اکسپرس و پست پیشتاز سراسری به تمام نقاط کشور.',
       icon: 'i-lucide-truck',
-      color: 'text-primary-500 bg-primary-50 dark:bg-primary-950/40',
+      color: 'text-primary-500 bg-primary-50 dark:bg-primary-950/40'
     },
     {
       title: 'مشاوره تخصصی و همراهی',
       desc: 'تیم کارشناسان مجرب برای انتخاب دقیق‌ترین محصولات متناسب با نیاز و سلیقه شما در کنارتان هستند.',
       icon: 'i-lucide-sparkles',
-      color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/40',
+      color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/40'
     },
     {
       title: 'ضمانت بازگشت ۷ روزه',
       desc: 'در صورت وجود هرگونه مغایرت یا آسیب‌دیدگی در هنگام تحویل، کالا بدون هیچ قید و شرطی بازگردانده می‌شود.',
       icon: 'i-lucide-refresh-cw',
-      color: 'text-primary-500 bg-primary-50 dark:bg-primary-950/40',
-    },
+      color: 'text-primary-500 bg-primary-50 dark:bg-primary-950/40'
+    }
   ]
 })
 </script>

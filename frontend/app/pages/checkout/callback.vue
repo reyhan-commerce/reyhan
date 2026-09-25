@@ -1,26 +1,32 @@
 <script setup lang="ts">
 import { useCartStore } from '~/stores/cart'
 
+definePageMeta({
+  layout: 'checkout'
+})
+
 useSeoMeta({
   title: 'نتیجه پرداخت و وضعیت سفارش - فروشگاه ایزیشاپ',
-  description: 'نتیجه تراکنش بانکی و بررسی وضعیت سفارش',
+  description: 'نتیجه تراکنش بانکی و بررسی وضعیت سفارش'
 })
 
 const route = useRoute()
 const api = useApi()
 const cartStore = useCartStore()
-const { formatPrice, toPersianDigits } = usePersian()
+const { formatPrice } = usePersian()
 
-const isLoading = ref(true)
-const isSuccess = ref<boolean | null>(null)
-const verifyData = ref<{
+interface VerifyData {
   order_number?: string
   tracking_code?: string
   reference_id?: string
   amount?: number
   paid_at?: string
   message?: string
-} | null>(null)
+}
+
+const isLoading = ref(true)
+const isSuccess = ref<boolean | null>(null)
+const verifyData = ref<VerifyData | null>(null)
 const errorMessage = ref('')
 const isCopied = ref(false)
 
@@ -49,30 +55,31 @@ onMounted(async () => {
   }
 
   try {
-    const res = await api<any>('/payment/verify', {
+    const res = await api<{ success: boolean, data?: VerifyData, message?: string }>('/payment/verify', {
       method: 'POST',
       body: {
         Authority: authority,
         Status: status,
-        ...route.query,
-      },
+        ...route.query
+      }
     })
 
-    if (res?.data?.success || res?.success) {
+    if (res?.data || res?.success) {
       isSuccess.value = true
-      verifyData.value = res.data || res
+      verifyData.value = res.data || null
       // Refresh cart to reflect that the paid cart items have been cleared
       await cartStore.fetchCart()
     } else {
       isSuccess.value = false
       errorMessage.value = res?.message || 'تراکنش توسط درگاه پرداخت بانکی تایید نشد.'
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     isSuccess.value = false
-    errorMessage.value =
-      err?.data?.message ||
-      err?.message ||
-      'خطایی در بررسی نتیجه پرداخت رخ داده است.'
+    const errObj = err as { data?: { message?: string }, message?: string }
+    errorMessage.value
+      = errObj?.data?.message
+        || errObj?.message
+        || 'خطایی در بررسی نتیجه پرداخت رخ داده است.'
   } finally {
     isLoading.value = false
   }
@@ -138,7 +145,7 @@ onMounted(async () => {
             <div class="flex items-center justify-between pt-1">
               <span class="text-neutral-500 dark:text-neutral-400">شماره سفارش:</span>
               <div class="flex items-center gap-2">
-                <span class="font-mono font-en font-bold text-neutral-900 dark:text-neutral-100">
+                <span class="font-mono font-bold text-neutral-900 dark:text-neutral-100">
                   {{ verifyData?.order_number }}
                 </span>
                 <button
@@ -163,7 +170,7 @@ onMounted(async () => {
               class="flex items-center justify-between pt-3.5"
             >
               <span class="text-neutral-500 dark:text-neutral-400">کد رهگیری بانکی:</span>
-              <span class="font-mono font-en font-semibold text-neutral-800 dark:text-neutral-200">
+              <span class="font-mono font-semibold text-neutral-800 dark:text-neutral-200">
                 {{ verifyData.tracking_code || verifyData.reference_id }}
               </span>
             </div>

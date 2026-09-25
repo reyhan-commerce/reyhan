@@ -14,8 +14,9 @@ export default defineNuxtConfig({
   },
 
   app: {
+    // Only keep page transition; layout transition + nested <Transition> components
+    // can cause "Symbol(_leaveCb)" crashes during rapid navigation (Vue SSR bug).
     pageTransition: { name: 'page', mode: 'out-in' },
-    layoutTransition: { name: 'layout', mode: 'out-in' },
     head: {
       htmlAttrs: {
         dir: 'rtl',
@@ -34,21 +35,6 @@ export default defineNuxtConfig({
     defaultLocale: 'fa-IR',
     name: 'فروشگاه اینترنتی ایزیشاپ',
     description: 'مرجع تخصصی خرید آنلاین محصولات آرایشی، بهداشتی و مراقبت از پوست اورجینال'
-  },
-
-  sitemap: {
-    sources: [
-      (process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api/v1') + '/sitemap/urls'
-    ]
-  },
-
-  robots: {
-    disallow: ['/cart', '/checkout', '/profile'],
-    allow: ['/products', '/categories', '/pages', '/about', '/contact', '/terms', '/faq']
-  },
-
-  ogImage: {
-    enabled: true
   },
 
   runtimeConfig: {
@@ -74,5 +60,25 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
+  },
+
+  ogImage: {
+    enabled: true,
+    // Provide explicit dimensions to suppress "og:image:width/height missing" warning
+    defaults: {
+      width: 1200,
+      height: 630
+    }
+  },
+
+  robots: {
+    disallow: ['/cart', '/checkout', '/profile'],
+    allow: ['/products', '/categories', '/pages', '/about', '/contact', '/terms', '/faq']
+  },
+
+  sitemap: {
+    sources: [
+      (process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api/v1') + '/sitemap/urls'
+    ]
   }
 })

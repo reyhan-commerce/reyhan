@@ -1,23 +1,16 @@
 <script setup lang="ts">
-import { useCartStore } from '~/stores/cart'
 import { useWishlistStore } from '~/stores/wishlist'
 
 const wishlistStore = useWishlistStore()
-const cartStore = useCartStore()
 const { formatPrice } = usePersian()
 
 useSeoMeta({
-  title: 'لیست علاقه‌مندی‌ها - ایزیشاپ',
+  title: 'لیست علاقه‌مندی‌ها - ایزیشاپ'
 })
 
 onMounted(async () => {
   await wishlistStore.fetchWishlist()
 })
-
-const handleAddToCart = async (product: any) => {
-  const variantId = product.variants?.[0]?.id || product.id
-  await cartStore.addItem(variantId, 1)
-}
 </script>
 
 <template>

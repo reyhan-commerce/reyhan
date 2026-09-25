@@ -217,7 +217,7 @@ onUnmounted(() => {
             کد تایید ۶ رقمی
           </label>
           <div
-            class="flex justify-center w-full py-2 dir-ltr"
+            class="flex justify-center w-full py-2 [direction:ltr]"
             dir="ltr"
           >
             <ConfigProvider dir="ltr">
@@ -230,8 +230,8 @@ onUnmounted(() => {
                 size="xl"
                 placeholder="○"
                 autofocus
-                class="font-mono font-en dir-ltr"
-                :ui="{ root: 'flex-row dir-ltr', base: 'font-mono font-en text-center text-lg' }"
+                class="font-mono [direction:ltr]"
+                :ui="{ root: 'flex-row [direction:ltr]', base: 'font-mono text-center text-lg' }"
                 @complete="handleVerifyOtp"
               />
             </ConfigProvider>

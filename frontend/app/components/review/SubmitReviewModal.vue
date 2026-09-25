@@ -26,7 +26,7 @@ const form = reactive({
   value_rating: 5,
   comment: '',
   strengths: [] as string[],
-  weaknesses: [] as string[],
+  weaknesses: [] as string[]
 })
 
 const strengthInput = ref('')
@@ -75,7 +75,7 @@ async function handleSubmit() {
     toast.add({
       title: 'خطای اعتبارسنجی',
       description: errorMsg,
-      color: 'error',
+      color: 'error'
     })
     return
   }
@@ -96,14 +96,14 @@ async function handleSubmit() {
         value_rating: form.value_rating,
         comment: form.comment.trim(),
         strengths: form.strengths,
-        weaknesses: form.weaknesses,
-      },
+        weaknesses: form.weaknesses
+      }
     })
 
     toast.add({
       title: 'ثبت نظر',
       description: res.message || 'دیدگاه تخصصی شما با موفقیت ثبت شد.',
-      color: 'success',
+      color: 'success'
     })
 
     isOpen.value = false
@@ -112,11 +112,12 @@ async function handleSubmit() {
     form.strengths = []
     form.weaknesses = []
     emit('submitted')
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errObj = err as { data?: { message?: string } }
     toast.add({
       title: 'خطا',
-      description: err?.data?.message || 'مشکلی در ثبت دیدگاه رخ داده است.',
-      color: 'error',
+      description: errObj?.data?.message || 'مشکلی در ثبت دیدگاه رخ داده است.',
+      color: 'error'
     })
   } finally {
     isSubmitting.value = false
@@ -131,7 +132,7 @@ async function handleSubmit() {
     :description="productName"
     :ui="{
       content: 'sm:max-w-xl',
-      body: 'p-6 space-y-6',
+      body: 'p-6 space-y-6'
     }"
   >
     <template #body>
@@ -144,7 +145,7 @@ async function handleSubmit() {
           <span class="text-xs font-bold text-neutral-600 dark:text-neutral-300">
             امتیاز کلی شما به این محصول
           </span>
-          <div class="flex items-center gap-1.5 dir-ltr">
+          <div class="flex items-center gap-1.5 [direction:ltr]">
             <button
               v-for="star in 5"
               :key="star"
@@ -175,7 +176,7 @@ async function handleSubmit() {
             <!-- Longevity (ماندگاری) -->
             <div class="flex items-center justify-between text-xs gap-4">
               <span class="text-neutral-600 dark:text-neutral-300 font-medium">ماندگاری روی پوست/مو:</span>
-              <div class="flex items-center gap-1 dir-ltr">
+              <div class="flex items-center gap-1 [direction:ltr]">
                 <button
                   v-for="val in 5"
                   :key="val"
@@ -196,7 +197,7 @@ async function handleSubmit() {
             <!-- Coverage (پوشانندگی) -->
             <div class="flex items-center justify-between text-xs gap-4">
               <span class="text-neutral-600 dark:text-neutral-300 font-medium">میزان پوشانندگی و جلوه نهایی:</span>
-              <div class="flex items-center gap-1 dir-ltr">
+              <div class="flex items-center gap-1 [direction:ltr]">
                 <button
                   v-for="val in 5"
                   :key="val"
@@ -217,7 +218,7 @@ async function handleSubmit() {
             <!-- Value (ارزش خرید) -->
             <div class="flex items-center justify-between text-xs gap-4">
               <span class="text-neutral-600 dark:text-neutral-300 font-medium">ارزش خرید نسبت به قیمت:</span>
-              <div class="flex items-center gap-1 dir-ltr">
+              <div class="flex items-center gap-1 [direction:ltr]">
                 <button
                   v-for="val in 5"
                   :key="val"

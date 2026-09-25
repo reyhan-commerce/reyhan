@@ -2,7 +2,7 @@
 const catalogStore = useCatalogStore()
 const { toPersianDigits } = usePersian()
 
-await useAsyncData('categories-tree-page', () => catalogStore.fetchCategoryTree())
+await useAsyncData('categories-tree-page', () => catalogStore.fetchCategoryTree().then(v => v.length > 0 ? v : null))
 
 const iconMap: Record<string, string> = {
   skincare: 'i-lucide-sparkles',

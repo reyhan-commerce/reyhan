@@ -2,13 +2,15 @@
 import { useAuthStore } from '~/stores/auth'
 import { useWishlistStore } from '~/stores/wishlist'
 
+import type { User } from '~/types/user'
+
 definePageMeta({
-  middleware: 'auth',
+  middleware: 'auth'
 })
 
 useSeoMeta({
   title: 'حساب کاربری من - فروشگاه ایزیشاپ',
-  description: 'مدیریت سفارش‌ها، آدرس‌های تحویل، لیست علاقه‌مندی‌ها و اطلاعات هویتی',
+  description: 'مدیریت سفارش‌ها، آدرس‌های تحویل، لیست علاقه‌مندی‌ها و اطلاعات هویتی'
 })
 
 const authStore = useAuthStore()
@@ -21,7 +23,7 @@ const { toPersianDigits } = usePersian()
 const stats = ref({
   orders: 0,
   wishlist: 0,
-  addresses: 0,
+  addresses: 0
 })
 
 const fetchProfileStats = async () => {
@@ -29,8 +31,8 @@ const fetchProfileStats = async () => {
     const res = await api<{
       success: boolean
       data: {
-        user: any
-        counts: { orders: number; wishlist: number; addresses: number }
+        user: User
+        counts: { orders: number, wishlist: number, addresses: number }
       }
     }>('/profile')
     if (res.data?.counts) {
@@ -53,32 +55,32 @@ const navItems = computed(() => {
     {
       label: 'سفارش‌های من',
       to: '/profile/orders',
-      icon: 'i-lucide-package',
+      icon: 'i-lucide-package'
     },
     {
       label: 'آدرس‌های من',
       to: '/profile/addresses',
-      icon: 'i-lucide-map-pin',
+      icon: 'i-lucide-map-pin'
     },
     {
       label: 'لیست علاقه‌مندی‌ها',
       to: '/profile/wishlist',
-      icon: 'i-lucide-heart',
-    },
+      icon: 'i-lucide-heart'
+    }
   ]
 
   if (features.hasFeature('loyalty')) {
     items.push({
       label: 'باشگاه مشتریان (VIP)',
       to: '/profile/club',
-      icon: 'i-lucide-crown',
+      icon: 'i-lucide-crown'
     })
   }
 
   items.push({
     label: 'اطلاعات حساب',
     to: '/profile/settings',
-    icon: 'i-lucide-user-cog',
+    icon: 'i-lucide-user-cog'
   })
 
   return items
@@ -115,27 +117,36 @@ const handleLogout = async () => {
       <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <!-- User Info -->
         <div class="flex items-center gap-4">
-          <div
-            class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-primary-600 to-primary-400 text-white flex items-center justify-center text-2xl font-black shadow-lg shadow-primary-500/25 shrink-0"
-          >
-            {{ authStore.user?.first_name?.[0] || 'ک' }}
-          </div>
-          <div class="flex flex-col gap-1">
-            <h1 class="text-xl sm:text-2xl font-black text-neutral-900 dark:text-neutral-100">
-              {{ authStore.user?.full_name || 'کاربر گرامی' }}
-            </h1>
-            <div class="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
-              <span class="font-mono font-en font-medium dir-ltr">{{ authStore.user?.mobile }}</span>
-              <span class="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700" />
-              <span class="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                <UIcon
-                  name="i-lucide-check-circle"
-                  class="w-3.5 h-3.5"
-                />
-                شماره تایید شده
-              </span>
+          <template v-if="authStore.user">
+            <div
+              class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-primary-600 to-primary-400 text-white flex items-center justify-center text-2xl font-black shadow-lg shadow-primary-500/25 shrink-0"
+            >
+              {{ authStore.user.first_name?.[0] || 'ک' }}
             </div>
-          </div>
+            <div class="flex flex-col gap-1">
+              <h1 class="text-xl sm:text-2xl font-black text-neutral-900 dark:text-neutral-100">
+                {{ authStore.user.full_name }}
+              </h1>
+              <div class="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
+                <span class="font-mono font-medium [direction:ltr]">{{ authStore.user.mobile }}</span>
+                <span class="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700" />
+                <span class="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                  <UIcon
+                    name="i-lucide-check-circle"
+                    class="w-3.5 h-3.5"
+                  />
+                  شماره تایید شده
+                </span>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <USkeleton class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl shrink-0" />
+            <div class="flex flex-col gap-2">
+              <USkeleton class="w-36 h-6 rounded-lg" />
+              <USkeleton class="w-28 h-4 rounded-md" />
+            </div>
+          </template>
         </div>
 
         <!-- Quick Summary Stats -->

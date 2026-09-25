@@ -78,10 +78,10 @@ export const useApi = () => {
     onRequest({ options }) {
       // Normalize any numeric payloads (e.g. mobile, OTP, postal codes) to English ASCII digits
       if (options.body && typeof options.body === 'object') {
-        options.body = normalizeNumericPayload(options.body) as any
+        options.body = normalizeNumericPayload(options.body) as Record<string, unknown>
       }
       if (options.params && typeof options.params === 'object') {
-        options.params = normalizeNumericPayload(options.params) as any
+        options.params = normalizeNumericPayload(options.params) as Record<string, unknown>
       }
 
       // Attach auth token if available in cookie or store
@@ -101,11 +101,19 @@ export const useApi = () => {
       options.headers.set('Accept', 'application/json')
     },
     onResponse({ response }) {
+      // Primary: read session from X-Cart-Session response header (requires CORS exposed_headers)
       const sessionHeader = response.headers.get('x-cart-session')
       if (sessionHeader) {
         cartSessionCookie.value = sessionHeader
       }
+
+      // Fallback: read session_id from cart response body (works even if header is CORS-blocked)
+      const body = response._data as { data?: { session_id?: string | null } } | undefined
+      if (!sessionHeader && body?.data?.session_id) {
+        cartSessionCookie.value = body.data.session_id
+      }
     },
+
     onResponseError({ response }) {
       const errorData = response._data as ApiErrorResponse | undefined
       const message = errorData?.message || 'خطایی در برقراری ارتباط با سرور رخ داد.'

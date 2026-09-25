@@ -1,13 +1,15 @@
 <script setup lang="ts">
+import type { Order } from '~/types/order'
+
 const api = useApi()
 const { formatPrice, toPersianDigits } = usePersian()
 
 useSeoMeta({
-  title: 'سفارش‌های من - ایزیشاپ',
+  title: 'سفارش‌های من - ایزیشاپ'
 })
 
 const isLoading = ref(true)
-const orders = ref<any[]>([])
+const orders = ref<Order[]>([])
 const activeTab = ref('all')
 const expandedOrder = ref<string | null>(null)
 const isCopied = ref<Record<string, boolean>>({})
@@ -15,7 +17,7 @@ const isCopied = ref<Record<string, boolean>>({})
 const fetchOrders = async () => {
   isLoading.value = true
   try {
-    const res = await api<any>('/orders')
+    const res = await api<{ success: boolean, data: Order[] }>('/orders')
     orders.value = res.data || []
   } catch {
     // handled by useApi
@@ -32,12 +34,12 @@ const tabs = [
   { id: 'all', label: 'همه سفارش‌ها' },
   { id: 'processing', label: 'در حال پردازش' },
   { id: 'delivered', label: 'تحویل داده شده' },
-  { id: 'cancelled', label: 'لغو شده' },
+  { id: 'cancelled', label: 'لغو شده' }
 ]
 
 const filteredOrders = computed(() => {
   if (activeTab.value === 'all') return orders.value
-  return orders.value.filter((o) => o.status === activeTab.value)
+  return orders.value.filter(o => o.status === activeTab.value)
 })
 
 const toggleExpand = (orderNumber: string) => {
@@ -54,6 +56,15 @@ const copyToClipboard = async (text: string, key: string) => {
   } catch {
     // fallback
   }
+}
+
+type BadgeColor = 'neutral' | 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error'
+const getBadgeColor = (color?: string): BadgeColor => {
+  const validColors: readonly string[] = ['neutral', 'primary', 'secondary', 'success', 'info', 'warning', 'error']
+  if (color && validColors.includes(color)) {
+    return color as BadgeColor
+  }
+  return 'neutral'
 }
 </script>
 
@@ -144,7 +155,7 @@ const copyToClipboard = async (text: string, key: string) => {
         <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-neutral-100 dark:border-neutral-800">
           <div class="flex items-center gap-2">
             <span class="text-xs text-neutral-400">شماره سفارش:</span>
-            <span class="font-mono font-en font-bold text-sm text-neutral-900 dark:text-white">
+            <span class="font-mono font-bold text-sm text-neutral-900 dark:text-white">
               {{ order.order_number }}
             </span>
             <button
@@ -164,7 +175,7 @@ const copyToClipboard = async (text: string, key: string) => {
           <div class="flex items-center gap-3">
             <!-- Status Badge -->
             <UBadge
-              :color="order.status_color || 'neutral'"
+              :color="getBadgeColor(order.status_color)"
               variant="subtle"
               size="md"
               class="font-bold px-3 py-1 rounded-full text-xs"
@@ -200,7 +211,7 @@ const copyToClipboard = async (text: string, key: string) => {
           <div class="flex flex-col gap-1">
             <span class="text-neutral-400">آدرس تحویل:</span>
             <span class="font-medium text-neutral-700 dark:text-neutral-300 truncate max-w-[180px]">
-              {{ order.shipping_address?.full_address || order.shipping_address?.city || '—' }}
+              {{ order.shipping_address?.full_address || order.shipping_address?.address_line || order.shipping_address?.city_name || '—' }}
             </span>
           </div>
         </div>

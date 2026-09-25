@@ -26,7 +26,7 @@ export const useFeatures = () => {
   }))
   const isLoading = useState<boolean>('app_features_loading', () => false)
 
-  const fetchFeatures = async () => {
+  const fetchFeatures = async (): Promise<FeaturesMap> => {
     try {
       isLoading.value = true
       const res = await api<ApiResponse<FeaturesMap>>('/app/features')
@@ -38,6 +38,7 @@ export const useFeatures = () => {
     } finally {
       isLoading.value = false
     }
+    return features.value
   }
 
   const hasFeature = (name: string): boolean => {

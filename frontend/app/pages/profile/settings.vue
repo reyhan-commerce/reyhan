@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
+import type { User } from '~/types/user'
 
 const authStore = useAuthStore()
 const api = useApi()
 const toast = useToast()
 
 useSeoMeta({
-  title: 'تنظیمات حساب کاربری - ایزیشاپ',
+  title: 'تنظیمات حساب کاربری - ایزیشاپ'
 })
 
 const form = reactive({
   first_name: authStore.user?.first_name || '',
   last_name: authStore.user?.last_name || '',
   national_code: authStore.user?.national_code || '',
-  email: authStore.user?.email || '',
+  email: authStore.user?.email || ''
 })
 
 // Sync if authStore.user changes
@@ -33,21 +34,21 @@ const handleSave = async () => {
     toast.add({
       title: 'خطای اعتبارسنجی',
       description: 'کد ملی باید دقیقاً ۱۰ رقم باشد.',
-      color: 'error',
+      color: 'error'
     })
     return
   }
 
   isSubmitting.value = true
   try {
-    const res = await api<{ success: boolean, message: string, data: any }>('/profile', {
+    const res = await api<{ success: boolean, message: string, data: User }>('/profile', {
       method: 'PUT',
       body: {
         first_name: form.first_name.trim() || null,
         last_name: form.last_name.trim() || null,
         national_code: form.national_code.trim() || null,
-        email: form.email.trim() || null,
-      },
+        email: form.email.trim() || null
+      }
     })
 
     if (res.data) {
@@ -57,13 +58,14 @@ const handleSave = async () => {
     toast.add({
       title: 'موفقیت‌آمیز',
       description: res.message || 'اطلاعات هویتی با موفقیت به‌روزرسانی شد.',
-      color: 'success',
+      color: 'success'
     })
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMsg = (err as { data?: { message?: string } })?.data?.message || 'مشکلی در ذخیره اطلاعات رخ داده است.'
     toast.add({
       title: 'خطا',
-      description: err?.data?.message || 'مشکلی در ذخیره اطلاعات رخ داده است.',
-      color: 'error',
+      description: errorMsg,
+      color: 'error'
     })
   } finally {
     isSubmitting.value = false
@@ -126,7 +128,7 @@ const handleSave = async () => {
               placeholder="مثال: ۰۰۱۲۳۴۵۶۷۸"
               maxlength="10"
               size="lg"
-              class="w-full font-mono font-en text-left"
+              class="w-full font-mono text-left"
             />
           </div>
 
@@ -140,7 +142,7 @@ const handleSave = async () => {
                 :model-value="authStore.user?.mobile"
                 disabled
                 size="lg"
-                class="w-full font-mono font-en text-left bg-neutral-50 dark:bg-neutral-800/50 cursor-not-allowed opacity-80"
+                class="w-full font-mono text-left bg-neutral-50 dark:bg-neutral-800/50 cursor-not-allowed opacity-80"
               />
               <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md">
                 تایید شده
@@ -158,7 +160,7 @@ const handleSave = async () => {
               type="email"
               placeholder="example@mail.com"
               size="lg"
-              class="w-full text-left font-mono font-en"
+              class="w-full text-left font-mono"
             />
           </div>
         </div>

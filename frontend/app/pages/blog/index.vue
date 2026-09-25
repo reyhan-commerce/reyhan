@@ -9,7 +9,7 @@ definePageMeta({
         return navigateTo('/')
       }
     }
-  ],
+  ]
 })
 
 const api = useApi()
@@ -22,7 +22,7 @@ const storeName = computed(() => settingsStore.settings.store_name || 'ایزی�
 
 useSeoMeta({
   title: () => `مجله و مقالات تخصصی - ${storeName.value}`,
-  description: 'جدیدترین مقالات، راهنماهای تخصصی انتخاب محصول، نکات مراقبت و آموزش‌های کاربردی.',
+  description: 'جدیدترین مقالات، راهنماهای تخصصی انتخاب محصول، نکات مراقبت و آموزش‌های کاربردی.'
 })
 
 // Query state
@@ -40,9 +40,9 @@ const categories = computed(() => categoriesResponse.value?.data ?? [])
 const { data: postsResponse, status, refresh } = await useAsyncData(
   'blog-posts',
   () => {
-    const params: Record<string, any> = {
+    const params: Record<string, string | number> = {
       page: currentPage.value,
-      per_page: 9,
+      per_page: 9
     }
     if (selectedCategory.value !== 'all') {
       params.category = selectedCategory.value
@@ -50,20 +50,19 @@ const { data: postsResponse, status, refresh } = await useAsyncData(
     if (searchQuery.value.trim()) {
       params.search = searchQuery.value.trim()
     }
-    return api<ApiResponse<BlogPost[]> & { meta?: any }>('/blog/posts', { params })
+    return api<ApiResponse<BlogPost[]> & { meta?: { current_page: number, last_page: number, total: number } }>('/blog/posts', { params })
   },
   {
-    watch: [selectedCategory, currentPage],
+    watch: [selectedCategory, currentPage]
   }
 )
 
 const posts = computed(() => postsResponse.value?.data ?? [])
-const paginationMeta = computed(() => (postsResponse.value as any)?.meta)
 
 // Featured post for Hero spotlight (only on first page and when not searching)
 const heroPost = computed(() => {
   if (selectedCategory.value === 'all' && !searchQuery.value && currentPage.value === 1) {
-    return posts.value.find((p) => p.is_featured) || posts.value[0]
+    return posts.value.find(p => p.is_featured) || posts.value[0]
   }
   return null
 })
@@ -71,7 +70,7 @@ const heroPost = computed(() => {
 // Remaining posts excluding the hero post
 const gridPosts = computed(() => {
   if (heroPost.value) {
-    return posts.value.filter((p) => p.id !== heroPost.value?.id)
+    return posts.value.filter(p => p.id !== heroPost.value?.id)
   }
   return posts.value
 })
@@ -83,8 +82,8 @@ const handleCategorySelect = (catSlug: string) => {
     query: {
       ...route.query,
       category: catSlug === 'all' ? undefined : catSlug,
-      page: undefined,
-    },
+      page: undefined
+    }
   })
 }
 
@@ -100,7 +99,7 @@ const formatJalaliDate = (isoString?: string | null) => {
     return new Intl.DateTimeFormat('fa-IR', {
       day: 'numeric',
       month: 'long',
-      year: 'numeric',
+      year: 'numeric'
     }).format(d)
   } catch {
     return ''
@@ -197,7 +196,7 @@ const formatJalaliDate = (isoString?: string | null) => {
           :src="heroPost.featured_image"
           :alt="heroPost.title"
           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-        />
+        >
         <div
           v-else
           class="w-full h-full flex items-center justify-center text-neutral-400"
@@ -310,7 +309,7 @@ const formatJalaliDate = (isoString?: string | null) => {
               :alt="post.title"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
               loading="lazy"
-            />
+            >
             <div
               v-else
               class="w-full h-full flex items-center justify-center text-neutral-300 dark:text-neutral-700"
