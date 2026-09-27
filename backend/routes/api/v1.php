@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\V1\FaqController;
 use App\Http\Controllers\Api\V1\GeoController;
 use App\Http\Controllers\Api\V1\LoyaltyController;
 use App\Http\Controllers\Api\V1\OrderController;
+use App\Http\Controllers\Api\V1\OrderInvoiceController;
 use App\Http\Controllers\Api\V1\PageController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\ProductController;
@@ -103,9 +104,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/create-order', [CheckoutController::class, 'createOrder'])->name('create-order');
     });
 
-    // Orders History
+    // Orders History & Invoice
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{orderNumber}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{orderNumber}/invoice', [OrderInvoiceController::class, 'show'])->name('orders.invoice');
 
     // Customer Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
@@ -128,6 +130,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/redeem', [LoyaltyController::class, 'redeem'])->name('redeem');
     });
 });
+
+// Signed Order Invoice (Admin / Shareable Print Link)
+Route::get('/orders/{orderNumber}/invoice/signed', [OrderInvoiceController::class, 'showSigned'])
+    ->name('orders.invoice.signed')
+    ->middleware('signed:relative');
 
 // Customer Loyalty Club Tiers (Public)
 Route::get('/loyalty/tiers', [LoyaltyController::class, 'tiers'])->name('loyalty.tiers');

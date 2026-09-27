@@ -10,6 +10,7 @@ use App\Filament\Resources\Orders\Pages\CreateOrder;
 use App\Filament\Resources\Orders\Pages\EditOrder;
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
+use App\Http\Controllers\Api\V1\OrderInvoiceController;
 use App\Models\Order;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -287,6 +288,12 @@ class OrderResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make(),
+                Action::make('print_invoice')
+                    ->label('چاپ فاکتور')
+                    ->icon(Heroicon::OutlinedPrinter)
+                    ->color('gray')
+                    ->url(fn (Order $record): string => OrderInvoiceController::generateAdminInvoiceUrl($record))
+                    ->openUrlInNewTab(),
                 EditAction::make(),
                 Action::make('markAsShipped')
                     ->label('ثبت ارسال')

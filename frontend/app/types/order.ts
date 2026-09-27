@@ -92,7 +92,12 @@ export interface Order {
   shipping_fee: number
   final_payable: number
   items_count: number
+  notes?: string | null
   paid_at?: string | null
   created_at: string
   items?: OrderItem[]
+  user?: {
+    name: string | null
+    mobile: string | null
+  } | null
 }

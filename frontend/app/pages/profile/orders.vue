@@ -229,17 +229,31 @@ const getBadgeColor = (color?: string): BadgeColor => {
             </span>
           </div>
 
-          <button
-            type="button"
-            class="flex items-center gap-1.5 text-xs font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors shrink-0 cursor-pointer"
-            @click="toggleExpand(order.order_number)"
-          >
-            <span>{{ expandedOrder === order.order_number ? 'بستن فاکتور' : 'مشاهده فاکتور' }}</span>
-            <UIcon
-              :name="expandedOrder === order.order_number ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
-              class="w-4 h-4"
-            />
-          </button>
+          <div class="flex items-center gap-2 shrink-0">
+            <NuxtLink
+              :to="`/invoice/${order.order_number}`"
+              target="_blank"
+              class="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-600 dark:text-neutral-400 hover:text-primary transition-colors py-1.5 px-3 rounded-xl border border-neutral-200/80 dark:border-neutral-700/80 hover:border-primary/50"
+            >
+              <UIcon
+                name="i-lucide-printer"
+                class="size-3.5"
+              />
+              <span>چاپ فاکتور</span>
+            </NuxtLink>
+
+            <button
+              type="button"
+              class="flex items-center gap-1.5 text-xs font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors shrink-0 cursor-pointer py-1.5 px-2.5"
+              @click="toggleExpand(order.order_number)"
+            >
+              <span>{{ expandedOrder === order.order_number ? 'بستن ریز اقلام' : 'ریز اقلام' }}</span>
+              <UIcon
+                :name="expandedOrder === order.order_number ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+                class="w-4 h-4"
+              />
+            </button>
+          </div>
         </div>
 
         <!-- Expanded Itemized Breakdown Table -->

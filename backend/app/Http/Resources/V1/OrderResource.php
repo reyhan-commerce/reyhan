@@ -27,6 +27,7 @@ class OrderResource extends JsonResource
             'shipping_method' => $this->shipping_method?->value,
             'shipping_method_title' => $this->shipping_method?->title(),
             'shipping_address' => $this->shipping_address,
+            'notes' => $this->notes,
             'items_subtotal' => $this->items_subtotal,
             'discount_amount' => $this->discount_amount,
             'coupon_discount' => $this->coupon_discount,
@@ -37,6 +38,10 @@ class OrderResource extends JsonResource
             'paid_at' => $this->paid_at?->toIso8601String(),
             'created_at' => $this->created_at->toIso8601String(),
             'items' => OrderItemResource::collection($this->whenLoaded('items')),
+            'user' => $this->whenLoaded('user', fn () => [
+                'name' => $this->user?->full_name,
+                'mobile' => $this->user?->mobile,
+            ]),
         ];
     }
 }
