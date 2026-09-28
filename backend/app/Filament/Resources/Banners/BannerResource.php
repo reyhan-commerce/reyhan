@@ -16,6 +16,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -23,7 +24,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -52,7 +53,7 @@ class BannerResource extends Resource
         return $schema
             ->components([
                 Section::make('مشخصات بنر')
-                    ->description('اطلاعات تصویر، موقعیت و لینک مقصد')
+                    ->description('اطلاعات عنوان، موقعیت و لینک مقصد')
                     ->columns(2)
                     ->schema([
                         TextInput::make('title')
@@ -65,17 +66,6 @@ class BannerResource extends Resource
                             ->label('زیرعنوان یا توضیحات کوتاه')
                             ->maxLength(255)
                             ->placeholder('مثال: تا ۵۰٪ تخفیف روی تمامی لوازم دیجیتال'),
-
-                        TextInput::make('image_url')
-                            ->label('آدرس تصویر بنر (دسکتاپ)')
-                            ->required()
-                            ->maxLength(512)
-                            ->placeholder('https://... یا /images/banners/...'),
-
-                        TextInput::make('mobile_image_url')
-                            ->label('آدرس تصویر موبایل (اختیاری)')
-                            ->maxLength(512)
-                            ->placeholder('در صورت خالی بودن، از تصویر دسکتاپ استفاده می‌شود'),
 
                         TextInput::make('link_url')
                             ->label('لینک مقصد کلیک')
@@ -105,6 +95,25 @@ class BannerResource extends Resource
                         DateTimePicker::make('ends_at')
                             ->label('زمان پایان نمایش (اختیاری)'),
                     ]),
+
+                Section::make('تصاویر بنر')
+                    ->description('آپلود تصویر اختصاصی برای نسخه دسکتاپ و موبایل')
+                    ->columns(2)
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('image')
+                            ->collection('image')
+                            ->label('تصویر بنر (دسکتاپ)')
+                            ->image()
+                            ->imageEditor()
+                            ->helperText('پیشنهادی برای اسلایدر: ۱۹۲۰×۶۰۰ پیکسل | برای بنر میانی: ۱۲۰۰×۴۰۰ پیکسل'),
+
+                        SpatieMediaLibraryFileUpload::make('mobile_image')
+                            ->collection('mobile_image')
+                            ->label('تصویر بنر (موبایل - اختیاری)')
+                            ->image()
+                            ->imageEditor()
+                            ->helperText('در صورت عدم آپلود، از تصویر دسکتاپ استفاده خواهد شد (پیشنهادی: ۸۰۰×۶۰۰ پیکسل)'),
+                    ]),
             ]);
     }
 
@@ -112,10 +121,11 @@ class BannerResource extends Resource
     {
         return $table
             ->columns([
-                ImageColumn::make('image_url')
+                SpatieMediaLibraryImageColumn::make('image')
+                    ->collection('image')
                     ->label('پیش‌نمایش')
                     ->square()
-                    ->defaultImageUrl('/placeholder.png'),
+                    ->defaultImageUrl(fn (Banner $record): string => $record->image_url ?: '/placeholder.png'),
 
                 TextColumn::make('title')
                     ->label('عنوان بنر')
@@ -148,7 +158,7 @@ class BannerResource extends Resource
                 TernaryFilter::make('is_active')
                     ->label('فقط فعال‌ها'),
             ])
-            ->rowActions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])

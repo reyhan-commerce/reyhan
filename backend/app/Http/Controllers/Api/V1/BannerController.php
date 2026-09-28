@@ -17,7 +17,7 @@ final class BannerController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Banner::query()->active();
+        $query = Banner::query()->active()->with('media');
 
         if ($request->filled('position')) {
             $position = $request->query('position');

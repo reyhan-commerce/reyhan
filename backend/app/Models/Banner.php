@@ -7,8 +7,11 @@ namespace App\Models;
 use App\Enums\BannerPosition;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property int $id
@@ -25,11 +28,55 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
-final class Banner extends Model
+final class Banner extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $guarded = ['id'];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('image')->useDisk('public')->singleFile();
+        $this->addMediaCollection('mobile_image')->useDisk('public')->singleFile();
+    }
+
+    /**
+     * @return Attribute<string, void>
+     */
+    protected function imageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value): string {
+                $url = $this->getFirstMediaUrl('image') ?: ($value ?? '');
+                if ($url === '') {
+                    return '';
+                }
+
+                return str_starts_with($url, 'http://') || str_starts_with($url, 'https://')
+                    ? $url
+                    : url($url);
+            }
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, void>
+     */
+    protected function mobileImageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value): ?string {
+                $url = $this->getFirstMediaUrl('mobile_image') ?: $value;
+                if (! $url) {
+                    return null;
+                }
+
+                return str_starts_with($url, 'http://') || str_starts_with($url, 'https://')
+                    ? $url
+                    : url($url);
+            }
+        );
+    }
 
     /**
      * @return array<string, string>
