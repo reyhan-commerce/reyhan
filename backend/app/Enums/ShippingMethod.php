@@ -13,13 +13,18 @@ enum ShippingMethod: string implements HasColor, HasLabel
     use HasEnumHelpers;
 
     case Express = 'express';
+    case ExpressCourier = 'express_courier';
     case Pishtaz = 'pishtaz';
+    case Tipax = 'tipax';
+    case Freight = 'freight';
 
     public function getLabel(): string
     {
         return match ($this) {
-            self::Express => __('enums.shipping_method.express_courier'),
+            self::Express, self::ExpressCourier => __('enums.shipping_method.express_courier'),
             self::Pishtaz => __('enums.shipping_method.post_pishtaz'),
+            self::Tipax => __('enums.shipping_method.tipax'),
+            self::Freight => __('enums.shipping_method.freight'),
         };
     }
 
@@ -31,8 +36,10 @@ enum ShippingMethod: string implements HasColor, HasLabel
     public function getColor(): string
     {
         return match ($this) {
-            self::Express => 'warning',
+            self::Express, self::ExpressCourier => 'warning',
             self::Pishtaz => 'primary',
+            self::Tipax => 'info',
+            self::Freight => 'gray',
         };
     }
 
@@ -44,8 +51,10 @@ enum ShippingMethod: string implements HasColor, HasLabel
     public function deliveryTime(): string
     {
         return match ($this) {
-            self::Express => 'تحویل ۱ تا ۳ ساعته',
+            self::Express, self::ExpressCourier => 'تحویل ۱ تا ۳ ساعته',
             self::Pishtaz => '۲ تا ۴ روز کاری',
+            self::Tipax => '۱ تا ۲ روز کاری',
+            self::Freight => '۳ تا ۵ روز کاری',
         };
     }
 }
