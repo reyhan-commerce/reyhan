@@ -4,29 +4,48 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
-enum ShippingMethod: string
+use App\Enums\Concerns\HasEnumHelpers;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
+
+enum ShippingMethod: string implements HasColor, HasLabel
 {
+    use HasEnumHelpers;
+
     case Express = 'express';
     case Pishtaz = 'pishtaz';
 
-    public function title(): string
+    public function getLabel(): string
     {
         return match ($this) {
-            self::Express => __('Express Courier (Tehran & Suburbs)'),
-            self::Pishtaz => __('Nationwide Pishtaz Post'),
+            self::Express => __('enums.shipping_method.express_courier'),
+            self::Pishtaz => __('enums.shipping_method.post_pishtaz'),
         };
+    }
+
+    public function title(): string
+    {
+        return $this->getLabel();
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Express => 'warning',
+            self::Pishtaz => 'primary',
+        };
+    }
+
+    public function color(): string
+    {
+        return $this->getColor();
     }
 
     public function deliveryTime(): string
     {
         return match ($this) {
-            self::Express => __('Delivery in 1 to 3 hours'),
-            self::Pishtaz => __('2 to 4 business days'),
+            self::Express => 'تحویل ۱ تا ۳ ساعته',
+            self::Pishtaz => '۲ تا ۴ روز کاری',
         };
-    }
-
-    public function label(): string
-    {
-        return $this->title();
     }
 }

@@ -69,7 +69,7 @@ beforeEach(function (): void {
         'paid_at' => now(),
     ]);
 
-    OrderItem::create([
+    OrderItem::factory()->create([
         'order_id' => $this->order->id,
         'product_id' => $this->product->id,
         'product_variant_id' => $this->variant->id,

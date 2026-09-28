@@ -5,22 +5,29 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Orders;
 
 use App\Enums\OrderStatus;
+use App\Enums\PaymentGateway;
+use App\Enums\PaymentStatus;
 use App\Enums\ShippingMethod;
 use App\Filament\Resources\Orders\Pages\CreateOrder;
 use App\Filament\Resources\Orders\Pages\EditOrder;
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Http\Controllers\Api\V1\OrderInvoiceController;
+use App\Http\Controllers\OrderShippingLabelController;
 use App\Models\Order;
+use App\Services\Sms\SmsManager;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
@@ -35,6 +42,8 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\HtmlString;
 use Morilog\Jalali\Jalalian;
 use UnitEnum;
 use Zvizvi\FilamentColumnFilters\Filters\ColumnFilter;
@@ -70,13 +79,24 @@ class OrderResource extends Resource
                             ))
                             ->required(),
 
-                        Select::make('shipping_method')
+                        Select::make('shipping_method_id')
                             ->label('روش ارسال مرسوله')
-                            ->options(array_combine(
-                                array_map(fn (ShippingMethod $m): string => $m->value, ShippingMethod::cases()),
-                                array_map(fn (ShippingMethod $m): string => $m->label(), ShippingMethod::cases())
-                            ))
-                            ->required(),
+                            ->relationship('shippingMethod', 'name')
+                            ->searchable()
+                            ->preload(),
+
+                        TextInput::make('tracking_code')
+                            ->label('کد رهگیری مرسوله پستی / باربری')
+                            ->maxLength(64),
+
+                        TextInput::make('tracking_url')
+                            ->label('لینک رهگیری آنلاین')
+                            ->url()
+                            ->maxLength(512),
+
+                        TextInput::make('delivery_time_slot')
+                            ->label('بازه زمانی تحویل سفارش')
+                            ->maxLength(64),
 
                         Textarea::make('notes')
                             ->label('یادداشت‌های داخلی سفارش')
@@ -105,15 +125,40 @@ class OrderResource extends Resource
                             ->formatStateUsing(fn (OrderStatus $state): string => $state->label())
                             ->color(fn (OrderStatus $state): string => $state->color()),
 
-                        TextEntry::make('shipping_method')
+                        TextEntry::make('shipping_method_title')
                             ->label('روش ارسال')
                             ->badge()
-                            ->color('gray')
-                            ->formatStateUsing(fn (?ShippingMethod $state): string => $state?->label() ?? 'نامشخص'),
+                            ->color('info')
+                            ->default(fn (Order $record): string => $record->shippingMethod?->name ?? ($record->shipping_method instanceof ShippingMethod ? $record->shipping_method->title() : ($record->shipping_method ?? 'پست پیشتاز'))),
 
                         TextEntry::make('created_at')
                             ->label('زمان ثبت سفارش')
                             ->formatStateUsing(fn (?string $state): string => $state ? Jalalian::fromDateTime($state)->format('Y/m/d H:i') : '-'),
+                    ]),
+
+                Section::make('اطلاعات لجستیک، رهگیری و ارسال')
+                    ->columns(4)
+                    ->schema([
+                        TextEntry::make('tracking_code')
+                            ->label('کد رهگیری مرسوله')
+                            ->copyable()
+                            ->weight('bold')
+                            ->icon(Heroicon::OutlinedTruck)
+                            ->default('هنوز ثبت نشده'),
+
+                        TextEntry::make('tracking_url')
+                            ->label('لینک رهگیری مرسوله')
+                            ->default('-')
+                            ->url(fn (?string $state): ?string => $state)
+                            ->openUrlInNewTab(),
+
+                        TextEntry::make('delivery_time_slot')
+                            ->label('بازه زمانی تحویل')
+                            ->default('عادی (ارسال سراسری)'),
+
+                        TextEntry::make('shipped_at')
+                            ->label('تاریخ ارسال')
+                            ->formatStateUsing(fn (?string $state): string => $state ? Jalalian::fromDateTime($state)->format('Y/m/d H:i') : 'ارسال نشده'),
                     ]),
 
                 Grid::make(2)
@@ -211,11 +256,70 @@ class OrderResource extends Resource
                             ->label('هزینه ارسال')
                             ->formatStateUsing(fn (int $state): string => $state === 0 ? 'رایگان' : number_format((int) ($state / 10)).' تومان'),
 
+                        TextEntry::make('wallet_paid_amount')
+                            ->label('پرداخت از کیف پول')
+                            ->formatStateUsing(fn (int $state): string => $state === 0 ? '۰' : number_format((int) ($state / 10)).' تومان')
+                            ->color(fn (int $state): string => $state > 0 ? 'info' : 'gray'),
+
                         TextEntry::make('final_payable')
-                            ->label('مبلغ نهایی فاکتور')
+                            ->label('مبلغ نهایی پرداختی')
                             ->weight('bold')
                             ->color('success')
                             ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)).' تومان'),
+                    ]),
+
+                Section::make('درخواست فاکتور رسمی مالیاتی (حقوقی)')
+                    ->visible(fn (Order $record): bool => (bool) $record->is_corporate_invoice)
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('corporate_data.company_name')
+                            ->label('نام شرکت / سازمان')
+                            ->weight('bold'),
+
+                        TextEntry::make('corporate_data.national_id')
+                            ->label('شناسه ملی شرکت')
+                            ->copyable(),
+
+                        TextEntry::make('corporate_data.economic_code')
+                            ->label('کد اقتصادی')
+                            ->copyable()
+                            ->default('-'),
+
+                        TextEntry::make('corporate_data.registration_number')
+                            ->label('شماره ثبت')
+                            ->default('-'),
+
+                        TextEntry::make('corporate_data.phone')
+                            ->label('شماره تلفن شرکت')
+                            ->default('-'),
+                    ]),
+
+                Section::make('رسید پرداخت آفلاین کارت‌به‌کارت')
+                    ->visible(fn (Order $record): bool => $record->cardTransferReceipt !== null)
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('cardTransferReceipt.tracking_number')
+                            ->label('شماره پیگیری / ارجاع بانکی')
+                            ->weight('bold')
+                            ->copyable(),
+
+                        TextEntry::make('cardTransferReceipt.source_card_number')
+                            ->label('شماره کارت مبدا')
+                            ->default('-'),
+
+                        TextEntry::make('cardTransferReceipt.status')
+                            ->label('وضعیت بررسی فیش')
+                            ->badge()
+                            ->color(fn (?string $state): string => match ($state) {
+                                'approved' => 'success',
+                                'rejected' => 'error',
+                                default => 'warning',
+                            })
+                            ->formatStateUsing(fn (?string $state): string => match ($state) {
+                                'approved' => 'تایید شده توسط امور مالی',
+                                'rejected' => 'رد شده',
+                                default => 'در انتظار تایید امور مالی',
+                            }),
                     ]),
             ]);
     }
@@ -254,7 +358,13 @@ class OrderResource extends Resource
 
                 TextColumn::make('shipping_method')
                     ->label('روش ارسال')
-                    ->formatStateUsing(fn (?ShippingMethod $state): string => $state?->label() ?? '-')
+                    ->state(fn (Order $record): string => $record->shippingMethod?->name ?? ($record->shipping_method instanceof ShippingMethod ? $record->shipping_method->title() : ($record->shipping_method ?? '-')))
+                    ->toggleable(),
+
+                TextColumn::make('tracking_code')
+                    ->label('کد رهگیری')
+                    ->copyable()
+                    ->placeholder('-')
                     ->toggleable(),
 
                 TextColumn::make('final_payable')
@@ -294,31 +404,170 @@ class OrderResource extends Resource
                     ->color('gray')
                     ->url(fn (Order $record): string => OrderInvoiceController::generateAdminInvoiceUrl($record))
                     ->openUrlInNewTab(),
-                EditAction::make(),
-                Action::make('markAsShipped')
-                    ->label('ثبت ارسال')
-                    ->icon(Heroicon::OutlinedTruck)
-                    ->color('success')
-                    ->visible(fn (Order $record): bool => $record->status === OrderStatus::Processing || $record->status === OrderStatus::PendingPayment)
-
+                Action::make('print_tax_invoice')
+                    ->label('فاکتور رسمی (ماده ۱۹)')
+                    ->icon(Heroicon::OutlinedDocumentText)
+                    ->color('info')
+                    ->visible(fn (Order $record): bool => (bool) $record->is_corporate_invoice)
+                    ->url(fn (Order $record): string => OrderInvoiceController::generateAdminInvoiceUrl($record).'&type=tax')
+                    ->openUrlInNewTab(),
+                Action::make('verifyCardTransfer')
+                    ->label('بررسی فیش واریزی')
+                    ->icon(Heroicon::OutlinedCreditCard)
+                    ->color('warning')
+                    ->visible(fn (Order $record): bool => $record->cardTransferReceipt !== null && $record->cardTransferReceipt->status === 'pending')
                     ->form([
-                        TextInput::make('tracking_code')
-                            ->label('کد رهگیری مرسوله پستی')
-                            ->required()
-                            ->maxLength(50),
+                        Placeholder::make('receipt_info')
+                            ->label('اطلاعات فیش بانکی')
+                            ->content(function (Order $record): HtmlString {
+                                $receipt = $record->cardTransferReceipt;
+                                if (! $receipt) {
+                                    return new HtmlString('-');
+                                }
+                                $amount = number_format((int) ($receipt->amount / 10)).' تومان';
+                                $tracking = e($receipt->tracking_number);
+                                $card = e($receipt->source_card_number ?? 'ثبت نشده');
+
+                                return new HtmlString("
+                                    <div class='space-y-1 text-sm'>
+                                        <div><strong>مبلغ واریزی:</strong> {$amount}</div>
+                                        <div><strong>کد رهگیری / ارجاع:</strong> {$tracking}</div>
+                                        <div><strong>شماره کارت مبدا:</strong> {$card}</div>
+                                    </div>
+                                ");
+                            }),
+                        Radio::make('decision')
+                            ->label('تصمیم مدیر مالی')
+                            ->options([
+                                'approve' => 'تأیید فیش واریزی و تغییر سفارش به در حال پردازش',
+                                'reject' => 'رد فیش واریزی (نامعتبر یا عدم تطابق مبلغ)',
+                            ])
+                            ->default('approve')
+                            ->required(),
+                        Textarea::make('admin_notes')
+                            ->label('یادداشت مدیر مالی')
+                            ->placeholder('توضیحات در صورت رد فیش یا شماره سند حسابداری...')
+                            ->rows(2),
                     ])
                     ->action(function (Order $record, array $data): void {
+                        $receipt = $record->cardTransferReceipt;
+                        if (! $receipt) {
+                            return;
+                        }
+
+                        $isApproved = ($data['decision'] ?? '') === 'approve';
+                        $notes = trim((string) ($data['admin_notes'] ?? ''));
+
+                        $receipt->update([
+                            'status' => $isApproved ? 'approved' : 'rejected',
+                            'reviewed_by' => auth()->id(),
+                            'reviewed_at' => now(),
+                            'admin_notes' => $notes,
+                        ]);
+
+                        if ($isApproved) {
+                            $record->update([
+                                'status' => OrderStatus::Processing,
+                                'paid_at' => now(),
+                            ]);
+
+                            $payment = $record->payments()->latest()->first();
+                            if ($payment) {
+                                $payment->update([
+                                    'status' => PaymentStatus::Successful,
+                                    'paid_at' => now(),
+                                    'reference_id' => $receipt->tracking_number,
+                                ]);
+                            } else {
+                                $record->payments()->create([
+                                    'user_id' => $record->user_id,
+                                    'amount' => $receipt->amount,
+                                    'gateway' => PaymentGateway::CardToCard,
+                                    'status' => PaymentStatus::Successful,
+                                    'reference_id' => $receipt->tracking_number,
+                                    'paid_at' => now(),
+                                ]);
+                            }
+
+                            Notification::make()
+                                ->title('فیش واریزی با موفقیت تأیید شد و سفارش به در حال پردازش تغییر یافت')
+                                ->success()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('فیش واریزی رد شد')
+                                ->warning()
+                                ->send();
+                        }
+                    }),
+                Action::make('print_shipping_label')
+                    ->label('برچسب پستی')
+                    ->icon(Heroicon::OutlinedTag)
+                    ->color('gray')
+                    ->url(fn (Order $record): string => OrderShippingLabelController::generateLabelUrl($record))
+                    ->openUrlInNewTab(),
+                EditAction::make(),
+                Action::make('markAsShipped')
+                    ->label('ثبت ارسال و رهگیری')
+                    ->icon(Heroicon::OutlinedTruck)
+                    ->color('success')
+                    ->visible(fn (Order $record): bool => in_array($record->status, [OrderStatus::Processing, OrderStatus::PendingPayment], true))
+                    ->form([
+                        TextInput::make('tracking_code')
+                            ->label('کد رهگیری مرسوله پستی / تیپاکس')
+                            ->required()
+                            ->maxLength(64)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (?string $state, callable $set): void {
+                                $clean = trim((string) $state);
+                                if (strlen($clean) >= 20 && ctype_digit($clean)) {
+                                    $set('tracking_url', 'https://tracking.post.ir/?id='.$clean);
+                                }
+                            }),
+
+                        TextInput::make('tracking_url')
+                            ->label('لینک سامانه رهگیری مرسوله')
+                            ->url()
+                            ->maxLength(512)
+                            ->placeholder('https://tracking.post.ir/?id=...'),
+
+                        Toggle::make('send_sms')
+                            ->label('ارسال پیامک اطلاع‌رسانی با لینک رهگیری به شماره خریدار')
+                            ->default(true),
+                    ])
+                    ->action(function (Order $record, array $data): void {
+                        $trackingCode = trim((string) $data['tracking_code']);
+                        $trackingUrl = ! empty($data['tracking_url'])
+                            ? trim((string) $data['tracking_url'])
+                            : (strlen($trackingCode) >= 20 && ctype_digit($trackingCode) ? 'https://tracking.post.ir/?id='.$trackingCode : null);
+
                         $notes = $record->notes ? $record->notes."\n" : '';
-                        $notes .= 'کد رهگیری پستی: '.$data['tracking_code'];
+                        $notes .= 'کد رهگیری پستی: '.$trackingCode;
 
                         $record->update([
                             'status' => OrderStatus::Shipped,
+                            'tracking_code' => $trackingCode,
+                            'tracking_url' => $trackingUrl,
                             'shipped_at' => now(),
                             'notes' => $notes,
                         ]);
 
+                        if (! empty($data['send_sms'])) {
+                            $mobile = $record->shipping_address['recipient_mobile'] ?? $record->user?->mobile;
+                            if ($mobile) {
+                                try {
+                                    $smsManager = app(SmsManager::class);
+                                    $urlPart = $trackingUrl ? "\nرهگیری: {$trackingUrl}" : '';
+                                    $message = "مشتری گرامی، سفارش شما به شماره {$record->order_number} تحویل شرکت پست/پیک گردید.\nکد رهگیری: {$trackingCode}{$urlPart}";
+                                    $smsManager->send($mobile, $message);
+                                } catch (\Throwable $e) {
+                                    Log::warning("Failed to send tracking SMS: {$e->getMessage()}");
+                                }
+                            }
+                        }
+
                         Notification::make()
-                            ->title('سفارش به وضعیت ارسال شده تغییر یافت')
+                            ->title('سفارش به وضعیت ارسال شده تغییر یافت و اطلاعات رهگیری ثبت شد')
                             ->success()
                             ->send();
                     }),

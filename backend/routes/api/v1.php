@@ -6,27 +6,37 @@ use App\Http\Controllers\Api\V1\AddressController;
 use App\Http\Controllers\Api\V1\AppFeaturesController;
 use App\Http\Controllers\Api\V1\AppSettingController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\BannerController;
 use App\Http\Controllers\Api\V1\BlogController;
 use App\Http\Controllers\Api\V1\CaptchaController;
 use App\Http\Controllers\Api\V1\CartController;
 use App\Http\Controllers\Api\V1\CartCouponController;
 use App\Http\Controllers\Api\V1\CartItemController;
 use App\Http\Controllers\Api\V1\CartSyncController;
+use App\Http\Controllers\Api\V1\CatalogFiltersController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CategoryTreeController;
 use App\Http\Controllers\Api\V1\CheckoutController;
+use App\Http\Controllers\Api\V1\CompareProductsController;
 use App\Http\Controllers\Api\V1\ContactMessageController;
 use App\Http\Controllers\Api\V1\FaqController;
 use App\Http\Controllers\Api\V1\GeoController;
 use App\Http\Controllers\Api\V1\LoyaltyController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\OrderInvoiceController;
+use App\Http\Controllers\Api\V1\OrderReturnController;
 use App\Http\Controllers\Api\V1\PageController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\Api\V1\ProductPriceHistoryController;
+use App\Http\Controllers\Api\V1\ProductQuestionController;
 use App\Http\Controllers\Api\V1\ProfileController;
+use App\Http\Controllers\Api\V1\ReferralController;
 use App\Http\Controllers\Api\V1\ReviewController;
 use App\Http\Controllers\Api\V1\SearchSuggestionController;
+use App\Http\Controllers\Api\V1\StockAlertController;
+use App\Http\Controllers\Api\V1\SupportTicketController;
+use App\Http\Controllers\Api\V1\WalletController;
 use App\Http\Controllers\Api\V1\WishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -63,6 +73,10 @@ Route::prefix('auth')->name('auth.')->group(function () {
 
 // Product Catalog & Category Taxonomy
 Route::get('/search/suggestions', [SearchSuggestionController::class, 'index'])->name('search.suggestions');
+Route::get('/catalog/filters', CatalogFiltersController::class)->name('catalog.filters');
+Route::post('/catalog/stock-alerts', [StockAlertController::class, 'store'])->name('catalog.stock-alerts');
+Route::post('/products/compare', CompareProductsController::class)->name('products.compare');
+Route::get('/products/{product}/related', [ProductController::class, 'related'])->name('products.related');
 Route::get('/categories/tree', CategoryTreeController::class)->name('categories.tree');
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
@@ -101,6 +115,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Checkout
     Route::prefix('checkout')->name('checkout.')->group(function () {
         Route::get('/preview', [CheckoutController::class, 'preview'])->name('preview');
+        Route::get('/shipping-methods', [CheckoutController::class, 'shippingMethods'])->name('shipping-methods');
         Route::post('/create-order', [CheckoutController::class, 'createOrder'])->name('create-order');
     });
 
@@ -129,7 +144,51 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/transactions', [LoyaltyController::class, 'transactions'])->name('transactions');
         Route::post('/redeem', [LoyaltyController::class, 'redeem'])->name('redeem');
     });
+
+    // Customer Wallet
+    Route::prefix('wallet')->name('wallet.')->group(function () {
+        Route::get('/', [WalletController::class, 'index'])->name('index');
+        Route::post('/top-up', [WalletController::class, 'topUp'])->name('top-up');
+    });
+
+    // 7-Day Online Order Returns (RMA)
+    Route::get('/profile/returns', [OrderReturnController::class, 'index'])->name('profile.returns.index');
+    Route::get('/profile/returns/{returnNumber}', [OrderReturnController::class, 'show'])->name('profile.returns.show');
+    Route::post('/orders/{orderNumber}/returns', [OrderReturnController::class, 'store'])->name('orders.returns.store');
+
+    // Support Tickets & Helpdesk
+    Route::prefix('tickets')->name('tickets.')->group(function () {
+        Route::get('/', [SupportTicketController::class, 'index'])->name('index');
+        Route::post('/', [SupportTicketController::class, 'store'])->name('store');
+        Route::get('/{ticketNumber}', [SupportTicketController::class, 'show'])->name('show');
+        Route::post('/{ticketNumber}/messages', [SupportTicketController::class, 'reply'])->name('reply');
+        Route::put('/{ticketNumber}/close', [SupportTicketController::class, 'close'])->name('close');
+    });
+
+    // Customer Referral Program
+    Route::prefix('referral')->name('referral.')->group(function () {
+        Route::get('/', [ReferralController::class, 'index'])->name('index');
+        Route::post('/claim', [ReferralController::class, 'claim'])->name('claim');
+    });
+    Route::prefix('profile/referral')->name('profile.referral.')->group(function () {
+        Route::get('/', [ReferralController::class, 'index'])->name('profile.index');
+        Route::post('/claim', [ReferralController::class, 'claim'])->name('profile.claim');
+    });
+
+    // Product Questions & Answers (Interactive)
+    Route::post('/products/{product}/questions', [ProductQuestionController::class, 'store'])->name('products.questions.store');
+    Route::post('/questions/{question}/answers', [ProductQuestionController::class, 'storeAnswer'])->name('questions.answers.store');
+    Route::post('/questions/{question}/like', [ProductQuestionController::class, 'like'])->name('questions.like');
 });
+
+// Promotional Banners & Sliders (Public)
+Route::get('/banners', [BannerController::class, 'index'])->name('banners.index');
+
+// Product Questions (Public List)
+Route::get('/products/{product}/questions', [ProductQuestionController::class, 'index'])->name('products.questions.index');
+
+// Product Price History (Public Chart)
+Route::get('/products/{product}/price-history', [ProductPriceHistoryController::class, 'show'])->name('products.price-history');
 
 // Signed Order Invoice (Admin / Shareable Print Link)
 Route::get('/orders/{orderNumber}/invoice/signed', [OrderInvoiceController::class, 'showSigned'])

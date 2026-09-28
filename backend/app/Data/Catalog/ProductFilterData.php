@@ -11,6 +11,7 @@ final class ProductFilterData extends Data
 {
     /**
      * @param  string|array<string>|null  $brand
+     * @param  array<string, mixed>|null  $attributes
      */
     public function __construct(
         public ?string $category = null,
@@ -21,6 +22,9 @@ final class ProductFilterData extends Data
         public int|string|null $maxPrice = null,
         #[MapInputName('in_stock')]
         public bool|string|null $inStock = null,
+        #[MapInputName('has_discount')]
+        public bool|string|null $hasDiscount = null,
+        public ?array $attributes = null,
         public ?string $search = null,
         public ?string $sort = null,
     ) {}

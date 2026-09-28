@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
-enum OrderStatus: string
+use App\Enums\Concerns\HasEnumHelpers;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
+
+enum OrderStatus: string implements HasColor, HasLabel
 {
+    use HasEnumHelpers;
+
     case PendingPayment = 'pending_payment';
     case Processing = 'processing';
     case Shipped = 'shipped';
@@ -13,27 +19,25 @@ enum OrderStatus: string
     case Cancelled = 'cancelled';
     case Refunded = 'refunded';
 
-    public function label(): string
+    public function getLabel(): string
     {
-        return match ($this) {
-            self::PendingPayment => __('Pending Payment'),
-            self::Processing => __('Processing'),
-            self::Shipped => __('Shipped'),
-            self::Delivered => __('Delivered'),
-            self::Cancelled => __('Cancelled'),
-            self::Refunded => __('Refunded'),
-        };
+        return __('enums.order_status.'.$this->value);
     }
 
-    public function color(): string
+    public function getColor(): string
     {
         return match ($this) {
             self::PendingPayment => 'warning',
             self::Processing => 'info',
             self::Shipped => 'primary',
             self::Delivered => 'success',
-            self::Cancelled => 'neutral',
-            self::Refunded => 'error',
+            self::Cancelled => 'gray',
+            self::Refunded => 'danger',
         };
+    }
+
+    public function color(): string
+    {
+        return $this->getColor();
     }
 }

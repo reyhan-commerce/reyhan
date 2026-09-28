@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
+use App\Enums\Concerns\HasEnumHelpers;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
 enum AttributeType: string implements HasColor, HasIcon, HasLabel
 {
+    use HasEnumHelpers;
+
     case Text = 'text';
     case Color = 'color';
     case Number = 'number';
@@ -17,12 +20,7 @@ enum AttributeType: string implements HasColor, HasIcon, HasLabel
 
     public function getLabel(): string
     {
-        return match ($this) {
-            self::Text => __('Plain Text (Text)'),
-            self::Color => __('Color (Hex Swatch)'),
-            self::Number => __('Number & Scale'),
-            self::Select => __('Dropdown / Select List'),
-        };
+        return __('enums.attribute_type.'.$this->value);
     }
 
     public function getColor(): string
@@ -33,6 +31,11 @@ enum AttributeType: string implements HasColor, HasIcon, HasLabel
             self::Number => 'info',
             self::Select => 'primary',
         };
+    }
+
+    public function color(): string
+    {
+        return $this->getColor();
     }
 
     public function getIcon(): string

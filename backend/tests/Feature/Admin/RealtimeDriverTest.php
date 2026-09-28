@@ -38,7 +38,7 @@ test('order model dispatches realtime event upon creation', function (): void {
 
     $user = User::factory()->create();
 
-    $order = Order::create([
+    $order = Order::factory()->create([
         'order_number' => Order::generateOrderNumber(),
         'user_id' => $user->id,
         'status' => OrderStatus::PendingPayment,
@@ -61,7 +61,7 @@ test('order model dispatches realtime event upon creation', function (): void {
 test('order model dispatches realtime event upon status update', function (): void {
     $user = User::factory()->create();
 
-    $order = Order::create([
+    $order = Order::factory()->create([
         'order_number' => Order::generateOrderNumber(),
         'user_id' => $user->id,
         'status' => OrderStatus::PendingPayment,

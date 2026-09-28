@@ -11,6 +11,7 @@ use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Resources\Products\RelationManagers\VariantsRelationManager;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Specification;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -18,6 +19,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -109,6 +111,28 @@ class ProductResource extends Resource
                                             ->image()
                                             ->maxFiles(8)
                                             ->helperText('می‌توانید تا ۸ تصویر اضافه کنید. اولین تصویر به عنوان کاور اصلی استفاده خواهد شد.'),
+                                    ]),
+
+                                Section::make('مشخصات فنی کالا')
+                                    ->description('تکمیل مشخصات فنی ساختاریافته کالا جهت نمایش در تب مشخصات و مقایسه تخصصی')
+                                    ->collapsible()
+                                    ->schema([
+                                        Repeater::make('specifications')
+                                            ->relationship('specifications')
+                                            ->label('مشخصات فنی')
+                                            ->columns(3)
+                                            ->schema([
+                                                Select::make('specification_id')
+                                                    ->label('عنوان مشخصه')
+                                                    ->options(fn () => Specification::query()->with('group')->get()->mapWithKeys(fn ($s) => [$s->id => ($s->group ? "{$s->group->name} / " : '').$s->name.($s->unit ? " ({$s->unit})" : '')]))
+                                                    ->searchable()
+                                                    ->required(),
+                                                TextInput::make('value')
+                                                    ->label('مقدار مشخصه')
+                                                    ->required()
+                                                    ->columnSpan(2),
+                                            ])
+                                            ->defaultItems(0),
                                     ]),
 
                                 static::seoSection()

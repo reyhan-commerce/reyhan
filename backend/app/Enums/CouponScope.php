@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
+use App\Enums\Concerns\HasEnumHelpers;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum CouponScope: string implements HasColor, HasLabel
 {
+    use HasEnumHelpers;
+
     case All = 'all';
     case Categories = 'categories';
     case Brands = 'brands';
@@ -16,12 +19,7 @@ enum CouponScope: string implements HasColor, HasLabel
 
     public function getLabel(): string
     {
-        return match ($this) {
-            self::All => __('Entire Store & Cart'),
-            self::Categories => __('Specific Categories'),
-            self::Brands => __('Specific Brands'),
-            self::Variants => __('Selected Products'),
-        };
+        return __('enums.coupon_scope.'.$this->value);
     }
 
     public function getColor(): string
@@ -32,5 +30,10 @@ enum CouponScope: string implements HasColor, HasLabel
             self::Brands => 'info',
             self::Variants => 'warning',
         };
+    }
+
+    public function color(): string
+    {
+        return $this->getColor();
     }
 }

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\OrderShippingLabelController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,3 +19,7 @@ Route::get('/', function (Request $request): JsonResponse|RedirectResponse {
 
     return redirect('/admin');
 });
+
+Route::get('/orders/{order}/shipping-label', [OrderShippingLabelController::class, 'show'])
+    ->name('orders.shipping-label')
+    ->middleware('signed');

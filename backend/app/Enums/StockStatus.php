@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
+use App\Enums\Concerns\HasEnumHelpers;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
 enum StockStatus: string implements HasColor, HasIcon, HasLabel
 {
+    use HasEnumHelpers;
+
     case InStock = 'in_stock';
     case LowStock = 'low_stock';
     case OutOfStock = 'out_of_stock';
 
     public function getLabel(): string
     {
-        return match ($this) {
-            self::InStock => __('In Stock'),
-            self::LowStock => __('Low Stock'),
-            self::OutOfStock => __('Out of Stock'),
-        };
+        return __('enums.stock_status.'.$this->value);
     }
 
     public function getColor(): string
@@ -30,6 +29,11 @@ enum StockStatus: string implements HasColor, HasIcon, HasLabel
             self::LowStock => 'warning',
             self::OutOfStock => 'danger',
         };
+    }
+
+    public function color(): string
+    {
+        return $this->getColor();
     }
 
     public function getIcon(): string

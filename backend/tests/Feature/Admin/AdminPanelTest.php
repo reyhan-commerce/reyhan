@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Enums\PaymentGateway;
 use App\Models\Admin;
+use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Spatie\Permission\Models\Role;
 
 uses(DatabaseTransactions::class);
 
@@ -53,6 +56,26 @@ test('admin can access sms settings page', function () {
     $admin = Admin::factory()->create();
 
     $response = $this->actingAs($admin, 'admin')->get('/admin/manage-sms-settings');
+
+    $response->assertOk();
+});
+
+test('admin can access payments list with diverse gateway records', function () {
+    $role = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'admin']);
+    $admin = Admin::factory()->create();
+    $admin->assignRole($role);
+
+    Payment::factory()->create([
+        'gateway' => PaymentGateway::SnappPay,
+    ]);
+    Payment::factory()->create([
+        'gateway' => PaymentGateway::Wallet,
+    ]);
+    Payment::factory()->create([
+        'gateway' => PaymentGateway::CardToCard,
+    ]);
+
+    $response = $this->actingAs($admin, 'admin')->get('/admin/payments');
 
     $response->assertOk();
 });
