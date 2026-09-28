@@ -10,6 +10,7 @@
         "alareqi/filament-tree": "^1.0",
         "bezhansalleh/filament-shield": "^4.3",
         "bokshorn-it/filament-activity-timeline": "^1.4",
+        "dedoc/scramble": "^0.13.45",
         "filament/filament": "^5.8",
         "filament/spatie-laravel-media-library-plugin": "^5.8",
         "filament/spatie-laravel-settings-plugin": "^5.8",

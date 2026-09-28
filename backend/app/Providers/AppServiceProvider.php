@@ -68,6 +68,15 @@ class AppServiceProvider extends ServiceProvider
             });
         }
 
+        // Scramble API documentation access gate
+        Gate::define('viewApiDocs', function (?Admin $admin): bool {
+            if (app()->environment('local', 'testing', 'staging')) {
+                return true;
+            }
+
+            return $admin !== null;
+        });
+
         // Register system health checks
         Health::checks([
             DatabaseCheck::new(),

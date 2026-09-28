@@ -28,6 +28,7 @@ This document defines the comprehensive architecture, design patterns, database 
 | **Iranian Validation Rules** | [`iamfarhad/validation`](https://github.com/iamfarhad/validation) | Validation rules for Iranian mobile, national code, postal code, IBAN, and cards |
 | **Online Payment Gateway** | [`shetabit/payment`](https://github.com/shetabit/payment) | Unified driver-based payment processing for Iranian banks & Shaparak |
 | **Jalali Date Engine** | `morilog/jalali` | Shamsi calendar conversion and formatting across Filament and API outputs |
+| **API Documentation** | [`dedoc/scramble`](https://scramble.dedoc.co/) | Zero-annotation OpenAPI 3.1 generator with **Scalar API Reference** UI (`/docs/api`) |
 | **Testing Framework** | Pest PHP (Latest) | Functional, Unit, and Feature testing suite (Strictly Non-UI) |
 | **Code Formatter** | Laravel Pint | Automated PSR-12 and Laravel code style enforcement |
 | **Static Analyzer** | Larastan (PHPStan) | Level 8 strict static analysis |
@@ -662,5 +663,37 @@ Queueable classes prefer official `Illuminate\Queue\Attributes\` attributes:
 - `#[Queue('notifications')]` to specify destination queue name.
 - `#[Connection('redis')]` to specify queue connection.
 - `#[Tries(3)]`, `#[Timeout(60)]`, `#[Backoff([10, 30, 60])]` for retry dynamics.
+
+---
+
+## 18. API Documentation & OpenAPI Specification (Scramble + Scalar)
+
+The API documentation is powered by **Scramble** (`dedoc/scramble`) using **Scalar API Reference** as the visual interactive renderer.
+
+### 18.1. Architecture & Zero-Annotation Philosophy
+- **No Manual DocBlocks/Annotations**: Scramble uses PHP AST static analysis to infer:
+  - Route definitions & parameter types (`api/v1/*`).
+  - Validation rules from typed `FormRequest` classes (`rules()` method).
+  - Response structures from Eloquent `JsonResource` and DTO schemas.
+  - Backed Enums with values and labels.
+  - Sanctum `Bearer` token security scheme automatically attached to routes protected by `auth:sanctum`.
+
+### 18.2. Interactive Documentation URL & Access Control
+- **Interactive UI**: `http://localhost:8000/docs/api` (Rendered via **Scalar** with light/dark support, responsive layout, and built-in interactive request tester).
+- **OpenAPI 3.1 JSON**: `http://localhost:8000/docs/api.json`.
+- **Gate Authorization**: Defined via `viewApiDocs` in `AppServiceProvider`:
+  - `local`, `testing`, `staging`: Unrestricted access.
+  - `production`: Restricted to authenticated `Admin` users.
+
+### 18.3. Exporting Specs & Frontend Type Synchronization (Nuxt 4)
+To export the complete OpenAPI specification for CI/CD, Postman, or Nuxt 4 TypeScript generation:
+```bash
+# Export OpenAPI 3.1 JSON from backend
+php artisan scramble:export
+
+# Generate TypeScript types & API clients for Nuxt 4 (inside frontend/)
+npx openapi-typescript ../backend/api.json -o ./types/api-schema.d.ts
+```
+
 
 
