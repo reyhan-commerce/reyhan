@@ -43,6 +43,7 @@ use Spatie\Sluggable\SlugOptions;
  * @property-read Collection<int, Review> $reviews
  * @property-read Collection<int, Review> $approvedReviews
  * @property-read Collection<int, Wishlist> $wishlists
+ * @property-read Collection<int, OrderItem> $orderItems
  * @property-read array{min: int|null, max: int|null} $price_range
  */
 class Product extends Model implements HasMedia, ProvidesActivityTitle
@@ -121,6 +122,14 @@ class Product extends Model implements HasMedia, ProvidesActivityTitle
     public function activeVariants(): HasMany
     {
         return $this->hasMany(ProductVariant::class)->where('is_active', true);
+    }
+
+    /**
+     * @return HasMany<OrderItem, $this>
+     */
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
     }
 
     /**

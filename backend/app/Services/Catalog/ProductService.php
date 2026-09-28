@@ -128,6 +128,9 @@ final class ProductService
                     'desc'
                 ),
                 'featured' => $query->orderByDesc('is_featured')->latest(),
+                'bestselling', 'popular' => $query->withSum('orderItems', 'quantity')
+                    ->orderByDesc('order_items_sum_quantity')
+                    ->latest(),
                 default => $query->latest(),
             };
         }

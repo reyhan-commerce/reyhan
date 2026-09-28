@@ -15,5 +15,7 @@ export enum ProductSortOption {
   Latest = 'latest',
   Cheapest = 'cheapest',
   Expensive = 'expensive',
-  Featured = 'featured'
+  Featured = 'featured',
+  Bestselling = 'bestselling',
+  Popular = 'popular'
 }

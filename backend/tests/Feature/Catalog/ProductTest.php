@@ -243,3 +243,20 @@ it('excludes inactive products from public listing', function (): void {
     expect(collect($data)->pluck('slug'))->toContain('active-product')
         ->and(collect($data)->pluck('slug'))->not->toContain('inactive-product');
 });
+
+it('supports sorting products by popular and bestselling without 422 error', function (string $sortOption): void {
+    $cat = Category::factory()->create(['name' => 'دسته تست سورت', 'slug' => 'sort-test-cat-'.$sortOption]);
+
+    $p1 = Product::factory()->create([
+        'category_id' => $cat->id,
+        'name' => 'کالای پرفروش ۱',
+        'slug' => 'bestseller-1-'.$sortOption,
+        'published_at' => now()->subMinute(),
+    ]);
+    ProductVariant::factory()->create(['product_id' => $p1->id, 'price' => 1000, 'stock' => 5]);
+
+    $response = $this->getJson(route('products.index', ['sort' => $sortOption]));
+
+    $response->assertOk()
+        ->assertJson(['success' => true]);
+})->with(['popular', 'bestselling']);

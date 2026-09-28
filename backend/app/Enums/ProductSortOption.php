@@ -12,6 +12,8 @@ enum ProductSortOption: string implements HasLabel
     case Cheapest = 'cheapest';
     case Expensive = 'expensive';
     case Featured = 'featured';
+    case Bestselling = 'bestselling';
+    case Popular = 'popular';
 
     public function getLabel(): string
     {
@@ -20,6 +22,7 @@ enum ProductSortOption: string implements HasLabel
             self::Cheapest => __('Cheapest'),
             self::Expensive => __('Most Expensive'),
             self::Featured => __('Featured Products'),
+            self::Bestselling, self::Popular => __('Best Selling'),
         };
     }
 
