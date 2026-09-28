@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Requests\Api\V1\Checkout;
 
 use App\Enums\PaymentGateway;
-use App\Enums\ShippingMethod;
 use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
@@ -24,6 +23,13 @@ final class CreateOrderRequest extends FormRequest
                 'notes' => PersianNormalizer::normalizeSearchQuery((string) $this->input('notes')),
             ]);
         }
+
+        // Fallback default shipping_method if neither is provided
+        if (! $this->has('shipping_method') && ! $this->has('shipping_method_id')) {
+            $this->merge([
+                'shipping_method' => 'pishtaz',
+            ]);
+        }
     }
 
     /**
@@ -33,10 +39,23 @@ final class CreateOrderRequest extends FormRequest
     {
         return [
             'address_id' => ['required', 'integer', 'exists:addresses,id'],
-            'shipping_method' => ['required', 'string', new Enum(ShippingMethod::class)],
+            'shipping_method_id' => ['nullable', 'integer', 'exists:shipping_methods,id'],
+            'shipping_method' => ['nullable', 'string', 'max:50'],
+            'delivery_date' => ['nullable', 'date_format:Y-m-d'],
+            'delivery_time_slot' => ['nullable', 'string', 'max:100'],
             'gateway' => ['required', 'string', new Enum(PaymentGateway::class)],
             'callback_url' => ['required', 'url'],
             'notes' => ['nullable', 'string', 'max:500'],
+            'use_wallet' => ['nullable', 'boolean'],
+            'is_corporate_invoice' => ['nullable', 'boolean'],
+            'corporate_data' => ['nullable', 'array'],
+            'corporate_data.company_name' => ['required_if:is_corporate_invoice,true', 'nullable', 'string', 'max:150'],
+            'corporate_data.economic_code' => ['nullable', 'string', 'max:50'],
+            'corporate_data.national_id' => ['required_if:is_corporate_invoice,true', 'nullable', 'string', 'max:50'],
+            'corporate_data.registration_number' => ['nullable', 'string', 'max:50'],
+            'corporate_data.phone' => ['nullable', 'string', 'max:50'],
+            'card_tracking_number' => ['nullable', 'string', 'max:64'],
+            'card_source_number' => ['nullable', 'string', 'max:32'],
         ];
     }
 }

@@ -8,13 +8,16 @@ use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -29,14 +32,31 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property string|null $avatar
  * @property bool $is_active
  * @property Carbon|null $mobile_verified_at
+ * @property int $wallet_balance
+ * @property string|null $referral_code
+ * @property int|null $referred_by
  * @property-read int $loyalty_points_balance
  * @property-read array{key: string, label: string, color: string, icon: string, min_points: int, next_points: ?int, discount_percent: int} $loyalty_tier
  * @property-read string $full_name
+ * @property-read Collection<int, WalletTransaction> $walletTransactions
+ * @property-read User|null $referrer
+ * @property-read Collection<int, User> $referredUsers
+ * @property-read Collection<int, Referral> $referralsSent
+ * @property-read Referral|null $referralReceived
  */
 class User extends Authenticatable implements ProvidesActivityTitle
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, LogsActivity, Notifiable, SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::creating(function (User $user): void {
+            if (empty($user->referral_code)) {
+                $user->referral_code = strtoupper(Str::random(8));
+            }
+        });
+    }
 
     protected $guarded = ['id'];
 
@@ -81,6 +101,7 @@ class User extends Authenticatable implements ProvidesActivityTitle
         return [
             'is_active' => 'boolean',
             'mobile_verified_at' => 'datetime',
+            'wallet_balance' => 'integer',
         ];
     }
 
@@ -130,6 +151,54 @@ class User extends Authenticatable implements ProvidesActivityTitle
     public function wishlists(): HasMany
     {
         return $this->hasMany(Wishlist::class);
+    }
+
+    /**
+     * @return HasMany<WalletTransaction, $this>
+     */
+    public function walletTransactions(): HasMany
+    {
+        return $this->hasMany(WalletTransaction::class)->latest();
+    }
+
+    /**
+     * @return HasMany<CardTransferReceipt, $this>
+     */
+    public function cardTransferReceipts(): HasMany
+    {
+        return $this->hasMany(CardTransferReceipt::class)->latest();
+    }
+
+    /**
+     * @return HasMany<OrderReturn, $this>
+     */
+    public function orderReturns(): HasMany
+    {
+        return $this->hasMany(OrderReturn::class)->latest();
+    }
+
+    /**
+     * @return HasMany<SupportTicket, $this>
+     */
+    public function supportTickets(): HasMany
+    {
+        return $this->hasMany(SupportTicket::class)->latest();
+    }
+
+    /**
+     * @return HasMany<ProductQuestion, $this>
+     */
+    public function productQuestions(): HasMany
+    {
+        return $this->hasMany(ProductQuestion::class)->latest();
+    }
+
+    /**
+     * @return HasMany<ProductAnswer, $this>
+     */
+    public function productAnswers(): HasMany
+    {
+        return $this->hasMany(ProductAnswer::class)->latest();
     }
 
     /**
@@ -234,6 +303,46 @@ class User extends Authenticatable implements ProvidesActivityTitle
             'description' => $description,
             'reference_id' => $referenceId,
         ]);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function referrer(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'referred_by');
+    }
+
+    /**
+     * @return HasMany<User, $this>
+     */
+    public function referredUsers(): HasMany
+    {
+        return $this->hasMany(self::class, 'referred_by');
+    }
+
+    /**
+     * @return HasMany<Referral, $this>
+     */
+    public function referralsSent(): HasMany
+    {
+        return $this->hasMany(Referral::class, 'referrer_id');
+    }
+
+    /**
+     * @return HasOne<Referral, $this>
+     */
+    public function referralReceived(): HasOne
+    {
+        return $this->hasOne(Referral::class, 'referred_id');
+    }
+
+    /**
+     * @return HasMany<AbandonedCartLog, $this>
+     */
+    public function abandonedCartLogs(): HasMany
+    {
+        return $this->hasMany(AbandonedCartLog::class);
     }
 
     /**

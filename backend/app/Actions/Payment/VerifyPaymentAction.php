@@ -11,6 +11,7 @@ use App\Models\Payment;
 use App\Models\ProductVariant;
 use App\Services\Cart\CartService;
 use App\Services\Inventory\StockReservationService;
+use App\Services\Marketing\ReferralService;
 use App\Services\Payment\PaymentManager;
 use App\Services\Sms\SmsManager;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,7 @@ final class VerifyPaymentAction
         protected StockReservationService $stockReservationService,
         protected CartService $cartService,
         protected SmsManager $smsManager,
+        protected ReferralService $referralService,
     ) {}
 
     /**
@@ -106,6 +108,9 @@ final class VerifyPaymentAction
                 'status' => OrderStatus::Processing,
                 'paid_at' => now(),
             ]);
+
+            // Settle Referral Reward if customer was referred
+            $this->referralService->rewardReferralUponOrderCompletion($order);
 
             // Clear User Cart
             if ($order->user) {

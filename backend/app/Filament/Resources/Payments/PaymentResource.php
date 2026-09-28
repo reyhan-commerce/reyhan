@@ -97,19 +97,16 @@ class PaymentResource extends Resource
 
                 TextColumn::make('gateway')
                     ->label('درگاه پرداخت')
-                    ->formatStateUsing(fn (?PaymentGateway $state): string => match ($state) {
-                        PaymentGateway::Zarinpal => 'زرین‌پال',
-                        PaymentGateway::Saman => 'بانک سامان',
-                        PaymentGateway::Mellat => 'بانک ملت',
-                        PaymentGateway::Sandbox => 'سندباکس (تست)',
-                        default => 'درگاه بانکی',
-                    })
+                    ->formatStateUsing(fn (?PaymentGateway $state): string => $state?->label() ?? 'درگاه بانکی')
                     ->badge()
                     ->color(fn (?PaymentGateway $state): string => match ($state) {
                         PaymentGateway::Zarinpal => 'warning',
                         PaymentGateway::Saman => 'info',
                         PaymentGateway::Mellat => 'danger',
                         PaymentGateway::Sandbox => 'gray',
+                        PaymentGateway::SnappPay => 'secondary',
+                        PaymentGateway::CardToCard => 'primary',
+                        PaymentGateway::Wallet => 'success',
                         default => 'primary',
                     }),
 
@@ -155,12 +152,11 @@ class PaymentResource extends Resource
 
                 SelectFilter::make('gateway')
                     ->label('فیلتر درگاه پرداخت')
-                    ->options(collect(PaymentGateway::cases())->mapWithKeys(fn (PaymentGateway $gateway): array => [$gateway->value => match ($gateway) {
-                        PaymentGateway::Zarinpal => 'زرین‌پال',
-                        PaymentGateway::Saman => 'بانک سامان',
-                        PaymentGateway::Mellat => 'بانک ملت',
-                        PaymentGateway::Sandbox => 'سندباکس (تست)',
-                    }])->all()),
+                    ->options(
+                        collect(PaymentGateway::cases())
+                            ->mapWithKeys(fn (PaymentGateway $gateway): array => [$gateway->value => $gateway->label()])
+                            ->all()
+                    ),
             ])
             ->recordActions([
                 EditAction::make(),

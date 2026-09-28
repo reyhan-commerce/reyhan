@@ -173,6 +173,18 @@ const getBadgeColor = (color?: string): BadgeColor => {
           </div>
 
           <div class="flex items-center gap-3">
+            <!-- Scheduled Delivery Time Slot Badge -->
+            <div
+              v-if="order.delivery_time_slot"
+              class="hidden sm:flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-xl font-bold"
+            >
+              <UIcon
+                name="i-lucide-calendar-clock"
+                class="size-3.5"
+              />
+              <span>{{ order.delivery_time_slot }}</span>
+            </div>
+
             <!-- Status Badge -->
             <UBadge
               :color="getBadgeColor(order.status_color)"
@@ -182,6 +194,116 @@ const getBadgeColor = (color?: string): BadgeColor => {
             >
               {{ order.status_label }}
             </UBadge>
+          </div>
+        </div>
+
+        <!-- 5-Step Order Status Timeline (For non-cancelled orders) -->
+        <div
+          v-if="order.status !== 'cancelled' && order.status !== 'refunded'"
+          class="py-3 border-b border-neutral-100 dark:border-neutral-800"
+        >
+          <div class="grid grid-cols-5 gap-1 items-center text-center">
+            <!-- Step 1: Created -->
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="size-6 sm:size-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+                :class="['pending', 'processing', 'shipped', 'delivered'].includes(order.status) ? 'bg-primary text-white ring-2 ring-primary/20' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
+              >
+                <UIcon name="i-lucide-file-text" class="size-3.5" />
+              </div>
+              <span class="text-[10px] sm:text-xs font-bold text-neutral-700 dark:text-neutral-300">ثبت سفارش</span>
+            </div>
+
+            <!-- Step 2: Paid -->
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="size-6 sm:size-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+                :class="['processing', 'shipped', 'delivered'].includes(order.status) || order.paid_at ? 'bg-primary text-white ring-2 ring-primary/20' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
+              >
+                <UIcon name="i-lucide-credit-card" class="size-3.5" />
+              </div>
+              <span class="text-[10px] sm:text-xs font-bold text-neutral-700 dark:text-neutral-300">پرداخت موفق</span>
+            </div>
+
+            <!-- Step 3: Packaging -->
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="size-6 sm:size-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+                :class="['processing', 'shipped', 'delivered'].includes(order.status) ? 'bg-primary text-white ring-2 ring-primary/20' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
+              >
+                <UIcon name="i-lucide-package" class="size-3.5" />
+              </div>
+              <span class="text-[10px] sm:text-xs font-bold text-neutral-700 dark:text-neutral-300">بسته‌بندی</span>
+            </div>
+
+            <!-- Step 4: Shipped -->
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="size-6 sm:size-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+                :class="['shipped', 'delivered'].includes(order.status) ? 'bg-primary text-white ring-2 ring-primary/20' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
+              >
+                <UIcon name="i-lucide-truck" class="size-3.5" />
+              </div>
+              <span class="text-[10px] sm:text-xs font-bold text-neutral-700 dark:text-neutral-300">تحویل به پست/پیک</span>
+            </div>
+
+            <!-- Step 5: Delivered -->
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="size-6 sm:size-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+                :class="order.status === 'delivered' ? 'bg-emerald-600 text-white ring-2 ring-emerald-500/20' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
+              >
+                <UIcon name="i-lucide-check-circle" class="size-3.5" />
+              </div>
+              <span class="text-[10px] sm:text-xs font-bold text-neutral-700 dark:text-neutral-300">تحویل نهایی</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Postal Tracking Banner (When tracking code exists) -->
+        <div
+          v-if="order.tracking_code"
+          class="my-3 p-3.5 rounded-2xl bg-primary/5 dark:bg-primary/10 border border-primary/20 flex flex-wrap items-center justify-between gap-3"
+        >
+          <div class="flex items-center gap-3">
+            <div class="size-9 rounded-xl bg-primary/20 text-primary flex items-center justify-center shrink-0">
+              <UIcon
+                name="i-lucide-truck"
+                class="size-5"
+              />
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium">کد رهگیری مرسوله پستی / تیپاکس:</span>
+              <span class="font-mono font-black text-sm text-neutral-900 dark:text-white tracking-wider">
+                {{ order.tracking_code }}
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <UButton
+              size="xs"
+              color="neutral"
+              variant="subtle"
+              icon="i-lucide-copy"
+              class="rounded-xl font-bold cursor-pointer"
+              @click="copyToClipboard(order.tracking_code!, 'trk_' + order.order_number)"
+            >
+              {{ isCopied['trk_' + order.order_number] ? 'کپی شد' : 'کپی کد' }}
+            </UButton>
+
+            <a
+              :href="order.tracking_url || `https://tracking.post.ir/?id=${order.tracking_code}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-all shadow-xs cursor-pointer"
+            >
+              <UIcon
+                name="i-lucide-external-link"
+                class="size-3.5"
+              />
+              <span>پیگیری آنلاین مرسوله</span>
+            </a>
           </div>
         </div>
 
@@ -230,6 +352,18 @@ const getBadgeColor = (color?: string): BadgeColor => {
           </div>
 
           <div class="flex items-center gap-2 shrink-0">
+            <NuxtLink
+              v-if="order.status === 'delivered' || order.status === 'shipped'"
+              :to="`/profile/returns/create-${order.order_number}`"
+              class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-400 hover:text-amber-800 transition-colors py-1.5 px-3 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20"
+            >
+              <UIcon
+                name="i-lucide-undo-2"
+                class="size-3.5"
+              />
+              <span>مرجوعی کالا</span>
+            </NuxtLink>
+
             <NuxtLink
               :to="`/invoice/${order.order_number}`"
               target="_blank"

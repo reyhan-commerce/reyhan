@@ -11,6 +11,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\City;
 use App\Models\Coupon;
+use App\Models\ShippingMethod;
 use App\Services\Shipping\ShippingService;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -23,8 +24,11 @@ final class PricingService
     /**
      * Compute full pricing breakdown for a given Cart.
      */
-    public function calculateCart(Cart $cart, ?City $destinationCity = null): CartPricingData
-    {
+    public function calculateCart(
+        Cart $cart,
+        ?City $destinationCity = null,
+        ShippingMethod|\App\Enums\ShippingMethod|int|string|null $shippingMethod = null
+    ): CartPricingData {
         $items = $cart->items()->with(['variant.product.category', 'variant.product.brand'])->get();
 
         $originalItemsSubtotal = 0;
@@ -79,7 +83,8 @@ final class PricingService
             subtotalRial: $itemsSubtotal,
             totalWeightGrams: $totalWeight,
             destinationCity: $destinationCity,
-            couponGrantsFreeShipping: $couponGrantsFreeShipping
+            couponGrantsFreeShipping: $couponGrantsFreeShipping,
+            shippingMethod: $shippingMethod
         );
 
         $subtotalAfterCoupon = max(0, $itemsSubtotal - $couponDiscount);
@@ -101,6 +106,8 @@ final class PricingService
             totalItemsCount: $totalItemsCount,
             totalWeightGrams: $totalWeight,
             appliedCoupon: $appliedCouponData,
+            shippingMethodId: $shipping['shipping_method_id'],
+            shippingMethodTitle: $shipping['method_title'],
         );
     }
 

@@ -6,8 +6,12 @@ namespace App\Services\Payment;
 
 use App\Enums\PaymentGateway;
 use App\Services\Payment\Contracts\PaymentDriverInterface;
+use App\Services\Payment\Drivers\CardToCardDriver;
 use App\Services\Payment\Drivers\SandboxDriver;
+use App\Services\Payment\Drivers\SnappPayDriver;
+use App\Services\Payment\Drivers\WalletDriver;
 use App\Services\Payment\Drivers\ZarinpalDriver;
+use App\Services\Wallet\WalletService;
 use Illuminate\Support\Manager;
 
 class PaymentManager extends Manager
@@ -59,6 +63,36 @@ class PaymentManager extends Manager
     {
         // Fallback to sandbox if not configured
         return new SandboxDriver;
+    }
+
+    /**
+     * Create SnappPay BNPL driver instance.
+     */
+    protected function createSnappPayDriver(): PaymentDriverInterface
+    {
+        /** @var array<string, mixed> $config */
+        $config = (array) $this->config->get('payment.gateways.snapp_pay', []);
+
+        return new SnappPayDriver($config);
+    }
+
+    /**
+     * Create Card-to-Card offline driver instance.
+     */
+    protected function createCardToCardDriver(): PaymentDriverInterface
+    {
+        /** @var array<string, mixed> $config */
+        $config = (array) $this->config->get('payment.gateways.card_to_card', []);
+
+        return new CardToCardDriver($config);
+    }
+
+    /**
+     * Create Customer Wallet driver instance.
+     */
+    protected function createWalletDriver(): PaymentDriverInterface
+    {
+        return new WalletDriver(app(WalletService::class));
     }
 
     /**

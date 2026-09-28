@@ -44,17 +44,19 @@ onMounted(async () => {
 
   await Promise.all([
     checkoutStore.fetchAddresses(),
+    checkoutStore.fetchShippingMethods(),
     checkoutStore.fetchGateways(),
     checkoutStore.fetchPreview()
   ])
 })
 
-// When address or shipping method changes, update preview
-watch(() => checkoutStore.selectedAddressId, () => {
-  checkoutStore.fetchPreview()
+// When address changes, update shipping methods and preview
+watch(() => checkoutStore.selectedAddressId, async () => {
+  await checkoutStore.fetchShippingMethods()
+  await checkoutStore.fetchPreview()
 })
 
-watch(() => checkoutStore.selectedShippingMethod, () => {
+watch(() => checkoutStore.selectedShippingMethodId, () => {
   checkoutStore.fetchPreview()
 })
 

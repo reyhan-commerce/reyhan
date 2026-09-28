@@ -75,12 +75,22 @@ const { formatPrice } = usePersian()
         </span>
       </div>
 
+      <div
+        v-if="checkoutStore.useWallet && checkoutStore.walletBalance > 0"
+        class="flex justify-between items-center text-emerald-600 dark:text-emerald-400 font-bold"
+      >
+        <span>کسر از کیف پول:</span>
+        <span>
+          {{ formatPrice(Math.min(checkoutStore.walletBalance, checkoutStore.previewFinalPayable ?? cartStore.pricing?.final_payable ?? 0)) }}-
+        </span>
+      </div>
+
       <div class="pt-4 border-t border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
         <span class="font-black text-neutral-900 dark:text-white text-sm sm:text-base">
-          مبلغ نهایی پرداخت:
+          {{ checkoutStore.useWallet ? 'مانده قابل پرداخت:' : 'مبلغ نهایی پرداخت:' }}
         </span>
         <span class="font-black text-primary text-lg sm:text-xl">
-          {{ formatPrice(checkoutStore.previewFinalPayable ?? cartStore.pricing?.final_payable) }}
+          {{ formatPrice(checkoutStore.useWallet ? checkoutStore.effectivePayable : (checkoutStore.previewFinalPayable ?? cartStore.pricing?.final_payable)) }}
         </span>
       </div>
     </div>

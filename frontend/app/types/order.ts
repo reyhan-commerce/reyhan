@@ -74,6 +74,26 @@ export interface OrderShippingAddress {
   unit?: string | null
 }
 
+export interface ShippingTimeSlotDay {
+  date: string
+  jalali_date: string
+  day_name: string
+  slots: string[]
+}
+
+export interface AvailableShippingMethod {
+  id: number
+  name: string
+  slug: string
+  description?: string | null
+  icon?: string | null
+  shipping_fee: number
+  is_free: boolean
+  estimated_delivery_days?: string | null
+  requires_time_slot: boolean
+  time_slots: ShippingTimeSlotDay[]
+}
+
 export type OrderStatusColor = 'error' | 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'neutral'
 
 export interface Order {
@@ -83,7 +103,14 @@ export interface Order {
   status_label: string
   status_color?: OrderStatusColor | string
   shipping_method?: string | null
+  shipping_method_id?: number | null
   shipping_method_title?: string | null
+  shipping_method_icon?: string | null
+  tracking_code?: string | null
+  tracking_url?: string | null
+  delivery_date?: string | null
+  delivery_date_jalali?: string | null
+  delivery_time_slot?: string | null
   shipping_address?: OrderShippingAddress | null
   items_subtotal: number
   discount_amount: number
@@ -92,9 +119,26 @@ export interface Order {
   shipping_fee: number
   final_payable: number
   items_count: number
+  wallet_paid_amount?: number
+  is_corporate_invoice?: boolean
+  corporate_data?: {
+    company_name?: string
+    economic_code?: string
+    national_id?: string
+    registration_number?: string
+  } | null
+  card_receipt?: {
+    status?: string
+    tracking_number?: string
+    source_card_number?: string
+    amount?: number
+  } | null
   notes?: string | null
   paid_at?: string | null
+  shipped_at?: string | null
+  shipped_at_jalali?: string | null
   created_at: string
+  created_at_jalali?: string | null
   items?: OrderItem[]
   user?: {
     name: string | null

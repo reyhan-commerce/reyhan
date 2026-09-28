@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\OrderStatus;
-use App\Enums\ShippingMethod;
+use App\Enums\ShippingMethod as ShippingMethodEnum;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\OrderFactory;
@@ -27,21 +27,32 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property string $order_number
  * @property int|null $user_id
  * @property OrderStatus $status
- * @property ShippingMethod|null $shipping_method
+ * @property ShippingMethodEnum|string|null $shipping_method
+ * @property int|null $shipping_method_id
  * @property array<string, mixed>|null $shipping_address
  * @property int $items_subtotal
  * @property int $discount_amount
  * @property int $coupon_discount
  * @property string|null $coupon_code
  * @property int $shipping_fee
+ * @property int $wallet_paid_amount
  * @property int $final_payable
  * @property string|null $notes
+ * @property bool $is_corporate_invoice
+ * @property array<string, mixed>|null $corporate_data
+ * @property string|null $tracking_code
+ * @property string|null $tracking_url
+ * @property Carbon|null $delivery_date
+ * @property string|null $delivery_time_slot
  * @property Carbon|null $paid_at
  * @property Carbon|null $shipped_at
  * @property Carbon|null $cancelled_at
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property-read User|null $user
+ * @property-read ShippingMethod|null $shippingMethod
+ * @property-read CardTransferReceipt|null $cardTransferReceipt
+ * @property-read Collection<int, WalletTransaction> $walletTransactions
  * @property-read Collection<int, OrderItem> $items
  * @property-read Collection<int, Payment> $payments
  * @property-read Payment|null $successfulPayment
@@ -93,13 +104,18 @@ class Order extends Model implements ProvidesActivityTitle
     {
         return [
             'status' => OrderStatus::class,
-            'shipping_method' => ShippingMethod::class,
+            'shipping_method' => ShippingMethodEnum::class,
+            'shipping_method_id' => 'integer',
             'shipping_address' => 'array',
             'items_subtotal' => 'integer',
             'discount_amount' => 'integer',
             'coupon_discount' => 'integer',
             'shipping_fee' => 'integer',
+            'wallet_paid_amount' => 'integer',
             'final_payable' => 'integer',
+            'is_corporate_invoice' => 'boolean',
+            'corporate_data' => 'array',
+            'delivery_date' => 'date:Y-m-d',
             'paid_at' => 'datetime',
             'shipped_at' => 'datetime',
             'cancelled_at' => 'datetime',
@@ -115,11 +131,43 @@ class Order extends Model implements ProvidesActivityTitle
     }
 
     /**
+     * @return BelongsTo<ShippingMethod, $this>
+     */
+    public function shippingMethod(): BelongsTo
+    {
+        return $this->belongsTo(ShippingMethod::class, 'shipping_method_id');
+    }
+
+    /**
+     * @return HasOne<CardTransferReceipt, $this>
+     */
+    public function cardTransferReceipt(): HasOne
+    {
+        return $this->hasOne(CardTransferReceipt::class);
+    }
+
+    /**
+     * @return HasMany<WalletTransaction, $this>
+     */
+    public function walletTransactions(): HasMany
+    {
+        return $this->hasMany(WalletTransaction::class);
+    }
+
+    /**
      * @return HasMany<OrderItem, $this>
      */
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * @return HasMany<OrderReturn, $this>
+     */
+    public function returns(): HasMany
+    {
+        return $this->hasMany(OrderReturn::class)->latest();
     }
 
     /**

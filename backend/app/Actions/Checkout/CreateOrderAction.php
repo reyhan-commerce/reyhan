@@ -7,18 +7,22 @@ namespace App\Actions\Checkout;
 use App\Data\Checkout\CreateOrderData;
 use App\Data\Checkout\CreateOrderResultData;
 use App\Enums\OrderStatus;
+use App\Enums\PaymentGateway;
 use App\Enums\PaymentStatus;
 use App\Models\Address;
 use App\Models\AttributeValue;
+use App\Models\CardTransferReceipt;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\User;
 use App\Services\Cart\CartService;
 use App\Services\Inventory\StockReservationService;
+use App\Services\Marketing\ReferralService;
 use App\Services\Payment\PaymentManager;
 use App\Services\Pricing\PricingService;
 use App\Services\Shipping\ShippingService;
+use App\Services\Wallet\WalletService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -31,6 +35,7 @@ final class CreateOrderAction
         protected ShippingService $shippingService,
         protected StockReservationService $stockReservationService,
         protected PaymentManager $paymentManager,
+        protected WalletService $walletService,
     ) {}
 
     /**
@@ -53,13 +58,25 @@ final class CreateOrderAction
             ]);
         }
 
-        $shippingMethod = $data->shippingMethod;
+        $shippingMethodInput = $data->shippingMethodId ?? $data->shippingMethod ?? 'pishtaz';
         $gateway = $data->gateway;
 
         // Calculate Pricing using DTO
-        $pricing = $this->pricingService->calculateCart($cart, $address->city);
+        $pricing = $this->pricingService->calculateCart($cart, $address->city, $shippingMethodInput);
         $shippingFee = $pricing->shippingFee;
         $finalPayable = $pricing->finalPayable;
+        $shippingMethodId = $pricing->shippingMethodId;
+        $shippingMethodCode = is_string($data->shippingMethod)
+            ? $data->shippingMethod
+            : ($data->shippingMethod?->value ?? ($pricing->shippingMethodTitle ? 'express' : 'pishtaz'));
+
+        // Calculate Wallet Deduction
+        $walletDeduction = 0;
+        if ($data->useWallet) {
+            $userBalance = $this->walletService->getBalance($user);
+            $walletDeduction = min($finalPayable, $userBalance);
+        }
+        $remainingPayable = $finalPayable - $walletDeduction;
 
         // Reserve Stock in Redis (Tier 1 Concurrency Locking)
         $reservationId = 'order_res_'.Str::random(16);
@@ -97,17 +114,26 @@ final class CreateOrderAction
             $user,
             $address,
             $cart,
-            $shippingMethod,
+            $shippingMethodCode,
+            $shippingMethodId,
             $pricing,
             $shippingFee,
             $finalPayable,
+            $walletDeduction,
+            $remainingPayable,
             $data
         ): Order {
+            $initialStatus = ($remainingPayable === 0) ? OrderStatus::Processing : OrderStatus::PendingPayment;
+            $paidAt = ($remainingPayable === 0) ? now() : null;
+
             $order = Order::create([
                 'order_number' => Order::generateOrderNumber(),
                 'user_id' => $user->id,
-                'status' => OrderStatus::PendingPayment,
-                'shipping_method' => $shippingMethod,
+                'status' => $initialStatus,
+                'shipping_method' => $shippingMethodCode,
+                'shipping_method_id' => $shippingMethodId,
+                'delivery_date' => $data->deliveryDate,
+                'delivery_time_slot' => $data->deliveryTimeSlot,
                 'shipping_address' => [
                     'recipient_name' => $address->recipient_name,
                     'recipient_mobile' => $address->recipient_mobile,
@@ -126,8 +152,12 @@ final class CreateOrderAction
                 'coupon_discount' => $pricing->couponDiscount,
                 'coupon_code' => $pricing->appliedCoupon['code'] ?? null,
                 'shipping_fee' => $shippingFee,
+                'wallet_paid_amount' => $walletDeduction,
                 'final_payable' => $finalPayable,
                 'notes' => $data->notes,
+                'is_corporate_invoice' => $data->isCorporateInvoice,
+                'corporate_data' => $data->isCorporateInvoice ? $data->corporateData : null,
+                'paid_at' => $paidAt,
             ]);
 
             // Save immutable item snapshots
@@ -166,10 +196,61 @@ final class CreateOrderAction
                 ]);
             }
 
+            // Deduct from wallet if requested
+            if ($walletDeduction > 0) {
+                $this->walletService->withdraw(
+                    user: $user,
+                    amountRial: $walletDeduction,
+                    description: __('messages.wallet.order_deduction', ['order_number' => $order->order_number]),
+                    orderId: $order->id,
+                );
+            }
+
+            // Store Card-to-Card offline receipt if submitted
+            if ($data->gateway === PaymentGateway::CardToCard && ! empty($data->cardTrackingNumber)) {
+                CardTransferReceipt::create([
+                    'order_id' => $order->id,
+                    'user_id' => $user->id,
+                    'amount' => $remainingPayable > 0 ? $remainingPayable : $finalPayable,
+                    'tracking_number' => $data->cardTrackingNumber,
+                    'source_card_number' => $data->cardSourceNumber,
+                    'transferred_at' => now(),
+                    'status' => 'pending',
+                ]);
+            }
+
             return $order;
         });
 
-        // 2. Initiate payment via PaymentManager OUTSIDE the database transaction (Farshid Rule 5 / Red Flag 3)
+        // CASE A: 100% covered by Wallet
+        if ($remainingPayable === 0) {
+            $payment = Payment::create([
+                'order_id' => $order->id,
+                'user_id' => $user->id,
+                'gateway' => PaymentGateway::Wallet,
+                'status' => PaymentStatus::Success,
+                'amount' => $finalPayable,
+                'authority' => 'WALLET-'.Str::random(20),
+                'reference_id' => 'WLT-'.Str::random(12),
+                'tracking_code' => Payment::generateTrackingCode(),
+                'paid_at' => now(),
+            ]);
+
+            $this->cartService->clearCart($cart);
+
+            app(ReferralService::class)->rewardReferralUponOrderCompletion($order);
+
+            $separator = str_contains($data->callbackUrl, '?') ? '&' : '?';
+            $redirectUrl = "{$data->callbackUrl}{$separator}Authority={$payment->authority}&Status=OK&payment_method=wallet";
+
+            return new CreateOrderResultData(
+                order: $order,
+                payment: $payment,
+                redirectUrl: $redirectUrl,
+            );
+        }
+
+        // CASE B: Remaining amount paid via selected gateway OUTSIDE database transaction
         $driver = $this->paymentManager->driver($gateway->value);
         $payResult = $driver->request($order, $data->callbackUrl);
 
@@ -177,18 +258,27 @@ final class CreateOrderAction
             $this->rollbackReservations($reservedVariantIds, $reservationId);
             $order->update(['status' => OrderStatus::Cancelled]);
 
+            if ($walletDeduction > 0) {
+                $this->walletService->deposit(
+                    user: $user,
+                    amountRial: $walletDeduction,
+                    description: "استرداد وجه کیف پول بابت لغو سفارش {$order->order_number}",
+                    orderId: $order->id
+                );
+            }
+
             throw ValidationException::withMessages([
                 'payment' => [$payResult->errorMessage ?? __('Error communicating with the payment gateway.')],
             ]);
         }
 
-        // 3. Record pending Payment in DB
+        // Record pending Payment in DB
         $payment = Payment::create([
             'order_id' => $order->id,
             'user_id' => $user->id,
             'gateway' => $gateway,
             'status' => PaymentStatus::Pending,
-            'amount' => $finalPayable,
+            'amount' => $remainingPayable,
             'authority' => $payResult->authority,
         ]);
 

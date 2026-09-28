@@ -54,5 +54,11 @@ final class CartPricingData extends Data
 
         #[MapName('applied_coupon')]
         public ?array $appliedCoupon = null,
+
+        #[MapName('shipping_method_id')]
+        public ?int $shippingMethodId = null,
+
+        #[MapName('shipping_method_title')]
+        public ?string $shippingMethodTitle = null,
     ) {}
 }
