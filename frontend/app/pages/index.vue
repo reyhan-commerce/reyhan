@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import CategoryNav from '~/components/catalog/CategoryNav.vue'
-import HomeHeroBanner from '~/components/home/HomeHeroBanner.vue'
+import HomeHeroSlider from '~/components/home/HomeHeroSlider.vue'
 import HomeTrustBadges from '~/components/home/HomeTrustBadges.vue'
 import HomeFlashDeals from '~/components/home/HomeFlashDeals.vue'
 import HomeFeaturedProducts from '~/components/home/HomeFeaturedProducts.vue'
 import HomeBlogSection from '~/components/home/HomeBlogSection.vue'
 import HomeBrandsSection, { type BrandDisplayItem } from '~/components/home/HomeBrandsSection.vue'
-import HomeBannersGrid, { type BannerItem } from '~/components/home/HomeBannersGrid.vue'
+import HomeBannersGrid from '~/components/home/HomeBannersGrid.vue'
+import type { BannerItem } from '~/types/content'
 import type { BlogPost } from '~/types/blog'
 import type { ApiResponse } from '~/types/api'
 import { useCatalogService } from '~/services/catalogService'
@@ -38,6 +39,8 @@ const { data: bannersResponse } = await useAsyncData('home-banners', () =>
   api<ApiResponse<BannerItem[]>>('/banners').catch(() => null)
 )
 const banners = computed(() => bannersResponse.value?.data ?? [])
+const gridBanners = computed(() => banners.value.filter(b => b.position === 'home_grid'))
+const middleBanners = computed(() => banners.value.filter(b => b.position === 'home_middle'))
 
 // Flash deals (products with discounts)
 const flashDeals = computed(() => {
@@ -68,8 +71,9 @@ const brands = computed<BrandDisplayItem[]>(() => {
 
 <template>
   <div class="flex flex-col gap-10 sm:gap-14 lg:gap-18 pt-4 pb-16">
-    <!-- Hero Banner with Liquid Glass & Luxury Accents -->
-    <HomeHeroBanner
+    <!-- Hero Slider with Liquid Glass & Luxury Accents -->
+    <HomeHeroSlider
+      :banners="banners"
       :store-name="settingsStore.settings.store_name"
       :store-slogan="settingsStore.settings.store_slogan"
       :badge-text="settingsStore.settings.hero_badge_text"
@@ -112,10 +116,11 @@ const brands = computed<BrandDisplayItem[]>(() => {
       :section-subtitle="settingsStore.settings.flash_deals_subtitle"
     />
 
-    <!-- Middle / Grid Banners Strip -->
+    <!-- Grid Promotional Banners Strip -->
     <HomeBannersGrid
-      v-if="banners.length > 0"
+      v-if="gridBanners.length > 0"
       :banners="banners"
+      position="home_grid"
     />
 
     <!-- Best Sellers / Featured Products -->
@@ -124,6 +129,13 @@ const brands = computed<BrandDisplayItem[]>(() => {
       :loading="isHomeLoading"
       :section-title="settingsStore.settings.featured_products_title"
       :button-text="settingsStore.settings.featured_products_button_text"
+    />
+
+    <!-- Middle Wide Promotional Banner Strip -->
+    <HomeBannersGrid
+      v-if="middleBanners.length > 0"
+      :banners="banners"
+      position="home_middle"
     />
 
     <!-- Latest Blog Articles Showcase -->

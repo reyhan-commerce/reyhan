@@ -41,3 +41,16 @@ export interface CmsPage {
   meta_description?: string | null
   updated_at?: string
 }
+
+export type BannerPositionType = 'home_slider' | 'home_middle' | 'home_grid' | 'sidebar'
+
+export interface BannerItem {
+  id: number
+  title: string
+  subtitle: string | null
+  image_url: string
+  mobile_image_url: string | null
+  link_url: string | null
+  position: BannerPositionType
+  order: number
+}

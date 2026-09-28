@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import FilterSidebar from '~/components/catalog/FilterSidebar.vue'
+import SidebarBanners from '~/components/catalog/SidebarBanners.vue'
 import ProductCard from '~/components/catalog/ProductCard.vue'
 import ProductCardSkeleton from '~/components/skeletons/ProductCardSkeleton.vue'
 import CompareFloatingBar from '~/components/catalog/CompareFloatingBar.vue'
+import type { BannerItem } from '~/types/content'
+import type { ApiResponse } from '~/types/api'
 
 const route = useRoute()
 const router = useRouter()
 const catalogStore = useCatalogStore()
+const api = useApi()
 const { toPersianDigits } = usePersian()
 
 const isFilterDrawerOpen = ref(false)
@@ -15,7 +19,12 @@ const isFilterDrawerOpen = ref(false)
 catalogStore.applyFiltersFromQuery(route.query)
 const searchInput = ref(catalogStore.filters.search || '')
 
-// 2. Fetch Category Tree and Products in SSR / Initial load
+// 2. Fetch Category Tree, Products, and Sidebar Banners in SSR / Initial load
+const { data: sidebarBannersResponse } = await useAsyncData('catalog-sidebar-banners', () =>
+  api<ApiResponse<BannerItem[]>>('/banners?position=sidebar').catch(() => null)
+)
+const sidebarBanners = computed(() => sidebarBannersResponse.value?.data ?? [])
+
 await useAsyncData('products-catalog-page', async () => {
   await Promise.all([
     catalogStore.fetchCategoryTree(),
@@ -202,16 +211,26 @@ useSeoMeta({
         class="lg:hidden"
       >
         <template #body>
-          <div class="p-4">
+          <div class="p-4 flex flex-col gap-6">
             <FilterSidebar @applied="isFilterDrawerOpen = false" />
+            <SidebarBanners
+              v-if="sidebarBanners.length > 0"
+              :banners="sidebarBanners"
+            />
           </div>
         </template>
       </USlideover>
 
       <!-- Desktop Sidebar (Sticky Container) -->
       <aside class="hidden lg:block lg:col-span-1">
-        <div class="sticky top-[216px] p-5 rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs">
-          <FilterSidebar />
+        <div class="sticky top-[216px] flex flex-col gap-5">
+          <div class="p-5 rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs">
+            <FilterSidebar />
+          </div>
+          <SidebarBanners
+            v-if="sidebarBanners.length > 0"
+            :banners="sidebarBanners"
+          />
         </div>
       </aside>
 
