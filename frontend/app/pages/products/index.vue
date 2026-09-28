@@ -2,25 +2,81 @@
 import FilterSidebar from '~/components/catalog/FilterSidebar.vue'
 import ProductCard from '~/components/catalog/ProductCard.vue'
 import ProductCardSkeleton from '~/components/skeletons/ProductCardSkeleton.vue'
+import CompareFloatingBar from '~/components/catalog/CompareFloatingBar.vue'
 
 const route = useRoute()
+const router = useRouter()
 const catalogStore = useCatalogStore()
 const { toPersianDigits } = usePersian()
 
 const isFilterDrawerOpen = ref(false)
-const searchInput = ref(String(route.query.search || ''))
 
-// Initialize filters from URL query parameters if present
-if (route.query.category) catalogStore.filters.category = String(route.query.category)
-if (route.query.brand) catalogStore.filters.brand = [String(route.query.brand)]
-if (route.query.search) catalogStore.filters.search = String(route.query.search)
+// 1. Initialize store filters from URL query parameters (on initial load & SSR)
+catalogStore.applyFiltersFromQuery(route.query)
+const searchInput = ref(catalogStore.filters.search || '')
 
+// 2. Fetch Category Tree and Products in SSR / Initial load
 await useAsyncData('products-catalog-page', async () => {
   await Promise.all([
     catalogStore.fetchCategoryTree(),
     catalogStore.fetchProducts()
   ])
   return true
+})
+
+// 3. Two-way sync: Watch store filters and sync changes to route.query
+let isUpdatingRoute = false
+function syncQueryFromStore() {
+  if (isUpdatingRoute) return
+  const q = catalogStore.filtersToQuery()
+  const currentQuery = route.query
+
+  const qKeys = Object.keys(q)
+  const curKeys = Object.keys(currentQuery)
+  let isDifferent = qKeys.length !== curKeys.length
+  if (!isDifferent) {
+    for (const k of qKeys) {
+      if (String(q[k]) !== String(currentQuery[k])) {
+        isDifferent = true
+        break
+      }
+    }
+  }
+
+  if (isDifferent) {
+    isUpdatingRoute = true
+    router.replace({ query: q }).finally(() => {
+      isUpdatingRoute = false
+    })
+  }
+}
+
+// Watch filters deeply to push changes to URL
+watch(() => catalogStore.filters, () => {
+  syncQueryFromStore()
+}, { deep: true })
+
+// 4. Two-way sync: When URL query changes (e.g. Browser Back/Forward or clicking navigation link)
+watch(() => route.query, (newQuery) => {
+  if (isUpdatingRoute) return
+  const currentStoreQuery = catalogStore.filtersToQuery()
+  const qKeys = Object.keys(currentStoreQuery)
+  const newKeys = Object.keys(newQuery)
+  let isDifferent = qKeys.length !== newKeys.length
+  if (!isDifferent) {
+    for (const k of newKeys) {
+      if (String(newQuery[k]) !== String(currentStoreQuery[k])) {
+        isDifferent = true
+        break
+      }
+    }
+  }
+
+  if (isDifferent) {
+    catalogStore.applyFiltersFromQuery(newQuery)
+    searchInput.value = catalogStore.filters.search || ''
+    catalogStore.fetchProducts()
+  }
 })
 
 // Debounced search
@@ -36,11 +92,17 @@ function onSortChange(val: string) {
   catalogStore.setFilter('sort', val)
 }
 
+function onResetFilters() {
+  searchInput.value = ''
+  catalogStore.resetFilters()
+}
+
 const sortOptions = [
   { label: 'جدیدترین', value: 'latest' },
   { label: 'ارزان‌ترین', value: 'cheapest' },
   { label: 'گران‌ترین', value: 'expensive' },
-  { label: 'محصولات برگزیده', value: 'featured' }
+  { label: 'پیشنهادات شگفت‌انگیز', value: 'featured' },
+  { label: 'پرفروش‌ترین‌ها', value: 'popular' }
 ]
 
 useSeoMeta({
@@ -69,8 +131,8 @@ useSeoMeta({
       </p>
     </div>
 
-    <!-- Search & Toolbar -->
-    <div class="p-4 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-xs">
+    <!-- Search & Toolbar (Sticky Header) -->
+    <div class="sticky top-[130px] z-30 p-4 rounded-2xl bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-xs">
       <!-- Search Input -->
       <div class="w-full sm:max-w-md">
         <UInput
@@ -131,7 +193,7 @@ useSeoMeta({
     </div>
 
     <!-- Layout: Filters + Products Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <!-- Mobile Filter Slideover Drawer -->
       <USlideover
         v-model:open="isFilterDrawerOpen"
@@ -146,9 +208,9 @@ useSeoMeta({
         </template>
       </USlideover>
 
-      <!-- Desktop Sidebar -->
+      <!-- Desktop Sidebar (Sticky Container) -->
       <aside class="hidden lg:block lg:col-span-1">
-        <div class="sticky top-20 p-5 rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs">
+        <div class="sticky top-[216px] p-5 rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 shadow-xs">
           <FilterSidebar />
         </div>
       </aside>
@@ -197,7 +259,7 @@ useSeoMeta({
             color="primary"
             variant="solid"
             size="sm"
-            @click="catalogStore.resetFilters"
+            @click="onResetFilters"
           >
             پاک کردن همه فیلترها
           </UButton>
@@ -218,17 +280,7 @@ useSeoMeta({
       </main>
     </div>
 
-    <!-- Mobile Filter Drawer -->
-    <USlideover
-      v-model:open="isFilterDrawerOpen"
-      title="فیلترهای کاتالوگ"
-      side="right"
-    >
-      <template #body>
-        <div class="p-4">
-          <FilterSidebar />
-        </div>
-      </template>
-    </USlideover>
+    <!-- Compare Floating Bar -->
+    <CompareFloatingBar />
   </div>
 </template>

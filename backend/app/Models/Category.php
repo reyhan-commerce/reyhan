@@ -97,6 +97,16 @@ class Category extends Model implements HasMedia
     }
 
     /**
+     * @return BelongsToMany<Specification, $this>
+     */
+    public function specifications(): BelongsToMany
+    {
+        return $this->belongsToMany(Specification::class, 'category_specifications')
+            ->with('group')
+            ->orderBy('order');
+    }
+
+    /**
      * Get all ancestors (breadcrumb path) from root to parent.
      *
      * @return Collection<int, Category>

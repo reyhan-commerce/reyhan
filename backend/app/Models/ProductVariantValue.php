@@ -18,6 +18,8 @@ class ProductVariantValue extends Pivot
 
     public $incrementing = true;
 
+    public $timestamps = false;
+
     /**
      * @return BelongsTo<ProductVariant, $this>
      */

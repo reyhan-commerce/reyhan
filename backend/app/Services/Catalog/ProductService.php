@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 final class ProductService
 {
@@ -83,7 +84,30 @@ final class ProductService
             });
         }
 
-        // 6. Sorting (when not sorted by search similarity)
+        // 6. Has discount toggle
+        if (! empty($data->hasDiscount) && filter_var($data->hasDiscount, FILTER_VALIDATE_BOOLEAN)) {
+            $query->whereHas('activeVariants', function (Builder $v): void {
+                $v->whereNotNull('compare_at_price')
+                    ->whereColumn('compare_at_price', '>', 'price');
+            });
+        }
+
+        // 7. Dynamic Attribute values filter
+        if (! empty($data->attributes)) {
+            foreach ($data->attributes as $attrSlug => $values) {
+                if (empty($values)) {
+                    continue;
+                }
+                $valList = is_array($values) ? $values : explode(',', (string) $values);
+                $query->whereHas('activeVariants.attributeValues', function (Builder $av) use ($attrSlug, $valList): void {
+                    $av->whereIn('value', $valList)
+                        ->orWhereIn('id', array_filter($valList, 'is_numeric'))
+                        ->whereHas('attribute', fn (Builder $a) => $a->where('slug', $attrSlug));
+                });
+            }
+        }
+
+        // 8. Sorting (when not sorted by search similarity)
         if (empty($data->search)) {
             $sort = $data->sort ?? 'latest';
             match ($sort) {
@@ -123,8 +147,38 @@ final class ProductService
                 'category.attributes.values',
                 'brand',
                 'activeVariants.attributeValues.attribute',
+                'specifications.specification.group',
                 'media',
             ])
             ->firstOrFail();
+    }
+
+    /**
+     * Get active related products sharing same category or brand.
+     *
+     * @return Collection<int, Product>
+     */
+    public function getRelatedProducts(Product $product, int $limit = 8): Collection
+    {
+        return Product::query()
+            ->active()
+            ->where('id', '!=', $product->id)
+            ->where(function (Builder $q) use ($product): void {
+                if ($product->category_id) {
+                    $q->where('category_id', $product->category_id);
+                }
+                if ($product->brand_id) {
+                    $q->orWhere('brand_id', $product->brand_id);
+                }
+            })
+            ->with([
+                'category',
+                'brand',
+                'activeVariants.attributeValues',
+                'media',
+            ])
+            ->latest()
+            ->limit($limit)
+            ->get();
     }
 }

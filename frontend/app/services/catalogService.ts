@@ -28,6 +28,14 @@ export function useCatalogService() {
     if (filters?.min_price !== null && filters?.min_price !== undefined) params.min_price = filters.min_price
     if (filters?.max_price !== null && filters?.max_price !== undefined) params.max_price = filters.max_price
     if (filters?.in_stock) params.in_stock = true
+    if (filters?.has_discount) params.has_discount = true
+    if (filters?.attributes) {
+      for (const [key, vals] of Object.entries(filters.attributes)) {
+        if (vals && vals.length > 0) {
+          params[`attributes[${key}]`] = vals.join(',')
+        }
+      }
+    }
     if (filters?.search) params.search = filters.search
     if (filters?.sort) params.sort = filters.sort
     if (filters?.page) params.page = filters.page
@@ -39,6 +47,13 @@ export function useCatalogService() {
       meta: res.meta,
       total: res.meta?.total || items.length
     }
+  }
+
+  async function getFilterMetadata(categorySlug?: string) {
+    const res = await api<ApiResponse<import('~/types/product').FilterMetadataResponse>>('/catalog/filters', {
+      params: categorySlug ? { category: categorySlug } : {}
+    })
+    return res.data || null
   }
 
   async function getProductBySlug(slug: string): Promise<ProductDetailItem | null> {
@@ -69,6 +84,7 @@ export function useCatalogService() {
   return {
     getCategoryTree,
     getProducts,
+    getFilterMetadata,
     getProductBySlug,
     getSuggestions
   }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useWishlistStore } from '~/stores/wishlist'
+import { useCompareStore } from '~/stores/compare'
 import type { ProductCardItem } from '~/stores/catalog'
 
 const props = defineProps<{
@@ -7,6 +8,7 @@ const props = defineProps<{
 }>()
 
 const wishlistStore = useWishlistStore()
+const compareStore = useCompareStore()
 const { formatPrice, formatDiscount } = usePersian()
 
 const displayPrice = computed(() => {
@@ -96,6 +98,24 @@ const discountPercent = computed(() => {
           name="i-lucide-heart"
           class="w-4 h-4 transition-transform"
           :class="{ 'fill-primary text-primary': wishlistStore.isInWishlist(product.id) }"
+        />
+      </button>
+
+      <!-- Compare Button -->
+      <button
+        type="button"
+        class="absolute top-12.5 end-3 z-20 w-8 h-8 rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border border-neutral-200/70 dark:border-neutral-700/70 flex items-center justify-center shadow-xs transition-all active:scale-90 hover:scale-110 cursor-pointer"
+        :class="[
+          compareStore.isInCompare(product.slug)
+            ? 'text-primary border-primary/50'
+            : 'text-neutral-400 hover:text-primary'
+        ]"
+        title="مقایسه کالا"
+        @click.prevent.stop="compareStore.addToCompare(product.slug, product.name)"
+      >
+        <UIcon
+          name="i-lucide-arrow-left-right"
+          class="w-3.5 h-3.5"
         />
       </button>
 

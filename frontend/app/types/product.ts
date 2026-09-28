@@ -105,6 +105,20 @@ export interface ProductDetailItem {
   breadcrumbs: ProductBreadcrumb[]
   variants: ProductVariantItem[]
   variants_matrix: AttributeMatrixItem[]
+  specifications?: ProductSpecGroup[]
+}
+
+export interface ProductSpecItem {
+  id: number
+  name: string
+  value: string
+  unit: string | null
+}
+
+export interface ProductSpecGroup {
+  group_id: number
+  group_name: string
+  items: ProductSpecItem[]
 }
 
 export interface CatalogFilterState {
@@ -113,7 +127,59 @@ export interface CatalogFilterState {
   min_price: number | null
   max_price: number | null
   in_stock: boolean
+  has_discount: boolean
+  attributes: Record<string, string[]>
   search: string
   sort: string
   page: number
+}
+
+export interface CompareProductItem {
+  id: number
+  name: string
+  slug: string
+  brand: { id: number, name: string, slug: string } | null
+  category: { id: number, name: string, slug: string } | null
+  thumbnail: string | null
+  price_range: { min: number | null, max: number | null }
+  has_stock: boolean
+  review_stats: { average_rating: number, total_reviews: number }
+}
+
+export interface CompareSpecItem {
+  id: number
+  name: string
+  unit: string | null
+  values: Record<string, string>
+}
+
+export interface CompareSpecGroup {
+  id: number
+  name: string
+  items: CompareSpecItem[]
+}
+
+export interface CompareResponse {
+  products: CompareProductItem[]
+  specification_groups: CompareSpecGroup[]
+}
+
+export interface FilterMetadataResponse {
+  brands: BrandItem[]
+  attributes: {
+    id: number
+    name: string
+    slug: string
+    type: string
+    values: {
+      id: number
+      value: string
+      label: string | null
+      hex_code: string | null
+    }[]
+  }[]
+  price_bounds: {
+    min: number
+    max: number
+  }
 }

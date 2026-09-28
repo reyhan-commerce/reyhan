@@ -45,4 +45,17 @@ final class ProductController extends Controller
             'data' => new ProductDetailResource($model),
         ]);
     }
+
+    /**
+     * Show related products for PDP.
+     */
+    public function related(string $product): JsonResponse
+    {
+        $model = $this->productService->findBySlug($product);
+        $related = $this->productService->getRelatedProducts($model);
+
+        return ProductResource::collection($related)
+            ->additional(['success' => true])
+            ->response();
+    }
 }

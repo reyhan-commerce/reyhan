@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import FilterSidebar from '~/components/catalog/FilterSidebar.vue'
 import ProductCard from '~/components/catalog/ProductCard.vue'
+import CompareFloatingBar from '~/components/catalog/CompareFloatingBar.vue'
 import type { CategoryTreeItem } from '~/stores/catalog'
 
 const route = useRoute()
@@ -10,12 +11,15 @@ const catalogStore = useCatalogStore()
 const slug = computed(() => decodeURIComponent(String(route.params.slug || '')))
 const isFilterDrawerOpen = ref(false)
 
+// Initialize category-scoped filters
+catalogStore.applyFiltersFromQuery({ ...route.query, category: slug.value })
+
 // Fetch Category Detail & Products
 const { data: categoryData } = await useAsyncData(`category-${slug.value}`, async () => {
   const [catRes] = await Promise.all([
     api<{ success: boolean, data: CategoryTreeItem & { parent?: { name: string, slug: string }, attributes?: unknown[] } }>(`/categories/${encodeURIComponent(slug.value)}`),
     catalogStore.fetchCategoryTree(),
-    catalogStore.fetchProducts({ category: slug.value, page: 1 })
+    catalogStore.fetchProducts({ category: slug.value })
   ])
   return catRes.data
 })
@@ -171,5 +175,8 @@ useSeoMeta({
         </div>
       </template>
     </USlideover>
+
+    <!-- Compare Floating Bar -->
+    <CompareFloatingBar />
   </div>
 </template>

@@ -58,6 +58,7 @@ class ProductDetailResource extends JsonResource
             'breadcrumbs' => $breadcrumbs,
             'variants' => ProductVariantResource::collection($this->whenLoaded('activeVariants')),
             'variants_matrix' => $this->availableVariantsMatrix(),
+            'specifications' => $this->specificationsGrouped(),
         ];
     }
 }

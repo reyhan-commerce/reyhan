@@ -270,6 +270,72 @@ class Product extends Model implements HasMedia, ProvidesActivityTitle
     }
 
     /**
+     * @return HasMany<ProductQuestion, $this>
+     */
+    public function questions(): HasMany
+    {
+        return $this->hasMany(ProductQuestion::class)->latest();
+    }
+
+    /**
+     * @return HasMany<ProductPriceHistory, $this>
+     */
+    public function priceHistories(): HasMany
+    {
+        return $this->hasMany(ProductPriceHistory::class)->orderBy('recorded_at', 'asc');
+    }
+
+    /**
+     * @return HasMany<ProductSpecification, $this>
+     */
+    public function specifications(): HasMany
+    {
+        return $this->hasMany(ProductSpecification::class);
+    }
+
+    /**
+     * Get specifications grouped by specification group.
+     *
+     * @return list<array{group_id: int, group_name: string, items: list<array{id: int, name: string, value: string, unit: string|null}>}>
+     */
+    public function specificationsGrouped(): array
+    {
+        $specs = $this->specifications()
+            ->with(['specification.group'])
+            ->get();
+
+        $groups = [];
+
+        foreach ($specs as $prodSpec) {
+            $spec = $prodSpec->specification;
+            $groupId = $spec->group->id;
+            if (! isset($groups[$groupId])) {
+                $groups[$groupId] = [
+                    'group_id' => $groupId,
+                    'group_name' => $spec->group->name,
+                    'order' => $spec->group->order,
+                    'items' => [],
+                ];
+            }
+
+            $groups[$groupId]['items'][] = [
+                'id' => $spec->id,
+                'name' => $spec->name,
+                'value' => $prodSpec->value,
+                'unit' => $spec->unit,
+            ];
+        }
+
+        uasort($groups, fn ($a, $b) => $a['order'] <=> $b['order']);
+
+        return array_values(array_map(function ($g) {
+            unset($g['order']);
+
+            return $g;
+        }, $groups));
+    }
+
+    /**
      * Get aggregated review stats for this product.
      *
      * @return array{average_rating: float, average_longevity: float, average_coverage: float, average_value: float, total_reviews: int}
