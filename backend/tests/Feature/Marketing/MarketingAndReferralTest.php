@@ -19,10 +19,10 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Referral;
 use App\Models\User;
+use App\Notifications\Marketing\AbandonedCartReminderNotification;
 use App\Services\Marketing\ReferralService;
-use App\Services\Sms\SmsManager;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Mockery;
+use Illuminate\Support\Facades\Notification;
 
 uses(DatabaseTransactions::class);
 
@@ -171,9 +171,7 @@ test('completing an order rewards the referrer with wallet cashback', function (
 });
 
 test('recover abandoned carts command identifies carts and dispatches notifications', function (): void {
-    $smsMock = Mockery::mock(SmsManager::class);
-    $smsMock->shouldReceive('send')->once()->andReturn(true);
-    $this->app->instance(SmsManager::class, $smsMock);
+    Notification::fake();
 
     $abandonedCart = Cart::factory()->create([
         'user_id' => $this->user->id,
@@ -188,6 +186,14 @@ test('recover abandoned carts command identifies carts and dispatches notificati
 
     $this->artisan('cart:recover-abandoned', ['--hours' => 2])
         ->assertSuccessful();
+
+    Notification::assertSentTo(
+        $this->user,
+        AbandonedCartReminderNotification::class,
+        function (AbandonedCartReminderNotification $notification) use ($abandonedCart) {
+            return $notification->cart->id === $abandonedCart->id;
+        }
+    );
 
     $log = AbandonedCartLog::query()
         ->where('cart_id', $abandonedCart->id)

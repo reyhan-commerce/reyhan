@@ -53,4 +53,13 @@ return [
     'shipping' => [
         'tracking_sms' => 'سفارش :order_number شما تحویل شرکت پست شد. کد رهگیری: :tracking_code پیگیری آنلاین: :tracking_url',
     ],
+
+    'orders' => [
+        'paid_sms' => 'سفارش :order_number شما با کد رهگیری :tracking_code با موفقیت ثبت و پرداخت گردید. از خرید شما سپاسگزاریم.',
+        'shipped_sms' => "مشتری گرامی، سفارش شما به شماره :order_number تحویل شرکت پست/پیک گردید.\nکد رهگیری: :tracking_code:tracking_url",
+    ],
+
+    'catalog' => [
+        'stock_alert_sms' => 'کاربر گرامی، کالای «:product» (:variant) در فروشگاه موجود شد. جهت مشاهده و خرید سریع به سایت مراجعه فرمایید.',
+    ],
 ];

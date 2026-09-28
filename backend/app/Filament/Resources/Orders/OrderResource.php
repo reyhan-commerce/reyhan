@@ -15,7 +15,7 @@ use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Http\Controllers\Api\V1\OrderInvoiceController;
 use App\Http\Controllers\OrderShippingLabelController;
 use App\Models\Order;
-use App\Services\Sms\SmsManager;
+use App\Notifications\Orders\OrderShippedNotification;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -43,6 +43,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification as SystemNotification;
 use Illuminate\Support\HtmlString;
 use Morilog\Jalali\Jalalian;
 use UnitEnum;
@@ -556,12 +557,10 @@ class OrderResource extends Resource
                             $mobile = $record->shipping_address['recipient_mobile'] ?? $record->user?->mobile;
                             if ($mobile) {
                                 try {
-                                    $smsManager = app(SmsManager::class);
-                                    $urlPart = $trackingUrl ? "\nرهگیری: {$trackingUrl}" : '';
-                                    $message = "مشتری گرامی، سفارش شما به شماره {$record->order_number} تحویل شرکت پست/پیک گردید.\nکد رهگیری: {$trackingCode}{$urlPart}";
-                                    $smsManager->send($mobile, $message);
+                                    $recipient = $record->user ?? SystemNotification::route('sms', (string) $mobile);
+                                    $recipient->notify(new OrderShippedNotification($record, $trackingCode, $trackingUrl));
                                 } catch (\Throwable $e) {
-                                    Log::warning("Failed to send tracking SMS: {$e->getMessage()}");
+                                    Log::warning("Failed to send tracking notification: {$e->getMessage()}");
                                 }
                             }
                         }

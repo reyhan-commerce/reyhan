@@ -9,13 +9,14 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Models\Payment;
 use App\Models\ProductVariant;
+use App\Notifications\Orders\OrderPaidNotification;
 use App\Services\Cart\CartService;
 use App\Services\Inventory\StockReservationService;
 use App\Services\Marketing\ReferralService;
 use App\Services\Payment\PaymentManager;
-use App\Services\Sms\SmsManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Throwable;
 
 final class VerifyPaymentAction
@@ -24,7 +25,6 @@ final class VerifyPaymentAction
         protected PaymentManager $paymentManager,
         protected StockReservationService $stockReservationService,
         protected CartService $cartService,
-        protected SmsManager $smsManager,
         protected ReferralService $referralService,
     ) {}
 
@@ -123,18 +123,13 @@ final class VerifyPaymentAction
         $orderNumber = $order ? $order->order_number : '';
         $userMobile = $order?->user?->mobile;
 
-        // Dispatch Order Confirmation SMS OUTSIDE the DB transaction (Farshid Rule 5 / Red Flag 3)
-        if ($userMobile && $orderNumber) {
+        // Dispatch Order Confirmation Notification OUTSIDE the DB transaction (Farshid Rule 5 / Red Flag 3)
+        if ($order) {
             try {
-                $this->smsManager->send(
-                    $userMobile,
-                    __('Your order :order_number with tracking code :tracking_code has been placed and paid successfully. Thank you for shopping with us.', [
-                        'order_number' => $orderNumber,
-                        'tracking_code' => $verifyResult->trackingCode,
-                    ])
-                );
+                $recipient = $order->user ?? ($userMobile ? Notification::route('sms', $userMobile) : null);
+                $recipient?->notify(new OrderPaidNotification($order, $verifyResult->trackingCode));
             } catch (Throwable $e) {
-                Log::warning("Failed to send order SMS to {$userMobile}: {$e->getMessage()}");
+                Log::warning("Failed to send order notification for order {$orderNumber}: {$e->getMessage()}");
             }
         }
 

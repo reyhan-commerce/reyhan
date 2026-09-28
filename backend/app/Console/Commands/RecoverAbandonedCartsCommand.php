@@ -6,7 +6,7 @@ namespace App\Console\Commands;
 
 use App\Models\AbandonedCartLog;
 use App\Models\Cart;
-use App\Services\Sms\SmsManager;
+use App\Notifications\Marketing\AbandonedCartReminderNotification;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,7 +31,7 @@ final class RecoverAbandonedCartsCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(SmsManager $smsManager): int
+    public function handle(): int
     {
         $hours = (int) $this->option('hours');
         $cutoff = Carbon::now()->subHours($hours);
@@ -60,13 +60,7 @@ final class RecoverAbandonedCartsCommand extends Command
             }
 
             try {
-                $frontendUrl = config('app.frontend_url', 'http://localhost:3000');
-                $message = __('messages.cart.abandoned_reminder_sms', [
-                    'name' => $user->full_name,
-                    'url' => "{$frontendUrl}/cart",
-                ]);
-
-                $smsManager->send($user->mobile, $message);
+                $user->notify(new AbandonedCartReminderNotification($cart));
 
                 AbandonedCartLog::create([
                     'cart_id' => $cart->id,
@@ -77,7 +71,7 @@ final class RecoverAbandonedCartsCommand extends Command
 
                 $sentCount++;
             } catch (\Throwable $e) {
-                $this->error("Failed sending SMS to {$user->mobile}: {$e->getMessage()}");
+                $this->error("Failed sending notification to {$user->mobile}: {$e->getMessage()}");
             }
         }
 

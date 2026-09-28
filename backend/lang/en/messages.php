@@ -53,4 +53,13 @@ return [
     'shipping' => [
         'tracking_sms' => 'Your order :order_number has been shipped. Tracking code: :tracking_code Track online: :tracking_url',
     ],
+
+    'orders' => [
+        'paid_sms' => 'Your order :order_number with tracking code :tracking_code has been paid successfully. Thank you for shopping with us.',
+        'shipped_sms' => "Dear customer, your order :order_number has been shipped.\nTracking Code: :tracking_code:tracking_url",
+    ],
+
+    'catalog' => [
+        'stock_alert_sms' => 'Dear customer, the item ":product" (:variant) is back in stock. Visit our shop to purchase.',
+    ],
 ];

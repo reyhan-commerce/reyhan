@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\StockStatus;
-use App\Jobs\SendStockAlertSmsJob;
+use App\Events\Catalog\ProductRestockedEvent;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\ProductVariantFactory;
@@ -64,10 +64,12 @@ class ProductVariant extends Model implements ProvidesActivityTitle
     protected static function booted(): void
     {
         static::updated(function (self $variant): void {
-            if ($variant->wasChanged('stock') && (int) $variant->getOriginal('stock') <= 0 && $variant->stock > 0) {
-                $alerts = $variant->stockAlerts()->where('status', 'pending')->get();
-                foreach ($alerts as $alert) {
-                    SendStockAlertSmsJob::dispatch($alert);
+            if ($variant->wasChanged('stock')) {
+                $oldStock = (int) $variant->getOriginal('stock');
+                $newStock = (int) $variant->stock;
+
+                if ($oldStock <= 0 && $newStock > 0) {
+                    ProductRestockedEvent::dispatch($variant, $oldStock, $newStock);
                 }
             }
         });

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Events\Catalog\ProductRestockedEvent;
 use App\Features\ShopFeature;
 use App\Http\Controllers\Api\V1\AppSettingController;
+use App\Listeners\Catalog\SendProductRestockAlertsListener;
 use App\Models\Admin;
 use App\Services\Sms\SmsManager;
 use BokshornIt\FilamentActivityTimeline\Policies\ActivityPolicy;
@@ -85,6 +87,9 @@ class AppServiceProvider extends ServiceProvider
                 $this->app->make(SmsManager::class)->forgetDrivers();
             }
         });
+
+        // Register catalog restock domain event listener
+        Event::listen(ProductRestockedEvent::class, SendProductRestockAlertsListener::class);
 
         // Register default Pennant feature flags
         foreach (ShopFeature::names() as $feature) {

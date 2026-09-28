@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Notifications\Channels\SmsChannel;
 use App\Services\Integrations\FarazSms\FarazSmsClient;
 use App\Services\Integrations\Ghasedak\GhasedakClient;
 use App\Services\Integrations\Kavenegar\KavenegarClient;
@@ -11,6 +12,7 @@ use App\Services\Sms\SmsManager;
 use App\Settings\SmsSettings;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
 use Spatie\LaravelSettings\Events\SettingsSaved;
 
@@ -39,7 +41,12 @@ class SmsServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // 3. Invalidate cached settings instance in container when admin updates settings
+        // 3. Register custom SMS channel for Laravel Notification system
+        Notification::extend('sms', function (Application $app): SmsChannel {
+            return $app->make(SmsChannel::class);
+        });
+
+        // 4. Invalidate cached settings instance in container when admin updates settings
         Event::listen(SettingsSaved::class, function (SettingsSaved $event): void {
             if ($event->settings instanceof SmsSettings) {
                 $this->app->forgetInstance(SmsSettings::class);

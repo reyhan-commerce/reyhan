@@ -581,3 +581,20 @@ php artisan test --compact
 
 ### 15.3. Dual Logging Pipeline
 Configured as `stack` logging to both daily rolling files (30-day retention) and standard output (`stdout`) for Docker and Octane.
+
+---
+
+## 16. Unified Notification Architecture Contract (SMS & System Notifications)
+
+All outbound SMS messages and customer alerts must strictly pass through Laravel's native Notification system (`Illuminate\Notifications\Notification`). Direct invocation of `SmsManager` or low-level SMS drivers inside Controllers, Actions, Commands, Jobs, or Filament Resources is **strictly prohibited**.
+
+### Core Architecture Rules:
+1. **Laravel Notification First**: Every SMS or customer alert must be encapsulated in a dedicated notification class under `App\Notifications\` (e.g. `Orders\OrderPaidNotification`, `Orders\OrderShippedNotification`, `Marketing\AbandonedCartReminderNotification`, `Catalog\StockAlertNotification`, `Auth\SendOtpNotification`).
+2. **Channel Specification**: All SMS notifications must implement `via($notifiable)` returning `[SmsChannel::class]`.
+3. **Queue by Default**: All notification classes must implement `ShouldQueue` (with `use Queueable;`) to ensure non-blocking background queue execution via Redis/Horizon.
+4. **Message Encapsulation**: Notifications must implement `toSms($notifiable): SmsMessage` utilizing the fluent `App\Notifications\Messages\SmsMessage` builder.
+5. **Notifiable Routing**:
+   - For registered users: Call `$user->notify(new [NotificationName]($model))`. The `User` model implements `routeNotificationForSms()` to provide `$this->mobile`.
+   - For guest/anonymous recipients: Call `Notification::route('sms', $mobile)->notify(new [NotificationName]($params))`.
+6. **No DB Transactions Holding External Calls**: Never trigger or execute notifications within open database transaction blocks (`DB::transaction()`). Dispatch notifications only after transaction commits.
+
