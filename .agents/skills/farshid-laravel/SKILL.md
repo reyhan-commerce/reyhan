@@ -24,6 +24,7 @@ Your goal is not theoretical design-pattern sophistication. Your goal is code th
 4. **Single-Use-Case Actions**: Domain operations belong in `final class [Verb][Noun]Action` with an `execute()` method.
 5. **Safe Transactions**: Never hold a database transaction open while awaiting an external HTTP request.
 6. **Pest Testing**: Every operational change must be verified with realistic Pest feature tests asserting real database state.
+7. **100% Model Factory Coverage**: Every Eloquent Model must implement `HasFactory` and have a complete, functional model factory in `database/factories/` with valid default values for all non-nullable columns.
 
 ---
 

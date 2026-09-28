@@ -138,14 +138,57 @@ All AI agents and developers writing backend code for EasyShop **must strictly f
 - Server verifies the salt, nonce, and minimum elapsed human interaction time ($\ge 100\text{ms}$).
 
 ### Contract 7: Strict Localization & Zero Hardcoded Strings
-- No Persian or English UI/error messages may be hardcoded in PHP classes, FormRequests, or Controllers.
-- Hardcoded `messages()` in FormRequests are prohibited; rely on `lang/fa/validation.php` attributes and rules.
-- Controller and exception messages must strictly use Laravel translation functions: `__('Message string')` backed by `lang/fa.json` and `lang/fa/validation.php`.
-- The application default locale is `fa` with fallback `fa`.
+- **Zero Hardcoded Text**: No Persian or English UI, response, exception, or validation messages may be hardcoded in PHP classes, Controllers, Actions, Services, Commands, or FormRequests.
+- **Messages Structure**: All API response and business domain messages are stored in `lang/{locale}/messages.php` (e.g., `lang/fa/messages.php` and `lang/en/messages.php`) and referenced via `__('messages.<domain>.<key>', ['param' => $val])`.
+- **Validation**: Hardcoded `messages()` in FormRequests are prohibited; rely on `lang/{locale}/validation.php` attributes and rules.
+- **Exceptions**: Domain exceptions must pass translated strings into `parent::__construct(__('messages.<domain>.<key>'))` or resolve translations inside their `render()` method.
+- **Default Locale**: Application default locale is `fa` with fallback `fa`.
 
 ### Contract 8: Idiomatic Framework Abstractions Over Re-invented Wheels
 - Always prefer Laravel's built-in abstractions:
   - Use `Illuminate\Support\Facades\Pipeline` for step-based transformations instead of custom `foreach` loops.
   - Use Laravel Notification system (`app/Notifications/`) and custom notification channels (`app/Notifications/Channels/SmsChannel.php`) for messaging, rather than ad-hoc queue jobs or direct driver calls.
   - Always hash sensitive verification tokens stored in Redis using `Hash::make()` and check via `Hash::check()`.
+
+### Contract 9: Standardized Enum Architecture & Filament Native Integration
+- **PHP 8.1+ Backed Enums**: All status, type, and categorical values must be backed enums (string-backed).
+- **Core Interfaces & Helpers**:
+  - Every Enum must use the `App\Enums\Concerns\HasEnumHelpers` trait, which provides:
+    - `public function label(): string`
+    - `public static function options(): array<string, string>` (for selects and filters)
+    - `public static function values(): array<string>` (for validation in rules)
+  - Every Enum must implement `Filament\Support\Contracts\HasLabel` and `Filament\Support\Contracts\HasColor`.
+- **Translated Labels Delegation**:
+  - Enum classes MUST NOT hardcode Persian/English labels inside `match ($this)` blocks.
+  - `getLabel(): string` must delegate directly to Laravel's translator:
+    ```php
+    public function getLabel(): string
+    {
+        return __('enums.order_status.' . $this->value);
+    }
+    ```
+  - Enum translations are maintained in `lang/fa/enums.php` and `lang/en/enums.php`.
+- **Filament Admin Panel Integration**:
+  - In Filament Tables: Directly call `TextColumn::make('status')->badge()` without custom `match` closures or raw labels. Filament natively queries `getLabel()` and `getColor()`.
+  - In Filament Filters: Directly call `SelectFilter::make('status')->options(OrderStatus::options())` without duplicating option arrays.
+  - In Filament Forms: Directly call `Select::make('status')->options(OrderStatus::options())`.
+
+### Contract 10: Dynamic Store Settings & Headless Consumption
+- **Configurable Business & Marketing Policies**:
+  - Operational parameters subject to business updates (e.g. Return guarantee window days, Return policy notice, Corporate tax invoice notice, Support work hours notice, Referral rewards and promotional banners) MUST NOT be hardcoded in frontend components or backend logic.
+- **Spatie Settings Architecture**:
+  - Settings are defined as typed properties in `App\Settings\GeneralSettings`.
+  - Database schema changes for settings are versioned via Spatie settings migrations in `database/settings/`.
+- **Filament Management**:
+  - All dynamic settings must be editable in the Filament admin panel under `ManageGeneralSettings` within appropriate tabbed sections.
+- **Headless Distribution & Caching**:
+  - Public settings are cached in Redis under `app:settings:general` with a 24-hour TTL and purged immediately upon saving (`SettingsSaved` event).
+  - The API endpoint `/api/v1/app/settings` serves these settings headlessly.
+  - The Nuxt frontend consumes them reactively via `useSettingsStore()`, ensuring instant site-wide consistency without client-side rebuilds.
+
+### Contract 11: 100% Model Factory Coverage for Test Automation
+- **Mandatory Factory for Every Eloquent Model**: Every domain model in `app/Models/` MUST use the `Illuminate\Database\Eloquent\Factories\HasFactory` trait and have a corresponding dedicated Factory class in `database/factories/{Model}Factory.php`. No model may exist without an active factory.
+- **Complete Default Definitions**: The `definition()` method of each factory must provide realistic, valid default data (using `fake()`) satisfying all non-nullable database columns and foreign keys (e.g., `'user_id' => User::factory()`, `'product_id' => Product::factory()`), ensuring `$modelClass::factory()->create()` works out of the box without requiring manual overrides.
+- **Automated Regression Architecture Gate**: The test suite includes a dedicated feature test (`tests/Feature/ModelFactoriesTest.php`) verifying that 100% of models can be instantiated and persisted in the test database without missing columns, timestamp bugs, or relation errors. Any new model introduced without a working factory will cause the test suite to fail immediately.
+
 
