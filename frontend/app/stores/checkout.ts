@@ -190,8 +190,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
     const newAddress = await checkoutService.createAddress(payload)
     await fetchAddresses()
     selectedAddressId.value = newAddress.id
-    await fetchShippingMethods()
-    await fetchPreview()
     return newAddress
   }
 
@@ -206,8 +204,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
       selectedAddressId.value = null
     }
     await fetchAddresses()
-    await fetchShippingMethods()
-    await fetchPreview()
   }
 
   async function fetchWalletBalance(): Promise<void> {

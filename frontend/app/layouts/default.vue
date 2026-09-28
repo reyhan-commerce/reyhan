@@ -4,6 +4,7 @@ import CategoryMegaMenu from '~/components/navigation/CategoryMegaMenu.vue'
 import MobileBottomNav from '~/components/navigation/MobileBottomNav.vue'
 import AppFooter from '~/components/navigation/AppFooter.vue'
 import CartSlideover from '~/components/cart/CartSlideover.vue'
+import UserMenuDropdown from '~/components/navigation/UserMenuDropdown.vue'
 
 const authStore = useAuthStore()
 const cartStore = useCartStore()
@@ -19,55 +20,6 @@ onMounted(() => {
   if (authStore.isAuthenticated && !authStore.user) {
     authStore.fetchUser()
   }
-})
-
-const userDropdownItems = computed(() => {
-  const profileItems = [
-    {
-      label: 'سفارش‌های من',
-      description: 'پیگیری و مشاهده فاکتورها',
-      icon: 'i-lucide-package',
-      to: '/profile/orders'
-    },
-    ...(features.hasFeature('loyalty')
-      ? [{
-          label: 'باشگاه مشتریان (VIP)',
-          description: 'امتیازات و سطوح وفاداری',
-          icon: 'i-lucide-crown',
-          to: '/profile/club'
-        }]
-      : []),
-    {
-      label: 'لیست علاقه‌مندی‌ها',
-      description: 'کالاهای برگزیده شما',
-      icon: 'i-lucide-heart',
-      to: '/profile/wishlist'
-    },
-    {
-      label: 'آدرس‌های تحویل',
-      description: 'مدیریت مقاصد ارسال سفارش',
-      icon: 'i-lucide-map-pin',
-      to: '/profile/addresses'
-    },
-    {
-      label: 'اطلاعات حساب کاربری',
-      description: 'ویرایش مشخصات و امنیت',
-      icon: 'i-lucide-user-cog',
-      to: '/profile/settings'
-    }
-  ]
-
-  return [
-    profileItems,
-    [
-      {
-        label: 'خروج از حساب',
-        icon: 'i-lucide-log-out',
-        color: 'error' as const,
-        onSelect: () => authStore.logout()
-      }
-    ]
-  ]
 })
 </script>
 
@@ -169,64 +121,17 @@ const userDropdownItems = computed(() => {
 
             <!-- User Auth / Profile Button -->
             <template v-if="authStore.isAuthenticated">
-              <UDropdownMenu
+              <UserMenuDropdown
                 v-if="authStore.user"
-                :items="userDropdownItems"
-                :content="{ align: 'start', sideOffset: 8 }"
-                :ui="{
-                  content: 'w-64 p-2 rounded-2xl shadow-xl shadow-neutral-900/10 dark:shadow-neutral-950/40 border border-neutral-200/80 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md',
-                  item: 'rounded-xl px-2.5 py-2 text-xs font-medium cursor-pointer transition-colors',
-                  itemLeadingIcon: 'size-4.5',
-                  itemLabel: 'font-bold text-xs',
-                  itemDescription: 'text-[10px] text-neutral-400 dark:text-neutral-500'
-                }"
-              >
-                <button
-                  type="button"
-                  class="group hidden sm:flex items-center gap-2.5 min-h-10 px-3 py-1.5 rounded-xl bg-neutral-100/80 dark:bg-neutral-800/80 hover:bg-neutral-200/80 dark:hover:bg-neutral-700/80 transition-all border border-neutral-200/50 dark:border-neutral-700/50 cursor-pointer text-start"
-                >
-                  <div class="size-6.5 rounded-lg bg-gradient-to-tr from-primary-600 to-primary-400 text-white flex items-center justify-center text-[11px] font-black shadow-xs shadow-primary-500/20 shrink-0">
-                    {{ authStore.user.first_name?.[0] || 'ک' }}
-                  </div>
-                  <span class="text-xs font-bold text-neutral-800 dark:text-neutral-200 max-w-[100px] truncate">
-                    {{ authStore.user.full_name }}
-                  </span>
-                  <UIcon
-                    name="i-lucide-chevron-down"
-                    class="size-3.5 text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-200 transition-transform duration-200"
-                  />
-                </button>
-
-                <template #content-top>
-                  <NuxtLink
-                    to="/profile"
-                    class="flex items-center gap-3 p-2.5 mb-1.5 rounded-xl bg-neutral-50 dark:bg-neutral-800/50 hover:bg-primary-50/70 dark:hover:bg-primary-950/40 border border-neutral-100 dark:border-neutral-800/80 transition-colors group cursor-pointer"
-                  >
-                    <div class="size-9 rounded-xl bg-gradient-to-tr from-primary-600 to-primary-400 text-white flex items-center justify-center text-sm font-black shadow-sm shadow-primary-500/25 shrink-0">
-                      {{ authStore.user.first_name?.[0] || 'ک' }}
-                    </div>
-                    <div class="flex flex-col min-w-0 flex-1">
-                      <span class="text-xs font-black text-neutral-900 dark:text-neutral-100 truncate group-hover:text-primary-600 transition-colors">
-                        {{ authStore.user.full_name }}
-                      </span>
-                      <span class="text-[10px] font-mono text-neutral-400 dark:text-neutral-500 truncate [direction:ltr] text-right mt-0.5">
-                        {{ authStore.user.mobile || 'مشاهده پنل کاربری' }}
-                      </span>
-                    </div>
-                    <UIcon
-                      name="i-lucide-chevron-left"
-                      class="size-4 text-neutral-400 group-hover:text-primary-600 transition-transform group-hover:-translate-x-0.5 shrink-0"
-                    />
-                  </NuxtLink>
-                </template>
-              </UDropdownMenu>
+                class="hidden sm:flex"
+              />
 
               <!-- Skeleton Button while user data is loading -->
               <div
                 v-else
                 class="hidden sm:flex items-center gap-2.5 min-h-10 px-3 py-1.5 rounded-xl bg-neutral-100/80 dark:bg-neutral-800/80 border border-neutral-200/50 dark:border-neutral-700/50"
               >
-                <USkeleton class="size-6.5 rounded-lg" />
+                <USkeleton class="size-7 rounded-lg" />
                 <USkeleton class="w-16 h-3.5 rounded-md" />
               </div>
             </template>

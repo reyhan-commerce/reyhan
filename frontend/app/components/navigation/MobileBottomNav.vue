@@ -62,11 +62,10 @@ function handleUserClick() {
       </NuxtLink>
 
       <!-- 4. Cart -->
-      <button
-        type="button"
+      <NuxtLink
+        to="/cart"
         class="relative flex flex-col items-center justify-center min-h-12 py-1 rounded-xl transition-colors"
         :class="isCart ? 'text-primary' : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'"
-        @click="cartStore.openSlideover"
       >
         <div class="relative">
           <UIcon
@@ -83,7 +82,7 @@ function handleUserClick() {
           </UBadge>
         </div>
         <span class="text-[10px] font-bold mt-1">سبد خرید</span>
-      </button>
+      </NuxtLink>
 
       <!-- 5. Profile / Auth -->
       <template v-if="authStore.isAuthenticated">
