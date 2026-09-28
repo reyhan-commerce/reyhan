@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Guarded(['id'])]
 final class SupportTicketMessage extends Model
 {
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>

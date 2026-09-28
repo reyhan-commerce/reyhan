@@ -7,6 +7,8 @@ namespace App\Models;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,6 +46,8 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property-read Collection<int, Referral> $referralsSent
  * @property-read Referral|null $referralReceived
  */
+#[Guarded(['id'])]
+#[Hidden(['remember_token'])]
 class User extends Authenticatable implements ProvidesActivityTitle
 {
     /** @use HasFactory<UserFactory> */
@@ -58,8 +62,6 @@ class User extends Authenticatable implements ProvidesActivityTitle
         });
     }
 
-    protected $guarded = ['id'];
-
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -73,15 +75,6 @@ class User extends Authenticatable implements ProvidesActivityTitle
     {
         return $this->full_name ?: $this->mobile;
     }
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'remember_token',
-    ];
 
     /**
      * Route notifications for the SMS channel.

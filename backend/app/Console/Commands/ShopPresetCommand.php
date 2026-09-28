@@ -17,6 +17,8 @@ use Database\Seeders\CatalogSeeder;
 use Database\Seeders\DigitalPresetSeeder;
 use Database\Seeders\FaqSeeder;
 use Database\Seeders\PageSeeder;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -31,12 +33,10 @@ use function Laravel\Prompts\spin;
 use function Laravel\Prompts\table;
 use function Laravel\Prompts\text;
 
+#[Signature('shop:preset {vertical? : Target industry vertical (apparel|digital|cosmetics|blank)} {--admin-name= : Initial admin full name} {--admin-email= : Initial admin email address} {--admin-password= : Initial admin password}')]
+#[Description('Interactive TUI starter kit and store scaffolder for e-commerce verticals')]
 class ShopPresetCommand extends Command
 {
-    protected $signature = 'shop:preset {vertical? : Target industry vertical (apparel|digital|cosmetics|blank)} {--admin-name= : Initial admin full name} {--admin-email= : Initial admin email address} {--admin-password= : Initial admin password}';
-
-    protected $description = 'Interactive TUI starter kit and store scaffolder for e-commerce verticals';
-
     public function handle(GeneralSettings $generalSettings, ThemeSettings $themeSettings): int
     {
         intro('⚡ EasyShop — High-Performance E-Commerce Starter Kit & Store Scaffolder');

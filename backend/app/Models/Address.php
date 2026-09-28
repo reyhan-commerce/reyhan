@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\AddressFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,14 +30,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Province|null $province
  * @property-read City|null $city
  */
+#[Guarded(['id'])]
 class Address extends Model
 {
     /** @use HasFactory<AddressFactory> */
-    use HasFactory;
-
-    use SoftDeletes;
-
-    protected $guarded = ['id'];
+    use HasFactory, SoftDeletes;
 
     /**
      * @return array<string, string>
@@ -74,7 +73,8 @@ class Address extends Model
     /**
      * @param  Builder<Address>  $query
      */
-    public function scopeDefault(Builder $query): void
+    #[Scope]
+    protected function default(Builder $query): void
     {
         $query->where('is_default', true);
     }

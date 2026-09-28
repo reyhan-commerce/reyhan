@@ -9,6 +9,8 @@ use App\Enums\ShippingMethod as ShippingMethodEnum;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\OrderFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,12 +60,11 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property-read Collection<int, Payment> $payments
  * @property-read Payment|null $successfulPayment
  */
+#[Guarded(['id'])]
 class Order extends Model implements ProvidesActivityTitle
 {
     /** @use HasFactory<OrderFactory> */
     use HasFactory, LogsActivity, SoftDeletes;
-
-    protected $guarded = ['id'];
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -191,7 +192,8 @@ class Order extends Model implements ProvidesActivityTitle
     /**
      * @param  Builder<Order>  $query
      */
-    public function scopePendingPayment(Builder $query): void
+    #[Scope]
+    protected function pendingPayment(Builder $query): void
     {
         $query->where('status', OrderStatus::PendingPayment);
     }
@@ -199,7 +201,8 @@ class Order extends Model implements ProvidesActivityTitle
     /**
      * @param  Builder<Order>  $query
      */
-    public function scopeProcessing(Builder $query): void
+    #[Scope]
+    protected function processing(Builder $query): void
     {
         $query->where('status', OrderStatus::Processing);
     }

@@ -9,6 +9,8 @@ use App\Enums\PaymentStatus;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\PaymentFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,12 +34,11 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property-read Order|null $order
  * @property-read User|null $user
  */
+#[Guarded(['id'])]
 class Payment extends Model implements ProvidesActivityTitle
 {
     /** @use HasFactory<PaymentFactory> */
     use HasFactory, LogsActivity, SoftDeletes;
-
-    protected $guarded = ['id'];
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -86,7 +87,8 @@ class Payment extends Model implements ProvidesActivityTitle
     /**
      * @param  Builder<Payment>  $query
      */
-    public function scopeSuccess(Builder $query): void
+    #[Scope]
+    protected function success(Builder $query): void
     {
         $query->where('status', PaymentStatus::Success);
     }

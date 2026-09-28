@@ -5,20 +5,16 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\ProductVariantValueFactory;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+#[Table(name: 'product_variant_values', incrementing: true, timestamps: false)]
 class ProductVariantValue extends Pivot
 {
     /** @use HasFactory<ProductVariantValueFactory> */
     use HasFactory;
-
-    protected $table = 'product_variant_values';
-
-    public $incrementing = true;
-
-    public $timestamps = false;
 
     /**
      * @return BelongsTo<ProductVariant, $this>

@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\WishlistFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Guarded(['id'])]
 class Wishlist extends Model
 {
     /** @use HasFactory<WishlistFactory> */
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     /**
      * @return BelongsTo<User, $this>

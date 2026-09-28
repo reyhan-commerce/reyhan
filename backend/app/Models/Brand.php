@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\BrandFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,12 +28,12 @@ use Spatie\Sluggable\SlugOptions;
  * @property int $order
  * @property-read Collection<int, Product> $products
  */
+#[RouteKey('slug')]
+#[Guarded(['id'])]
 class Brand extends Model implements HasMedia
 {
     /** @use HasFactory<BrandFactory> */
     use HasFactory, HasSlug, InteractsWithMedia;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -50,11 +53,6 @@ class Brand extends Model implements HasMedia
             ->saveSlugsTo('slug');
     }
 
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-
     /**
      * @return HasMany<Product, $this>
      */
@@ -66,7 +64,8 @@ class Brand extends Model implements HasMedia
     /**
      * @param  Builder<Brand>  $query
      */
-    public function scopeActive(Builder $query): void
+    #[Scope]
+    protected function active(Builder $query): void
     {
         $query->where('is_active', true);
     }
@@ -74,7 +73,8 @@ class Brand extends Model implements HasMedia
     /**
      * @param  Builder<Brand>  $query
      */
-    public function scopeOrdered(Builder $query): void
+    #[Scope]
+    protected function ordered(Builder $query): void
     {
         $query->orderBy('order');
     }

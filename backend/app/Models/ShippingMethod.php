@@ -6,6 +6,8 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Database\Factories\ShippingMethodFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,12 +33,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $updated_at
  * @property-read Collection<int, Order> $orders
  */
+#[Guarded(['id'])]
 class ShippingMethod extends Model
 {
     /** @use HasFactory<ShippingMethodFactory> */
     use HasFactory, SoftDeletes;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -65,7 +66,8 @@ class ShippingMethod extends Model
     /**
      * @param  Builder<ShippingMethod>  $query
      */
-    public function scopeActive(Builder $query): void
+    #[Scope]
+    protected function active(Builder $query): void
     {
         $query->where('is_active', true)->orderBy('sort_order', 'asc');
     }

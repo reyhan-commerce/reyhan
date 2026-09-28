@@ -17,18 +17,26 @@ Never create artificial layers or repositories just to hide Eloquent query build
 ## 2. Modern Model Configuration (Laravel 11, 12 & 13)
 
 ### 2.1 The `casts()` Method
-In modern Laravel, define casts using the **`casts()` method**, not the legacy `$casts` property:
+### 2.1 The `casts()` Method & Native PHP Attributes (Laravel 13)
+In modern Laravel 13, prefer native PHP class attributes for model configuration over legacy properties, and define casts using the **`casts()` method**:
 
 ```php
 namespace App\Models;
 
 use App\Enums\OrderStatusEnum;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+#[RouteKey('slug')]
+#[Guarded(['id'])]
+#[Hidden(['password', 'remember_token'])]
 final class Order extends Model
 {
-    protected $guarded = ['id'];
-
     /**
      * Get the attributes that should be cast.
      *
@@ -47,11 +55,13 @@ final class Order extends Model
 }
 ```
 
-### 2.2 Mass Assignment Protection
-Default to guarding the primary key:
-```php
-protected $guarded = ['id'];
-```
+### 2.2 Mass Assignment & Model Attributes
+Use Laravel 13's native attribute definitions:
+- `#[Guarded(['id'])]` or `#[Unguarded]` instead of `$guarded` property.
+- `#[Table('custom_table', incrementing: true, timestamps: false)]` for custom table bindings.
+- `#[RouteKey('slug')]` instead of overriding `getRouteKeyName()`.
+- `#[Hidden(['token'])]` and `#[Visible(['name'])]` for serialization.
+
 For critical security-sensitive attributes (e.g. `is_admin`, `balance`, `role`), explicitly assign attributes in the Action rather than blindly passing request data:
 
 ```php
@@ -84,16 +94,21 @@ public function user(): BelongsTo
 ---
 
 ## 4. Scopes vs Use-Case Queries
-- **Use Scopes** for genuinely reusable, domain-wide query filters (e.g., `scopePaid()`, `scopeActive()`).
+- **Laravel 13 Attribute Scopes**: Define reusable domain-wide query scopes with `#[Scope]` and a `protected` method without the legacy `scope` prefix:
 - **Do NOT use Scopes** for one-off queries specific to a single controller or action. Keep one-off query logic directly where it is called.
 - Avoid turning Models into bloated query dumping grounds.
 
 ```php
-public function scopePaid(Builder $query): void
+use Illuminate\Database\Eloquent\Attributes\Scope;
+
+#[Scope]
+protected function paid(Builder $query): void
 {
     $query->where('status', OrderStatusEnum::PAID);
 }
 ```
+
+Calling `$orderQuery->paid()` or `Order::paid()` triggers the scope natively and safely in Laravel 13.
 
 ---
 

@@ -8,6 +8,9 @@ use App\Enums\ReviewStatus;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -46,12 +49,12 @@ use Spatie\Sluggable\SlugOptions;
  * @property-read Collection<int, OrderItem> $orderItems
  * @property-read array{min: int|null, max: int|null} $price_range
  */
+#[RouteKey('slug')]
+#[Guarded(['id'])]
 class Product extends Model implements HasMedia, ProvidesActivityTitle
 {
     /** @use HasFactory<ProductFactory> */
     use HasFactory, HasSEO, HasSlug, InteractsWithMedia, LogsActivity, SoftDeletes;
-
-    protected $guarded = ['id'];
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -85,11 +88,6 @@ class Product extends Model implements HasMedia, ProvidesActivityTitle
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug')
             ->slugsShouldBeNoLongerThan(255);
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
     }
 
     /**
@@ -135,7 +133,8 @@ class Product extends Model implements HasMedia, ProvidesActivityTitle
     /**
      * @param  Builder<Product>  $query
      */
-    public function scopeActive(Builder $query): void
+    #[Scope]
+    protected function active(Builder $query): void
     {
         $query->where('is_active', true)
             ->where(function (Builder $q): void {
@@ -147,7 +146,8 @@ class Product extends Model implements HasMedia, ProvidesActivityTitle
     /**
      * @param  Builder<Product>  $query
      */
-    public function scopeFeatured(Builder $query): void
+    #[Scope]
+    protected function featured(Builder $query): void
     {
         $query->where('is_featured', true);
     }
@@ -155,7 +155,8 @@ class Product extends Model implements HasMedia, ProvidesActivityTitle
     /**
      * @param  Builder<Product>  $query
      */
-    public function scopePublished(Builder $query): void
+    #[Scope]
+    protected function published(Builder $query): void
     {
         $query->whereNotNull('published_at')
             ->where('published_at', '<=', now());

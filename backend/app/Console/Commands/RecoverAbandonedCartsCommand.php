@@ -8,26 +8,16 @@ use App\Models\AbandonedCartLog;
 use App\Models\Cart;
 use App\Notifications\Marketing\AbandonedCartReminderNotification;
 use Carbon\Carbon;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
+#[Signature('cart:recover-abandoned {--hours=2 : Hours of cart inactivity}')]
+#[Description('Find inactive customer carts and send recovery reminder SMS')]
 final class RecoverAbandonedCartsCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'cart:recover-abandoned {--hours=2 : Hours of cart inactivity}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Find inactive customer carts and send recovery reminder SMS';
-
     /**
      * Execute the console command.
      */

@@ -80,7 +80,7 @@ Formulate an Architecture Proposal using [templates/architecture-proposal.md](./
 
 ### Phase 3: Implementation According to Standards
 - Write thin controllers delegating to `final` Actions.
-- Ensure all models use modern `protected function casts(): array` and `$guarded = ['id']`.
+- Ensure all models use Laravel 13 native class attributes (`#[Guarded(['id'])]`, `#[RouteKey('slug')]`, `#[Scope] protected function ...`) and modern `protected function casts(): array`.
 - Reference the production examples:
   - [Action Pattern](./examples/CreateOrderAction.php)
   - [DTO Pattern](./examples/CreateOrderData.php)

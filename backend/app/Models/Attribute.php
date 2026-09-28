@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\AttributeType;
 use Database\Factories\AttributeFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,12 +26,11 @@ use Spatie\Sluggable\SlugOptions;
  * @property-read Collection<int, Category> $categories
  * @property-read Pivot|null $pivot
  */
+#[Guarded(['id'])]
 class Attribute extends Model
 {
     /** @use HasFactory<AttributeFactory> */
     use HasFactory, HasSlug;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>

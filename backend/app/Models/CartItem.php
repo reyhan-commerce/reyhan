@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\CartItemFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,12 +22,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read int $subtotal
  * @property-read int $original_subtotal
  */
+#[Guarded(['id'])]
 class CartItem extends Model
 {
     /** @use HasFactory<CartItemFactory> */
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>

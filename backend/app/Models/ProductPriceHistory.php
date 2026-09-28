@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[WithoutTimestamps]
+#[Guarded(['id'])]
 final class ProductPriceHistory extends Model
 {
     use HasFactory;
-
-    public $timestamps = false;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>

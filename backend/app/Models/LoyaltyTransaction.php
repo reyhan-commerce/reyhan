@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\LoyaltyTransactionFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Guarded(['id'])]
 class LoyaltyTransaction extends Model
 {
     /** @use HasFactory<LoyaltyTransactionFactory> */
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     protected function casts(): array
     {
@@ -36,7 +37,8 @@ class LoyaltyTransaction extends Model
      * @param  Builder<$this>  $query
      * @return Builder<$this>
      */
-    public function scopeEarned(Builder $query): Builder
+    #[Scope]
+    protected function earned(Builder $query): Builder
     {
         return $query->where('points', '>', 0);
     }
@@ -45,7 +47,8 @@ class LoyaltyTransaction extends Model
      * @param  Builder<$this>  $query
      * @return Builder<$this>
      */
-    public function scopeSpent(Builder $query): Builder
+    #[Scope]
+    protected function spent(Builder $query): Builder
     {
         return $query->where('points', '<', 0);
     }

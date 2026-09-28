@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,11 +32,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Payment|null $payment
  * @property-read User|null $reviewer
  */
+#[Guarded(['id'])]
 class CardTransferReceipt extends Model
 {
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>

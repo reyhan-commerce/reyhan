@@ -598,3 +598,69 @@ All outbound SMS messages and customer alerts must strictly pass through Laravel
    - For guest/anonymous recipients: Call `Notification::route('sms', $mobile)->notify(new [NotificationName]($params))`.
 6. **No DB Transactions Holding External Calls**: Never trigger or execute notifications within open database transaction blocks (`DB::transaction()`). Dispatch notifications only after transaction commits.
 
+---
+
+## 17. Laravel 13 Native PHP Attributes Standard
+
+The codebase adopts Laravel 13's native PHP 8 Attribute-first paradigm for declarative framework configuration. This standard ensures maximum readability, strict typing, and zero legacy property ceremony.
+
+### 17.1. Eloquent Models
+All models strictly use official `Illuminate\Database\Eloquent\Attributes\` attributes:
+- **Mass Assignment**: `#[Guarded(['id'])]` or `#[Unguarded]` on class level instead of `$guarded` property.
+- **Route Key Binding**: `#[RouteKey('slug')]` on class level instead of overriding `getRouteKeyName(): string`.
+- **Query Scopes**: `#[Scope]` on `protected` methods without the legacy `scope` prefix (e.g. `#[Scope] protected function active(Builder $query): void`).
+- **Hidden / Visible Serialization**: `#[Hidden(['password', 'remember_token'])]` and `#[Visible([...])]`.
+- **Table / Timestamp Configuration**: `#[Table('custom_name', incrementing: true, timestamps: false)]` or `#[WithoutTimestamps]`.
+
+```php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+#[RouteKey('slug')]
+#[Guarded(['id'])]
+class Product extends Model
+{
+    #[Scope]
+    protected function active(Builder $query): void
+    {
+        $query->where('is_active', true);
+    }
+}
+```
+
+### 17.2. Artisan Console Commands
+All Artisan commands use official `Illuminate\Console\Attributes\` attributes:
+- `#[Signature('command:name {argument}')]` instead of `protected $signature`.
+- `#[Description('Description text')]` instead of `protected $description`.
+
+```php
+namespace App\Console\Commands;
+
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
+use Illuminate\Console\Command;
+
+#[Signature('cart:recover-abandoned {--hours=2}')]
+#[Description('Find inactive customer carts and send recovery reminder SMS')]
+final class RecoverAbandonedCartsCommand extends Command
+{
+    public function handle(): int
+    {
+        // ...
+        return self::SUCCESS;
+    }
+}
+```
+
+### 17.3. Queues, Listeners & Background Jobs
+Queueable classes prefer official `Illuminate\Queue\Attributes\` attributes:
+- `#[Queue('notifications')]` to specify destination queue name.
+- `#[Connection('redis')]` to specify queue connection.
+- `#[Tries(3)]`, `#[Timeout(60)]`, `#[Backoff([10, 30, 60])]` for retry dynamics.
+
+

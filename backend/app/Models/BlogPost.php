@@ -6,6 +6,8 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Database\Factories\BlogPostFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,12 +18,11 @@ use Rankbeam\Seo\Traits\HasSEO;
 /**
  * @property Carbon|null $published_at
  */
+#[Guarded(['id'])]
 class BlogPost extends Model
 {
     /** @use HasFactory<BlogPostFactory> */
     use HasFactory, HasSEO, SoftDeletes;
-
-    protected $guarded = ['id'];
 
     protected function casts(): array
     {
@@ -55,7 +56,8 @@ class BlogPost extends Model
      * @param  Builder<$this>  $query
      * @return Builder<$this>
      */
-    public function scopePublished(Builder $query): Builder
+    #[Scope]
+    protected function published(Builder $query): Builder
     {
         return $query->where('is_published', true)
             ->where(function (Builder $q) {
@@ -68,7 +70,8 @@ class BlogPost extends Model
      * @param  Builder<$this>  $query
      * @return Builder<$this>
      */
-    public function scopeFeatured(Builder $query): Builder
+    #[Scope]
+    protected function featured(Builder $query): Builder
     {
         return $query->where('is_featured', true);
     }

@@ -7,16 +7,16 @@ namespace App\Models;
 use App\Enums\TicketDepartment;
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[Guarded(['id'])]
 final class SupportTicket extends Model
 {
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>

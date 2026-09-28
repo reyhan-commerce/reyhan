@@ -6,6 +6,8 @@ namespace App\Models;
 
 use App\Enums\BannerPosition;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,11 +30,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
+#[Guarded(['id'])]
 final class Banner extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
-
-    protected $guarded = ['id'];
 
     public function registerMediaCollections(): void
     {
@@ -96,7 +97,8 @@ final class Banner extends Model implements HasMedia
      * @param  Builder<self>  $query
      * @return Builder<self>
      */
-    public function scopeActive(Builder $query): Builder
+    #[Scope]
+    protected function active(Builder $query): Builder
     {
         $now = now();
 

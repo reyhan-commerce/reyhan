@@ -9,6 +9,8 @@ use Database\Factories\AdminFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -17,6 +19,8 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Permission\Traits\HasRoles;
 
+#[Guarded(['id'])]
+#[Hidden(['password', 'remember_token'])]
 class Admin extends Authenticatable implements FilamentUser, HasName, ProvidesActivityTitle
 {
     /** @use HasFactory<AdminFactory> */
@@ -56,18 +60,6 @@ class Admin extends Authenticatable implements FilamentUser, HasName, ProvidesAc
      * Default guard for admin permissions.
      */
     protected string $guard_name = 'admin';
-
-    protected $guarded = ['id'];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
 
     /**
      * Get the attributes that should be cast.

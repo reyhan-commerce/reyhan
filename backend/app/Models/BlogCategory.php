@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\BlogCategoryFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[Guarded(['id'])]
 class BlogCategory extends Model
 {
     /** @use HasFactory<BlogCategoryFactory> */
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     protected function casts(): array
     {
@@ -29,7 +30,8 @@ class BlogCategory extends Model
      * @param  Builder<$this>  $query
      * @return Builder<$this>
      */
-    public function scopeActive(Builder $query): Builder
+    #[Scope]
+    protected function active(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }

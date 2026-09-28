@@ -9,6 +9,8 @@ use App\Enums\CouponType;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\CouponFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,12 +41,11 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property-read Collection<int, Brand> $brands
  * @property-read Collection<int, ProductVariant> $variants
  */
+#[Guarded(['id'])]
 class Coupon extends Model implements ProvidesActivityTitle
 {
     /** @use HasFactory<CouponFactory> */
     use HasFactory, LogsActivity, SoftDeletes;
-
-    protected $guarded = ['id'];
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -115,7 +116,8 @@ class Coupon extends Model implements ProvidesActivityTitle
     /**
      * @param  Builder<Coupon>  $query
      */
-    public function scopeActive(Builder $query): void
+    #[Scope]
+    protected function active(Builder $query): void
     {
         $query->where('is_active', true)
             ->where(function (Builder $q): void {

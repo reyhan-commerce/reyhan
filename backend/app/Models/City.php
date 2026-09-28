@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\CityFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,12 +25,11 @@ use Spatie\Sluggable\SlugOptions;
  * @property float|null $longitude
  * @property-read Province|null $province
  */
+#[Guarded(['id'])]
 class City extends Model
 {
     /** @use HasFactory<CityFactory> */
     use HasFactory, HasSlug;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -62,7 +63,8 @@ class City extends Model
     /**
      * @param  Builder<City>  $query
      */
-    public function scopeActive(Builder $query): void
+    #[Scope]
+    protected function active(Builder $query): void
     {
         $query->where('is_active', true);
     }

@@ -9,11 +9,13 @@ use App\Models\StockAlert;
 use App\Notifications\Catalog\StockAlertNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Queue\Attributes\Queue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Throwable;
 
+#[Queue('notifications')]
 final class SendProductRestockAlertsListener implements ShouldQueue
 {
     use InteractsWithQueue;
@@ -22,11 +24,6 @@ final class SendProductRestockAlertsListener implements ShouldQueue
      * Ensure the listener only executes after the database transaction has committed.
      */
     public bool $afterCommit = true;
-
-    /**
-     * The name of the queue the job should be sent to.
-     */
-    public string $queue = 'notifications';
 
     /**
      * Handle the event.

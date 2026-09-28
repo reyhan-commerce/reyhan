@@ -9,6 +9,8 @@ use App\Events\Catalog\ProductRestockedEvent;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
 use Database\Factories\ProductVariantFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -40,12 +42,11 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property-read StockStatus $stock_status
  * @property-read int $discount_percent
  */
+#[Guarded(['id'])]
 class ProductVariant extends Model implements ProvidesActivityTitle
 {
     /** @use HasFactory<ProductVariantFactory> */
     use HasFactory, LogsActivity, SoftDeletes;
-
-    protected $guarded = ['id'];
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -122,7 +123,8 @@ class ProductVariant extends Model implements ProvidesActivityTitle
     /**
      * @param  Builder<ProductVariant>  $query
      */
-    public function scopeActive(Builder $query): void
+    #[Scope]
+    protected function active(Builder $query): void
     {
         $query->where('is_active', true);
     }
@@ -130,7 +132,8 @@ class ProductVariant extends Model implements ProvidesActivityTitle
     /**
      * @param  Builder<ProductVariant>  $query
      */
-    public function scopeInStock(Builder $query): void
+    #[Scope]
+    protected function inStock(Builder $query): void
     {
         $query->where('stock', '>', 0);
     }

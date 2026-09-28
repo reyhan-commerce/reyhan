@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\CategoryFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,12 +34,12 @@ use Spatie\Sluggable\SlugOptions;
  * @property-read EloquentCollection<int, Product> $products
  * @property-read EloquentCollection<int, Attribute> $attributes
  */
+#[RouteKey('slug')]
+#[Guarded(['id'])]
 class Category extends Model implements HasMedia
 {
     /** @use HasFactory<CategoryFactory> */
     use HasFactory, HasSlug, InteractsWithMedia;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>
@@ -55,11 +58,6 @@ class Category extends Model implements HasMedia
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug')
             ->slugsShouldBeNoLongerThan(255);
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
     }
 
     /**
@@ -182,7 +180,8 @@ class Category extends Model implements HasMedia
     /**
      * @param  Builder<Category>  $query
      */
-    public function scopeActive(Builder $query): void
+    #[Scope]
+    protected function active(Builder $query): void
     {
         $query->where('is_active', true);
     }
@@ -190,7 +189,8 @@ class Category extends Model implements HasMedia
     /**
      * @param  Builder<Category>  $query
      */
-    public function scopeRoot(Builder $query): void
+    #[Scope]
+    protected function root(Builder $query): void
     {
         $query->whereNull('parent_id');
     }
@@ -198,7 +198,8 @@ class Category extends Model implements HasMedia
     /**
      * @param  Builder<Category>  $query
      */
-    public function scopeOrdered(Builder $query): void
+    #[Scope]
+    protected function ordered(Builder $query): void
     {
         $query->orderBy('order');
     }

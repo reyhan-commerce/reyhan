@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\CartFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,12 +21,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Coupon|null $coupon
  * @property-read Collection<int, CartItem> $items
  */
+#[Guarded(['id'])]
 class Cart extends Model
 {
     /** @use HasFactory<CartFactory> */
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     /**
      * @return BelongsTo<User, $this>

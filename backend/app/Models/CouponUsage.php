@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\CouponUsageFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,12 +18,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Coupon|null $coupon
  * @property-read User|null $user
  */
+#[Guarded(['id'])]
 class CouponUsage extends Model
 {
     /** @use HasFactory<CouponUsageFactory> */
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>

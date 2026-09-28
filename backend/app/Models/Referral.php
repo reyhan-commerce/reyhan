@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\ReferralStatus;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,11 +26,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read User $referred
  * @property-read Order|null $order
  */
+#[Guarded(['id'])]
 final class Referral extends Model
 {
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     /**
      * @return array<string, string>

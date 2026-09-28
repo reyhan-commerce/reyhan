@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\FaqFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[Guarded(['id'])]
 class Faq extends Model
 {
     /** @use HasFactory<FaqFactory> */
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     protected function casts(): array
     {
@@ -28,7 +29,8 @@ class Faq extends Model
      * @param  Builder<$this>  $query
      * @return Builder<$this>
      */
-    public function scopeActive(Builder $query): Builder
+    #[Scope]
+    protected function active(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
