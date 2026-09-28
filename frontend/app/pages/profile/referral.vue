@@ -180,7 +180,7 @@ const submitClaim = async () => {
             </span>
             <UButton
               size="xs"
-              color="white"
+              color="neutral"
               variant="solid"
               icon="i-lucide-copy"
               @click="copyCode"

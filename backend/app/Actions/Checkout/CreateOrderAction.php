@@ -152,6 +152,7 @@ final class CreateOrderAction
                 'coupon_discount' => $pricing->couponDiscount,
                 'coupon_code' => $pricing->appliedCoupon['code'] ?? null,
                 'shipping_fee' => $shippingFee,
+                'tax_amount' => $pricing->taxAmount,
                 'wallet_paid_amount' => $walletDeduction,
                 'final_payable' => $finalPayable,
                 'notes' => $data->notes,

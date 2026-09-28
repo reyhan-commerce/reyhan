@@ -150,22 +150,5 @@ const { toPersianDigits } = usePersian()
         </div>
       </div>
     </div>
-
-    <!-- Step 1 Actions -->
-    <div
-      v-if="checkoutStore.addresses.length > 0"
-      class="flex justify-end pt-4 border-t border-neutral-100 dark:border-neutral-800"
-    >
-      <UButton
-        color="primary"
-        variant="solid"
-        size="lg"
-        trailing-icon="i-lucide-arrow-left"
-        class="rounded-2xl px-8 font-bold shadow-md shadow-primary/25"
-        @click="emit('next')"
-      >
-        انتخاب شیوه ارسال
-      </UButton>
-    </div>
   </section>
 </template>

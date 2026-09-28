@@ -28,6 +28,16 @@ return [
         'wallet' => 'Customer Wallet',
     ],
 
+    'payment_gateway_description' => [
+        'sandbox' => 'Test payment simulator (no actual charge)',
+        'zarinpal' => 'Secure payment with all Shetab bank cards',
+        'saman' => 'Direct online gateway via Saman Bank (SEP)',
+        'mellat' => 'Direct online gateway via Behpardakht Mellat',
+        'snapp_pay' => 'Buy now, pay in 4 interest-free installments',
+        'card_to_card' => 'Offline card-to-card transfer with slip submission',
+        'wallet' => 'Instant payment using account wallet balance',
+    ],
+
     'order_return_status' => [
         'pending' => 'Pending Review',
         'approved' => 'Approved (Awaiting Return Shipment)',

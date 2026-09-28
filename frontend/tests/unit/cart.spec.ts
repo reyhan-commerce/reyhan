@@ -33,7 +33,9 @@ describe('Cart Financial Calculations & Thresholds', () => {
     const shippingFee = isFreeShipping ? 0 : params.standardShippingFee
     const remainingForFreeShipping = Math.max(0, params.freeShippingThreshold - itemsSubtotal)
     const progress = Math.min(100, Math.round((itemsSubtotal / params.freeShippingThreshold) * 100))
-    const finalPayable = Math.max(0, itemsSubtotal - couponDiscount + shippingFee)
+    const subtotalAfterCoupon = Math.max(0, itemsSubtotal - couponDiscount)
+    const taxAmount = Math.round(subtotalAfterCoupon * 0.10)
+    const finalPayable = subtotalAfterCoupon + taxAmount + shippingFee
 
     return {
       original_items_subtotal: originalSubtotal,
@@ -41,6 +43,7 @@ describe('Cart Financial Calculations & Thresholds', () => {
       catalog_discount: catalogDiscount,
       coupon_discount: couponDiscount,
       total_discount: totalDiscount,
+      tax_amount: taxAmount,
       shipping_fee: shippingFee,
       is_free_shipping: isFreeShipping,
       free_shipping_threshold: params.freeShippingThreshold,
@@ -66,10 +69,11 @@ describe('Cart Financial Calculations & Thresholds', () => {
     expect(result.original_items_subtotal).toBe(2500000)
     expect(result.items_subtotal).toBe(2100000)
     expect(result.catalog_discount).toBe(400000)
+    expect(result.tax_amount).toBe(210000) // 10% of 2.1M
     expect(result.is_free_shipping).toBe(false)
     expect(result.shipping_fee).toBe(650000)
     expect(result.remaining_for_free_shipping).toBe(2900000)
-    expect(result.final_payable).toBe(2100000 + 650000)
+    expect(result.final_payable).toBe(2100000 + 210000 + 650000)
   })
 
   it('qualifies for free shipping when exceeding threshold', () => {
@@ -83,9 +87,10 @@ describe('Cart Financial Calculations & Thresholds', () => {
 
     expect(result.is_free_shipping).toBe(true)
     expect(result.shipping_fee).toBe(0)
+    expect(result.tax_amount).toBe(600000) // 10% of 6M
     expect(result.remaining_for_free_shipping).toBe(0)
     expect(result.free_shipping_progress).toBe(100)
-    expect(result.final_payable).toBe(6000000)
+    expect(result.final_payable).toBe(6000000 + 600000)
   })
 
   it('applies percentage coupon discounts accurately', () => {
@@ -99,7 +104,8 @@ describe('Cart Financial Calculations & Thresholds', () => {
     })
 
     expect(result.coupon_discount).toBe(200000)
-    expect(result.final_payable).toBe(2000000 - 200000 + 500000)
+    expect(result.tax_amount).toBe(180000) // 10% of 1.8M
+    expect(result.final_payable).toBe(1800000 + 180000 + 500000)
   })
 
   it('caps fixed coupon at items subtotal to avoid negative amounts', () => {
@@ -113,6 +119,7 @@ describe('Cart Financial Calculations & Thresholds', () => {
     })
 
     expect(result.coupon_discount).toBe(300000)
+    expect(result.tax_amount).toBe(0) // 0 after coupon
     expect(result.final_payable).toBe(500000) // only shipping fee remains
   })
 })

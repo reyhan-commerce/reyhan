@@ -28,6 +28,9 @@ final class CartPricingData extends Data
         #[MapName('total_discount')]
         public int $totalDiscount,
 
+        #[MapName('tax_amount')]
+        public int $taxAmount,
+
         #[MapName('shipping_fee')]
         public int $shippingFee,
 

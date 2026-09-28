@@ -40,32 +40,32 @@ const handleRemoveCoupon = async () => {
       <!-- Free shipping progress bar -->
       <div
         v-if="cartStore.pricing && !cartStore.isEmpty"
-        class="mb-4 p-3 rounded-2xl bg-primary-50/60 dark:bg-primary-950/20 border border-primary-100 dark:border-primary-900/40"
+        class="mb-4 p-3.5 rounded-2xl bg-primary-50/60 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900/40"
       >
-        <div class="flex items-center justify-between text-xs font-medium mb-1.5">
+        <div class="flex items-center justify-between text-xs font-medium mb-2">
           <div class="flex items-center gap-1.5 text-primary-700 dark:text-primary-300">
             <UIcon
               name="i-lucide-truck"
-              class="w-4 h-4 shrink-0"
+              class="size-4 shrink-0"
             />
             <span
               v-if="cartStore.pricing.is_free_shipping"
               class="font-bold text-emerald-600 dark:text-emerald-400"
             >
-              تبریک! ارسال این سفارش رایگان است 🎉
+              تبریک! ارسال این سفارش رایگان شد 🎉
             </span>
             <span v-else>
               تنها {{ formatPrice(cartStore.pricing.remaining_for_free_shipping) }} تا ارسال رایگان
             </span>
           </div>
-          <span class="text-[11px] font-bold text-primary-600 dark:text-primary-400">
+          <span class="text-[11px] font-black text-primary">
             {{ toPersianDigits(cartStore.pricing.free_shipping_progress) }}٪
           </span>
         </div>
 
-        <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+        <div class="w-full h-1.5 bg-neutral-200/80 dark:bg-neutral-800 rounded-full overflow-hidden">
           <div
-            class="h-full bg-primary-500 rounded-full transition-all duration-500 ease-out"
+            class="h-full bg-primary rounded-full transition-all duration-500 ease-out"
             :style="{ width: `${cartStore.pricing.free_shipping_progress}%` }"
           />
         </div>
@@ -87,16 +87,16 @@ const handleRemoveCoupon = async () => {
         v-else-if="cartStore.isEmpty"
         class="flex flex-col items-center justify-center py-16 text-center"
       >
-        <div class="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4 text-gray-400 dark:text-gray-500">
+        <div class="size-20 rounded-3xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4 text-neutral-400 dark:text-neutral-500 shadow-xs">
           <UIcon
             name="i-lucide-shopping-bag"
-            class="w-10 h-10"
+            class="size-10 text-primary"
           />
         </div>
-        <h3 class="text-base font-bold text-gray-900 dark:text-gray-100 mb-1">
+        <h3 class="text-base font-black text-neutral-900 dark:text-white mb-1.5">
           سبد خرید شما خالی است
         </h3>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-6 max-w-xs">
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-6 max-w-xs leading-relaxed">
           می‌توانید برای مشاهده و خرید محصولات به کاتالوگ فروشگاه مراجعه کنید.
         </p>
         <UButton
@@ -104,21 +104,23 @@ const handleRemoveCoupon = async () => {
           color="primary"
           icon="i-lucide-arrow-left"
           trailing
+          class="rounded-xl font-bold shadow-sm shadow-primary/25"
           @click="cartStore.closeSlideover"
         >
-          مشاهده محصولات فروشگاه
+          مشاهده کاتالوگ محصولات
         </UButton>
       </div>
 
       <!-- Cart Items List -->
       <div
         v-else
-        class="divide-y divide-gray-100 dark:divide-gray-800"
+        class="divide-y divide-neutral-100 dark:divide-neutral-800/80"
       >
         <CartItemRow
           v-for="item in cartStore.cart?.items"
           :key="item.id"
           :item="item"
+          compact
         />
 
         <!-- Coupon section -->
@@ -126,15 +128,15 @@ const handleRemoveCoupon = async () => {
           <!-- Active applied coupon -->
           <div
             v-if="cartStore.pricing?.applied_coupon"
-            class="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50"
+            class="flex items-center justify-between p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50"
           >
             <div class="flex items-center gap-2">
               <UIcon
                 name="i-lucide-ticket"
-                class="w-4 h-4 text-emerald-600 dark:text-emerald-400"
+                class="size-4 text-emerald-600 dark:text-emerald-400"
               />
               <div class="text-xs">
-                <span class="font-bold font-mono text-emerald-700 dark:text-emerald-300">
+                <span class="font-black font-mono text-emerald-700 dark:text-emerald-300">
                   {{ cartStore.pricing.applied_coupon.code }}
                 </span>
                 <span class="text-emerald-600 dark:text-emerald-400 mr-2">
@@ -147,7 +149,7 @@ const handleRemoveCoupon = async () => {
               variant="ghost"
               size="xs"
               icon="i-lucide-trash-2"
-              class="text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
+              class="text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg"
               :loading="cartStore.isApplyingCoupon"
               @click="handleRemoveCoupon"
             />
@@ -170,6 +172,7 @@ const handleRemoveCoupon = async () => {
               color="neutral"
               variant="outline"
               size="sm"
+              class="rounded-xl"
               :loading="cartStore.isApplyingCoupon"
               :disabled="!couponInput.trim()"
               @click="handleApplyCoupon"
@@ -187,15 +190,15 @@ const handleRemoveCoupon = async () => {
         class="w-full space-y-3"
       >
         <!-- Breakdown table -->
-        <div class="space-y-1.5 text-xs text-gray-600 dark:text-gray-300">
+        <div class="space-y-2 text-xs text-neutral-600 dark:text-neutral-400">
           <div class="flex justify-between">
             <span>مجموع خرید:</span>
-            <span>{{ formatPrice(cartStore.pricing?.original_items_subtotal) }}</span>
+            <span class="font-bold text-neutral-900 dark:text-white">{{ formatPrice(cartStore.pricing?.original_items_subtotal) }}</span>
           </div>
 
           <div
             v-if="cartStore.pricing && cartStore.pricing.catalog_discount > 0"
-            class="flex justify-between text-red-500 font-medium"
+            class="flex justify-between text-primary font-bold"
           >
             <span>سود شما از تخفیف‌ها:</span>
             <span>{{ formatPrice(cartStore.pricing.catalog_discount) }}-</span>
@@ -203,28 +206,41 @@ const handleRemoveCoupon = async () => {
 
           <div
             v-if="cartStore.pricing && cartStore.pricing.coupon_discount > 0"
-            class="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium"
+            class="flex justify-between text-emerald-600 dark:text-emerald-400 font-bold"
           >
             <span>تخفیف کوپن:</span>
             <span>{{ formatPrice(cartStore.pricing.coupon_discount) }}-</span>
+          </div>
+
+          <div
+            v-if="cartStore.pricing && cartStore.pricing.tax_amount > 0"
+            class="flex justify-between"
+          >
+            <span>مالیات بر ارزش افزوده (۱۰٪):</span>
+            <span class="font-bold text-neutral-900 dark:text-white">
+              {{ formatPrice(cartStore.pricing.tax_amount) }}+
+            </span>
           </div>
 
           <div class="flex justify-between">
             <span>هزینه ارسال:</span>
             <span
               v-if="cartStore.pricing?.is_free_shipping"
-              class="text-emerald-600 dark:text-emerald-400 font-bold"
+              class="text-emerald-600 dark:text-emerald-400 font-black"
             >
               رایگان
             </span>
-            <span v-else>
+            <span
+              v-else
+              class="font-bold text-neutral-900 dark:text-white"
+            >
               {{ formatPrice(cartStore.pricing?.shipping_fee) }}
             </span>
           </div>
 
-          <div class="pt-2 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center text-sm font-black text-gray-900 dark:text-gray-100">
+          <div class="pt-2.5 border-t border-neutral-100 dark:border-neutral-800 flex justify-between items-center text-sm font-black text-neutral-900 dark:text-white">
             <span>مبلغ قابل پرداخت:</span>
-            <span class="text-primary-600 dark:text-primary-400 text-base">
+            <span class="text-primary text-base font-black">
               {{ formatPrice(cartStore.pricing?.final_payable) }}
             </span>
           </div>
@@ -237,6 +253,7 @@ const handleRemoveCoupon = async () => {
             color="neutral"
             variant="outline"
             block
+            class="rounded-xl font-bold"
             @click="cartStore.closeSlideover"
           >
             مشاهده سبد خرید
@@ -247,6 +264,7 @@ const handleRemoveCoupon = async () => {
             block
             trailing
             icon="i-lucide-arrow-left"
+            class="rounded-xl font-bold shadow-sm shadow-primary/25"
             @click="cartStore.closeSlideover"
           >
             تکمیل سفارش
@@ -256,3 +274,4 @@ const handleRemoveCoupon = async () => {
     </template>
   </USlideover>
 </template>
+

@@ -132,7 +132,8 @@ export const useCheckoutStore = defineStore('checkout', () => {
   async function fetchGateways(): Promise<void> {
     isLoadingGateways.value = true
     try {
-      gateways.value = await checkoutService.getGateways()
+      const res = await checkoutService.getGateways()
+      gateways.value = res.filter(g => g.id !== 'wallet')
       if (gateways.value.length > 0 && !gateways.value.some(g => g.id === selectedGateway.value)) {
         selectedGateway.value = gateways.value[0]?.id || 'sandbox'
       }
@@ -222,7 +223,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
   }
 
   const effectivePayable = computed(() => {
-    const raw = previewFinalPayable.value ?? previewPricing.value?.final_price ?? 0
+    const raw = previewFinalPayable.value ?? previewPricing.value?.final_payable ?? 0
     if (!useWallet.value) return raw
     return Math.max(0, raw - walletBalance.value)
   })

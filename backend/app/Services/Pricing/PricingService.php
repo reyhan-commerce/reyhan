@@ -88,7 +88,8 @@ final class PricingService
         );
 
         $subtotalAfterCoupon = max(0, $itemsSubtotal - $couponDiscount);
-        $finalPayable = $subtotalAfterCoupon + $shipping['shipping_fee'];
+        $taxAmount = (int) round($subtotalAfterCoupon * 0.10); // 10% Iranian standard VAT
+        $finalPayable = $subtotalAfterCoupon + $taxAmount + $shipping['shipping_fee'];
         $totalDiscount = $catalogDiscount + $couponDiscount;
 
         return new CartPricingData(
@@ -97,6 +98,7 @@ final class PricingService
             catalogDiscount: $catalogDiscount,
             couponDiscount: $couponDiscount,
             totalDiscount: $totalDiscount,
+            taxAmount: $taxAmount,
             shippingFee: $shipping['shipping_fee'],
             isFreeShipping: $shipping['is_free'],
             freeShippingThreshold: $shipping['free_shipping_threshold'],

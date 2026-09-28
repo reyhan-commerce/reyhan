@@ -28,13 +28,13 @@ watch(() => props.active, async (isActive) => {
 
 // Check if wallet covers 100% of payable
 const isFullyCoveredByWallet = computed(() => {
-  const total = checkoutStore.previewFinalPayable ?? checkoutStore.previewPricing?.final_price ?? 0
+  const total = checkoutStore.previewFinalPayable ?? checkoutStore.previewPricing?.final_payable ?? 0
   return checkoutStore.useWallet && checkoutStore.walletBalance >= total && total > 0
 })
 
 const walletDeductionAmount = computed(() => {
   if (!checkoutStore.useWallet) return 0
-  const total = checkoutStore.previewFinalPayable ?? checkoutStore.previewPricing?.final_price ?? 0
+  const total = checkoutStore.previewFinalPayable ?? checkoutStore.previewPricing?.final_payable ?? 0
   return Math.min(checkoutStore.walletBalance, total)
 })
 </script>
@@ -339,34 +339,6 @@ const walletDeductionAmount = computed(() => {
         :rows="2"
         class="w-full"
       />
-    </div>
-
-    <!-- STEP ACTIONS -->
-    <div class="flex items-center justify-between pt-4 border-t border-neutral-100 dark:border-neutral-800">
-      <UButton
-        color="neutral"
-        variant="ghost"
-        size="lg"
-        icon="i-lucide-arrow-right"
-        class="rounded-2xl px-5 font-bold"
-        @click="emit('prev')"
-      >
-        بازگشت به شیوه ارسال
-      </UButton>
-
-      <UButton
-        color="primary"
-        variant="solid"
-        size="lg"
-        icon="i-lucide-lock"
-        :loading="checkoutStore.isSubmittingOrder"
-        class="rounded-2xl px-8 font-black shadow-lg shadow-primary/25 cursor-pointer"
-        @click="emit('pay')"
-      >
-        <span v-if="isFullyCoveredByWallet">تسویه کامل از کیف پول و ثبت سفارش</span>
-        <span v-else-if="checkoutStore.selectedGateway === 'card_to_card'">ثبت سفارش و ثبت فیش کارت‌به‌کارت</span>
-        <span v-else>پرداخت و ثبت نهایی سفارش</span>
-      </UButton>
     </div>
   </section>
 </template>

@@ -33,10 +33,12 @@ class ZarinpalDriver implements PaymentDriverInterface
             : 'https://payment.zarinpal.com/pg/v4/payment';
 
         try {
+            $payableRials = max(0, $order->final_payable - ($order->wallet_paid_amount ?? 0));
+
             $response = Http::timeout(10)->post("{$baseUrl}/request.json", [
                 'merchant_id' => $this->config['merchant_id'],
                 // Zarinpal v4 expects amount in Toman (order final_payable is in Rial)
-                'amount' => (int) ($order->final_payable / 10),
+                'amount' => (int) ($payableRials / 10),
                 'description' => __('Payment for order #:order_number', ['order_number' => $order->order_number]),
                 'callback_url' => $callbackUrl,
                 'metadata' => [

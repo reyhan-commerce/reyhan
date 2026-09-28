@@ -66,6 +66,7 @@ const polygonPoints = computed(() => {
   if (chartPoints.value.length === 0) return ''
   const first = chartPoints.value[0]
   const last = chartPoints.value[chartPoints.value.length - 1]
+  if (!first || !last) return ''
   const base = `${last.x},${svgHeight - padding} ${first.x},${svgHeight - padding}`
   return `${polylinePoints.value} ${base}`
 })

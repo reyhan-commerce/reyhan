@@ -31,6 +31,16 @@ enum PaymentGateway: string implements HasColor, HasIcon, HasLabel
         return $this->getLabel();
     }
 
+    public function getDescription(): string
+    {
+        return __('enums.payment_gateway_description.'.$this->value);
+    }
+
+    public function description(): string
+    {
+        return $this->getDescription();
+    }
+
     public function getColor(): string
     {
         return match ($this) {

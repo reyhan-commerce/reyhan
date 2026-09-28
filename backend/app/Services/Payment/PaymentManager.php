@@ -106,6 +106,10 @@ class PaymentManager extends Manager
         $configured = (array) $this->config->get('payment.gateways', []);
 
         foreach ($configured as $key => $options) {
+            if ((string) $key === 'wallet') {
+                continue;
+            }
+
             if (! empty($options['active'])) {
                 $enum = PaymentGateway::tryFrom((string) $key);
                 $gateways[] = [

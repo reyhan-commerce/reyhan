@@ -113,11 +113,14 @@ export interface Order {
   delivery_time_slot?: string | null
   shipping_address?: OrderShippingAddress | null
   items_subtotal: number
+  original_items_subtotal?: number
   discount_amount: number
   coupon_discount: number
   coupon_code?: string | null
   shipping_fee: number
+  tax_amount?: number
   final_payable: number
+  remaining_payable?: number
   items_count: number
   wallet_paid_amount?: number
   is_corporate_invoice?: boolean

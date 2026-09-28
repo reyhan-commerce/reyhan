@@ -41,6 +41,18 @@ export function usePersian() {
   }
 
   /**
+   * Format prices in Rial (for official legal invoices):
+   * Keeps exact Rial amount (no division by 10) with thousands separator and Persian digits.
+   * e.g. 8500000 -> "۸٬۵۰۰٬۰۰۰ ریال"
+   */
+  function formatRials(rial: number | null | undefined, options: { showUnit?: boolean } = {}): string {
+    if (rial === null || rial === undefined) return '—'
+    const showUnit = options.showUnit ?? true
+    const formattedNumber = toPersianDigits(Math.round(rial).toLocaleString('en-US'))
+    return showUnit ? `${formattedNumber} ریال` : formattedNumber
+  }
+
+  /**
    * Format percentage discount with Persian digits and percent sign.
    */
   function formatDiscount(price: number, compareAtPrice: number | null | undefined): string | null {
@@ -53,6 +65,7 @@ export function usePersian() {
     toPersianDigits,
     toEnglishDigits,
     formatPrice,
+    formatRials,
     formatDiscount
   }
 }

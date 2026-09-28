@@ -123,7 +123,10 @@ async function handlePay() {
 
       <!-- Invoice Summary Sidebar (4 cols) -->
       <div class="lg:col-span-4">
-        <CheckoutSummaryCard @pay="handlePay" />
+        <CheckoutSummaryCard
+          v-model:current-step="currentStep"
+          @pay="handlePay"
+        />
       </div>
     </div>
 

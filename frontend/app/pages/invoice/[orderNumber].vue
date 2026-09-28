@@ -8,7 +8,7 @@ definePageMeta({
 const route = useRoute()
 const api = useApi()
 const settingsStore = useSettingsStore()
-const { toPersianDigits, formatPrice } = usePersian()
+const { toPersianDigits, formatPrice, formatRials } = usePersian()
 
 const orderNumber = computed(() => String(route.params.orderNumber))
 const order = ref<Order | null>(null)
@@ -92,16 +92,23 @@ async function fetchInvoice() {
   }
 }
 
-// Calculations for Tax Invoice (ماده ۱۹ ارزش افزوده)
-const vatRate = 0.10 // 10% Iranian standard VAT
+// Calculations for Tax Invoice (ماده ۱۹ ارزش افزوده - ۱۰٪ محاسبه مستقیم روی مبلغ خالص پس از تخفیف)
+const vatRate = 0.10 // 10% Iranian standard VAT (Exclusive add-on)
 const taxableItems = computed(() => {
   if (!order.value?.items) return []
   return order.value.items.map((item) => {
-    const netTotal = item.total_price
-    const vat = Math.round(netTotal * vatRate)
-    const grandTotal = netTotal + vat
+    const unitPrice = item.unit_price
+    const discount = item.discount_amount
+    const netTotal = item.total_price // Price after catalog discount for total quantity
+    const vat = Math.round(netTotal * vatRate) // Exactly 10% of net total (e.g. 950,000)
+    const grandTotal = netTotal + vat // Net + VAT (e.g. 10,450,000)
+    const netUnit = item.final_price
+
     return {
       ...item,
+      unitPrice,
+      discount,
+      netUnit,
       netTotal,
       vat,
       grandTotal,
@@ -109,8 +116,48 @@ const taxableItems = computed(() => {
   })
 })
 
+// Gross items total (sum of unit_price * quantity before discounts)
+const grossItemsTotal = computed(() => {
+  if (!order.value) return 0
+  if (order.value.original_items_subtotal) {
+    return order.value.original_items_subtotal
+  }
+  return order.value.items_subtotal + (order.value.discount_amount || 0)
+})
+
+const totalCatalogDiscount = computed(() => order.value?.discount_amount || 0)
+const totalCouponDiscount = computed(() => order.value?.coupon_discount || 0)
+const totalAllDiscounts = computed(() => totalCatalogDiscount.value + totalCouponDiscount.value)
+const totalShippingFee = computed(() => order.value?.shipping_fee || 0)
+
 const totalVatAmount = computed(() => {
+  if (invoiceType.value !== 'tax') return 0
   return taxableItems.value.reduce((acc, curr) => acc + curr.vat, 0)
+})
+
+// Grand Total of Invoice
+const grandInvoiceTotal = computed(() => {
+  if (!order.value) return 0
+  const base = order.value.final_payable || 0
+  if (invoiceType.value === 'tax') {
+    return base + totalVatAmount.value
+  }
+  return base
+})
+
+const walletPaidAmount = computed(() => order.value?.wallet_paid_amount || 0)
+
+// Gateway / Cash paid amount is only what was actually paid beyond wallet for the base order
+const gatewayPaidAmount = computed(() => {
+  if (!order.value) return 0
+  return Math.max(0, (order.value.final_payable || 0) - walletPaidAmount.value)
+})
+
+const isOrderPaid = computed(() => {
+  return Boolean(order.value?.paid_at)
+    || order.value?.status === 'processing'
+    || order.value?.status === 'shipped'
+    || order.value?.status === 'delivered'
 })
 
 function handlePrint() {
@@ -435,13 +482,13 @@ useHead({
                   تعداد
                 </th>
                 <th class="py-2.5 px-3 font-bold text-start w-28">
-                  قیمت واحد
+                  قیمت واحد (ریال)
                 </th>
                 <th class="py-2.5 px-3 font-bold text-start w-28">
-                  تخفیف
+                  تخفیف (ریال)
                 </th>
                 <th class="py-2.5 px-3 font-bold text-start w-32">
-                  مبلغ کل
+                  مبلغ کل (ریال)
                 </th>
               </tr>
             </thead>
@@ -476,14 +523,14 @@ useHead({
                 <td class="py-3 px-3 text-center font-bold text-neutral-900 font-mono">
                   {{ toPersianDigits(item.quantity) }}
                 </td>
-                <td class="py-3 px-3 font-medium text-neutral-700 whitespace-nowrap">
-                  {{ formatPrice(item.unit_price) }}
+                <td class="py-3 px-3 font-medium text-neutral-700 whitespace-nowrap font-mono">
+                  {{ formatRials(item.unit_price) }}
                 </td>
-                <td class="py-3 px-3 font-medium text-neutral-500 whitespace-nowrap">
-                  {{ item.discount_amount > 0 ? formatPrice(item.discount_amount) : '۰' }}
+                <td class="py-3 px-3 font-medium text-neutral-500 whitespace-nowrap font-mono">
+                  {{ item.discount_amount > 0 ? formatRials(item.discount_amount) : '۰ ریال' }}
                 </td>
-                <td class="py-3 px-3 font-bold text-neutral-900 whitespace-nowrap">
-                  {{ formatPrice(item.total_price) }}
+                <td class="py-3 px-3 font-bold text-neutral-900 whitespace-nowrap font-mono">
+                  {{ formatRials(item.total_price) }}
                 </td>
               </tr>
             </tbody>
@@ -498,11 +545,11 @@ useHead({
                 <th class="py-2 px-2 font-bold text-center w-8">ردیف</th>
                 <th class="py-2 px-2 font-bold">شرح کالا یا خدمات</th>
                 <th class="py-2 px-2 font-bold text-center w-12">تعداد</th>
-                <th class="py-2 px-2 font-bold text-start w-24">مبلغ واحد</th>
-                <th class="py-2 px-2 font-bold text-start w-20">تخفیف</th>
-                <th class="py-2 px-2 font-bold text-start w-24">مبلغ پس از تخفیف</th>
+                <th class="py-2 px-2 font-bold text-start w-24">مبلغ واحد (ریال)</th>
+                <th class="py-2 px-2 font-bold text-start w-20">تخفیف (ریال)</th>
+                <th class="py-2 px-2 font-bold text-start w-24">مبلغ پس از تخفیف (ریال)</th>
                 <th class="py-2 px-2 font-bold text-start w-24 text-emerald-800">مالیات و عوارض (۱۰٪)</th>
-                <th class="py-2 px-2 font-bold text-start w-28">جمع کل با مالیات</th>
+                <th class="py-2 px-2 font-bold text-start w-28">جمع کل با مالیات (ریال)</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-neutral-200">
@@ -525,20 +572,20 @@ useHead({
                 <td class="py-2 px-2 text-center font-bold text-neutral-900 font-mono">
                   {{ toPersianDigits(item.quantity) }}
                 </td>
-                <td class="py-2 px-2 font-medium whitespace-nowrap">
-                  {{ formatPrice(item.unit_price) }}
+                <td class="py-2 px-2 font-medium whitespace-nowrap font-mono">
+                  {{ formatRials(item.unit_price) }}
                 </td>
-                <td class="py-2 px-2 font-medium text-neutral-500 whitespace-nowrap">
-                  {{ item.discount_amount > 0 ? formatPrice(item.discount_amount) : '۰' }}
+                <td class="py-2 px-2 font-medium text-neutral-500 whitespace-nowrap font-mono">
+                  {{ item.discount_amount > 0 ? formatRials(item.discount_amount) : '۰ ریال' }}
                 </td>
-                <td class="py-2 px-2 font-bold whitespace-nowrap">
-                  {{ formatPrice(item.netTotal) }}
+                <td class="py-2 px-2 font-bold whitespace-nowrap font-mono">
+                  {{ formatRials(item.netTotal) }}
                 </td>
-                <td class="py-2 px-2 font-bold text-emerald-700 whitespace-nowrap">
-                  {{ formatPrice(item.vat) }}
+                <td class="py-2 px-2 font-bold text-emerald-700 whitespace-nowrap font-mono">
+                  {{ formatRials(item.vat) }}
                 </td>
-                <td class="py-2 px-2 font-black text-neutral-950 whitespace-nowrap">
-                  {{ formatPrice(item.grandTotal) }}
+                <td class="py-2 px-2 font-black text-neutral-950 whitespace-nowrap font-mono">
+                  {{ formatRials(item.grandTotal) }}
                 </td>
               </tr>
             </tbody>
@@ -611,44 +658,75 @@ useHead({
         <div class="flex flex-col gap-2 p-4 rounded-xl bg-neutral-50/80 border border-neutral-200/80 print:bg-transparent print:border-neutral-300">
           <div class="flex justify-between items-center text-neutral-600">
             <span>مجموع اقلام (ناخالص):</span>
-            <span class="font-medium">{{ formatPrice(order.items_subtotal) }}</span>
+            <span class="font-bold font-mono text-neutral-800">{{ formatRials(grossItemsTotal) }}</span>
           </div>
 
           <div
-            v-if="order.discount_amount || order.coupon_discount"
+            v-if="totalAllDiscounts > 0"
             class="flex justify-between items-center text-emerald-700 font-medium"
           >
             <span>مجموع تخفیف‌های اعمال شده:</span>
-            <span>- {{ formatPrice((order.discount_amount || 0) + (order.coupon_discount || 0)) }}</span>
+            <span class="font-mono">- {{ formatRials(totalAllDiscounts) }}</span>
           </div>
 
           <div
             v-if="invoiceType === 'tax'"
+            class="flex justify-between items-center text-neutral-700 font-medium"
+          >
+            <span>مبلغ پس از تخفیف:</span>
+            <span class="font-mono">{{ formatRials(grossItemsTotal - totalAllDiscounts) }}</span>
+          </div>
+
+          <div
+            v-if="invoiceType === 'tax' && totalVatAmount > 0"
             class="flex justify-between items-center text-emerald-800 font-bold"
           >
             <span>مالیات و عوارض ارزش افزوده (۱۰٪):</span>
-            <span>+ {{ formatPrice(totalVatAmount) }}</span>
+            <span class="font-mono">+ {{ formatRials(totalVatAmount) }}</span>
           </div>
 
           <div class="flex justify-between items-center text-neutral-600">
             <span>هزینه بسته‌بندی و ارسال:</span>
-            <span class="font-medium">
-              {{ order.shipping_fee > 0 ? formatPrice(order.shipping_fee) : 'رایگان' }}
+            <span class="font-medium font-mono text-neutral-800">
+              {{ totalShippingFee > 0 ? formatRials(totalShippingFee) : 'رایگان' }}
             </span>
           </div>
 
-          <div
-            v-if="order.wallet_paid_amount && order.wallet_paid_amount > 0"
-            class="flex justify-between items-center text-primary font-bold border-t border-neutral-200 pt-1.5"
-          >
-            <span>پرداخت از طریق کیف پول:</span>
-            <span>- {{ formatPrice(order.wallet_paid_amount) }}</span>
+          <div class="pt-2 border-t border-neutral-200 flex justify-between items-center text-xs font-black text-neutral-900">
+            <span>جمع کل صورتحساب:</span>
+            <span class="font-black text-sm font-mono text-neutral-950">{{ formatRials(grandInvoiceTotal) }}</span>
           </div>
 
-          <div class="pt-2.5 mt-1 border-t-2 border-neutral-900/10 flex justify-between items-center text-sm font-black text-neutral-900">
-            <span>مبلغ نهایی پرداختی:</span>
-            <span class="text-base text-neutral-950 font-black">
-              {{ formatPrice(order.final_payable) }}
+          <div
+            v-if="walletPaidAmount > 0"
+            class="flex justify-between items-center text-emerald-700 font-bold pt-1.5 border-t border-dashed border-neutral-200"
+          >
+            <span>پرداخت از طریق کیف پول:</span>
+            <span class="font-mono">- {{ formatRials(walletPaidAmount) }}</span>
+          </div>
+
+          <div
+            v-if="gatewayPaidAmount > 0 && isOrderPaid"
+            class="flex justify-between items-center text-neutral-700 font-bold"
+          >
+            <span>پرداخت آنلاین / درگاه بانکی:</span>
+            <span class="font-mono">{{ formatRials(gatewayPaidAmount) }}</span>
+          </div>
+
+          <div class="pt-2 mt-0.5 border-t-2 border-neutral-900/10 flex justify-between items-center text-xs sm:text-sm font-black text-neutral-900">
+            <span>وضعیت تسویه فاکتور:</span>
+            <span
+              v-if="isOrderPaid || gatewayPaidAmount === 0"
+              class="text-emerald-700 font-black flex items-center gap-1"
+            >
+              <UIcon name="i-lucide-check-circle-2" class="size-4" />
+              <span>تسویه کامل (۰ ریال)</span>
+            </span>
+            <span
+              v-else
+              class="text-primary font-black font-mono"
+            >
+              {{ formatRials(gatewayPaidAmount) }} (در انتظار پرداخت)
             </span>
           </div>
         </div>

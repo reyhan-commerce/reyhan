@@ -233,29 +233,5 @@ function handleNext() {
         به محض تحویل مرسوله به شرکت حمل‌ونقل، کد رهگیری پستی و لینک پیگیری لحظه‌ای از طریق پیامک برای شما ارسال خواهد شد.
       </span>
     </div>
-
-    <!-- Step 2 Actions -->
-    <div class="flex items-center justify-between pt-4 border-t border-neutral-100 dark:border-neutral-800">
-      <UButton
-        color="neutral"
-        variant="ghost"
-        size="lg"
-        icon="i-lucide-arrow-right"
-        class="rounded-2xl px-5 font-bold"
-        @click="emit('prev')"
-      >
-        بازگشت به آدرس
-      </UButton>
-      <UButton
-        color="primary"
-        variant="solid"
-        size="lg"
-        trailing-icon="i-lucide-arrow-left"
-        class="rounded-2xl px-8 font-bold shadow-md shadow-primary/25"
-        @click="handleNext"
-      >
-        مرحله بعد: درگاه پرداخت
-      </UButton>
-    </div>
   </section>
 </template>

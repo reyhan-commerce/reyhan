@@ -35,6 +35,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property int $coupon_discount
  * @property string|null $coupon_code
  * @property int $shipping_fee
+ * @property int $tax_amount
  * @property int $wallet_paid_amount
  * @property int $final_payable
  * @property string|null $notes
@@ -111,6 +112,7 @@ class Order extends Model implements ProvidesActivityTitle
             'discount_amount' => 'integer',
             'coupon_discount' => 'integer',
             'shipping_fee' => 'integer',
+            'tax_amount' => 'integer',
             'wallet_paid_amount' => 'integer',
             'final_payable' => 'integer',
             'is_corporate_invoice' => 'boolean',

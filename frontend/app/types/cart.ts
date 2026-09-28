@@ -41,6 +41,7 @@ export interface CartPricing {
   catalog_discount: number
   coupon_discount: number
   total_discount: number
+  tax_amount: number
   shipping_fee: number
   is_free_shipping: boolean
   free_shipping_threshold: number
