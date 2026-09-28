@@ -177,4 +177,3 @@ const handleRemove = () => {
     </div>
   </div>
 </template>
-

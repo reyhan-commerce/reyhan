@@ -8,7 +8,7 @@ describe('Phase 3 Financials & Corporate Tax Invoice Logic', () => {
     ]
 
     const vatRate = 0.10
-    const taxableItems = items.map(item => {
+    const taxableItems = items.map((item) => {
       const vat = Math.round(item.total_price * vatRate)
       return {
         ...item,
@@ -59,7 +59,7 @@ describe('Phase 3 Financials & Corporate Tax Invoice Logic', () => {
     const paginatedResponse = {
       current_page: 1,
       data: [
-        { id: 1, type: 'deposit', amount: 500000, balance_after: 500000, description: 'شارژ آنلاین' },
+        { id: 1, type: 'deposit', amount: 500000, balance_after: 500000, description: 'شارژ آنلاین' }
       ],
       first_page_url: 'http://localhost/api/v1/wallet?page=1',
       last_page: 1,

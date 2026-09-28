@@ -69,7 +69,6 @@ final class AuthController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        /** @phpstan-ignore-next-line */
         $user->currentAccessToken()?->delete();
 
         return response()->json([

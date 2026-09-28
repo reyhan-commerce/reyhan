@@ -6,7 +6,8 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt',
     '@nuxt/image',
-    '@nuxtjs/seo'
+    '@nuxtjs/seo',
+    '@vite-pwa/nuxt'
   ],
 
   devtools: {
@@ -39,10 +40,10 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   site: {
-    url: process.env.NUXT_PUBLIC_SITE_URL || 'https://easyshop.ir',
+    url: process.env.NUXT_PUBLIC_SITE_URL || 'https://shop.local',
     defaultLocale: 'fa-IR',
-    name: 'فروشگاه اینترنتی ایزیشاپ',
-    description: 'مرجع تخصصی خرید آنلاین محصولات آرایشی، بهداشتی و مراقبت از پوست اورجینال'
+    name: process.env.NUXT_PUBLIC_SITE_NAME || 'فروشگاه اینترنتی',
+    description: process.env.NUXT_PUBLIC_SITE_DESCRIPTION || 'خرید آنلاین با ضمانت اصالت کالا و ارسال سریع'
   },
 
   runtimeConfig: {
@@ -52,7 +53,11 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/': { prerender: true }
+    '/': { prerender: true },
+    '/about': { swr: 3600 },
+    '/contact': { swr: 3600 },
+    '/terms': { swr: 3600 },
+    '/faq': { swr: 3600 }
   },
 
   compatibilityDate: '2026-06-30',
@@ -76,6 +81,73 @@ export default defineNuxtConfig({
     defaults: {
       width: 1200,
       height: 630
+    }
+  },
+
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: process.env.NUXT_PUBLIC_SITE_NAME || 'فروشگاه اینترنتی',
+      short_name: process.env.NUXT_PUBLIC_SITE_SHORT_NAME || 'فروشگاه',
+      description: process.env.NUXT_PUBLIC_SITE_DESCRIPTION || 'خرید آنلاین با ضمانت اصالت کالا و ارسال سریع',
+      theme_color: '#2563eb',
+      background_color: '#ffffff',
+      display: 'standalone',
+      orientation: 'portrait',
+      scope: '/',
+      start_url: '/',
+      dir: 'rtl',
+      lang: 'fa-IR',
+      categories: ['shopping', 'lifestyle'],
+      icons: [
+        {
+          src: '/icon.svg',
+          sizes: 'any',
+          type: 'image/svg+xml',
+          purpose: 'any'
+        },
+        {
+          src: '/icon.svg',
+          sizes: '192x192 512x512',
+          type: 'image/svg+xml',
+          purpose: 'maskable'
+        }
+      ]
+    },
+    workbox: {
+      navigateFallback: '/',
+      globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2}'],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'google-fonts',
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 * 365
+            }
+          }
+        },
+        {
+          urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/i,
+          handler: 'StaleWhileRevalidate',
+          options: {
+            cacheName: 'image-assets',
+            expiration: {
+              maxEntries: 60,
+              maxAgeSeconds: 60 * 60 * 24 * 30
+            }
+          }
+        }
+      ]
+    },
+    client: {
+      installPrompt: true
+    },
+    devOptions: {
+      enabled: false,
+      type: 'module'
     }
   },
 

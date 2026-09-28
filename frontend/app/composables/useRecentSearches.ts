@@ -1,5 +1,5 @@
 export const useRecentSearches = () => {
-  const STORAGE_KEY = 'easyshop_recent_searches'
+  const STORAGE_KEY = 'app_recent_searches'
   const MAX_ITEMS = 8
 
   const recentSearches = ref<string[]>([])

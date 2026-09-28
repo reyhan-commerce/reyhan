@@ -8,6 +8,11 @@ parameters:
     # Level 8 strictness
     level: 8
 
+    treatPhpDocTypesAsCertain: false
+
     ignoreErrors:
         - '#Call to an undefined method Filament\\Tables\\Table::(tree|socket)\(\)#'
         - '#Call to an undefined method Filament\\Tables\\Columns\\TextColumn::columnFilter\(\)#'
+        -
+            message: '#Instanceof between .* and Filament\\Support\\Contracts\\HasLabel will always evaluate to true#'
+            path: app/Enums/Concerns/HasEnumHelpers.php

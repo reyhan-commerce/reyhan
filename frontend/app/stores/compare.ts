@@ -12,7 +12,7 @@ export const useCompareStore = defineStore('compare', () => {
   // Load from localStorage on client side
   if (import.meta.client) {
     try {
-      const saved = localStorage.getItem('easyshop_compare_items')
+      const saved = localStorage.getItem('app_compare_items')
       if (saved) {
         selectedSlugs.value = JSON.parse(saved)
       }
@@ -24,7 +24,7 @@ export const useCompareStore = defineStore('compare', () => {
   function persist() {
     if (import.meta.client) {
       try {
-        localStorage.setItem('easyshop_compare_items', JSON.stringify(selectedSlugs.value))
+        localStorage.setItem('app_compare_items', JSON.stringify(selectedSlugs.value))
       } catch {
         // ignore
       }

@@ -80,7 +80,10 @@ async function handleCloseTicket() {
     >
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2 text-xs text-neutral-400">
-          <NuxtLink to="/profile/tickets" class="hover:text-primary">تیکت‌های من</NuxtLink>
+          <NuxtLink
+            to="/profile/tickets"
+            class="hover:text-primary"
+          >تیکت‌های من</NuxtLink>
           <span>/</span>
           <span class="font-mono text-neutral-700 dark:text-neutral-300">{{ ticket.ticket_number }}</span>
         </div>
@@ -92,7 +95,10 @@ async function handleCloseTicket() {
           class="text-xs text-neutral-500 hover:text-red-600 transition-colors flex items-center gap-1 font-bold cursor-pointer"
           @click="handleCloseTicket"
         >
-          <UIcon name="i-lucide-lock" class="size-3.5" />
+          <UIcon
+            name="i-lucide-lock"
+            class="size-3.5"
+          />
           <span>بستن تیکت</span>
         </button>
       </div>
@@ -109,7 +115,10 @@ async function handleCloseTicket() {
             <span class="bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-bold px-2.5 py-0.5 rounded-lg">
               اولویت: {{ ticket.priority_label }}
             </span>
-            <span v-if="ticket.order_number" class="bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-bold px-2.5 py-0.5 rounded-lg">
+            <span
+              v-if="ticket.order_number"
+              class="bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-bold px-2.5 py-0.5 rounded-lg"
+            >
               سفارش: {{ ticket.order_number }}
             </span>
           </div>
@@ -121,7 +130,7 @@ async function handleCloseTicket() {
             'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-400': ticket.status === 'open',
             'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400': ticket.status === 'answered',
             'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400': ticket.status === 'awaiting_reply',
-            'bg-neutral-100 text-neutral-600 border border-neutral-200 dark:bg-neutral-800 dark:text-neutral-400': ticket.status === 'closed',
+            'bg-neutral-100 text-neutral-600 border border-neutral-200 dark:bg-neutral-800 dark:text-neutral-400': ticket.status === 'closed'
           }"
         >
           {{ ticket.status_label }}
@@ -130,7 +139,10 @@ async function handleCloseTicket() {
     </div>
 
     <!-- Message Thread -->
-    <div v-if="ticket" class="flex flex-col gap-4">
+    <div
+      v-if="ticket"
+      class="flex flex-col gap-4"
+    >
       <div
         v-for="msg in ticket.messages"
         :key="msg.id"
@@ -139,15 +151,24 @@ async function handleCloseTicket() {
           ? 'bg-primary/5 dark:bg-primary/10 border border-primary/20 mr-0 sm:mr-8'
           : 'bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 ml-0 sm:ml-8'"
       >
-        <div class="flex items-center justify-between pb-2 border-b" :class="msg.is_staff ? 'border-primary/15' : 'border-neutral-100 dark:border-neutral-800'">
+        <div
+          class="flex items-center justify-between pb-2 border-b"
+          :class="msg.is_staff ? 'border-primary/15' : 'border-neutral-100 dark:border-neutral-800'"
+        >
           <div class="flex items-center gap-2">
             <div
               class="size-7 rounded-lg flex items-center justify-center text-xs"
               :class="msg.is_staff ? 'bg-primary text-white font-bold' : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-white'"
             >
-              <UIcon :name="msg.is_staff ? 'i-lucide-headset' : 'i-lucide-user'" class="size-4" />
+              <UIcon
+                :name="msg.is_staff ? 'i-lucide-headset' : 'i-lucide-user'"
+                class="size-4"
+              />
             </div>
-            <span class="font-bold text-xs" :class="msg.is_staff ? 'text-primary' : 'text-neutral-900 dark:text-white'">
+            <span
+              class="font-bold text-xs"
+              :class="msg.is_staff ? 'text-primary' : 'text-neutral-900 dark:text-white'"
+            >
               {{ msg.author_name }}
             </span>
           </div>
@@ -169,7 +190,10 @@ async function handleCloseTicket() {
       class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col gap-3"
     >
       <label class="text-xs font-bold text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
-        <UIcon name="i-lucide-corner-down-left" class="size-4 text-primary" />
+        <UIcon
+          name="i-lucide-corner-down-left"
+          class="size-4 text-primary"
+        />
         <span>ارسال پاسخ به تیکت:</span>
       </label>
 
@@ -199,7 +223,10 @@ async function handleCloseTicket() {
       v-else-if="ticket && ticket.status === 'closed'"
       class="p-4 rounded-2xl bg-neutral-100 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 text-center text-xs text-neutral-500 flex items-center justify-center gap-2"
     >
-      <UIcon name="i-lucide-lock" class="size-4" />
+      <UIcon
+        name="i-lucide-lock"
+        class="size-4"
+      />
       <span>این تیکت بسته شده است. در صورت نیاز می‌توانید یک تیکت جدید ارسال نمایید.</span>
     </div>
   </div>

@@ -9,6 +9,7 @@ use App\Enums\WalletTransactionType;
 use App\Filament\Resources\OrderReturns\Pages\ListOrderReturns;
 use App\Filament\Resources\OrderReturns\Pages\ViewOrderReturn;
 use App\Models\OrderReturn;
+use App\Models\User;
 use App\Services\Wallet\WalletService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -218,10 +219,20 @@ class OrderReturnResource extends Resource
                     ->modalHeading('استرداد مبلغ به کیف پول مشتری')
                     ->modalDescription(fn (OrderReturn $record): string => 'مبلغ '.number_format((int) ($record->refund_amount / 10)).' تومان به کیف پول مشتری واریز خواهد شد.')
                     ->action(function (OrderReturn $record): void {
+                        $user = $record->user;
+                        if (! $user instanceof User) {
+                            Notification::make()
+                                ->title('کاربر مرتبط با این درخواست یافت نشد')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
                         /** @var WalletService $walletService */
                         $walletService = app(WalletService::class);
                         $walletService->deposit(
-                            user: $record->user,
+                            user: $user,
                             amountRial: $record->refund_amount,
                             description: "استرداد وجه بابت مرجوعی کالا (RMA: {$record->return_number})",
                             type: WalletTransactionType::Refund,

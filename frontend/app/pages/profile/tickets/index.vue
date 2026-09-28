@@ -26,7 +26,10 @@ const tickets = computed(() => response.value?.data?.data ?? [])
     <div class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
         <h1 class="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white flex items-center gap-2.5">
-          <UIcon name="i-lucide-headset" class="size-6 text-primary" />
+          <UIcon
+            name="i-lucide-headset"
+            class="size-6 text-primary"
+          />
           <span>تیکت‌های پشتیبانی</span>
         </h1>
         <p class="text-xs text-neutral-500 mt-1">
@@ -38,7 +41,10 @@ const tickets = computed(() => response.value?.data?.data ?? [])
         to="/profile/tickets/create"
         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-bold shadow-xs hover:bg-primary/90 transition-colors"
       >
-        <UIcon name="i-lucide-plus" class="size-4" />
+        <UIcon
+          name="i-lucide-plus"
+          class="size-4"
+        />
         <span>ارسال تیکت جدید</span>
       </NuxtLink>
     </div>
@@ -49,7 +55,10 @@ const tickets = computed(() => response.value?.data?.data ?? [])
       class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-12 text-center flex flex-col items-center justify-center gap-3"
     >
       <div class="size-16 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-400 flex items-center justify-center">
-        <UIcon name="i-lucide-message-square" class="size-8" />
+        <UIcon
+          name="i-lucide-message-square"
+          class="size-8"
+        />
       </div>
       <h3 class="font-bold text-base text-neutral-900 dark:text-white">
         هنوز تیکت پشتیبانی ثبت نکرده‌اید
@@ -66,7 +75,10 @@ const tickets = computed(() => response.value?.data?.data ?? [])
     </div>
 
     <!-- Tickets List -->
-    <div v-else class="flex flex-col gap-3">
+    <div
+      v-else
+      class="flex flex-col gap-3"
+    >
       <NuxtLink
         v-for="t in tickets"
         :key="t.id"
@@ -80,10 +92,13 @@ const tickets = computed(() => response.value?.data?.data ?? [])
               'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400': t.status === 'open',
               'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400': t.status === 'answered',
               'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400': t.status === 'awaiting_reply',
-              'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400': t.status === 'closed',
+              'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400': t.status === 'closed'
             }"
           >
-            <UIcon name="i-lucide-message-square-text" class="size-5.5" />
+            <UIcon
+              name="i-lucide-message-square-text"
+              class="size-5.5"
+            />
           </div>
 
           <div class="flex flex-col gap-1">
@@ -110,12 +125,15 @@ const tickets = computed(() => response.value?.data?.data ?? [])
               'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400': t.status === 'open',
               'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400': t.status === 'answered',
               'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400': t.status === 'awaiting_reply',
-              'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400': t.status === 'closed',
+              'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400': t.status === 'closed'
             }"
           >
             {{ t.status_label }}
           </span>
-          <UIcon name="i-lucide-chevron-left" class="size-4 text-neutral-400 group-hover:text-primary transition-colors" />
+          <UIcon
+            name="i-lucide-chevron-left"
+            class="size-4 text-neutral-400 group-hover:text-primary transition-colors"
+          />
         </div>
       </NuxtLink>
     </div>

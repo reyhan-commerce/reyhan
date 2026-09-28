@@ -30,7 +30,7 @@ const reasons = [
   'ایراد فنی، نقص عملکردی یا خرابی ظاهری',
   'آسیب‌دیدگی فیزیکی در حین حمل و نقل',
   'انصراف از خرید (پلمپ و بسته‌بندی کاملاً باز نشده)',
-  'ارسال اشتباه کالا توسط فروشگاه',
+  'ارسال اشتباه کالا توسط فروشگاه'
 ]
 
 const selectedReason = ref(reasons[0])
@@ -69,11 +69,11 @@ async function handleSubmit() {
       items: chosenItems.map(item => ({
         order_item_id: item.id,
         quantity: itemQuantities.value[item.id] || item.quantity,
-        reason: selectedReason.value,
+        reason: selectedReason.value
       }))
     }
 
-    const res = await api<{ success: boolean; message: string }>(`/orders/${orderNumber.value}/returns`, {
+    const res = await api<{ success: boolean, message: string }>(`/orders/${orderNumber.value}/returns`, {
       method: 'POST',
       body: payload
     })
@@ -102,7 +102,10 @@ async function handleSubmit() {
   <div class="flex flex-col gap-6">
     <div class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-2">
       <div class="flex items-center gap-2 text-xs text-neutral-400">
-        <NuxtLink to="/profile/orders" class="hover:text-primary">سفارشات</NuxtLink>
+        <NuxtLink
+          to="/profile/orders"
+          class="hover:text-primary"
+        >سفارشات</NuxtLink>
         <span>/</span>
         <span class="text-neutral-700 dark:text-neutral-300">سفارش {{ orderNumber }}</span>
         <span>/</span>
@@ -117,7 +120,10 @@ async function handleSubmit() {
     </div>
 
     <!-- Items Selection Form -->
-    <div v-if="order" class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-6">
+    <div
+      v-if="order"
+      class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-6"
+    >
       <h2 class="font-bold text-base text-neutral-900 dark:text-white pb-3 border-b border-neutral-100 dark:border-neutral-800">
         انتخاب اقلام جهت استرداد
       </h2>
@@ -133,12 +139,15 @@ async function handleSubmit() {
               v-model="selectedItems[item.id]"
               type="checkbox"
               class="size-5 rounded-md border-neutral-300 text-primary focus:ring-primary cursor-pointer"
-            />
+            >
             <div>
               <h4 class="font-bold text-sm text-neutral-900 dark:text-white">
                 {{ item.product_name }}
               </h4>
-              <span v-if="item.variant_title" class="text-xs text-neutral-500">
+              <span
+                v-if="item.variant_title"
+                class="text-xs text-neutral-500"
+              >
                 تنوع: {{ item.variant_title }}
               </span>
               <div class="text-xs font-mono font-bold text-primary mt-1">
@@ -147,7 +156,10 @@ async function handleSubmit() {
             </div>
           </div>
 
-          <div v-if="selectedItems[item.id]" class="flex items-center gap-2">
+          <div
+            v-if="selectedItems[item.id]"
+            class="flex items-center gap-2"
+          >
             <span class="text-xs text-neutral-500">تعداد:</span>
             <select
               v-model.number="itemQuantities[item.id]"
@@ -175,7 +187,13 @@ async function handleSubmit() {
             v-model="selectedReason"
             class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white text-xs font-medium focus:outline-none focus:border-primary"
           >
-            <option v-for="r in reasons" :key="r" :value="r">{{ r }}</option>
+            <option
+              v-for="r in reasons"
+              :key="r"
+              :value="r"
+            >
+              {{ r }}
+            </option>
           </select>
         </div>
 
@@ -194,7 +212,10 @@ async function handleSubmit() {
 
       <!-- Refund Destination Note -->
       <div class="p-3.5 rounded-2xl bg-primary/5 border border-primary/20 text-xs text-neutral-600 dark:text-neutral-300 flex items-start gap-2.5">
-        <UIcon name="i-lucide-wallet" class="size-5 text-primary shrink-0 mt-0.5" />
+        <UIcon
+          name="i-lucide-wallet"
+          class="size-5 text-primary shrink-0 mt-0.5"
+        />
         <div>
           <span class="font-bold block text-neutral-900 dark:text-white mb-0.5">شیوه استرداد وجه:</span>
           <span>پس از تأیید کارشناسان و دریافت کالا در انبار، مبلغ کل اقلام به صورت آنی به کیف پول کاربری شما واریز خواهد شد.</span>

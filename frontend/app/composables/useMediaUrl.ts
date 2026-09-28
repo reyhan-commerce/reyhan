@@ -6,10 +6,10 @@ export function useMediaUrl() {
 
     // Already absolute or data URI
     if (
-      url.startsWith('http://') ||
-      url.startsWith('https://') ||
-      url.startsWith('data:') ||
-      url.startsWith('blob:')
+      url.startsWith('http://')
+      || url.startsWith('https://')
+      || url.startsWith('data:')
+      || url.startsWith('blob:')
     ) {
       return url
     }

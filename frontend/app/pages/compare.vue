@@ -7,7 +7,7 @@ const cartStore = useCartStore()
 const { formatPrice, toPersianDigits } = usePersian()
 
 useSeoMeta({
-  title: 'مقایسه تخصصی کالاها — EasyShop',
+  title: 'مقایسه تخصصی کالاها',
   description: 'مقایسه مشخصات فنی، قیمت و ویژگی‌های کالاهای مختلف به صورت جدول اختصاصی'
 })
 
@@ -121,7 +121,7 @@ watch(() => compareStore.selectedSlugs.length, () => {
             compareStore.compareData.products.length === 1 ? 'col-span-9' : '',
             compareStore.compareData.products.length === 2 ? 'col-span-4 sm:col-span-4' : '',
             compareStore.compareData.products.length === 3 ? 'col-span-3' : '',
-            compareStore.compareData.products.length === 4 ? 'col-span-2 sm:col-span-2' : '',
+            compareStore.compareData.products.length === 4 ? 'col-span-2 sm:col-span-2' : ''
           ]"
         >
           <!-- Remove CTA -->
@@ -225,7 +225,7 @@ watch(() => compareStore.selectedSlugs.length, () => {
                   compareStore.compareData.products.length === 1 ? 'col-span-9' : '',
                   compareStore.compareData.products.length === 2 ? 'col-span-4' : '',
                   compareStore.compareData.products.length === 3 ? 'col-span-3' : '',
-                  compareStore.compareData.products.length === 4 ? 'col-span-2' : '',
+                  compareStore.compareData.products.length === 4 ? 'col-span-2' : ''
                 ]"
               >
                 {{ item.values[String(p.id)] || '—' }}

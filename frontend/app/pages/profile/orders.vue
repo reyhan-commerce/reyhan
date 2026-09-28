@@ -209,7 +209,10 @@ const getBadgeColor = (color?: string): BadgeColor => {
                 class="size-6 sm:size-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
                 :class="['pending', 'processing', 'shipped', 'delivered'].includes(order.status) ? 'bg-primary text-white ring-2 ring-primary/20' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
               >
-                <UIcon name="i-lucide-file-text" class="size-3.5" />
+                <UIcon
+                  name="i-lucide-file-text"
+                  class="size-3.5"
+                />
               </div>
               <span class="text-[10px] sm:text-xs font-bold text-neutral-700 dark:text-neutral-300">ثبت سفارش</span>
             </div>
@@ -220,7 +223,10 @@ const getBadgeColor = (color?: string): BadgeColor => {
                 class="size-6 sm:size-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
                 :class="['processing', 'shipped', 'delivered'].includes(order.status) || order.paid_at ? 'bg-primary text-white ring-2 ring-primary/20' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
               >
-                <UIcon name="i-lucide-credit-card" class="size-3.5" />
+                <UIcon
+                  name="i-lucide-credit-card"
+                  class="size-3.5"
+                />
               </div>
               <span class="text-[10px] sm:text-xs font-bold text-neutral-700 dark:text-neutral-300">پرداخت موفق</span>
             </div>
@@ -231,7 +237,10 @@ const getBadgeColor = (color?: string): BadgeColor => {
                 class="size-6 sm:size-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
                 :class="['processing', 'shipped', 'delivered'].includes(order.status) ? 'bg-primary text-white ring-2 ring-primary/20' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
               >
-                <UIcon name="i-lucide-package" class="size-3.5" />
+                <UIcon
+                  name="i-lucide-package"
+                  class="size-3.5"
+                />
               </div>
               <span class="text-[10px] sm:text-xs font-bold text-neutral-700 dark:text-neutral-300">بسته‌بندی</span>
             </div>
@@ -242,7 +251,10 @@ const getBadgeColor = (color?: string): BadgeColor => {
                 class="size-6 sm:size-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
                 :class="['shipped', 'delivered'].includes(order.status) ? 'bg-primary text-white ring-2 ring-primary/20' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
               >
-                <UIcon name="i-lucide-truck" class="size-3.5" />
+                <UIcon
+                  name="i-lucide-truck"
+                  class="size-3.5"
+                />
               </div>
               <span class="text-[10px] sm:text-xs font-bold text-neutral-700 dark:text-neutral-300">تحویل به پست/پیک</span>
             </div>
@@ -253,7 +265,10 @@ const getBadgeColor = (color?: string): BadgeColor => {
                 class="size-6 sm:size-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
                 :class="order.status === 'delivered' ? 'bg-emerald-600 text-white ring-2 ring-emerald-500/20' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'"
               >
-                <UIcon name="i-lucide-check-circle" class="size-3.5" />
+                <UIcon
+                  name="i-lucide-check-circle"
+                  class="size-3.5"
+                />
               </div>
               <span class="text-[10px] sm:text-xs font-bold text-neutral-700 dark:text-neutral-300">تحویل نهایی</span>
             </div>

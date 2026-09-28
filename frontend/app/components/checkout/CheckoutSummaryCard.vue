@@ -221,4 +221,3 @@ function handleGoPrev() {
     </div>
   </aside>
 </template>
-

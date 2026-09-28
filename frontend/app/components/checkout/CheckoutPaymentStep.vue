@@ -73,7 +73,10 @@ const walletDeductionAmount = computed(() => {
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="size-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <UIcon name="i-lucide-wallet" class="size-5" />
+            <UIcon
+              name="i-lucide-wallet"
+              class="size-5"
+            />
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -94,7 +97,7 @@ const walletDeductionAmount = computed(() => {
           v-model="checkoutStore.useWallet"
           type="checkbox"
           class="size-5 rounded-md border-neutral-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-        />
+        >
       </div>
 
       <div
@@ -104,18 +107,30 @@ const walletDeductionAmount = computed(() => {
         <span class="text-emerald-800 dark:text-emerald-300 font-medium">
           مبلغ قابل کسر از کیف پول: <strong>{{ formatPrice(walletDeductionAmount) }}</strong>
         </span>
-        <span v-if="isFullyCoveredByWallet" class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-          <UIcon name="i-lucide-check-circle" class="size-3.5" />
+        <span
+          v-if="isFullyCoveredByWallet"
+          class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1"
+        >
+          <UIcon
+            name="i-lucide-check-circle"
+            class="size-3.5"
+          />
           کل مبلغ سفارش از کیف پول پرداخت می‌شود
         </span>
-        <span v-else class="text-neutral-500">
+        <span
+          v-else
+          class="text-neutral-500"
+        >
           مانده قابل پرداخت آنلاین: <strong>{{ formatPrice(checkoutStore.effectivePayable) }}</strong>
         </span>
       </div>
     </div>
 
     <!-- 2. PAYMENT GATEWAYS (Hidden if 100% covered by wallet) -->
-    <div v-if="!isFullyCoveredByWallet" class="flex flex-col gap-3">
+    <div
+      v-if="!isFullyCoveredByWallet"
+      class="flex flex-col gap-3"
+    >
       <label class="text-xs font-bold text-neutral-700 dark:text-neutral-300">
         شیوه پرداخت مبلغ نهایی:
       </label>
@@ -190,7 +205,10 @@ const walletDeductionAmount = computed(() => {
       class="rounded-2xl border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 p-5 flex flex-col gap-4"
     >
       <div class="flex items-center gap-2 text-blue-950 dark:text-blue-200 font-bold text-sm">
-        <UIcon name="i-lucide-landmark" class="size-5 text-blue-600" />
+        <UIcon
+          name="i-lucide-landmark"
+          class="size-5 text-blue-600"
+        />
         <span>اطلاعات حساب بانکی جهت واریز کارت‌به‌کارت</span>
       </div>
 
@@ -225,7 +243,7 @@ const walletDeductionAmount = computed(() => {
             type="text"
             placeholder="مثال: ۱۲۹۴۸۵۷۳۶"
             class="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white text-xs font-mono font-bold focus:outline-none focus:border-blue-500"
-          />
+          >
         </div>
 
         <div class="space-y-1">
@@ -238,7 +256,7 @@ const walletDeductionAmount = computed(() => {
             maxlength="16"
             placeholder="مثال: ۶۰۳۷...۴۵۱۲"
             class="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white text-xs font-mono focus:outline-none focus:border-blue-500"
-          />
+          >
         </div>
       </div>
       <p class="text-[11px] text-neutral-500">
@@ -250,7 +268,10 @@ const walletDeductionAmount = computed(() => {
     <div class="rounded-2xl border border-neutral-200/80 dark:border-neutral-800/80 p-5 bg-neutral-50/50 dark:bg-neutral-800/20 flex flex-col gap-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <UIcon name="i-lucide-building-2" class="size-5 text-neutral-600 dark:text-neutral-400" />
+          <UIcon
+            name="i-lucide-building-2"
+            class="size-5 text-neutral-600 dark:text-neutral-400"
+          />
           <div>
             <h4 class="font-bold text-neutral-900 dark:text-white text-xs sm:text-sm">
               درخواست صدور فاکتور رسمی حقوقی (ماده ۱۹ ارزش افزوده)
@@ -265,7 +286,7 @@ const walletDeductionAmount = computed(() => {
           v-model="checkoutStore.isCorporateInvoice"
           type="checkbox"
           class="size-5 rounded-md border-neutral-300 text-primary focus:ring-primary cursor-pointer"
-        />
+        >
       </div>
 
       <!-- Corporate Fields -->
@@ -282,7 +303,7 @@ const walletDeductionAmount = computed(() => {
             type="text"
             placeholder="مثال: شرکت داده‌ورزی رایان پارس"
             class="w-full px-3 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white text-xs focus:outline-none focus:border-primary"
-          />
+          >
         </div>
 
         <div class="space-y-1">
@@ -295,7 +316,7 @@ const walletDeductionAmount = computed(() => {
             maxlength="14"
             placeholder="مثال: ۱۰۳۲۰۸۷۶۵۴۳"
             class="w-full px-3 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white text-xs font-mono focus:outline-none focus:border-primary"
-          />
+          >
         </div>
 
         <div class="space-y-1">
@@ -307,7 +328,7 @@ const walletDeductionAmount = computed(() => {
             type="text"
             placeholder="مثال: ۴۱۱۴۸۵۲۹۷۵۳۱"
             class="w-full px-3 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white text-xs font-mono focus:outline-none focus:border-primary"
-          />
+          >
         </div>
 
         <div class="space-y-1">
@@ -319,7 +340,7 @@ const walletDeductionAmount = computed(() => {
             type="text"
             placeholder="مثال: ۵۸۲۱۴۰"
             class="w-full px-3 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white text-xs font-mono focus:outline-none focus:border-primary"
-          />
+          >
         </div>
       </div>
     </div>

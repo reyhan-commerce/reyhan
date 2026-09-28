@@ -27,7 +27,10 @@ const returns = computed(() => response.value?.data?.data ?? [])
     <div class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
         <h1 class="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white flex items-center gap-2.5">
-          <UIcon name="i-lucide-undo-2" class="size-6 text-primary" />
+          <UIcon
+            name="i-lucide-undo-2"
+            class="size-6 text-primary"
+          />
           <span>مرجوعی کالا و استرداد وجه (RMA)</span>
         </h1>
         <p class="text-xs text-neutral-500 mt-1">
@@ -39,7 +42,10 @@ const returns = computed(() => response.value?.data?.data ?? [])
         to="/profile/orders"
         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-bold shadow-xs hover:bg-primary/90 transition-colors"
       >
-        <UIcon name="i-lucide-package" class="size-4" />
+        <UIcon
+          name="i-lucide-package"
+          class="size-4"
+        />
         <span>انتخاب سفارش جهت مرجوعی</span>
       </NuxtLink>
     </div>
@@ -50,7 +56,10 @@ const returns = computed(() => response.value?.data?.data ?? [])
       class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-12 text-center flex flex-col items-center justify-center gap-3"
     >
       <div class="size-16 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-400 flex items-center justify-center">
-        <UIcon name="i-lucide-check-circle" class="size-8 text-emerald-500" />
+        <UIcon
+          name="i-lucide-check-circle"
+          class="size-8 text-emerald-500"
+        />
       </div>
       <h3 class="font-bold text-base text-neutral-900 dark:text-white">
         درخواست مرجوعی فعالی ندارید
@@ -67,7 +76,10 @@ const returns = computed(() => response.value?.data?.data ?? [])
     </div>
 
     <!-- Returns List -->
-    <div v-else class="flex flex-col gap-4">
+    <div
+      v-else
+      class="flex flex-col gap-4"
+    >
       <div
         v-for="item in returns"
         :key="item.id"
@@ -92,7 +104,7 @@ const returns = computed(() => response.value?.data?.data ?? [])
               'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400': item.status === 'approved',
               'bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/40 dark:text-purple-400': item.status === 'item_received',
               'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400': item.status === 'refunded',
-              'bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/40 dark:text-red-400': item.status === 'rejected',
+              'bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/40 dark:text-red-400': item.status === 'rejected'
             }"
           >
             {{ item.status_label }}
@@ -114,7 +126,10 @@ const returns = computed(() => response.value?.data?.data ?? [])
           </div>
         </div>
 
-        <div v-if="item.admin_notes" class="p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-100 dark:border-neutral-800 text-xs">
+        <div
+          v-if="item.admin_notes"
+          class="p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-100 dark:border-neutral-800 text-xs"
+        >
           <span class="font-bold text-neutral-700 dark:text-neutral-300 block mb-0.5">پیام کارشناس پشتیبانی:</span>
           <span class="text-neutral-600 dark:text-neutral-400 leading-relaxed">{{ item.admin_notes }}</span>
         </div>

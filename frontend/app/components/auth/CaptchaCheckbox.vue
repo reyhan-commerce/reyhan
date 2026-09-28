@@ -151,7 +151,7 @@ const handleCheckboxClick = async () => {
         ]"
       />
       <span class="text-[9px] font-medium tracking-tight text-neutral-400 dark:text-neutral-500">
-        EasyShop Guard
+        Security Guard
       </span>
     </div>
   </div>

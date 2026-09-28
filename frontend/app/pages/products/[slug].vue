@@ -22,9 +22,11 @@ const activeTab = ref<'description' | 'specs' | 'reviews' | 'questions'>('specs'
 const isPriceHistoryOpen = ref(false)
 
 // Fetch product details via centralized catalog service
-const { data: product, error } = await useAsyncData(`product-${slug.value}`, () => {
-  return catalogService.getProductBySlug(slug.value)
-})
+const { data: product, error } = await useAsyncData(
+  () => `product-${slug.value}`,
+  () => catalogService.getProductBySlug(slug.value),
+  { watch: [slug] }
+)
 
 if (error.value || !product.value) {
   throw createError({
@@ -154,7 +156,10 @@ onMounted(() => {
               class="inline-flex items-center gap-1.5 text-xs text-neutral-500 hover:text-primary transition-colors cursor-pointer font-bold px-2.5 py-1 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800"
               @click="isPriceHistoryOpen = true"
             >
-              <UIcon name="i-lucide-trending-up" class="size-4 text-primary" />
+              <UIcon
+                name="i-lucide-trending-up"
+                class="size-4 text-primary"
+              />
               <span>نمودار تغییرات قیمت</span>
             </button>
           </div>

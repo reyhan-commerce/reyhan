@@ -9,6 +9,8 @@ use App\Features\ShopFeature;
 use App\Http\Controllers\Api\V1\AppSettingController;
 use App\Listeners\Catalog\SendProductRestockAlertsListener;
 use App\Models\Admin;
+use App\Models\Category;
+use App\Observers\CategoryObserver;
 use App\Services\Sms\SmsManager;
 use BokshornIt\FilamentActivityTimeline\Policies\ActivityPolicy;
 use Illuminate\Support\Facades\Cache;
@@ -99,6 +101,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Register catalog restock domain event listener
         Event::listen(ProductRestockedEvent::class, SendProductRestockAlertsListener::class);
+
+        // Register Category observer for automatic cache invalidation
+        Category::observe(CategoryObserver::class);
 
         // Register default Pennant feature flags
         foreach (ShopFeature::names() as $feature) {

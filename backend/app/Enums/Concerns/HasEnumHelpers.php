@@ -13,11 +13,7 @@ trait HasEnumHelpers
      */
     public function label(): string
     {
-        if ($this instanceof HasLabel) {
-            return $this->getLabel();
-        }
-
-        return (string) $this->value;
+        return $this instanceof HasLabel ? $this->getLabel() : (string) $this->value;
     }
 
     /**
@@ -27,17 +23,12 @@ trait HasEnumHelpers
      */
     public static function options(): array
     {
-        return collect(self::cases())
-            ->mapWithKeys(function (self $case): array {
-                $label = match (true) {
-                    $case instanceof HasLabel => $case->getLabel(),
-                    method_exists($case, 'label') => $case->label(),
-                    default => $case->value,
-                };
+        $options = [];
+        foreach (self::cases() as $case) {
+            $options[(string) $case->value] = $case instanceof HasLabel ? $case->getLabel() : (string) $case->value;
+        }
 
-                return [(string) $case->value => (string) $label];
-            })
-            ->all();
+        return $options;
     }
 
     /**

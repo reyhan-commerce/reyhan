@@ -30,4 +30,3 @@ export interface WalletData {
   balance_toman?: number
   transactions: WalletTransaction[] | PaginatedWalletTransactions
 }
-

@@ -40,7 +40,7 @@ const paginationMeta = computed(() => {
       currentPage: Number((tx as any).current_page ?? 1),
       lastPage: Number((tx as any).last_page ?? 1),
       total: Number((tx as any).total ?? 0),
-      perPage: Number((tx as any).per_page ?? 15),
+      perPage: Number((tx as any).per_page ?? 15)
     }
   }
   return null
@@ -56,7 +56,7 @@ const quickAmounts = [
   { label: '۲۰۰ هزار تومان', value: 200000 },
   { label: '۵۰۰ هزار تومان', value: 500000 },
   { label: '۱ میلیون تومان', value: 1000000 },
-  { label: '۲ میلیون تومان', value: 2000000 },
+  { label: '۲ میلیون تومان', value: 2000000 }
 ]
 
 function formatJalaliDate(isoString: string | null | undefined): string {
@@ -94,7 +94,7 @@ async function handleTopUp() {
     const res = await api<{
       success: boolean
       message: string
-      data: { redirect_url?: string; action?: string; payment_id?: number }
+      data: { redirect_url?: string, action?: string, payment_id?: number }
     }>('/wallet/top-up', {
       method: 'POST',
       body: {
@@ -143,7 +143,10 @@ async function handleTopUp() {
       <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div class="flex items-center gap-4">
           <div class="size-16 sm:size-18 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-primary-400 shrink-0 shadow-inner">
-            <UIcon name="i-lucide-wallet" class="size-8 sm:size-9" />
+            <UIcon
+              name="i-lucide-wallet"
+              class="size-8 sm:size-9"
+            />
           </div>
 
           <div class="flex flex-col gap-1.5">
@@ -172,15 +175,24 @@ async function handleTopUp() {
       <!-- Feature Badges -->
       <div class="relative z-10 mt-6 pt-5 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-neutral-300">
         <div class="flex items-center gap-2">
-          <UIcon name="i-lucide-zap" class="size-4 text-amber-400 shrink-0" />
+          <UIcon
+            name="i-lucide-zap"
+            class="size-4 text-amber-400 shrink-0"
+          />
           <span>خرید سریع بدون ورود به درگاه بانکی</span>
         </div>
         <div class="flex items-center gap-2">
-          <UIcon name="i-lucide-corner-down-left" class="size-4 text-emerald-400 shrink-0" />
+          <UIcon
+            name="i-lucide-corner-down-left"
+            class="size-4 text-emerald-400 shrink-0"
+          />
           <span>بازگشت آنی وجه در صورت انصراف یا مرجوعی</span>
         </div>
         <div class="flex items-center gap-2">
-          <UIcon name="i-lucide-gift" class="size-4 text-purple-400 shrink-0" />
+          <UIcon
+            name="i-lucide-gift"
+            class="size-4 text-purple-400 shrink-0"
+          />
           <span>واریز پاداش نقدی و کش‌بک‌های جشنواره</span>
         </div>
       </div>
@@ -190,7 +202,10 @@ async function handleTopUp() {
     <div class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-6">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <UIcon name="i-lucide-history" class="size-5 text-neutral-500" />
+          <UIcon
+            name="i-lucide-history"
+            class="size-5 text-neutral-500"
+          />
           <h2 class="font-black text-base sm:text-lg text-neutral-900 dark:text-white">
             تاریخچه تراکنش‌های کیف پول
           </h2>
@@ -215,7 +230,10 @@ async function handleTopUp() {
         class="py-12 flex flex-col items-center justify-center gap-3 text-center border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl"
       >
         <div class="size-14 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-400 flex items-center justify-center">
-          <UIcon name="i-lucide-receipt" class="size-7" />
+          <UIcon
+            name="i-lucide-receipt"
+            class="size-7"
+          />
         </div>
         <p class="font-bold text-neutral-700 dark:text-neutral-300 text-sm">
           هنوز تراکنشی در کیف پول شما ثبت نشده است
@@ -226,7 +244,10 @@ async function handleTopUp() {
       </div>
 
       <!-- Transactions List -->
-      <div v-else class="flex flex-col divide-y divide-neutral-100 dark:divide-neutral-800">
+      <div
+        v-else
+        class="flex flex-col divide-y divide-neutral-100 dark:divide-neutral-800"
+      >
         <div
           v-for="item in transactions"
           :key="item.id"
@@ -239,7 +260,7 @@ async function handleTopUp() {
               :class="{
                 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800': item?.type === 'deposit' || item?.type === 'refund' || item?.type === 'cashback',
                 'bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800': item?.type === 'withdraw',
-                'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800': item?.type === 'admin_adjustment',
+                'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800': item?.type === 'admin_adjustment'
               }"
             >
               <UIcon
@@ -261,7 +282,10 @@ async function handleTopUp() {
                   سفارش {{ item.order_number }}
                 </span>
               </div>
-              <span v-if="item?.description" class="text-xs text-neutral-500 leading-relaxed">
+              <span
+                v-if="item?.description"
+                class="text-xs text-neutral-500 leading-relaxed"
+              >
                 {{ item.description }}
               </span>
               <span class="text-[11px] text-neutral-400 font-medium">
@@ -305,7 +329,10 @@ async function handleTopUp() {
         <div class="p-6 flex flex-col gap-5">
           <div class="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-800">
             <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-wallet" class="size-5 text-primary-500" />
+              <UIcon
+                name="i-lucide-wallet"
+                class="size-5 text-primary-500"
+              />
               <h3 class="font-black text-base text-neutral-900 dark:text-white">
                 شارژ موجودی کیف پول
               </h3>
@@ -353,7 +380,7 @@ async function handleTopUp() {
                 step="10000"
                 placeholder="مثال: ۲۵۰,۰۰۰"
                 class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white font-mono font-bold text-base focus:outline-none focus:border-primary-500 pl-16"
-              />
+              >
               <span class="absolute left-3 top-3 text-xs text-neutral-400 font-bold pointer-events-none">
                 تومان
               </span>
@@ -365,7 +392,10 @@ async function handleTopUp() {
 
           <!-- Gateway Note -->
           <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 text-xs text-blue-900 dark:text-blue-300 flex items-start gap-2">
-            <UIcon name="i-lucide-shield-check" class="size-4 shrink-0 mt-0.5" />
+            <UIcon
+              name="i-lucide-shield-check"
+              class="size-4 shrink-0 mt-0.5"
+            />
             <span>اتصال امن به درگاه پرداخت اینترنتی شبکه شاپرک با تمامی کارت‌های بانکی عضو شتاب.</span>
           </div>
 

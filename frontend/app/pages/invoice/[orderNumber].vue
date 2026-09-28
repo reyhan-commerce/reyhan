@@ -77,7 +77,7 @@ async function fetchInvoice() {
       errorMessage.value = 'اطلاعات سفارش دریافت نشد.'
     }
   } catch (err: unknown) {
-    const errorObj = err as { response?: { status?: number; data?: { message?: string } } }
+    const errorObj = err as { response?: { status?: number, data?: { message?: string } } }
     if (errorObj.response?.status === 403) {
       errorMessage.value = 'لینک فاکتور منقضی شده یا دسترسی غیرمجاز است.'
     } else if (errorObj.response?.status === 404) {
@@ -111,7 +111,7 @@ const taxableItems = computed(() => {
       netUnit,
       netTotal,
       vat,
-      grandTotal,
+      grandTotal
     }
   })
 })
@@ -197,7 +197,10 @@ useHead({
 
       <div class="flex items-center gap-3">
         <!-- Invoice Mode Switcher (Standard vs Corporate Tax) -->
-        <div v-if="order?.is_corporate_invoice" class="flex items-center bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl text-xs">
+        <div
+          v-if="order?.is_corporate_invoice"
+          class="flex items-center bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl text-xs"
+        >
           <button
             type="button"
             class="px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer"
@@ -212,7 +215,10 @@ useHead({
             :class="invoiceType === 'tax' ? 'bg-white dark:bg-neutral-900 text-primary shadow-xs' : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'"
             @click="invoiceType = 'tax'"
           >
-            <UIcon name="i-lucide-building-2" class="size-3.5" />
+            <UIcon
+              name="i-lucide-building-2"
+              class="size-3.5"
+            />
             فاکتور رسمی ماده ۱۹ (حقوقی)
           </button>
         </div>
@@ -366,7 +372,10 @@ useHead({
             <span class="text-neutral-500">فروشگاه / شرکت:</span>
             <span class="font-bold text-neutral-900 mr-1.5">{{ settingsStore.settings.store_name }}</span>
           </div>
-          <div v-if="invoiceType === 'tax'" class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-neutral-100">
+          <div
+            v-if="invoiceType === 'tax'"
+            class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-neutral-100"
+          >
             <div>
               <span class="text-neutral-500">کد اقتصادی:</span>
               <span class="font-mono text-neutral-800 mr-1.5 [direction:ltr]">۴۱۱۴۸۵۲۹۷۵۳۱</span>
@@ -468,7 +477,10 @@ useHead({
         </h2>
 
         <!-- STANDARD TABLE -->
-        <div v-if="invoiceType === 'standard'" class="overflow-x-auto">
+        <div
+          v-if="invoiceType === 'standard'"
+          class="overflow-x-auto"
+        >
           <table class="w-full text-right text-xs border-collapse">
             <thead>
               <tr class="bg-neutral-100 text-neutral-700 border-y border-neutral-200">
@@ -538,18 +550,37 @@ useHead({
         </div>
 
         <!-- TAX INVOICE (ماده ۱۹) TABLE WITH VAT BREAKDOWN -->
-        <div v-else class="overflow-x-auto">
+        <div
+          v-else
+          class="overflow-x-auto"
+        >
           <table class="w-full text-right text-[11px] border-collapse">
             <thead>
               <tr class="bg-neutral-100 text-neutral-800 border-y border-neutral-300">
-                <th class="py-2 px-2 font-bold text-center w-8">ردیف</th>
-                <th class="py-2 px-2 font-bold">شرح کالا یا خدمات</th>
-                <th class="py-2 px-2 font-bold text-center w-12">تعداد</th>
-                <th class="py-2 px-2 font-bold text-start w-24">مبلغ واحد (ریال)</th>
-                <th class="py-2 px-2 font-bold text-start w-20">تخفیف (ریال)</th>
-                <th class="py-2 px-2 font-bold text-start w-24">مبلغ پس از تخفیف (ریال)</th>
-                <th class="py-2 px-2 font-bold text-start w-24 text-emerald-800">مالیات و عوارض (۱۰٪)</th>
-                <th class="py-2 px-2 font-bold text-start w-28">جمع کل با مالیات (ریال)</th>
+                <th class="py-2 px-2 font-bold text-center w-8">
+                  ردیف
+                </th>
+                <th class="py-2 px-2 font-bold">
+                  شرح کالا یا خدمات
+                </th>
+                <th class="py-2 px-2 font-bold text-center w-12">
+                  تعداد
+                </th>
+                <th class="py-2 px-2 font-bold text-start w-24">
+                  مبلغ واحد (ریال)
+                </th>
+                <th class="py-2 px-2 font-bold text-start w-20">
+                  تخفیف (ریال)
+                </th>
+                <th class="py-2 px-2 font-bold text-start w-24">
+                  مبلغ پس از تخفیف (ریال)
+                </th>
+                <th class="py-2 px-2 font-bold text-start w-24 text-emerald-800">
+                  مالیات و عوارض (۱۰٪)
+                </th>
+                <th class="py-2 px-2 font-bold text-start w-28">
+                  جمع کل با مالیات (ریال)
+                </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-neutral-200">
@@ -638,7 +669,10 @@ useHead({
             class="p-2.5 rounded-lg bg-amber-50/70 border border-amber-200 text-[11px] flex flex-col gap-1 text-amber-900"
           >
             <div class="font-bold flex items-center gap-1">
-              <UIcon name="i-lucide-credit-card" class="size-3.5" />
+              <UIcon
+                name="i-lucide-credit-card"
+                class="size-3.5"
+              />
               <span>پرداخت کارت‌به‌کارت بانکی</span>
             </div>
             <div>شماره پیگیری: <span class="font-mono font-bold">{{ order.card_receipt.tracking_number }}</span></div>
@@ -719,7 +753,10 @@ useHead({
               v-if="isOrderPaid || gatewayPaidAmount === 0"
               class="text-emerald-700 font-black flex items-center gap-1"
             >
-              <UIcon name="i-lucide-check-circle-2" class="size-4" />
+              <UIcon
+                name="i-lucide-check-circle-2"
+                class="size-4"
+              />
               <span>تسویه کامل (۰ ریال)</span>
             </span>
             <span

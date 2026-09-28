@@ -6,11 +6,32 @@ namespace App\Models;
 
 use App\Enums\OrderReturnStatus;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property string $return_number
+ * @property int $order_id
+ * @property int $user_id
+ * @property OrderReturnStatus $status
+ * @property string $reason
+ * @property array<string>|null $photos
+ * @property int $refund_amount
+ * @property string|null $admin_notes
+ * @property int|null $reviewed_by
+ * @property Carbon|null $reviewed_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Order|null $order
+ * @property-read User|null $user
+ * @property-read User|null $reviewer
+ * @property-read Collection<int, OrderReturnItem> $items
+ */
 #[Guarded(['id'])]
 final class OrderReturn extends Model
 {

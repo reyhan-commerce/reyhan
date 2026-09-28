@@ -15,7 +15,9 @@ use App\Models\CardTransferReceipt;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
+use App\Models\ProductVariant;
 use App\Models\User;
+use App\Notifications\Orders\OrderPaidNotification;
 use App\Services\Cart\CartService;
 use App\Services\Inventory\StockReservationService;
 use App\Services\Marketing\ReferralService;
@@ -23,9 +25,13 @@ use App\Services\Payment\PaymentManager;
 use App\Services\Pricing\PricingService;
 use App\Services\Shipping\ShippingService;
 use App\Services\Wallet\WalletService;
+use BackedEnum;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 final class CreateOrderAction
 {
@@ -68,7 +74,7 @@ final class CreateOrderAction
         $shippingMethodId = $pricing->shippingMethodId;
         $shippingMethodCode = is_string($data->shippingMethod)
             ? $data->shippingMethod
-            : ($data->shippingMethod?->value ?? ($pricing->shippingMethodTitle ? 'express' : 'pishtaz'));
+            : ($data->shippingMethod instanceof BackedEnum ? $data->shippingMethod->value : ($pricing->shippingMethodTitle ? 'express' : 'pishtaz'));
 
         // Calculate Wallet Deduction
         $walletDeduction = 0;
@@ -197,6 +203,20 @@ final class CreateOrderAction
                 ]);
             }
 
+            // If 100% covered by wallet, finalize stock decrement immediately in DB
+            if ($remainingPayable === 0) {
+                foreach ($cart->items as $item) {
+                    /** @var ProductVariant|null $variant */
+                    $variant = ProductVariant::where('id', $item->product_variant_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($variant) {
+                        $variant->decrement('stock', $item->quantity);
+                    }
+                }
+            }
+
             // Deduct from wallet if requested
             if ($walletDeduction > 0) {
                 $this->walletService->withdraw(
@@ -225,6 +245,9 @@ final class CreateOrderAction
 
         // CASE A: 100% covered by Wallet
         if ($remainingPayable === 0) {
+            // Release temporary Redis reservations since stock is permanently decremented in DB
+            $this->rollbackReservations($reservedVariantIds, $reservationId);
+
             $payment = Payment::create([
                 'order_id' => $order->id,
                 'user_id' => $user->id,
@@ -240,6 +263,14 @@ final class CreateOrderAction
             $this->cartService->clearCart($cart);
 
             app(ReferralService::class)->rewardReferralUponOrderCompletion($order);
+
+            // Dispatch Order Notification outside DB transaction
+            try {
+                $recipient = $order->user ?? ($user->mobile ? Notification::route('sms', $user->mobile) : null);
+                $recipient?->notify(new OrderPaidNotification($order, $payment->tracking_code));
+            } catch (Throwable $e) {
+                Log::warning("Failed to send wallet order notification for order {$order->order_number}: {$e->getMessage()}");
+            }
 
             $separator = str_contains($data->callbackUrl, '?') ? '&' : '?';
             $redirectUrl = "{$data->callbackUrl}{$separator}Authority={$payment->authority}&Status=OK&payment_method=wallet";

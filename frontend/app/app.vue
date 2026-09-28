@@ -44,7 +44,7 @@ const description = computed(() => settingsStore.settings.store_slogan || 'خر�
 // Global title template: every page just provides its own chunk,
 // this appends store name automatically — no more hardcoded ایزیشاپ in pages.
 useHead({
-  titleTemplate: (titleChunk) => titleChunk ? `${titleChunk} | ${storeName.value}` : storeName.value
+  titleTemplate: titleChunk => titleChunk ? `${titleChunk} | ${storeName.value}` : storeName.value
 })
 
 useSeoMeta({
@@ -73,5 +73,8 @@ useSeoMeta({
 
     <!-- Global Auth Modal accessible from any page -->
     <AuthModal />
+
+    <!-- PWA Offline & Service Worker Update Prompt -->
+    <PwaUpdatePrompt />
   </UApp>
 </template>

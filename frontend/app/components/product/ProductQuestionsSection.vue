@@ -48,7 +48,7 @@ async function handleAskQuestion() {
 
   isSubmittingQuestion.value = true
   try {
-    const res = await api<{ success: boolean; message: string }>(`/products/${props.productSlug}/questions`, {
+    const res = await api<{ success: boolean, message: string }>(`/products/${props.productSlug}/questions`, {
       method: 'POST',
       body: { question: newQuestionText.value.trim() }
     })
@@ -92,7 +92,7 @@ async function handleAnswerQuestion() {
 
   isSubmittingAnswer.value = true
   try {
-    const res = await api<{ success: boolean; message: string }>(`/questions/${activeQuestionId.value}/answers`, {
+    const res = await api<{ success: boolean, message: string }>(`/questions/${activeQuestionId.value}/answers`, {
       method: 'POST',
       body: { answer: newAnswerText.value.trim() }
     })
@@ -118,7 +118,7 @@ async function handleAnswerQuestion() {
 
 async function handleLikeQuestion(q: ProductQuestion) {
   try {
-    const res = await api<{ success: boolean; data: { likes_count: number } }>(`/questions/${q.id}/like`, {
+    const res = await api<{ success: boolean, data: { likes_count: number } }>(`/questions/${q.id}/like`, {
       method: 'POST'
     })
     if (res.data) {
@@ -136,7 +136,10 @@ async function handleLikeQuestion(q: ProductQuestion) {
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-neutral-100 dark:border-neutral-800">
       <div class="flex items-center gap-2.5">
         <div class="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-          <UIcon name="i-lucide-help-circle" class="size-5" />
+          <UIcon
+            name="i-lucide-help-circle"
+            class="size-5"
+          />
         </div>
         <div>
           <h3 class="font-black text-base sm:text-lg text-neutral-900 dark:text-white">
@@ -165,7 +168,10 @@ async function handleLikeQuestion(q: ProductQuestion) {
       class="py-8 flex flex-col items-center justify-center gap-2 text-center"
     >
       <div class="size-12 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-400 flex items-center justify-center">
-        <UIcon name="i-lucide-message-circle-question" class="size-6" />
+        <UIcon
+          name="i-lucide-message-circle-question"
+          class="size-6"
+        />
       </div>
       <p class="font-bold text-sm text-neutral-700 dark:text-neutral-300">
         هنوز پرسشی برای این کالا ثبت نشده است
@@ -176,7 +182,10 @@ async function handleLikeQuestion(q: ProductQuestion) {
     </div>
 
     <!-- Questions List -->
-    <div v-else class="flex flex-col gap-5">
+    <div
+      v-else
+      class="flex flex-col gap-5"
+    >
       <div
         v-for="q in questions"
         :key="q.id"
@@ -204,7 +213,10 @@ async function handleLikeQuestion(q: ProductQuestion) {
             class="flex items-center gap-1 text-xs text-neutral-400 hover:text-primary transition-colors cursor-pointer px-2 py-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800"
             @click="handleLikeQuestion(q)"
           >
-            <UIcon name="i-lucide-thumbs-up" class="size-3.5" />
+            <UIcon
+              name="i-lucide-thumbs-up"
+              class="size-3.5"
+            />
             <span class="font-mono">{{ toPersianDigits(q.likes_count) }}</span>
           </button>
         </div>
@@ -250,7 +262,10 @@ async function handleLikeQuestion(q: ProductQuestion) {
             class="text-xs text-primary font-bold hover:underline cursor-pointer flex items-center gap-1"
             @click="openAnswerModal(q.id)"
           >
-            <UIcon name="i-lucide-reply" class="size-3.5" />
+            <UIcon
+              name="i-lucide-reply"
+              class="size-3.5"
+            />
             <span>ثبت پاسخ به این پرسش</span>
           </button>
         </div>
@@ -265,7 +280,13 @@ async function handleLikeQuestion(q: ProductQuestion) {
             <h3 class="font-bold text-base text-neutral-900 dark:text-white">
               ثبت پرسش جدید درباره کالا
             </h3>
-            <UButton color="neutral" variant="ghost" icon="i-lucide-x" size="xs" @click="isQuestionModalOpen = false" />
+            <UButton
+              color="neutral"
+              variant="ghost"
+              icon="i-lucide-x"
+              size="xs"
+              @click="isQuestionModalOpen = false"
+            />
           </div>
 
           <div class="space-y-1.5">
@@ -281,7 +302,14 @@ async function handleLikeQuestion(q: ProductQuestion) {
           </div>
 
           <div class="flex items-center justify-end gap-2 pt-2">
-            <UButton color="neutral" variant="outline" size="sm" @click="isQuestionModalOpen = false">انصراف</UButton>
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="sm"
+              @click="isQuestionModalOpen = false"
+            >
+              انصراف
+            </UButton>
             <UButton
               color="primary"
               size="sm"
@@ -305,7 +333,13 @@ async function handleLikeQuestion(q: ProductQuestion) {
             <h3 class="font-bold text-base text-neutral-900 dark:text-white">
               ثبت پاسخ به پرسش
             </h3>
-            <UButton color="neutral" variant="ghost" icon="i-lucide-x" size="xs" @click="isAnswerModalOpen = false" />
+            <UButton
+              color="neutral"
+              variant="ghost"
+              icon="i-lucide-x"
+              size="xs"
+              @click="isAnswerModalOpen = false"
+            />
           </div>
 
           <div class="space-y-1.5">
@@ -321,7 +355,14 @@ async function handleLikeQuestion(q: ProductQuestion) {
           </div>
 
           <div class="flex items-center justify-end gap-2 pt-2">
-            <UButton color="neutral" variant="outline" size="sm" @click="isAnswerModalOpen = false">انصراف</UButton>
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="sm"
+              @click="isAnswerModalOpen = false"
+            >
+              انصراف
+            </UButton>
             <UButton
               color="primary"
               size="sm"

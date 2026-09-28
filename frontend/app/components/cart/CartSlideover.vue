@@ -274,4 +274,3 @@ const handleRemoveCoupon = async () => {
     </template>
   </USlideover>
 </template>
-

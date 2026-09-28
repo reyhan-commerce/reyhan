@@ -417,7 +417,10 @@ const activeCategoryName = computed(() => {
         class="flex items-center justify-between p-2 rounded-xl bg-primary/10 border border-primary/20 text-xs font-bold text-primary"
       >
         <div class="flex items-center gap-1.5 truncate">
-          <UIcon name="i-lucide-check-circle" class="size-4 shrink-0" />
+          <UIcon
+            name="i-lucide-check-circle"
+            class="size-4 shrink-0"
+          />
           <span class="truncate">{{ activeCategoryName }}</span>
         </div>
         <button
@@ -525,7 +528,10 @@ const activeCategoryName = computed(() => {
             ]"
             @click="selectAllAttributeValues(attr.slug)"
           >
-            <UIcon name="i-lucide-palette" class="size-3.5" />
+            <UIcon
+              name="i-lucide-palette"
+              class="size-3.5"
+            />
             <span class="text-[11px]">همه رنگ‌ها</span>
           </button>
 

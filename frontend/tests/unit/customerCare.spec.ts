@@ -4,7 +4,7 @@ describe('Phase 4 Customer Care & Retention Engine Logic', () => {
   it('correctly validates and computes RMA return refund sums', () => {
     const orderItems = [
       { id: 101, product_name: 'گوشی موبایل', final_price: 30000000, quantity: 1 },
-      { id: 102, product_name: 'قاب محافظ', final_price: 600000, quantity: 2 },
+      { id: 102, product_name: 'قاب محافظ', final_price: 600000, quantity: 2 }
     ]
 
     // Customer selects only item 102 with qty 1
@@ -13,7 +13,7 @@ describe('Phase 4 Customer Care & Retention Engine Logic', () => {
     ]
 
     let totalRefund = 0
-    chosenReturns.forEach(ret => {
+    chosenReturns.forEach((ret) => {
       const match = orderItems.find(i => i.id === ret.order_item_id)
       if (match) {
         const unit = match.final_price / match.quantity
@@ -32,7 +32,7 @@ describe('Phase 4 Customer Care & Retention Engine Logic', () => {
     const points = [
       { price: 1000000 },
       { price: 3000000 },
-      { price: 5000000 },
+      { price: 5000000 }
     ]
 
     const normalized = points.map(p => (p.price - minPrice) / range)

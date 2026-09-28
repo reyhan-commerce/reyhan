@@ -30,20 +30,22 @@ final class OrderReturnController extends Controller
             ->with(['order', 'items.orderItem.product'])
             ->paginate((int) $request->query('per_page', 10));
 
-        $data = $returns->through(fn (OrderReturn $r) => [
-            'id' => $r->id,
-            'return_number' => $r->return_number,
-            'order_number' => $r->order->order_number,
-            'status' => $r->status->value,
-            'status_label' => $r->status->label(),
-            'status_color' => $r->status->color(),
-            'reason' => $r->reason,
-            'refund_amount' => $r->refund_amount,
-            'refund_amount_toman' => (int) ($r->refund_amount / 10),
-            'items_count' => $r->items->count(),
-            'created_at' => $r->created_at->toIso8601String(),
-            'created_at_jalali' => Jalalian::fromCarbon($r->created_at)->format('Y/m/d H:i'),
-        ]);
+        $data = $returns->through(function (OrderReturn $r): array {
+            return [
+                'id' => $r->id,
+                'return_number' => $r->return_number,
+                'order_number' => $r->order ? $r->order->order_number : '',
+                'status' => $r->status->value,
+                'status_label' => $r->status->label(),
+                'status_color' => $r->status->color(),
+                'reason' => $r->reason,
+                'refund_amount' => $r->refund_amount,
+                'refund_amount_toman' => (int) ($r->refund_amount / 10),
+                'items_count' => $r->items->count(),
+                'created_at' => $r->created_at?->toIso8601String() ?? '',
+                'created_at_jalali' => $r->created_at ? Jalalian::fromCarbon($r->created_at)->format('Y/m/d H:i') : '',
+            ];
+        });
 
         return response()->json([
             'success' => true,

@@ -20,21 +20,21 @@ const departments = [
   { value: 'finance', label: 'امور مالی و حسابداری' },
   { value: 'sales', label: 'فروش و مشاوره خرید' },
   { value: 'shipping', label: 'پیگیری ارسال و مرسولات' },
-  { value: 'complaints', label: 'انتقادات و شکایات' },
+  { value: 'complaints', label: 'انتقادات و شکایات' }
 ]
 
 const priorities = [
   { value: 'low', label: 'کم' },
   { value: 'medium', label: 'متوسط' },
   { value: 'high', label: 'زیاد' },
-  { value: 'urgent', label: 'فوری و اضطراری' },
+  { value: 'urgent', label: 'فوری و اضطراری' }
 ]
 
 const form = ref({
   subject: '',
   department: 'support' as TicketDepartment,
   priority: 'medium' as TicketPriority,
-  message: '',
+  message: ''
 })
 
 const isSubmitting = ref(false)
@@ -85,7 +85,10 @@ async function handleSubmit() {
   <div class="flex flex-col gap-6">
     <div class="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-2">
       <div class="flex items-center gap-2 text-xs text-neutral-400">
-        <NuxtLink to="/profile/tickets" class="hover:text-primary">تیکت‌ها</NuxtLink>
+        <NuxtLink
+          to="/profile/tickets"
+          class="hover:text-primary"
+        >تیکت‌ها</NuxtLink>
         <span>/</span>
         <span>تیکت جدید</span>
       </div>
@@ -101,7 +104,10 @@ async function handleSubmit() {
       v-if="settingsStore.settings.support_work_hours_notice"
       class="p-4 rounded-2xl bg-primary/5 border border-primary/20 text-xs text-neutral-600 dark:text-neutral-300 flex items-start gap-3"
     >
-      <UIcon name="i-lucide-clock" class="size-5 text-primary shrink-0 mt-0.5" />
+      <UIcon
+        name="i-lucide-clock"
+        class="size-5 text-primary shrink-0 mt-0.5"
+      />
       <div>
         <span class="font-bold block text-neutral-900 dark:text-white mb-0.5">ساعات کاری و پاسخگویی:</span>
         <span>{{ settingsStore.settings.support_work_hours_notice }}</span>
@@ -119,7 +125,7 @@ async function handleSubmit() {
           type="text"
           placeholder="مثال: سوال درباره زمان تحویل سفارش"
           class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white text-xs font-medium focus:outline-none focus:border-primary"
-        />
+        >
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -131,7 +137,13 @@ async function handleSubmit() {
             v-model="form.department"
             class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white text-xs font-medium focus:outline-none focus:border-primary"
           >
-            <option v-for="d in departments" :key="d.value" :value="d.value">{{ d.label }}</option>
+            <option
+              v-for="d in departments"
+              :key="d.value"
+              :value="d.value"
+            >
+              {{ d.label }}
+            </option>
           </select>
         </div>
 
@@ -143,7 +155,13 @@ async function handleSubmit() {
             v-model="form.priority"
             class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white text-xs font-medium focus:outline-none focus:border-primary"
           >
-            <option v-for="p in priorities" :key="p.value" :value="p.value">{{ p.label }}</option>
+            <option
+              v-for="p in priorities"
+              :key="p.value"
+              :value="p.value"
+            >
+              {{ p.label }}
+            </option>
           </select>
         </div>
       </div>

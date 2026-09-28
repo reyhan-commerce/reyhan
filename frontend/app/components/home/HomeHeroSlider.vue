@@ -81,13 +81,13 @@ const sliderBanners = computed(() =>
             v-if="banner.mobile_image_url"
             media="(max-width: 640px)"
             :srcset="getMediaUrl(banner.mobile_image_url)"
-          />
+          >
           <img
             :src="getMediaUrl(banner.image_url)"
             :alt="banner.title"
             class="w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover:scale-102"
             loading="lazy"
-          />
+          >
         </picture>
 
         <!-- Luxury Gradient Scrim Overlay -->
@@ -97,7 +97,10 @@ const sliderBanners = computed(() =>
               v-if="badgeText || banner.subtitle"
               class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs sm:text-sm font-bold border border-white/25 drop-shadow"
             >
-              <UIcon name="i-lucide-sparkles" class="size-3.5 text-primary-300" />
+              <UIcon
+                name="i-lucide-sparkles"
+                class="size-3.5 text-primary-300"
+              />
               <span>{{ banner.subtitle || badgeText }}</span>
             </span>
 
@@ -105,10 +108,16 @@ const sliderBanners = computed(() =>
               {{ banner.title }}
             </h2>
 
-            <div v-if="banner.link_url" class="pt-2">
+            <div
+              v-if="banner.link_url"
+              class="pt-2"
+            >
               <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-bold text-xs sm:text-sm shadow-lg shadow-primary/30 hover:bg-primary-600 transition-colors">
                 <span>مشاهده پیشنهاد</span>
-                <UIcon name="i-lucide-arrow-left" class="size-4" />
+                <UIcon
+                  name="i-lucide-arrow-left"
+                  class="size-4"
+                />
               </span>
             </div>
           </div>

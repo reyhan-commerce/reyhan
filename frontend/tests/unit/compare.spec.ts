@@ -18,7 +18,7 @@ describe('Product Comparison Logic & Matrix Building', () => {
       clear: () => {
         slugs = []
       },
-      isInCompare: (slug: string) => slugs.includes(slug),
+      isInCompare: (slug: string) => slugs.includes(slug)
     }
   }
 

@@ -15,14 +15,19 @@ const isFilterDrawerOpen = ref(false)
 catalogStore.applyFiltersFromQuery({ ...route.query, category: slug.value })
 
 // Fetch Category Detail & Products
-const { data: categoryData } = await useAsyncData(`category-${slug.value}`, async () => {
-  const [catRes] = await Promise.all([
-    api<{ success: boolean, data: CategoryTreeItem & { parent?: { name: string, slug: string }, attributes?: unknown[] } }>(`/categories/${encodeURIComponent(slug.value)}`),
-    catalogStore.fetchCategoryTree(),
-    catalogStore.fetchProducts({ category: slug.value })
-  ])
-  return catRes.data
-})
+const { data: categoryData } = await useAsyncData(
+  () => `category-${slug.value}`,
+  async () => {
+    catalogStore.applyFiltersFromQuery({ ...route.query, category: slug.value })
+    const [catRes] = await Promise.all([
+      api<{ success: boolean, data: CategoryTreeItem & { parent?: { name: string, slug: string }, attributes?: unknown[] } }>(`/categories/${encodeURIComponent(slug.value)}`),
+      catalogStore.fetchCategoryTree(),
+      catalogStore.fetchProducts({ category: slug.value, ...route.query })
+    ])
+    return catRes.data
+  },
+  { watch: [slug, () => route.query] }
+)
 
 const currentCategory = computed(() => categoryData.value)
 

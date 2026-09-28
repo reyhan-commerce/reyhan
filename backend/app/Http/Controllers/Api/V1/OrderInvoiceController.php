@@ -64,7 +64,7 @@ final class OrderInvoiceController extends Controller
             false
         );
 
-        $frontendUrl = rtrim((string) (config('app.frontend_url') ?? env('FRONTEND_URL', 'http://localhost:3000')), '/');
+        $frontendUrl = rtrim((string) config('app.frontend_url', 'http://localhost:3000'), '/');
         $query = parse_url($apiSignedUrl, PHP_URL_QUERY);
 
         return $frontendUrl.'/invoice/'.$order->order_number.'?'.$query;

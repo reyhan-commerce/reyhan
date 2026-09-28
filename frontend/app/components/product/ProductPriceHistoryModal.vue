@@ -73,13 +73,19 @@ const polygonPoints = computed(() => {
 </script>
 
 <template>
-  <UModal :open="open" @update:open="emit('update:open', $event)">
+  <UModal
+    :open="open"
+    @update:open="emit('update:open', $event)"
+  >
     <template #content>
       <div class="p-6 flex flex-col gap-5">
         <!-- Modal Header -->
         <div class="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-800">
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-trending-up" class="size-5 text-primary" />
+            <UIcon
+              name="i-lucide-trending-up"
+              class="size-5 text-primary"
+            />
             <h3 class="font-black text-base text-neutral-900 dark:text-white">
               نمودار تغییرات قیمت محصول
             </h3>
@@ -98,13 +104,22 @@ const polygonPoints = computed(() => {
         </p>
 
         <!-- Loading State -->
-        <div v-if="isLoading" class="py-12 flex flex-col items-center justify-center gap-3">
-          <UIcon name="i-lucide-loader-2" class="size-7 text-primary animate-spin" />
+        <div
+          v-if="isLoading"
+          class="py-12 flex flex-col items-center justify-center gap-3"
+        >
+          <UIcon
+            name="i-lucide-loader-2"
+            class="size-7 text-primary animate-spin"
+          />
           <span class="text-xs text-neutral-500">در حال دریافت تاریخچه قیمت...</span>
         </div>
 
         <!-- Content -->
-        <div v-else-if="historyData" class="flex flex-col gap-5">
+        <div
+          v-else-if="historyData"
+          class="flex flex-col gap-5"
+        >
           <!-- Stats Summary Grid -->
           <div class="grid grid-cols-3 gap-3 text-center">
             <div class="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-900/50 flex flex-col gap-1">
@@ -146,9 +161,23 @@ const polygonPoints = computed(() => {
               class="w-full h-44 overflow-visible"
             >
               <defs>
-                <linearGradient id="priceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.3" />
-                  <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.0" />
+                <linearGradient
+                  id="priceGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="0%"
+                  y2="100%"
+                >
+                  <stop
+                    offset="0%"
+                    stop-color="#3b82f6"
+                    stop-opacity="0.3"
+                  />
+                  <stop
+                    offset="100%"
+                    stop-color="#3b82f6"
+                    stop-opacity="0.0"
+                  />
                 </linearGradient>
               </defs>
 
@@ -185,7 +214,10 @@ const polygonPoints = computed(() => {
 
             <!-- X-axis Date Labels -->
             <div class="flex justify-between text-[10px] text-neutral-400 pt-1 px-4 font-mono">
-              <span v-for="(p, i) in historyData.points" :key="i">
+              <span
+                v-for="(p, i) in historyData.points"
+                :key="i"
+              >
                 {{ p.date_jalali }}
               </span>
             </div>

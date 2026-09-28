@@ -414,4 +414,3 @@ const handleClearCart = async () => {
     </div>
   </div>
 </template>
-

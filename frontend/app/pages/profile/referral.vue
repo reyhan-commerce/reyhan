@@ -102,7 +102,7 @@ const submitClaim = async () => {
 
   isSubmittingClaim.value = true
   try {
-    const res = await api<{ success: boolean; message: string }>('/referral/claim', {
+    const res = await api<{ success: boolean, message: string }>('/referral/claim', {
       method: 'POST',
       body: { code: inputClaimCode.value.trim() }
     })
@@ -132,16 +132,28 @@ const submitClaim = async () => {
     <!-- Back to Profile Breadcrumb -->
     <div class="mb-6 flex items-center justify-between">
       <div class="flex items-center gap-2 text-sm text-neutral-500">
-        <NuxtLink to="/profile" class="hover:text-primary-600 transition flex items-center gap-1">
-          <UIcon name="i-lucide-user" class="w-4 h-4" />
+        <NuxtLink
+          to="/profile"
+          class="hover:text-primary-600 transition flex items-center gap-1"
+        >
+          <UIcon
+            name="i-lucide-user"
+            class="w-4 h-4"
+          />
           حساب کاربری
         </NuxtLink>
         <span>/</span>
         <span class="text-neutral-800 dark:text-neutral-200 font-medium">معرفی به دوستان</span>
       </div>
-      <NuxtLink to="/profile" class="text-xs text-primary-600 hover:underline flex items-center gap-1">
+      <NuxtLink
+        to="/profile"
+        class="text-xs text-primary-600 hover:underline flex items-center gap-1"
+      >
         بازگشت به حساب
-        <UIcon name="i-lucide-arrow-left" class="w-3.5 h-3.5" />
+        <UIcon
+          name="i-lucide-arrow-left"
+          class="w-3.5 h-3.5"
+        />
       </NuxtLink>
     </div>
 
@@ -151,7 +163,10 @@ const submitClaim = async () => {
       <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur text-xs font-medium mb-3">
-            <UIcon name="i-lucide-sparkles" class="w-4 h-4 text-amber-300" />
+            <UIcon
+              name="i-lucide-sparkles"
+              class="w-4 h-4 text-amber-300"
+            />
             برنامه پاداش و همکاری در فروش {{ settingsStore.settings.store_name }}
           </div>
           <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
@@ -173,7 +188,9 @@ const submitClaim = async () => {
         </div>
 
         <div class="w-full md:w-auto bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl flex flex-col gap-3 min-w-[280px]">
-          <div class="text-xs text-primary-200 font-medium">کد معرف اختصاصی شما:</div>
+          <div class="text-xs text-primary-200 font-medium">
+            کد معرف اختصاصی شما:
+          </div>
           <div class="flex items-center justify-between gap-3 bg-white/20 px-4 py-2.5 rounded-xl">
             <span class="font-mono text-xl font-bold tracking-widest text-amber-300">
               {{ referralData?.referral_code || '--------' }}
@@ -207,10 +224,15 @@ const submitClaim = async () => {
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
       <div class="bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm flex items-center gap-4">
         <div class="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-600 flex items-center justify-center">
-          <UIcon name="i-lucide-users" class="w-6 h-6" />
+          <UIcon
+            name="i-lucide-users"
+            class="w-6 h-6"
+          />
         </div>
         <div>
-          <div class="text-xs text-neutral-500 font-medium">دوستان دعوت‌شده</div>
+          <div class="text-xs text-neutral-500 font-medium">
+            دوستان دعوت‌شده
+          </div>
           <div class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">
             {{ toPersianDigits(referralData?.total_referrals_count || 0) }} نفر
           </div>
@@ -219,10 +241,15 @@ const submitClaim = async () => {
 
       <div class="bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm flex items-center gap-4">
         <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center">
-          <UIcon name="i-lucide-check-circle" class="w-6 h-6" />
+          <UIcon
+            name="i-lucide-check-circle"
+            class="w-6 h-6"
+          />
         </div>
         <div>
-          <div class="text-xs text-neutral-500 font-medium">خریدهای تکمیل‌شده</div>
+          <div class="text-xs text-neutral-500 font-medium">
+            خریدهای تکمیل‌شده
+          </div>
           <div class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">
             {{ toPersianDigits(referralData?.completed_referrals_count || 0) }} خرید
           </div>
@@ -231,10 +258,15 @@ const submitClaim = async () => {
 
       <div class="bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm flex items-center gap-4">
         <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 flex items-center justify-center">
-          <UIcon name="i-lucide-coins" class="w-6 h-6" />
+          <UIcon
+            name="i-lucide-coins"
+            class="w-6 h-6"
+          />
         </div>
         <div>
-          <div class="text-xs text-neutral-500 font-medium">کل پاداش واریزی به کیف پول</div>
+          <div class="text-xs text-neutral-500 font-medium">
+            کل پاداش واریزی به کیف پول
+          </div>
           <div class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">
             {{ toPersianDigits(formatPrice(referralData?.total_earned_toman || 0)) }} <span class="text-sm font-normal text-neutral-500">تومان</span>
           </div>
@@ -249,7 +281,10 @@ const submitClaim = async () => {
     >
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-950 flex items-center justify-center text-primary-600 shrink-0">
-          <UIcon name="i-lucide-gift" class="w-5 h-5" />
+          <UIcon
+            name="i-lucide-gift"
+            class="w-5 h-5"
+          />
         </div>
         <div>
           <div class="font-bold text-neutral-900 dark:text-neutral-100 text-sm">
@@ -281,7 +316,10 @@ const submitClaim = async () => {
       v-else
       class="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 rounded-xl p-4 mb-8 flex items-center gap-3 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm"
     >
-      <UIcon name="i-lucide-check" class="w-5 h-5 text-emerald-600" />
+      <UIcon
+        name="i-lucide-check"
+        class="w-5 h-5 text-emerald-600"
+      />
       <span>
         شما با کد معرف
         <span class="font-mono font-bold">{{ referralData.referred_by.code }}</span>
@@ -300,14 +338,26 @@ const submitClaim = async () => {
         </span>
       </div>
 
-      <div v-if="isLoading" class="p-8 text-center text-neutral-400">
-        <UIcon name="i-lucide-loader-2" class="w-8 h-8 animate-spin mx-auto mb-2 text-primary-500" />
+      <div
+        v-if="isLoading"
+        class="p-8 text-center text-neutral-400"
+      >
+        <UIcon
+          name="i-lucide-loader-2"
+          class="w-8 h-8 animate-spin mx-auto mb-2 text-primary-500"
+        />
         در حال بارگذاری اطلاعات...
       </div>
 
-      <div v-else-if="!referralData?.referrals || referralData.referrals.length === 0" class="p-12 text-center">
+      <div
+        v-else-if="!referralData?.referrals || referralData.referrals.length === 0"
+        class="p-12 text-center"
+      >
         <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-400">
-          <UIcon name="i-lucide-user-plus" class="w-8 h-8" />
+          <UIcon
+            name="i-lucide-user-plus"
+            class="w-8 h-8"
+          />
         </div>
         <p class="text-neutral-600 dark:text-neutral-400 font-medium text-sm">
           هنوز کسی با کد معرف شما ثبت‌نام نکرده است.
@@ -317,15 +367,28 @@ const submitClaim = async () => {
         </p>
       </div>
 
-      <div v-else class="overflow-x-auto">
+      <div
+        v-else
+        class="overflow-x-auto"
+      >
         <table class="w-full text-right text-sm">
           <thead class="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 text-xs">
             <tr>
-              <th class="px-6 py-3 font-medium">کاربر دعوت‌شده</th>
-              <th class="px-6 py-3 font-medium">تاریخ عضویت</th>
-              <th class="px-6 py-3 font-medium">وضعیت</th>
-              <th class="px-6 py-3 font-medium">شماره سفارش اول</th>
-              <th class="px-6 py-3 font-medium">پاداش دریافتی</th>
+              <th class="px-6 py-3 font-medium">
+                کاربر دعوت‌شده
+              </th>
+              <th class="px-6 py-3 font-medium">
+                تاریخ عضویت
+              </th>
+              <th class="px-6 py-3 font-medium">
+                وضعیت
+              </th>
+              <th class="px-6 py-3 font-medium">
+                شماره سفارش اول
+              </th>
+              <th class="px-6 py-3 font-medium">
+                پاداش دریافتی
+              </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
@@ -357,7 +420,10 @@ const submitClaim = async () => {
               <td class="px-6 py-4 text-xs font-mono text-neutral-500">
                 {{ item.order_number ? toPersianDigits(item.order_number) : '—' }}
               </td>
-              <td class="px-6 py-4 font-semibold text-xs" :class="item.status === 'completed' ? 'text-emerald-600' : 'text-neutral-400'">
+              <td
+                class="px-6 py-4 font-semibold text-xs"
+                :class="item.status === 'completed' ? 'text-emerald-600' : 'text-neutral-400'"
+              >
                 {{ item.status === 'completed' ? toPersianDigits(formatPrice(item.reward_amount_toman)) + ' تومان' : 'در انتظار خرید' }}
               </td>
             </tr>
