@@ -282,6 +282,50 @@ class ManageGeneralSettings extends SettingsPage
                                     ->placeholder('طراحی شده با رعایت استانداردهای تجربه کاربری و تجارت الکترونیک')
                                     ->columnSpanFull(),
                             ]),
+
+                        Tab::make('مشتریان، عودت و بازاریابی')
+                            ->icon(Heroicon::OutlinedSparkles)
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('referral_reward_toman')
+                                    ->label('مبلغ پاداش معرفی هر دوست')
+                                    ->numeric()
+                                    ->required()
+                                    ->suffix('تومان')
+                                    ->helperText('پس از اولین خرید موفق دوست به کیف پول معرف واریز می‌شود.'),
+
+                                TextInput::make('return_guarantee_days')
+                                    ->label('مهلت ضمانت بازگشت کالا')
+                                    ->numeric()
+                                    ->required()
+                                    ->suffix('روز')
+                                    ->helperText('تعداد روزهای مجاز پس از تحویل برای ثبت RMA.'),
+
+                                TextInput::make('referral_banner_title')
+                                    ->label('عنوان بنر معرفی دوستان')
+                                    ->placeholder('دوستانت را دعوت کن، هدیه نقدی بگیر!')
+                                    ->columnSpanFull(),
+
+                                Textarea::make('referral_banner_desc')
+                                    ->label('توضیحات بنر معرفی دوستان')
+                                    ->rows(2)
+                                    ->columnSpanFull(),
+
+                                Textarea::make('return_policy_notice')
+                                    ->label('متن قوانین و شرایط مرجوعی کالا')
+                                    ->rows(3)
+                                    ->columnSpanFull(),
+
+                                Textarea::make('tax_invoice_notice')
+                                    ->label('توضیحات قانونی فاکتور رسمی (ماده ۱۹)')
+                                    ->rows(2)
+                                    ->columnSpanFull(),
+
+                                TextInput::make('support_work_hours_notice')
+                                    ->label('متن ساعات پاسخگویی پشتیبانی')
+                                    ->placeholder('شنبه تا چهارشنبه ۹ الی ۱۸ | پنج‌شنبه‌ها ۹ الی ۱۴')
+                                    ->columnSpanFull(),
+                            ]),
                     ])
                     ->columnSpanFull(),
             ]);

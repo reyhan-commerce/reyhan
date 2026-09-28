@@ -78,6 +78,13 @@ class AppSettingService
                 'footer_about_text' => $this->settings->footer_about_text,
                 'footer_copyright_text' => $this->settings->footer_copyright_text,
                 'footer_designer_credit' => $this->settings->footer_designer_credit,
+                'referral_reward_toman' => $this->settings->referral_reward_toman ?? 50000,
+                'referral_banner_title' => $this->settings->referral_banner_title,
+                'referral_banner_desc' => $this->settings->referral_banner_desc,
+                'return_guarantee_days' => $this->settings->return_guarantee_days ?? 7,
+                'return_policy_notice' => $this->settings->return_policy_notice,
+                'tax_invoice_notice' => $this->settings->tax_invoice_notice,
+                'support_work_hours_notice' => $this->settings->support_work_hours_notice,
                 'theme' => $themeData,
             ];
         });

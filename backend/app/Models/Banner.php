@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use App\Enums\BannerPosition;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @property int $id
+ * @property string $title
+ * @property string|null $subtitle
+ * @property string $image_url
+ * @property string|null $mobile_image_url
+ * @property string|null $link_url
+ * @property BannerPosition $position
+ * @property int $order
+ * @property bool $is_active
+ * @property Carbon|null $starts_at
+ * @property Carbon|null $ends_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ */
+final class Banner extends Model
+{
+    use HasFactory;
+
+    protected $guarded = ['id'];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'position' => BannerPosition::class,
+            'order' => 'integer',
+            'is_active' => 'boolean',
+            'starts_at' => 'datetime',
+            'ends_at' => 'datetime',
+        ];
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeActive(Builder $query): Builder
+    {
+        $now = now();
+
+        return $query->where('is_active', true)
+            ->where(function (Builder $q) use ($now): void {
+                $q->whereNull('starts_at')->orWhere('starts_at', '<=', $now);
+            })
+            ->where(function (Builder $q) use ($now): void {
+                $q->whereNull('ends_at')->orWhere('ends_at', '>=', $now);
+            })
+            ->orderBy('order')
+            ->orderByDesc('id');
+    }
+}

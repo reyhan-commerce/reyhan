@@ -84,6 +84,20 @@ class GeneralSettings extends Settings
 
     public ?string $footer_designer_credit;
 
+    public int $referral_reward_toman;
+
+    public ?string $referral_banner_title;
+
+    public ?string $referral_banner_desc;
+
+    public int $return_guarantee_days;
+
+    public ?string $return_policy_notice;
+
+    public ?string $tax_invoice_notice;
+
+    public ?string $support_work_hours_notice;
+
     public static function group(): string
     {
         return 'general';

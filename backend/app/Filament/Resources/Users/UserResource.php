@@ -4,20 +4,25 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Users;
 
+use App\Enums\WalletTransactionType;
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Resources\Users\Pages\ViewUser;
 use App\Models\User;
+use App\Services\Wallet\WalletService;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -150,6 +155,13 @@ class UserResource extends Resource
                     ->color('info')
                     ->sortable(),
 
+                TextColumn::make('wallet_balance')
+                    ->label('کیف پول')
+                    ->formatStateUsing(fn (int $state): string => number_format((int) ($state / 10)).' تومان')
+                    ->badge()
+                    ->color('success')
+                    ->sortable(),
+
                 IconColumn::make('mobile_verified_at')
                     ->label('تایید پیامکی')
                     ->boolean()
@@ -189,6 +201,69 @@ class UserResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make(),
+                Action::make('adjust_wallet')
+                    ->label('مدیریت کیف پول')
+                    ->icon(Heroicon::OutlinedWallet)
+                    ->color('warning')
+                    ->form([
+                        Select::make('action_type')
+                            ->label('نوع عملیات')
+                            ->options([
+                                'deposit' => 'افزایش اعتبار (واریز به کیف پول)',
+                                'withdraw' => 'کاهش اعتبار (برداشت از کیف پول)',
+                            ])
+                            ->default('deposit')
+                            ->required(),
+
+                        TextInput::make('amount_toman')
+                            ->label('مبلغ به تومان')
+                            ->numeric()
+                            ->required()
+                            ->minValue(1000)
+                            ->helperText('مثال: ۱۰۰,۰۰۰ تومان'),
+
+                        TextInput::make('reason')
+                            ->label('علت / توضیحات تراکنش')
+                            ->placeholder('مثال: پاداش خرید، اصلاح حساب، کش‌بک ویژه')
+                            ->required()
+                            ->maxLength(255),
+                    ])
+                    ->action(function (User $record, array $data): void {
+                        $walletService = app(WalletService::class);
+                        $amountRial = (int) $data['amount_toman'] * 10;
+                        $desc = (string) $data['reason'];
+
+                        if ($data['action_type'] === 'deposit') {
+                            $walletService->deposit(
+                                user: $record,
+                                amountRial: $amountRial,
+                                description: "شارژ دستی ادمین: {$desc}",
+                                type: WalletTransactionType::AdminAdjustment
+                            );
+                            Notification::make()
+                                ->title('موجودی کیف پول با موفقیت افزایش یافت.')
+                                ->success()
+                                ->send();
+                        } else {
+                            try {
+                                $walletService->withdraw(
+                                    user: $record,
+                                    amountRial: $amountRial,
+                                    description: "کسر دستی ادمین: {$desc}"
+                                );
+                                Notification::make()
+                                    ->title('موجودی کیف پول با موفقیت کسر شد.')
+                                    ->success()
+                                    ->send();
+                            } catch (\Throwable $e) {
+                                Notification::make()
+                                    ->title('خطا در کسر موجودی')
+                                    ->body($e->getMessage())
+                                    ->danger()
+                                    ->send();
+                            }
+                        }
+                    }),
                 EditAction::make(),
             ])
             ->toolbarActions([

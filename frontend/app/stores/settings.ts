@@ -61,6 +61,14 @@ export interface StoreSettings {
   footer_about_text: string | null
   footer_copyright_text: string | null
   footer_designer_credit: string | null
+  // Dynamic Policies & Marketing
+  referral_reward_toman?: number
+  referral_banner_title?: string | null
+  referral_banner_desc?: string | null
+  return_guarantee_days?: number
+  return_policy_notice?: string | null
+  tax_invoice_notice?: string | null
+  support_work_hours_notice?: string | null
   theme?: ThemeTokens
 }
 
@@ -103,6 +111,13 @@ export const useSettingsStore = defineStore('settings', () => {
     footer_about_text: null,
     footer_copyright_text: null,
     footer_designer_credit: null,
+    referral_reward_toman: 50000,
+    referral_banner_title: 'دعوت از دوستان و دریافت هدیه',
+    referral_banner_desc: 'با ارسال لینک معرف خود به دوستان، پس از ثبت اولین خرید آنها، کیف پول شما شارژ خواهد شد.',
+    return_guarantee_days: 7,
+    return_policy_notice: 'تا ۷ روز کاری پس از تحویل کالا، در صورت عدم استفاده یا نقص فنی امکان ثبت درخواست مرجوعی وجود دارد.',
+    tax_invoice_notice: 'در صورت درخواست فاکتور رسمی، ارائه شناسه ملی و کد اقتصادی الزامی است و ارزش افزوده طبق قوانین جاری محاسبه می‌گردد.',
+    support_work_hours_notice: 'تیم پشتیبانی از شنبه تا چهارشنبه ساعت ۹ الی ۱۸ و پنج‌شنبه‌ها تا ساعت ۱۳ پاسخگوی شماست.',
     theme: {
       primary_color: '#e11d48',
       secondary_color: '#0284c7',

@@ -58,6 +58,11 @@ const navItems = computed(() => {
       icon: 'i-lucide-package'
     },
     {
+      label: 'کیف پول و موجودی',
+      to: '/profile/wallet',
+      icon: 'i-lucide-wallet'
+    },
+    {
       label: 'آدرس‌های من',
       to: '/profile/addresses',
       icon: 'i-lucide-map-pin'
@@ -77,11 +82,28 @@ const navItems = computed(() => {
     })
   }
 
-  items.push({
-    label: 'اطلاعات حساب',
-    to: '/profile/settings',
-    icon: 'i-lucide-user-cog'
-  })
+  items.push(
+    {
+      label: 'معرفی دوستان و هدیه',
+      to: '/profile/referral',
+      icon: 'i-lucide-users'
+    },
+    {
+      label: 'مرجوعی کالا (RMA)',
+      to: '/profile/returns',
+      icon: 'i-lucide-undo-2'
+    },
+    {
+      label: 'تیکت‌های پشتیبانی',
+      to: '/profile/tickets',
+      icon: 'i-lucide-headset'
+    },
+    {
+      label: 'اطلاعات حساب',
+      to: '/profile/settings',
+      icon: 'i-lucide-user-cog'
+    }
+  )
 
   return items
 })
