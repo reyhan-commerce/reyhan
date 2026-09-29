@@ -20,7 +20,7 @@
 
             <x-slot name="headerEnd">
                 <x-filament::button
-                    wire:click="runUpdate(app(\App\Actions\System\PerformCoreUpdateAction::class))"
+                    wire:click="runUpdate"
                     wire:loading.attr="disabled"
                     icon="heroicon-o-bolt"
                     color="primary"

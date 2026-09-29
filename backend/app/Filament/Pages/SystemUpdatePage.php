@@ -46,8 +46,10 @@ class SystemUpdatePage extends Page
 
     public bool $isUpdating = false;
 
-    public function runUpdate(PerformCoreUpdateAction $action): void
+    public function runUpdate(?PerformCoreUpdateAction $action = null): void
     {
+        $action ??= app(PerformCoreUpdateAction::class);
+
         $this->isUpdating = true;
         $result = $action->execute(skipBackup: false);
 
@@ -82,7 +84,7 @@ class SystemUpdatePage extends Page
                 ->modalHeading(__('System & Core Engine Update Center'))
                 ->modalDescription(__('Execute automated zero-downtime database migrations, refresh Filament assets, compile runtime caches, and reload FrankenPHP Octane workers with automatic database snapshot guarantees.'))
                 ->modalSubmitActionLabel(__('Execute Safe Update'))
-                ->action(fn (PerformCoreUpdateAction $action) => $this->runUpdate($action)),
+                ->action(fn () => $this->runUpdate()),
         ];
     }
 }
