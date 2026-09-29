@@ -7,7 +7,7 @@ namespace App\Http\Requests\Api\V1\Catalog;
 use App\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreStockAlertRequest extends FormRequest
+final class StoreStockAlertRequest extends FormRequest
 {
     public function authorize(): bool
     {

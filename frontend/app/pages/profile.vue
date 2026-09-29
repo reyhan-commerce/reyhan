@@ -19,6 +19,7 @@ const route = useRoute()
 const router = useRouter()
 const api = useApi()
 const { toPersianDigits } = usePersian()
+const features = useFeatures()
 
 const stats = ref({
   orders: 0,
@@ -45,34 +46,41 @@ const fetchProfileStats = async () => {
 
 onMounted(() => {
   fetchProfileStats()
-  wishlistStore.fetchWishlistIds()
+  if (features.hasFeature('wishlist')) {
+    wishlistStore.fetchWishlistIds()
+  }
 })
 
-const features = useFeatures()
-
 const navItems = computed(() => {
-  const items = [
+  const items: { label: string, to: string, icon: string }[] = [
     {
       label: 'سفارش‌های من',
       to: '/profile/orders',
       icon: 'i-lucide-package'
-    },
-    {
+    }
+  ]
+
+  if (features.hasFeature('wallet')) {
+    items.push({
       label: 'کیف پول و موجودی',
       to: '/profile/wallet',
       icon: 'i-lucide-wallet'
-    },
-    {
-      label: 'آدرس‌های من',
-      to: '/profile/addresses',
-      icon: 'i-lucide-map-pin'
-    },
-    {
+    })
+  }
+
+  items.push({
+    label: 'آدرس‌های من',
+    to: '/profile/addresses',
+    icon: 'i-lucide-map-pin'
+  })
+
+  if (features.hasFeature('wishlist')) {
+    items.push({
       label: 'لیست علاقه‌مندی‌ها',
       to: '/profile/wishlist',
       icon: 'i-lucide-heart'
-    }
-  ]
+    })
+  }
 
   if (features.hasFeature('loyalty')) {
     items.push({
@@ -82,28 +90,35 @@ const navItems = computed(() => {
     })
   }
 
-  items.push(
-    {
+  if (features.hasFeature('referral')) {
+    items.push({
       label: 'معرفی دوستان و هدیه',
       to: '/profile/referral',
       icon: 'i-lucide-users'
-    },
-    {
+    })
+  }
+
+  if (features.hasFeature('returns')) {
+    items.push({
       label: 'مرجوعی کالا (RMA)',
       to: '/profile/returns',
       icon: 'i-lucide-undo-2'
-    },
-    {
+    })
+  }
+
+  if (features.hasFeature('tickets')) {
+    items.push({
       label: 'تیکت‌های پشتیبانی',
       to: '/profile/tickets',
       icon: 'i-lucide-headset'
-    },
-    {
-      label: 'اطلاعات حساب',
-      to: '/profile/settings',
-      icon: 'i-lucide-user-cog'
-    }
-  )
+    })
+  }
+
+  items.push({
+    label: 'اطلاعات حساب',
+    to: '/profile/settings',
+    icon: 'i-lucide-user-cog'
+  })
 
   return items
 })
@@ -172,7 +187,7 @@ const handleLogout = async () => {
         </div>
 
         <!-- Quick Summary Stats -->
-        <div class="grid grid-cols-3 gap-3 sm:gap-6 border-t md:border-t-0 md:border-r border-neutral-100 dark:border-neutral-800 pt-4 md:pt-0 md:pr-6">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 border-t md:border-t-0 md:border-r border-neutral-100 dark:border-neutral-800 pt-4 md:pt-0 md:pr-6">
           <NuxtLink
             to="/profile/orders"
             class="flex flex-col items-center justify-center p-3 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-colors group text-center"
@@ -184,6 +199,7 @@ const handleLogout = async () => {
           </NuxtLink>
 
           <NuxtLink
+            v-if="features.hasFeature('wishlist')"
             to="/profile/wishlist"
             class="flex flex-col items-center justify-center p-3 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-colors group text-center"
           >

@@ -10,7 +10,7 @@ use App\Http\Requests\Api\V1\Catalog\StoreStockAlertRequest;
 use App\Models\ProductVariant;
 use Illuminate\Http\JsonResponse;
 
-class StockAlertController extends Controller
+final class StockAlertController extends Controller
 {
     /**
      * Subscribe to stock alert for a variant.

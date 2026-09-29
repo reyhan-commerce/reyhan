@@ -9,6 +9,12 @@ export interface FeaturesMap {
   comparison?: boolean
   blog?: boolean
   loyalty?: boolean
+  wallet?: boolean
+  referral?: boolean
+  returns?: boolean
+  faq?: boolean
+  tickets?: boolean
+  questions?: boolean
   [key: string]: boolean | undefined
 }
 
@@ -22,7 +28,13 @@ export const useFeatures = () => {
     stock_alerts: true,
     comparison: true,
     blog: true,
-    loyalty: true
+    loyalty: true,
+    wallet: true,
+    referral: true,
+    returns: true,
+    faq: true,
+    tickets: true,
+    questions: true
   }))
   const isLoading = useState<boolean>('app_features_loading', () => false)
 
@@ -41,7 +53,7 @@ export const useFeatures = () => {
     return features.value
   }
 
-  const hasFeature = (name: string): boolean => {
+  const hasFeature = (name: keyof FeaturesMap | string): boolean => {
     return features.value[name] !== false
   }
 

@@ -19,23 +19,27 @@ async function fetchQuickStats() {
   if (!authStore.isAuthenticated) return
   isFetchingStats.value = true
   try {
-    const promises: Promise<unknown>[] = [
-      api<ApiResponse<{ balance: number }>>('/wallet').catch(() => null)
-    ]
+    const promises: Promise<unknown>[] = []
+    if (features.hasFeature('wallet')) {
+      promises.push(api<ApiResponse<{ balance: number }>>('/wallet').catch(() => null))
+    }
     if (features.hasFeature('loyalty')) {
       promises.push(api<ApiResponse<{ balance: number, current_tier?: { name: string } }>>('/loyalty/summary').catch(() => null))
     }
-    const [walletRes, loyaltyRes] = await Promise.all(promises) as [
-      ApiResponse<{ balance: number }> | null,
-      ApiResponse<{ balance: number, current_tier?: { name: string } }> | null
-    ]
-
-    if (walletRes?.data?.balance !== undefined) {
-      walletBalance.value = walletRes.data.balance
+    const results = await Promise.all(promises)
+    let idx = 0
+    if (features.hasFeature('wallet')) {
+      const walletRes = results[idx++] as ApiResponse<{ balance: number }> | null
+      if (walletRes?.data?.balance !== undefined) {
+        walletBalance.value = walletRes.data.balance
+      }
     }
-    if (loyaltyRes?.data) {
-      loyaltyPoints.value = loyaltyRes.data.balance ?? 0
-      loyaltyTier.value = loyaltyRes.data.current_tier?.name ?? null
+    if (features.hasFeature('loyalty')) {
+      const loyaltyRes = results[idx++] as ApiResponse<{ balance: number, current_tier?: { name: string } }> | null
+      if (loyaltyRes?.data) {
+        loyaltyPoints.value = loyaltyRes.data.balance ?? 0
+        loyaltyTier.value = loyaltyRes.data.current_tier?.name ?? null
+      }
     }
   } catch {
     // quiet fallback
@@ -132,10 +136,14 @@ async function handleLogout() {
           />
         </NuxtLink>
 
-        <!-- 2. Quick-Action Summary Widgets (Wallet & Club) -->
-        <div class="grid grid-cols-2 gap-2">
+        <!-- 2. Quick-Action Summary Widgets (Wallet & Club / Wishlist) -->
+        <div
+          v-if="features.hasFeature('wallet') || features.hasFeature('loyalty') || features.hasFeature('wishlist')"
+          class="grid grid-cols-2 gap-2"
+        >
           <!-- Wallet Widget -->
           <NuxtLink
+            v-if="features.hasFeature('wallet')"
             to="/profile/wallet"
             class="flex flex-col gap-1 p-2.5 rounded-2xl bg-emerald-500/5 hover:bg-emerald-500/10 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/40 border border-emerald-500/15 dark:border-emerald-800/30 transition-all group cursor-pointer"
             @click="closeMenu"
@@ -193,7 +201,7 @@ async function handleLogout() {
 
           <!-- Fallback Wishlist Quick Widget if Loyalty is disabled -->
           <NuxtLink
-            v-else
+            v-else-if="features.hasFeature('wishlist')"
             to="/profile/wishlist"
             class="flex flex-col gap-1 p-2.5 rounded-2xl bg-rose-500/5 hover:bg-rose-500/10 dark:bg-rose-950/20 dark:hover:bg-rose-950/40 border border-rose-500/15 dark:border-rose-800/30 transition-all group cursor-pointer"
             @click="closeMenu"
@@ -230,6 +238,7 @@ async function handleLogout() {
             </NuxtLink>
 
             <NuxtLink
+              v-if="features.hasFeature('returns')"
               to="/profile/returns"
               class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100/80 dark:hover:bg-neutral-800/70 hover:text-primary transition-colors cursor-pointer group"
               @click="closeMenu"
@@ -255,8 +264,12 @@ async function handleLogout() {
           </div>
 
           <!-- Group 2: Perks & Engagement -->
-          <div class="flex flex-col gap-0.5 py-2">
+          <div
+            v-if="features.hasFeature('wishlist') || features.hasFeature('referral')"
+            class="flex flex-col gap-0.5 py-2"
+          >
             <NuxtLink
+              v-if="features.hasFeature('wishlist')"
               to="/profile/wishlist"
               class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100/80 dark:hover:bg-neutral-800/70 hover:text-primary transition-colors cursor-pointer group"
               @click="closeMenu"
@@ -269,6 +282,7 @@ async function handleLogout() {
             </NuxtLink>
 
             <NuxtLink
+              v-if="features.hasFeature('referral')"
               to="/profile/referral"
               class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100/80 dark:hover:bg-neutral-800/70 hover:text-primary transition-colors cursor-pointer group"
               @click="closeMenu"
@@ -294,6 +308,7 @@ async function handleLogout() {
           <!-- Group 3: Support & Settings -->
           <div class="flex flex-col gap-0.5 py-2">
             <NuxtLink
+              v-if="features.hasFeature('tickets')"
               to="/profile/tickets"
               class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100/80 dark:hover:bg-neutral-800/70 hover:text-primary transition-colors cursor-pointer group"
               @click="closeMenu"

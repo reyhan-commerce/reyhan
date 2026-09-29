@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Notifications\Channels;
 
 use App\Notifications\Messages\SmsMessage;
+use App\Services\Sms\Contracts\SmsDriverInterface;
 use App\Services\Sms\SmsManager;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
+use Throwable;
 
 class SmsChannel
 {
@@ -16,7 +19,7 @@ class SmsChannel
     ) {}
 
     /**
-     * Send the given notification.
+     * Send the given notification with automatic failover driver support.
      *
      * @param  mixed  $notifiable
      */
@@ -47,27 +50,67 @@ class SmsChannel
                 return;
             }
 
-            if ($message->isOtp()) {
-                $this->smsManager->driver()->sendOtp(
-                    to: $recipient,
-                    code: (string) $message->otpCode,
-                    tokens: $message->tokens
-                );
-            } else {
-                $this->smsManager->driver()->send(
-                    to: $recipient,
-                    message: (string) ($message->content ?? '')
-                );
-            }
+            $this->sendWithFailover(function (SmsDriverInterface $driver) use ($recipient, $message) {
+                if ($message->isOtp()) {
+                    $driver->sendOtp(
+                        to: $recipient,
+                        code: (string) $message->otpCode,
+                        tokens: $message->tokens
+                    );
+                } else {
+                    $driver->send(
+                        to: $recipient,
+                        message: (string) ($message->content ?? '')
+                    );
+                }
+            });
         } elseif (is_string($message)) {
             if ($to === null || $to === '') {
                 return;
             }
 
-            $this->smsManager->driver()->send(
-                to: $to,
-                message: $message
-            );
+            $this->sendWithFailover(function (SmsDriverInterface $driver) use ($to, $message) {
+                $driver->send(
+                    to: $to,
+                    message: $message
+                );
+            });
+        }
+    }
+
+    /**
+     * Attempt sending via active driver, falling back to other configured drivers if failure occurs.
+     *
+     * @param  callable(SmsDriverInterface): void  $callback
+     */
+    protected function sendWithFailover(callable $callback): void
+    {
+        $defaultDriver = $this->smsManager->getDefaultDriver();
+        $fallbackChain = array_unique([$defaultDriver, 'kavenegar', 'farazsms', 'ghasedak', 'log']);
+
+        $lastException = null;
+
+        foreach ($fallbackChain as $driverName) {
+            try {
+                /** @var SmsDriverInterface $driver */
+                $driver = $this->smsManager->driver($driverName);
+                $callback($driver);
+
+                if ($driverName !== $defaultDriver) {
+                    Log::warning("Primary SMS driver [{$defaultDriver}] failed; successfully sent via fallback driver [{$driverName}].");
+                }
+
+                return;
+            } catch (Throwable $e) {
+                $lastException = $e;
+                Log::error("SMS sending failed with driver [{$driverName}]: {$e->getMessage()}");
+            }
+        }
+
+        if ($lastException !== null) {
+            Log::critical('All SMS drivers failed in fallback chain.', [
+                'error' => $lastException->getMessage(),
+            ]);
         }
     }
 }

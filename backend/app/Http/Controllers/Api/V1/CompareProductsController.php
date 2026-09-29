@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CompareProductsController extends Controller
+final class CompareProductsController extends Controller
 {
     /**
      * Compare up to 4 products.

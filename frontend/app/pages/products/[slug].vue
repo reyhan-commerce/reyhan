@@ -257,6 +257,7 @@ onMounted(() => {
         </button>
 
         <button
+          v-if="features.hasFeature('questions')"
           type="button"
           class="flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap"
           :class="[
@@ -303,7 +304,7 @@ onMounted(() => {
 
       <!-- Tab Content 4: Questions & Answers -->
       <div
-        v-if="activeTab === 'questions'"
+        v-if="activeTab === 'questions' && features.hasFeature('questions')"
         class="py-2"
       >
         <ProductQuestionsSection :product-slug="product.slug" />
@@ -319,7 +320,7 @@ onMounted(() => {
     <ProductStickyBar :selected-variant="selectedVariant" />
 
     <!-- Compare Floating Dock -->
-    <CompareFloatingBar />
+    <CompareFloatingBar v-if="features.hasFeature('comparison')" />
 
     <!-- Price History Modal -->
     <ProductPriceHistoryModal

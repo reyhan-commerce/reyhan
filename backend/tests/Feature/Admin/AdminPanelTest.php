@@ -6,7 +6,9 @@ use App\Enums\PaymentGateway;
 use App\Models\Admin;
 use App\Models\Payment;
 use App\Models\User;
+use Filament\Auth\Pages\Login;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
 uses(DatabaseTransactions::class);
@@ -78,4 +80,20 @@ test('admin can access payments list with diverse gateway records', function () 
     $response = $this->actingAs($admin, 'admin')->get('/admin/payments');
 
     $response->assertOk();
+});
+test('admin can log in through the login form and authenticate session', function () {
+    $admin = Admin::factory()->create([
+        'email' => 'login_test@easyshop.local',
+        'password' => 'password123',
+        'is_active' => true,
+    ]);
+
+    Livewire::test(Login::class)
+        ->set('data.email', 'login_test@easyshop.local')
+        ->set('data.password', 'password123')
+        ->call('authenticate')
+        ->assertHasNoErrors()
+        ->assertRedirect('/admin');
+
+    $this->assertAuthenticatedAs($admin, 'admin');
 });

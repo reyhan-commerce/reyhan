@@ -13,7 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class CatalogFiltersController extends Controller
+final class CatalogFiltersController extends Controller
 {
     /**
      * Get dynamic filters metadata (brands, attributes, price range) for catalog view.

@@ -9,6 +9,7 @@ const props = defineProps<{
 
 const wishlistStore = useWishlistStore()
 const compareStore = useCompareStore()
+const features = useFeatures()
 const { formatPrice, formatDiscount } = usePersian()
 
 const displayPrice = computed(() => {
@@ -84,6 +85,7 @@ const discountPercent = computed(() => {
 
       <!-- Wishlist Heart Button -->
       <button
+        v-if="features.hasFeature('wishlist')"
         type="button"
         class="absolute top-3 end-3 z-20 w-8 h-8 rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border border-neutral-200/70 dark:border-neutral-700/70 flex items-center justify-center shadow-xs transition-all active:scale-90 hover:scale-110 cursor-pointer"
         :class="[
@@ -103,6 +105,7 @@ const discountPercent = computed(() => {
 
       <!-- Compare Button -->
       <button
+        v-if="features.hasFeature('comparison')"
         type="button"
         class="absolute top-12.5 end-3 z-20 w-8 h-8 rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border border-neutral-200/70 dark:border-neutral-700/70 flex items-center justify-center shadow-xs transition-all active:scale-90 hover:scale-110 cursor-pointer"
         :class="[

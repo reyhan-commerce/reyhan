@@ -22,20 +22,38 @@ final class ShopFeature
 
     public const LOYALTY = 'loyalty';
 
+    public const WALLET = 'wallet';
+
+    public const REFERRAL = 'referral';
+
+    public const RETURNS = 'returns';
+
+    public const FAQ = 'faq';
+
+    public const TICKETS = 'tickets';
+
+    public const QUESTIONS = 'questions';
+
     /**
      * @return array<string, string>
      */
     public static function all(): array
     {
         return [
-            self::REVIEWS => __('User reviews and ratings system'),
-            self::COUPONS => __('Discount coupons and promotions system'),
-            self::WISHLIST => __('Wishlist and product bookmarks'),
-            self::BRANDS => __('Brands showcase and filtering'),
-            self::STOCK_ALERTS => __('SMS alerts for restocked items'),
-            self::COMPARISON => __('Product specification comparison'),
-            self::BLOG => __('Blog and editorial magazine'),
-            self::LOYALTY => __('Customer loyalty club'),
+            self::REVIEWS => 'سیستم نقد و بررسی و امتیازدهی کاربران',
+            self::COUPONS => 'سیستم کدهای تخفیف و پروموشن‌ها',
+            self::WISHLIST => 'لیست علاقه‌مندی‌ها و بوک‌مارک کالاها',
+            self::BRANDS => 'نمایش و فیلتر بر اساس برندها',
+            self::STOCK_ALERTS => 'اطلاع‌رسانی پیامکی موجود شدن کالا',
+            self::COMPARISON => 'مقایسه فنی مشخصات کالاها',
+            self::BLOG => 'مجله اینترنتی و وبلاگ آموزشی',
+            self::LOYALTY => 'باشگاه مشتریان و امتیاز وفاداری',
+            self::WALLET => 'کیف پول و اعتبار آنلاین',
+            self::REFERRAL => 'سیستم معرفی دوستان (کد معرف و پاداش)',
+            self::RETURNS => 'درخواست آنلاین مرجوعی کالا (RMA)',
+            self::FAQ => 'بخش سوالات متداول (FAQ)',
+            self::TICKETS => 'سیستم تیکت و پشتیبانی مشتریان',
+            self::QUESTIONS => 'پرسش و پاسخ تعاملی روی محصولات',
         ];
     }
 
