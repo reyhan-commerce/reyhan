@@ -14,28 +14,26 @@ services:
       APP_DEBUG: "false"
       APP_URL: "https://${DOMAIN:-localhost}"
       DB_CONNECTION: pgsql
-      DB_HOST: postgres
-      DB_PORT: 5432
+      DB_HOST: "${DB_HOST:-host.docker.internal}"
+      DB_PORT: "${DB_PORT:-5432}"
       DB_DATABASE: "${DB_DATABASE:-easyshop}"
-      DB_USERNAME: "${DB_USERNAME:-easyshop}"
-      DB_PASSWORD: "${DB_PASSWORD:-secret}"
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      DB_USERNAME: "${DB_USERNAME:-postgres}"
+      DB_PASSWORD: "${DB_PASSWORD:-}"
+      REDIS_HOST: "${REDIS_HOST:-host.docker.internal}"
+      REDIS_PORT: "${REDIS_PORT:-6379}"
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
       CACHE_STORE: redis
       SESSION_DRIVER: redis
       QUEUE_CONNECTION: redis
       OCTANE_SERVER: frankenphp
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - storage_data:/app/storage/app
       - caddy_data:/data
       - caddy_config:/config
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
     networks:
-      - easyshop-network
+      - reyhan-network
 
   worker:
     build:
@@ -46,19 +44,23 @@ services:
     environment:
       APP_ENV: production
       DB_CONNECTION: pgsql
-      DB_HOST: postgres
+      DB_HOST: "${DB_HOST:-host.docker.internal}"
+      DB_PORT: "${DB_PORT:-5432}"
       DB_DATABASE: "${DB_DATABASE:-easyshop}"
-      DB_USERNAME: "${DB_USERNAME:-easyshop}"
-      DB_PASSWORD: "${DB_PASSWORD:-secret}"
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      DB_USERNAME: "${DB_USERNAME:-postgres}"
+      DB_PASSWORD: "${DB_PASSWORD:-}"
+      REDIS_HOST: "${REDIS_HOST:-host.docker.internal}"
+      REDIS_PORT: "${REDIS_PORT:-6379}"
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
       QUEUE_CONNECTION: redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - storage_data:/app/storage/app
     depends_on:
       - app
     networks:
-      - easyshop-network
+      - reyhan-network
 
   scheduler:
     build:
@@ -69,14 +71,22 @@ services:
     environment:
       APP_ENV: production
       DB_CONNECTION: pgsql
-      DB_HOST: postgres
-      REDIS_HOST: redis
+      DB_HOST: "${DB_HOST:-host.docker.internal}"
+      DB_PORT: "${DB_PORT:-5432}"
+      DB_DATABASE: "${DB_DATABASE:-easyshop}"
+      DB_USERNAME: "${DB_USERNAME:-postgres}"
+      DB_PASSWORD: "${DB_PASSWORD:-}"
+      REDIS_HOST: "${REDIS_HOST:-host.docker.internal}"
+      REDIS_PORT: "${REDIS_PORT:-6379}"
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - storage_data:/app/storage/app
     depends_on:
       - app
     networks:
-      - easyshop-network
+      - reyhan-network
 
   frontend:
     build:
@@ -92,46 +102,13 @@ services:
     depends_on:
       - app
     networks:
-      - easyshop-network
-
-  postgres:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: "${DB_DATABASE:-easyshop}"
-      POSTGRES_USER: "${DB_USERNAME:-easyshop}"
-      POSTGRES_PASSWORD: "${DB_PASSWORD:-secret}"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-easyshop} -d ${DB_DATABASE:-easyshop}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - easyshop-network
-
-  redis:
-    image: redis:7-alpine
-    restart: unless-stopped
-    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD:-}"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - easyshop-network
+      - reyhan-network
 
 volumes:
-  postgres_data:
-  redis_data:
   storage_data:
   caddy_data:
   caddy_config:
 
 networks:
-  easyshop-network:
+  reyhan-network:
     driver: bridge

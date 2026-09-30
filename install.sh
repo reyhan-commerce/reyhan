@@ -170,8 +170,8 @@ else
     echo -e "  ${C_V}  ${S_CHECK} ${GREEN}Docker Compose plugin detected (${WHITE}v${COMPOSE_VER}${GREEN})${RESET}"
 fi
 
-# Step 2: Interactive Store Configuration
-step_box "2" "$TOTAL_STEPS" "Store Configuration & Domain Mapping"
+# Step 2: Interactive Store & External Infrastructure Configuration
+step_box "2" "$TOTAL_STEPS" "Store Configuration & External Services Mapping"
 
 echo -e "  ${C_V}  ${GRAY}Provide your public domain or server IP for automated HTTPS certificate issuance.${RESET}"
 echo -ne "  ${C_V}  ${BOLD}${WHITE}Domain / Hostname ${GRAY}[Default: localhost]${WHITE}: ${RESET}"
@@ -182,39 +182,72 @@ echo -ne "  ${C_V}  ${BOLD}${WHITE}Store Name ${GRAY}[Default: EasyShop Store]${
 read -r INPUT_STORE_NAME
 STORE_NAME="${INPUT_STORE_NAME:-EasyShop Store}"
 
-echo -ne "  ${C_V}  ${BOLD}${WHITE}Admin Mobile Number ${GRAY}[Default: 09120000000]${WHITE}: ${RESET}"
-read -r INPUT_ADMIN_MOBILE
-ADMIN_MOBILE="${INPUT_ADMIN_MOBILE:-09120000000}"
+echo -e "  ${C_V}"
+echo -e "  ${C_V}  ${PURPLE}ℹ Note: EasyShop connects to existing PostgreSQL & Redis instances via .env.${RESET}"
+echo -e "  ${C_V}  ${PURPLE}  It does NOT install or bundle database servers locally.${RESET}"
+
+echo -ne "  ${C_V}  ${BOLD}${WHITE}PostgreSQL Host ${GRAY}[Default: host.docker.internal]${WHITE}: ${RESET}"
+read -r INPUT_DB_HOST
+DB_HOST="${INPUT_DB_HOST:-host.docker.internal}"
+
+echo -ne "  ${C_V}  ${BOLD}${WHITE}PostgreSQL Port ${GRAY}[Default: 5432]${WHITE}: ${RESET}"
+read -r INPUT_DB_PORT
+DB_PORT="${INPUT_DB_PORT:-5432}"
+
+echo -ne "  ${C_V}  ${BOLD}${WHITE}PostgreSQL Database Name ${GRAY}[Default: easyshop]${WHITE}: ${RESET}"
+read -r INPUT_DB_DATABASE
+DB_DATABASE="${INPUT_DB_DATABASE:-easyshop}"
+
+echo -ne "  ${C_V}  ${BOLD}${WHITE}PostgreSQL Username ${GRAY}[Default: postgres]${WHITE}: ${RESET}"
+read -r INPUT_DB_USERNAME
+DB_USERNAME="${INPUT_DB_USERNAME:-postgres}"
+
+echo -ne "  ${C_V}  ${BOLD}${WHITE}PostgreSQL Password ${GRAY}[Hidden/Leave empty if none]${WHITE}: ${RESET}"
+read -rs INPUT_DB_PASSWORD
+echo ""
+DB_PASSWORD="${INPUT_DB_PASSWORD:-}"
+
+echo -ne "  ${C_V}  ${BOLD}${WHITE}Redis Host ${GRAY}[Default: host.docker.internal]${WHITE}: ${RESET}"
+read -r INPUT_REDIS_HOST
+REDIS_HOST="${INPUT_REDIS_HOST:-host.docker.internal}"
+
+echo -ne "  ${C_V}  ${BOLD}${WHITE}Redis Port ${GRAY}[Default: 6379]${WHITE}: ${RESET}"
+read -r INPUT_REDIS_PORT
+REDIS_PORT="${INPUT_REDIS_PORT:-6379}"
+
+echo -ne "  ${C_V}  ${BOLD}${WHITE}Redis Password ${GRAY}[Leave empty if none]${WHITE}: ${RESET}"
+read -rs INPUT_REDIS_PASSWORD
+echo ""
+REDIS_PASSWORD="${INPUT_REDIS_PASSWORD:-}"
 
 # Generate cryptographically secure tokens
-DB_PASSWORD=$(openssl rand -hex 16)
-REDIS_PASSWORD=$(openssl rand -hex 16)
 APP_KEY=$(openssl rand -base64 32)
 JWT_SECRET=$(openssl rand -hex 32)
 
 # Step 3: Environment Orchestration
-step_box "3" "$TOTAL_STEPS" "Orchestrating Environment Configuration"
+step_box "3" "$TOTAL_STEPS" "Orchestrating Environment Configuration (.env)"
 
 cat <<EOF > .env
-# EasyShop Master Environment File
+# EasyShop Master Production Environment
 DOMAIN=${DOMAIN_NAME}
 APP_NAME="${STORE_NAME}"
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://${DOMAIN_NAME}
 
-# Database
+# External Database (PostgreSQL 17+ Required)
 DB_CONNECTION=pgsql
-DB_HOST=postgres
-DB_PORT=5432
-DB_DATABASE=easyshop
-DB_USERNAME=easyshop
+DB_HOST=${DB_HOST}
+DB_PORT=${DB_PORT}
+DB_DATABASE=${DB_DATABASE}
+DB_USERNAME=${DB_USERNAME}
 DB_PASSWORD=${DB_PASSWORD}
 
-# Redis Infrastructure
-REDIS_HOST=redis
+# External In-Memory Engine (Redis 7+ Required)
+REDIS_CLIENT=phpredis
+REDIS_HOST=${REDIS_HOST}
 REDIS_PASSWORD=${REDIS_PASSWORD}
-REDIS_PORT=6379
+REDIS_PORT=${REDIS_PORT}
 CACHE_STORE=redis
 SESSION_DRIVER=redis
 QUEUE_CONNECTION=redis
@@ -231,8 +264,9 @@ EOF
 # Sync to backend
 cp .env backend/.env
 
-echo -e "  ${C_V}  ${S_CHECK} Generated high-entropy credentials for PostgreSQL & Redis."
-echo -e "  ${C_V}  ${S_CHECK} Synced production environment files."
+echo -e "  ${C_V}  ${S_CHECK} Configured external PostgreSQL (${WHITE}${DB_HOST}:${DB_PORT}/${DB_DATABASE}${RESET})."
+echo -e "  ${C_V}  ${S_CHECK} Configured external Redis (${WHITE}${REDIS_HOST}:${REDIS_PORT}${RESET})."
+echo -e "  ${C_V}  ${S_CHECK} Synced production environment files (.env)."
 
 # Step 4: Container Build & Service Provisioning
 step_box "4" "$TOTAL_STEPS" "Container Build & Multi-Service Provisioning"

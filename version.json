@@ -1,0 +1,21 @@
+{
+  "name": "Reyhan Headless Commerce Engine",
+  "version": "1.0.0",
+  "channel": "stable",
+  "release_date": "2026-10-01",
+  "components": {
+    "backend_core": "1.0.0",
+    "storefront_layer": "1.0.0",
+    "admin_filament": "5.8.0"
+  },
+  "requirements": {
+    "php": "^8.4",
+    "laravel": "^13.0",
+    "postgresql": "^17.0",
+    "redis": "^7.0",
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0",
+    "nuxt": "^4.5.0"
+  },
+  "semver_spec": "https://semver.org/spec/v2.0.0.html"
+}

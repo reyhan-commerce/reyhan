@@ -12,6 +12,15 @@ Thumbs.db
 .env.production
 .env.local
 
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+.nuxt/
+.output/
+dist/
+
 # Temporary files
 *.bak
 *.tmp

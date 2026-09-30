@@ -8,6 +8,20 @@ The system is designed with a **Decoupled (Headless) Architecture**:
 
 ---
 
+## ⚡ Quick Start (Instant Installation via NPX)
+
+Scaffold a brand-new, production-ready EasyShop store in seconds with zero global dependencies:
+
+```bash
+npx create-easyshop@latest my-store
+# or with pnpm
+pnpm create easyshop my-store
+```
+
+The interactive CLI will prompt for your store name, PostgreSQL and Redis credentials, and theme preset, then provision both Laravel 13 and Nuxt 4 environments automatically.
+
+---
+
 ## 1. Project Directory Structure
 
 ```text

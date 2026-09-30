@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        \App\Support\Modules\ModuleManager::registerDiscoveredExtensions($this->app);
     }
 
     /**
