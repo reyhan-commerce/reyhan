@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'آزمایشی',
             'mobile' => '09123456789',
             'national_code' => '0012345678',
-            'email' => 'test@easyshop.test',
+            'email' => 'test@reyhan.test',
         ]);
 
         $this->call([

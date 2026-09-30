@@ -30,7 +30,7 @@ final class SystemUpdateCommand extends Command
     {
         $this->newLine();
         $this->line('<fg=cyan;options=bold>╭────────────────────────────────────────────────────────╮</>');
-        $this->line('<fg=cyan;options=bold>│      🚀 EasyShop Core Engine Update Sequence           │</>');
+        $this->line('<fg=cyan;options=bold>│       🚀 Reyhan Core Engine Update Sequence            │</>');
         $this->line('<fg=cyan;options=bold>╰────────────────────────────────────────────────────────╯</>');
         $this->newLine();
 

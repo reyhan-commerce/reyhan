@@ -47,7 +47,7 @@ return [
     ],
 
     'cart' => [
-        'abandoned_reminder_sms' => 'Hello :name, your shopping cart is waiting for you at EasyShop! Complete your purchase: :url',
+        'abandoned_reminder_sms' => 'Hello :name, your shopping cart is waiting for you at Reyhan! Complete your purchase: :url',
     ],
 
     'shipping' => [

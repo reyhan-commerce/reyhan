@@ -4,7 +4,7 @@ import enDict from '~/locales/en.json'
 type LocaleDictionary = typeof faDict
 
 export const useShopLocale = () => {
-  const currentLocale = useState<'fa' | 'en'>('easyshop_locale', () => 'fa')
+  const currentLocale = useState<'fa' | 'en'>('reyhan_locale', () => 'fa')
   const appConfig = useAppConfig()
 
   const dictionaries: Record<'fa' | 'en', LocaleDictionary> = {
@@ -14,7 +14,7 @@ export const useShopLocale = () => {
 
   /**
    * Translate a dotted key with optional fallback.
-   * Allows user override from appConfig.easyshop.translations.
+   * Allows user override from appConfig.reyhan.translations.
    */
   const t = (key: string, fallback?: string): string => {
     // 1. Check user custom override in app.config.ts

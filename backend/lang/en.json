@@ -191,7 +191,7 @@
     "Core Update": "Core Update",
     "System Settings": "System Settings",
     "System & Core Engine Update Center": "System & Core Engine Update Center",
-    "EasyShop Core Engine Orchestrator": "EasyShop Core Engine Orchestrator",
+    "Reyhan Core Engine Orchestrator": "Reyhan Core Engine Orchestrator",
     "System Ready": "System Ready",
     "Execute automated zero-downtime database migrations, refresh Filament assets, compile runtime caches, and reload FrankenPHP Octane workers with automatic database snapshot guarantees.": "Execute automated zero-downtime database migrations, refresh Filament assets, compile runtime caches, and reload FrankenPHP Octane workers with automatic database snapshot guarantees.",
     "Execute Safe Update": "Execute Safe Update",

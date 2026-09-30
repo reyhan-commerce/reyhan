@@ -84,7 +84,7 @@ class PageResource extends Resource
                             ->schema([
                                 TextInput::make('metadata.badge')
                                     ->label('نشان یا برچسب بالای تیتر')
-                                    ->placeholder('مثال: داستان و تعهد ما در ایزیشاپ'),
+                                    ->placeholder('مثال: داستان و تعهد ما در ریحان'),
 
                                 TextInput::make('metadata.heading')
                                     ->label('تیتر برجسته هیرو')

@@ -37,11 +37,11 @@ return [
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => 'Comprehensive REST API documentation for the EasyShop Store e-commerce platform. Fully integrated with OpenAPI 3.1 and typed for Nuxt 4 frontend consumption.',
+        'description' => 'Comprehensive REST API documentation for the Reyhan Commerce e-commerce platform. Fully integrated with OpenAPI 3.1 and typed for Nuxt 4 frontend consumption.',
     ],
 
     'ui' => [
-        'title' => 'EasyShop Store API Documentation',
+        'title' => 'Reyhan Commerce API Documentation',
     ],
 
     /*

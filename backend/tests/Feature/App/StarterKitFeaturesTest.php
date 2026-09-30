@@ -86,7 +86,7 @@ test('shop preset command scaffolds vertical correctly and provisions initial ad
 
     $categoryCount = Category::count();
     $productCount = Product::count();
-    $admin = Admin::where('email', 'admin@easyshop.local')->first();
+    $admin = Admin::where('email', 'admin@reyhan.local')->first();
 
     expect($categoryCount)->toBeGreaterThan(0)
         ->and($productCount)->toBeGreaterThan(0)

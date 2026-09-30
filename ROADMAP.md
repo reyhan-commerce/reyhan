@@ -1,4 +1,4 @@
-# EasyShop E-Commerce Execution Roadmap & Phased Implementation Plan
+# Reyhan E-Commerce Execution Roadmap & Phased Implementation Plan
 
 This document outlines the structured, milestone-driven execution plan for building the cosmetics e-commerce platform across the **Laravel 13** backend and the **Nuxt 4** frontend.
 
@@ -36,7 +36,7 @@ gantt
 
 ### 0.1. Backend Infrastructure (`backend/`)
 - [x] Initialize Laravel 13 application in `backend/` with PHP 8.5+ strict typing.
-- [x] Configure **PostgreSQL 18.4** (`easyshop_db` and `easyshop_test_db` on port 30102) in `config/database.php`, `phpunit.xml`, and `.env`.
+- [x] Configure **PostgreSQL 18.4** (`reyhan_db` and `reyhan_db_test` on port 30102) in `config/database.php`, `phpunit.xml`, and `.env`.
 - [x] Create initial migration enabling PostgreSQL extensions: `pg_trgm`, `cube`, and `earthdistance`.
 - [x] Configure **Redis 8.6** (port 30101) with logical database partitioning:
   - `DB 0`: Cache, Pulse, OTP tokens, Captcha.

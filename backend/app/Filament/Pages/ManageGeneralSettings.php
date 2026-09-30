@@ -123,12 +123,12 @@ class ManageGeneralSettings extends SettingsPage
                                 TextInput::make('instagram_url')
                                     ->label('لینک صفحه اینستاگرام')
                                     ->url()
-                                    ->placeholder('https://instagram.com/easyshop'),
+                                    ->placeholder('https://instagram.com/reyhan'),
 
                                 TextInput::make('telegram_url')
                                     ->label('لینک کانال یا پشتیبانی تلگرام')
                                     ->url()
-                                    ->placeholder('https://t.me/easyshop'),
+                                    ->placeholder('https://t.me/reyhan'),
 
                                 TextInput::make('whatsapp_url')
                                     ->label('لینک یا شماره واتساپ')

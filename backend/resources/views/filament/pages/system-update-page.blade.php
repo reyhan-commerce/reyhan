@@ -6,7 +6,7 @@
             <x-slot name="heading">
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span style="font-size: 1.125rem; font-weight: 800; font-family: ui-monospace, monospace;">
-                        {{ __('EasyShop Core Engine Orchestrator') }}
+                        {{ __('Reyhan Core Engine Orchestrator') }}
                     </span>
                     <x-filament::badge color="success" size="sm" icon="heroicon-m-check-circle">
                         {{ __('System Ready') }}
@@ -101,7 +101,7 @@
                         <span style="display: inline-block; width: 0.75rem; height: 0.75rem; border-radius: 9999px; background: #f59e0b;"></span>
                         <span style="display: inline-block; width: 0.75rem; height: 0.75rem; border-radius: 9999px; background: #10b981;"></span>
                         <span style="font-family: ui-monospace, monospace; font-size: 0.75rem; color: #94a3b8; margin-left: 0.5rem;">
-                            easyshop@core-orchestrator:~$ php artisan system:update
+                            reyhan@core-orchestrator:~$ php artisan system:update
                         </span>
                     </div>
 

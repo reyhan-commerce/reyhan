@@ -39,7 +39,7 @@ class ShopPresetCommand extends Command
 {
     public function handle(GeneralSettings $generalSettings, ThemeSettings $themeSettings): int
     {
-        intro('⚡ EasyShop — High-Performance E-Commerce Starter Kit & Store Scaffolder');
+        intro('⚡ Reyhan — High-Performance E-Commerce Starter Kit & Store Scaffolder');
 
         $isInteractive = $this->input->isInteractive();
 
@@ -128,7 +128,7 @@ class ShopPresetCommand extends Command
 
         // 3. Initial Super Admin credentials (with friendly defaults)
         $defaultAdminName = (string) ($this->option('admin-name') ?: 'Super Admin');
-        $defaultAdminEmail = (string) ($this->option('admin-email') ?: 'admin@easyshop.local');
+        $defaultAdminEmail = (string) ($this->option('admin-email') ?: 'admin@reyhan.local');
         $defaultAdminPassword = (string) ($this->option('admin-password') ?: 'password');
 
         $adminName = (string) ($isInteractive ? text(

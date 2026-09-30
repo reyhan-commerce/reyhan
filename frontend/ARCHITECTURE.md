@@ -1,6 +1,6 @@
 # Frontend Architectural Manual & Context (AI & Human Guide)
 
-This document serves as the authoritative blueprint for the frontend architecture, design principles, component guidelines, and developer conventions for the EasyShop e-commerce platform. **All AI coding agents and human engineers must adhere strictly to these rules.**
+This document serves as the authoritative blueprint for the frontend architecture, design principles, component guidelines, and developer conventions for the Reyhan e-commerce platform. **All AI coding agents and human engineers must adhere strictly to these rules.**
 
 ---
 

@@ -1,7 +1,7 @@
-# Change Proposal: EasyShop Core Baseline Features (Phases 0-7)
+# Change Proposal: Reyhan Core Baseline Features (Phases 0-7)
 
 ## Why
-Formalize and archive all foundational e-commerce capabilities built across Phases 0 through 7 into OpenSpec specifications, establishing the single source of truth for the EasyShop platform.
+Formalize and archive all foundational e-commerce capabilities built across Phases 0 through 7 into OpenSpec specifications, establishing the single source of truth for the Reyhan platform.
 
 ## What Changes
 - Formalize specs for Authentication, Captcha, and Persian Normalizer (Phase 1)

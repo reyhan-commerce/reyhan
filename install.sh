@@ -178,12 +178,12 @@ echo -ne "  ${C_V}  ${BOLD}${WHITE}Domain / Hostname ${GRAY}[Default: localhost]
 read -r INPUT_DOMAIN
 DOMAIN_NAME="${INPUT_DOMAIN:-localhost}"
 
-echo -ne "  ${C_V}  ${BOLD}${WHITE}Store Name ${GRAY}[Default: EasyShop Store]${WHITE}: ${RESET}"
+echo -ne "  ${C_V}  ${BOLD}${WHITE}Store Name ${GRAY}[Default: Reyhan Store]${WHITE}: ${RESET}"
 read -r INPUT_STORE_NAME
-STORE_NAME="${INPUT_STORE_NAME:-EasyShop Store}"
+STORE_NAME="${INPUT_STORE_NAME:-Reyhan Store}"
 
 echo -e "  ${C_V}"
-echo -e "  ${C_V}  ${PURPLE}ℹ Note: EasyShop connects to existing PostgreSQL & Redis instances via .env.${RESET}"
+echo -e "  ${C_V}  ${PURPLE}ℹ Note: Reyhan connects to existing PostgreSQL & Redis instances via .env.${RESET}"
 echo -e "  ${C_V}  ${PURPLE}  It does NOT install or bundle database servers locally.${RESET}"
 
 echo -ne "  ${C_V}  ${BOLD}${WHITE}PostgreSQL Host ${GRAY}[Default: host.docker.internal]${WHITE}: ${RESET}"
@@ -194,9 +194,9 @@ echo -ne "  ${C_V}  ${BOLD}${WHITE}PostgreSQL Port ${GRAY}[Default: 5432]${WHITE
 read -r INPUT_DB_PORT
 DB_PORT="${INPUT_DB_PORT:-5432}"
 
-echo -ne "  ${C_V}  ${BOLD}${WHITE}PostgreSQL Database Name ${GRAY}[Default: easyshop]${WHITE}: ${RESET}"
+echo -ne "  ${C_V}  ${BOLD}${WHITE}PostgreSQL Database Name ${GRAY}[Default: reyhan]${WHITE}: ${RESET}"
 read -r INPUT_DB_DATABASE
-DB_DATABASE="${INPUT_DB_DATABASE:-easyshop}"
+DB_DATABASE="${INPUT_DB_DATABASE:-reyhan}"
 
 echo -ne "  ${C_V}  ${BOLD}${WHITE}PostgreSQL Username ${GRAY}[Default: postgres]${WHITE}: ${RESET}"
 read -r INPUT_DB_USERNAME
@@ -228,7 +228,7 @@ JWT_SECRET=$(openssl rand -hex 32)
 step_box "3" "$TOTAL_STEPS" "Orchestrating Environment Configuration (.env)"
 
 cat <<EOF > .env
-# EasyShop Master Production Environment
+# Reyhan Master Production Environment
 DOMAIN=${DOMAIN_NAME}
 APP_NAME="${STORE_NAME}"
 APP_ENV=production
@@ -305,7 +305,7 @@ echo -e "  ${C_V}  ${S_CHECK} ${GREEN}Auto SSL / TLS Provisioning: READY (Caddy)
 
 # Final Dashboard Summary Box
 echo -e "\n${EMERALD}${C_TL}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_TR}${RESET}"
-echo -e "${EMERALD}${C_V}${RESET}  ${BOLD}${WHITE}🎉 EasyShop Engine is live and fully operational!${RESET}            ${EMERALD}${C_V}${RESET}"
+echo -e "${EMERALD}${C_V}${RESET}  ${BOLD}${WHITE}🎉 Reyhan Engine is live and fully operational!${RESET}            ${EMERALD}${C_V}${RESET}"
 echo -e "${EMERALD}${C_BL}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_H}${C_BR}${RESET}"
 
 echo -e "\n  ${BOLD}${UNDERLINE}Access Endpoints:${RESET}"

@@ -97,7 +97,7 @@ final class ModuleManager
                     'provider' => $providerClass,
                 ];
             } catch (Throwable $e) {
-                Log::error("Failed to register EasyShop extension [{$id}]: ".$e->getMessage(), [
+                Log::error("Failed to register Reyhan extension [{$id}]: ".$e->getMessage(), [
                     'exception' => $e,
                 ]);
             }

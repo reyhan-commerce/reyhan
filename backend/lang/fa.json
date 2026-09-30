@@ -191,7 +191,7 @@
     "Core Update": "به‌روزرسانی هسته",
     "System Settings": "تنظیمات سیستم",
     "System & Core Engine Update Center": "مرکز مدیریت و به‌روزرسانی هسته سیستم",
-    "EasyShop Core Engine Orchestrator": "مدیریت و ارتقای یکپارچه هسته ایزیشاپ",
+    "Reyhan Core Engine Orchestrator": "مدیریت و ارتقای یکپارچه هسته ریحان",
     "System Ready": "سیستم آماده است",
     "Execute automated zero-downtime database migrations, refresh Filament assets, compile runtime caches, and reload FrankenPHP Octane workers with automatic database snapshot guarantees.": "اجرای خودکار مایگریشن‌های بدون قطعی دیتابیس، به‌روزرسانی دارایی‌های فیلامنت، بازسازی کش‌های اجرایی و ری‌لود ورکر‌های فرانکن‌پی‌اچ‌پی با تضمین پشتیبان‌گیری خودکار دیتابیس.",
     "Execute Safe Update": "اجرای به‌روزرسانی امن",

@@ -1,6 +1,6 @@
 # Backend Architectural Manual & Context (AI & Human Guide)
 
-This document provides a comprehensive blueprint of the backend architecture, coding conventions, domain rules, and developer tooling for the EasyShop cosmetics platform. **All AI agents and engineers working on this repository must strictly adhere to the patterns defined here.**
+This document provides a comprehensive blueprint of the backend architecture, coding conventions, domain rules, and developer tooling for the Reyhan cosmetics platform. **All AI agents and engineers working on this repository must strictly adhere to the patterns defined here.**
 
 ---
 
@@ -20,7 +20,7 @@ This document provides a comprehensive blueprint of the backend architecture, co
    - **`users` Table**: End-customers who interact with the Nuxt frontend. They authenticate solely via mobile phone number + SMS OTP through Laravel Sanctum. No passwords or Spatie roles are assigned to `users`.
    - **`admins` Table**: Store administrators and staff who access the Filament 5 admin panel. Authenticated via session cookies on the `admin` guard, governed by Spatie Permissions and Filament Shield.
 3. **Database-Level Data Integrity**:
-   - Primary database is PostgreSQL 18/17 (`easyshop_db` in development, `easyshop_test_db` for automated tests).
+   - Primary database is PostgreSQL 18/17 (`reyhan_db` in development, `reyhan_db_test` for automated tests).
    - Extensions enabled:
      - `pg_trgm`: Used for GIN-indexed trigram fuzzy search across Persian and English product titles and brand names.
      - `cube` & `earthdistance`: Used for spatial distance calculation (e.g., shipping hubs to delivery addresses).
@@ -102,7 +102,7 @@ To prevent overselling during high-traffic flash sales:
 
 ## 6. Mandatory Engineering Contracts & Design Conventions
 
-All AI agents and developers writing backend code for EasyShop **must strictly follow these 8 design contracts**:
+All AI agents and developers writing backend code for Reyhan **must strictly follow these 8 design contracts**:
 
 ### Contract 1: Single Responsibility Principle (SRP) & Granular Services
 - Every class, service method, and action must have **only one reason to change**.

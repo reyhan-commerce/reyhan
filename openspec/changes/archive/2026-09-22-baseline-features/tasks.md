@@ -1,4 +1,4 @@
-# Tasks: EasyShop Core Baseline Features
+# Tasks: Reyhan Core Baseline Features
 
 ## 1. Infrastructure & Core Subsystems
 - [x] 1.1 Establish PostgreSQL 18.4 & Redis 8.6 multi-database configuration <!-- id: 1.1 -->

@@ -1,4 +1,4 @@
-# EasyShop (ایزیشاپ) — Enterprise Cosmetics & Personal Care E-Commerce
+# Reyhan (ریحان) — Enterprise Cosmetics & Personal Care E-Commerce
 
 Production-grade, enterprise-scale, decoupled Iranian cosmetics and personal care e-commerce platform built with **Laravel 13 (Backend)** and **Nuxt 4 + Nuxt UI + Tailwind CSS v4 (Frontend)**.
 
@@ -10,12 +10,12 @@ The system is designed with a **Decoupled (Headless) Architecture**:
 
 ## ⚡ Quick Start (Instant Installation via NPX)
 
-Scaffold a brand-new, production-ready EasyShop store in seconds with zero global dependencies:
+Scaffold a brand-new, production-ready Reyhan store in seconds with zero global dependencies:
 
 ```bash
-npx create-easyshop@latest my-store
+npx @reyhan-commerce/create-reyhan@latest my-store
 # or with pnpm
-pnpm create easyshop my-store
+pnpm create @reyhan-commerce/reyhan my-store
 ```
 
 The interactive CLI will prompt for your store name, PostgreSQL and Redis credentials, and theme preset, then provision both Laravel 13 and Nuxt 4 environments automatically.

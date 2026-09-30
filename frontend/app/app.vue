@@ -42,7 +42,7 @@ const storeName = computed(() => settingsStore.settings.store_name || 'فروش�
 const description = computed(() => settingsStore.settings.store_slogan || 'خرید آنلاین با تضمین اصالت کالا و ارسال سریع')
 
 // Global title template: every page just provides its own chunk,
-// this appends store name automatically — no more hardcoded ایزیشاپ in pages.
+// this appends store name automatically — no more hardcoded ریحان in pages.
 useHead({
   titleTemplate: titleChunk => titleChunk ? `${titleChunk} | ${storeName.value}` : storeName.value
 })

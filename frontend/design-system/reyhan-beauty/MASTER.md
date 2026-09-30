@@ -6,7 +6,7 @@
 
 ---
 
-**Project:** EasyShop Beauty
+**Project:** Reyhan Beauty
 **Generated:** 2026-09-21 12:34:34
 **Category:** E-commerce Luxury
 

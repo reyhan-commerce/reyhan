@@ -33,7 +33,7 @@ class AdminRoleSeeder extends Seeder
 
         // Provision default SuperAdmin
         $admin = Admin::firstOrCreate(
-            ['email' => 'admin@easyshop.local'],
+            ['email' => 'admin@reyhan.local'],
             [
                 'name' => 'مدیر ارشد سامانه',
                 'password' => Hash::make('password'),

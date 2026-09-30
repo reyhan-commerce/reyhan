@@ -83,13 +83,13 @@ test('admin can access payments list with diverse gateway records', function () 
 });
 test('admin can log in through the login form and authenticate session', function () {
     $admin = Admin::factory()->create([
-        'email' => 'login_test@easyshop.local',
+        'email' => 'login_test@reyhan.local',
         'password' => 'password123',
         'is_active' => true,
     ]);
 
     Livewire::test(Login::class)
-        ->set('data.email', 'login_test@easyshop.local')
+        ->set('data.email', 'login_test@reyhan.local')
         ->set('data.password', 'password123')
         ->call('authenticate')
         ->assertHasNoErrors()

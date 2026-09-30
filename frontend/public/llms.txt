@@ -1,12 +1,12 @@
-# EasyShop E-Commerce - AI Shopping Agent Guide
+# Reyhan Commerce - AI Shopping Agent Guide
 
-> EasyShop (ایزیشاپ) is a specialized online cosmetics and skincare store in Iran offering authentic skincare, beauty, and haircare products.
+> Reyhan (ریحان) is a specialized online cosmetics and skincare store in Iran offering authentic skincare, beauty, and haircare products.
 
 ## Store Overview
-- **Store Name**: فروشگاه اینترنتی ایزیشاپ (EasyShop)
+- **Store Name**: فروشگاه اینترنتی ریحان (Reyhan)
 - **Primary Language**: Persian (fa-IR)
 - **Currency**: Iranian Toman (تومان) - Note: Backend API prices are in Rials (1 Toman = 10 Rials)
-- **Official URL**: https://easyshop.ir
+- **Official URL**: https://reyhan.ir
 
 ## Main Product Categories
 - **مراقبت از پوست (Skincare)**: ضد آفتاب (Sunscreen), مرطوب‌کننده و آبرسان (Moisturizer), ضد چروک و جوانساز (Anti-aging), شوینده و پاک‌کننده (Cleansers)
@@ -27,4 +27,4 @@
 - **Sitemap URLs**: `GET /api/v1/sitemap/urls` - All active public URLs with last modification dates.
 
 ## Detailed Agent Specification
-For comprehensive API contracts, JSON schemas, and attribute matrices, refer to [/llms-full.txt](https://easyshop.ir/llms-full.txt).
+For comprehensive API contracts, JSON schemas, and attribute matrices, refer to [/llms-full.txt](https://reyhan.ir/llms-full.txt).

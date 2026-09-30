@@ -1,4 +1,4 @@
-# EasyShop Backend AI Agent Operational Directives
+# Reyhan Backend AI Agent Operational Directives
 
 > **CRITICAL INSTRUCTION FOR ALL AI CODING AGENTS**:
 > Before writing, generating, or refactoring any code in this repository, you **MUST** read and strictly follow the 8 mandatory engineering contracts defined in `ARCHITECTURE.md` (Section 6). Failure to follow these rules constitutes a violation of project architectural integrity.
