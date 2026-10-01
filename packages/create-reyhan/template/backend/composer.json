@@ -1,0 +1,55 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "reyhan-store/backend",
+    "type": "project",
+    "description": "Reyhan Commerce Store Backend Application",
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "laravel/framework": "^13.17",
+        "reyhan-commerce/core": "^1.0 || dev-main"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "/home/farshid/Desktop/projects/reyhan/packages/core",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/pail": "^1.2.5",
+        "laravel/pint": "^1.27",
+        "pestphp/pest": "^4.7",
+        "pestphp/pest-plugin-laravel": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

@@ -1,0 +1,26 @@
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.codegraph/
+*.sw?
+
+# Environment & local files
+.env
+.env.backup
+.env.production
+.env.local
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+.nuxt/
+.output/
+dist/
+
+# Temporary files
+*.bak
+*.tmp

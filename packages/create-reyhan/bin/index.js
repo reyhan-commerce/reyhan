@@ -175,39 +175,9 @@ async function main() {
   const s = spinner()
   s.start(pc.green('Scaffolding Reyhan full-stack monorepo...'))
 
-  const sourceRoot = resolve(import.meta.dirname, '../../..')
+  const templateDir = resolve(import.meta.dirname, '../template')
   mkdirSync(targetDir, { recursive: true })
-
-  // Copy template files
-  const filesToCopy = [
-    'backend',
-    'frontend',
-    'docker-compose.prod.yml',
-    'reyhan',
-    'version.json',
-    'FRAMEWORK.md',
-    'README.md',
-    '.gitignore'
-  ]
-
-  for (const item of filesToCopy) {
-    const srcPath = join(sourceRoot, item)
-    const destPath = join(targetDir, item)
-    if (existsSync(srcPath)) {
-      cpSync(srcPath, destPath, {
-        recursive: true,
-        filter: (src) => {
-          if (src.includes('/node_modules') || src.includes('/vendor') || src.includes('/.nuxt') || src.includes('/.output') || src.includes('/storage/logs/')) {
-            return false
-          }
-          if (basename(src) === '.env' && !src.endsWith('.env.example')) {
-            return false
-          }
-          return true
-        }
-      })
-    }
-  }
+  cpSync(templateDir, targetDir, { recursive: true })
 
   // Make reyhan script executable
   const reyhanScript = join(targetDir, 'reyhan')

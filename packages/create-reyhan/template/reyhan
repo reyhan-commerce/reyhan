@@ -1,0 +1,195 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+#   ██████╗ ███████╗██╗   ██╗██╗  ██╗ █████╗ ███╗   ██╗
+#   ██╔══██╗██╔════╝╚██╗ ██╔╝██║  ██║██╔══██╗████╗  ██║
+#   ██████╔╝█████╗   ╚████╔╝ ███████║███████║██╔██╗ ██║
+#   ██╔══██╗██╔══╝    ╚██╔╝  ██╔══██║██╔══██║██║╚██╗██║
+#   ██║  ██║███████╗   ██║   ██║  ██║██║  ██║██║ ╚████║
+#   ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+#
+#   Reyhan Unified Orchestrator & CLI Tool
+#   Next-Gen Headless E-Commerce Framework (Laravel 13 + Nuxt 4)
+# ==============================================================================
+
+set -eo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Styling & Palette
+ESC="\033["
+RESET="${ESC}0m"
+BOLD="${ESC}1m"
+DIM="${ESC}2m"
+EMERALD="${ESC}38;5;48m"
+GREEN="${ESC}38;5;42m"
+# shellcheck disable=SC2034
+CYAN="${ESC}38;5;51m"
+# shellcheck disable=SC2034
+BLUE="${ESC}38;5;39m"
+# shellcheck disable=SC2034
+PURPLE="${ESC}38;5;141m"
+YELLOW="${ESC}38;5;220m"
+RED="${ESC}38;5;196m"
+GRAY="${ESC}38;5;243m"
+WHITE="${ESC}38;5;255m"
+
+print_header() {
+    echo -e "${EMERALD}"
+    cat << "EOF"
+  ██████╗ ███████╗██╗   ██╗██╗  ██╗ █████╗ ███╗   ██╗
+  ██╔══██╗██╔════╝╚██╗ ██╔╝██║  ██║██╔══██╗████╗  ██║
+  ██████╔╝█████╗   ╚████╔╝ ███████║███████║██╔██╗ ██║
+  ██╔══██╗██╔══╝    ╚██╔╝  ██╔══██║██╔══██║██║╚██╗██║
+  ██║  ██║███████╗   ██║   ██║  ██║██║  ██║██║ ╚████║
+  ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+EOF
+    echo -e "${RESET}"
+    echo -e "   ${BOLD}${EMERALD}Reyhan CLI Orchestrator${RESET} ${DIM}│${RESET} ${WHITE}v1.0.0${RESET}"
+    echo -e "   ${GRAY}Next-Gen Headless E-Commerce Framework (Laravel 13 + Nuxt 4)${RESET}\n"
+}
+
+show_help() {
+    print_header
+    echo -e "  ${BOLD}${WHITE}USAGE:${RESET}  ./reyhan <command> [options]\n"
+    echo -e "  ${BOLD}AVAILABLE COMMANDS:${RESET}"
+    echo -e "    ${EMERALD}version${RESET}             Display version matrix, drivers, and runtime status"
+    echo -e "    ${EMERALD}doctor${RESET}              Run health, environment, and dependency diagnostics"
+    echo -e "    ${EMERALD}install [--dev]${RESET}     Provision database, env, storage link, and admin panel"
+    echo -e "    ${EMERALD}update${RESET}              Execute safe, zero-downtime core update & migrations"
+    echo -e "    ${EMERALD}dev${RESET}                 Start backend and frontend development servers"
+    echo -e "    ${EMERALD}help${RESET}                Show this manual\n"
+}
+
+cmd_version() {
+    print_header
+    if [ -f "backend/artisan" ]; then
+        php backend/artisan reyhan:version
+    else
+        echo -e "  ${RED}✖ backend/artisan not detected.${RESET}"
+    fi
+}
+
+cmd_doctor() {
+    print_header
+    echo -e "  ${BOLD}${WHITE}Frontend Diagnostic Checks:${RESET}"
+    
+    # Node check
+    if command -v node &> /dev/null; then
+        NODE_VER=$(node -v)
+        echo -e "  Node.js Engine                      ${GREEN}✔ PASS${RESET}  ${GRAY}(${NODE_VER})${RESET}"
+    else
+        echo -e "  Node.js Engine                      ${RED}✖ FAIL${RESET}  ${YELLOW}(Not installed)${RESET}"
+    fi
+
+    # pnpm check
+    if command -v pnpm &> /dev/null; then
+        PNPM_VER=$(pnpm -v)
+        echo -e "  pnpm Package Manager                ${GREEN}✔ PASS${RESET}  ${GRAY}(v${PNPM_VER})${RESET}"
+    else
+        echo -e "  pnpm Package Manager                ${RED}✖ FAIL${RESET}  ${YELLOW}(Not installed)${RESET}"
+    fi
+
+    echo ""
+    if [ -f "backend/artisan" ]; then
+        php backend/artisan reyhan:doctor
+    fi
+}
+
+cmd_install() {
+    print_header
+    local MODE="dev"
+    if [ "$1" == "--prod" ]; then
+        MODE="prod"
+    fi
+
+    if [ "$MODE" == "prod" ]; then
+        echo -e "  ${EMERALD}➜ Running production VPS automated installer (install.sh)...${RESET}\n"
+        sudo bash install.sh
+        return
+    fi
+
+    echo -e "  ${EMERALD}➜ Initializing Reyhan Local Development Environment...${RESET}\n"
+
+    # Backend setup
+    if [ ! -f "backend/.env" ]; then
+        if [ -f "backend/.env.example" ]; then
+            cp backend/.env.example backend/.env
+            echo -e "  ${GREEN}✔${RESET} Created backend/.env from template."
+        fi
+    fi
+
+    echo -e "  ${EMERALD}●${RESET} Configuring backend..."
+    (cd backend && php artisan reyhan:install --force)
+
+    # Frontend setup
+    if [ -d "frontend" ]; then
+        echo -e "\n  ${EMERALD}●${RESET} Installing frontend dependencies via pnpm..."
+        (cd frontend && pnpm install --silent && pnpm postinstall)
+        echo -e "  ${GREEN}✔${RESET} Storefront layer dependencies initialized."
+    fi
+
+    echo -e "\n  ${GREEN}✨ Reyhan local development setup completed!${RESET}"
+    echo -e "  ${GRAY}Run: ${WHITE}./reyhan dev${GRAY} to start both servers.${RESET}\n"
+}
+
+cmd_update() {
+    print_header
+    echo -e "  ${EMERALD}➜ Initiating Reyhan Framework Zero-Downtime Update...${RESET}\n"
+
+    # Backend update
+    if [ -f "backend/artisan" ]; then
+        php backend/artisan reyhan:update "$@"
+    fi
+
+    # Frontend sync
+    if [ -d "frontend" ]; then
+        echo -e "\n  ${EMERALD}[Front] Refreshing Nuxt 4 Storefront Layer...${RESET}"
+        (cd frontend && pnpm postinstall > /dev/null 2>&1 || true)
+        echo -e "  ${GREEN}✔ Nuxt 4 Storefront types and layer state synchronized.${RESET}"
+    fi
+
+    echo -e "\n  ${GREEN}🎉 Reyhan core update completed successfully!${RESET}\n"
+}
+
+cmd_dev() {
+    print_header
+    echo -e "  ${EMERALD}➜ Starting Reyhan Development Engine...${RESET}"
+    echo -e "  ${GRAY}Backend API:  ${WHITE}http://localhost:8000${RESET}"
+    echo -e "  ${GRAY}Storefront:   ${WHITE}http://localhost:3000${RESET}\n"
+
+    trap 'kill 0' EXIT
+    (cd backend && php artisan serve --port=8000) &
+    (cd frontend && pnpm dev) &
+    wait
+}
+
+COMMAND="${1:-help}"
+shift || true
+
+case "$COMMAND" in
+    version)
+        cmd_version "$@"
+        ;;
+    doctor)
+        cmd_doctor "$@"
+        ;;
+    install)
+        cmd_install "$@"
+        ;;
+    update)
+        cmd_update "$@"
+        ;;
+    dev)
+        cmd_dev "$@"
+        ;;
+    help|--help|-h)
+        show_help
+        ;;
+    *)
+        echo -e "${RED}Unknown command: ${COMMAND}${RESET}\n"
+        show_help
+        exit 1
+        ;;
+esac

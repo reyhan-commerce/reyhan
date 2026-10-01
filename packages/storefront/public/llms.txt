@@ -1,0 +1,32 @@
+# Reyhan Commerce - AI Shopping Agent Guide
+
+> Reyhan Commerce (ریحان) is an enterprise-grade headless e-commerce framework and universal online store engine supporting diverse retail verticals (Fashion, Electronics, Beauty, Home & Lifestyle, Digital Goods) with fast SSR catalog discovery and AI agent readiness.
+
+## Store Overview
+- **Platform**: Reyhan Commerce (پلتفرم فروشگاهی ریحان)
+- **Primary Language**: Persian (fa-IR)
+- **Currency**: Iranian Toman (تومان) - Note: Backend API prices are in Rials (1 Toman = 10 Rials)
+- **Official URL**: https://reyhan.ir
+
+## Product Catalog & Taxonomy Architecture
+Reyhan Commerce supports infinite hierarchical categories and dynamic attribute matrices across any retail vertical (Fashion, Electronics, Home & Lifestyle, Beauty, Groceries, etc.). Supported category trees include:
+- **پوشاک و مد (Apparel & Fashion)**: لباس، کفش و اکسسوری با ماتریس سایز، رنگ و متریال
+- **دیجیتال و گجت (Electronics & Gadgets)**: موبایل، لپ‌تاپ و تجهیزات جانبی با مشخصات فنی
+- **سلامت و زیبایی (Beauty & Personal Care)**: محصولات مراقبت و سلامت
+- **کالای عمومی و سوپرمارکتی (General Merchandise)**: خریدهای روزمره با فیلترهای برند و دسته‌بندی
+
+## Public Catalog Endpoints (REST API v1)
+- **Category Tree**: `GET /api/v1/categories/tree` - Hierarchical category taxonomy with subcategories.
+- **Product Listing**: `GET /api/v1/products` - Search, filter, and paginate products.
+  - Query Parameters:
+    - `q`: Free-text search (typo-tolerant via PostgreSQL pg_trgm).
+    - `category`: Category slug.
+    - `brand`: Brand slug.
+    - `min_price`, `max_price`: Price filter range (in Rials).
+    - `in_stock`: `1` to show only in-stock items.
+    - `sort`: `latest`, `cheapest`, `expensive`, `popular`, `bestselling`.
+- **Product Details**: `GET /api/v1/products/{slug}` - Detailed specification, scoped attributes, available variants matrix, inventory, and reviews.
+- **Sitemap URLs**: `GET /api/v1/sitemap/urls` - All active public URLs with last modification dates.
+
+## Detailed Agent Specification
+For comprehensive API contracts, JSON schemas, and attribute matrices, refer to [/llms-full.txt](https://reyhan.ir/llms-full.txt).

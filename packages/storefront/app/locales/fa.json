@@ -1,0 +1,60 @@
+{
+  "common": {
+    "site_title": "فروشگاه اینترنتی",
+    "search_placeholder": "جستجوی کالا، برند یا دسته‌بندی...",
+    "toman": "تومان",
+    "rial": "ریال",
+    "loading": "در حال بارگذاری...",
+    "error_occurred": "خطایی رخ داده است. لطفاً دوباره تلاش کنید.",
+    "back": "بازگشت",
+    "save": "ذخیره",
+    "submit": "ثبت"
+  },
+  "catalog": {
+    "products": "محصولات",
+    "categories": "دسته‌بندی‌ها",
+    "brands": "برندها",
+    "filter": "فیلترها",
+    "sort_by": "مرتب‌سازی بر اساس",
+    "sort_newest": "جدیدترین",
+    "sort_cheapest": "ارزان‌ترین",
+    "sort_expensive": "گران‌ترین",
+    "sort_popular": "محبوب‌ترین",
+    "in_stock": "موجود در انبار",
+    "out_of_stock": "ناموجود",
+    "add_to_cart": "افزودن به سبد خرید",
+    "view_product": "مشاهده کالا",
+    "specifications": "مشخصات فنی",
+    "user_reviews": "دیدگاه‌های کاربران"
+  },
+  "cart": {
+    "title": "سبد خرید شما",
+    "empty": "سبد خرید شما در حال حاضر خالی است.",
+    "items_count": "کالا",
+    "subtotal": "مبلغ کل کالاها",
+    "discount": "سود شما از خرید",
+    "shipping_fee": "هزینه ارسال",
+    "total_payable": "مبلغ قابل پرداخت",
+    "proceed_to_checkout": "ادامه ثبت سفارش",
+    "remove_item": "حذف از سبد"
+  },
+  "checkout": {
+    "title": "تکمیل و ثبت سفارش",
+    "select_address": "انتخاب آدرس تحویل",
+    "select_shipping": "انتخاب شیوه ارسال",
+    "select_gateway": "انتخاب درگاه پرداخت",
+    "coupon_code": "کد تخفیف",
+    "apply_coupon": "اعمال تخفیف",
+    "pay_and_finalize": "پرداخت و ثبت نهایی سفارش",
+    "order_success": "سفارش شما با موفقیت ثبت شد.",
+    "order_tracking_code": "کد رهگیری سفارش"
+  },
+  "auth": {
+    "login_register": "ورود / ثبت‌نام",
+    "mobile_placeholder": "شماره موبایل خود را وارد کنید",
+    "send_otp": "دریافت کد تایید",
+    "enter_otp": "کد ارسال‌شده را وارد نمایید",
+    "resend_otp": "ارسال مجدد کد",
+    "logout": "خروج از حساب کاربری"
+  }
+}
