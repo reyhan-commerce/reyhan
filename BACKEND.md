@@ -1,6 +1,6 @@
-# Backend Technical Specification & Architecture Guide
+# Reyhan Commerce — Backend Technical Specification & Architecture Guide
 
-This document defines the comprehensive architecture, design patterns, database blueprints, coding standards, and implementation roadmap for the **Laravel 13** backend of the **Reyhan Commerce** headless e-commerce framework.
+This document defines the comprehensive architecture, design patterns, database blueprints, coding standards, and implementation roadmap for the headless domain engine of the **Reyhan Commerce** framework.
 
 ---
 

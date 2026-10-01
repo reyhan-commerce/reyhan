@@ -1,6 +1,6 @@
-# 🔌 Reyhan Commerce — Filament & Modular Plugin System
+# 🔌 Reyhan Commerce — Modular Extension & Plugin Architecture
 
-This document specifies the modular plugin and extension architecture for the **Reyhan Commerce Framework** — covering native Filament 5 admin panel extensions, drop-in user modules (`extensions/`), dynamic PSR-4 autoloading, and pipeline hooks.
+This document specifies the modular plugin and extension architecture for the **Reyhan Commerce Framework** — covering admin console plugins, drop-in user modules (`extensions/`), dynamic PSR-4 autoloading, and pipeline hooks.
 
 ---
 
@@ -45,9 +45,9 @@ When Reyhan boots, `ModuleManager` scans `backend/extensions/` and:
 
 ---
 
-## 2. Active & Verified Core Filament 5 Plugins
+## 2. Active & Verified Admin Console Plugins
 
-| Plugin Name | Composer Package | Purpose in Reyhan | Status |
+| Plugin Name | Package Identifier | Purpose in Reyhan | Status |
 | :--- | :--- | :--- | :--- |
 | **Filament Shield** | `bezhansalleh/filament-shield` | RBAC role, permission, and security gate management for `admin` guard | Active ✅ |
 | **Spatie Laravel Backup** | `shuvroroy/filament-spatie-laravel-backup` | Manual and automated PostgreSQL database snapshots via Redis queue | Active ✅ |
@@ -65,10 +65,10 @@ When Reyhan boots, `ModuleManager` scans `backend/extensions/` and:
 
 ## 3. Evaluation Checklist for Adding New Extensions
 
-1. **Version Compatibility:** Fully supports Filament 5 and PHP 8.4+.
-2. **Strict Guard Isolation:** Respects the `admin` guard; customer domain authentication is strictly isolated via OTP and Sanctum.
+1. **Version Compatibility:** Fully supports modern runtime environments (PHP 8.4+).
+2. **Strict Guard Isolation:** Respects the `admin` guard; customer domain authentication is strictly isolated via OTP and token guards.
 3. **Pest Test Coverage:** Every plugin integration must have associated Pest Feature tests verifying registration and authorization boundaries.
-4. **Clean Domain Separation:** Complex mutations and transactions belong in single-responsibility `final` Action classes, not inline within Filament UI closures.
+4. **Clean Domain Separation:** Complex mutations and transactions belong in single-responsibility `final` Action classes, not inline within UI closures.
 
 ---
 

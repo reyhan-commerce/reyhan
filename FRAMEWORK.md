@@ -1,49 +1,63 @@
-# 🌿 Reyhan Commerce — Framework Architecture & Extensibility Specification
+# 🌿 Reyhan Commerce — Framework Architecture & Technical Specification
 
-This document is the official architectural specification for the **Reyhan Commerce Framework** — an enterprise-grade, full-stack, headless, and modular e-commerce engine designed for high concurrency, sovereign customizability, and seamless zero-breaking updates.
+This document is the official architectural specification for the **Reyhan Commerce Framework** — an enterprise-scale, full-stack, headless, and modular e-commerce engine designed for high-concurrency resilience, sovereign customizability, and seamless zero-breaking upgrades.
 
 ---
 
-## 🏛️ 1. Framework Monorepo & Package Architecture
+## 🏛️ 1. Modular Monorepo & Package Anatomy
 
-Reyhan is organized as a modular monorepo distributing standalone, reusable packages alongside reference implementations:
+Reyhan distributes independent, production-grade packages alongside full-featured reference applications:
 
 ```text
 reyhan/
 ├── packages/
-│   ├── core/                        # 🟢 Laravel Engine: reyhan-commerce/core
+│   ├── core/                        # 🟢 Headless Domain Engine (Composer Package)
 │   │   ├── src/
-│   │   │   ├── Actions/             # Domain actions (Checkout, Payment, Orders, Wishlist)
+│   │   │   ├── Actions/             # Single-responsibility domain action classes
 │   │   │   ├── Contracts/Models/    # Domain interfaces (OrderContract, ProductContract, ...)
-│   │   │   ├── Data/                # Strongly-typed DTOs (Spatie Laravel Data)
+│   │   │   ├── Data/                # Strongly-typed Data Transfer Objects (DTOs)
 │   │   │   ├── Models/              # Native Eloquent entities (swappable via Reyhan::model())
-│   │   │   ├── Services/            # Inventory, Pricing, Otp, Sms, Payment Manager
-│   │   │   └── Support/Modules/     # Dynamic PSR-4 extension loader
+│   │   │   ├── Services/            # Inventory, Pricing, OTP, SMS & Payment Managers
+│   │   │   └── Support/Modules/     # Dynamic PSR-4 extension discovery autoloader
 │   │   ├── database/migrations/     # PostgreSQL 17 JSONB schemas & GIN indices
-│   │   └── composer.json            # Package metadata & provider auto-discovery
+│   │   └── composer.json            # Package auto-discovery manifest
 │   │
-│   ├── storefront/                  # 🎨 Nuxt 4 Layer: @reyhan-commerce/storefront
+│   ├── storefront/                  # 🎨 Reactive Storefront Layer (NPM Package)
 │   │   ├── app/
-│   │   │   ├── components/          # Cascading e-commerce UI components (Nuxt UI + Tailwind 4)
+│   │   │   ├── components/          # Cascading e-commerce UI components
 │   │   │   ├── composables/         # Reactive hooks (useShopLocale, useApi, usePersian)
-│   │   │   ├── layouts/             # Default, checkout, invoice layouts
-│   │   │   ├── pages/               # Catalog, PDP, Checkout, Profile, Wishlist, RMA
+│   │   │   ├── layouts/             # Default, checkout, and invoice layouts
+│   │   │   ├── pages/               # Catalog, PDP, Checkout, Profile, Wishlist, Returns
 │   │   │   └── stores/              # Pinia state stores (cart, auth, checkout, catalog)
 │   │   ├── nuxt.config.ts           # Storefront layer configuration
 │   │   └── package.json             # NPM package specification
 │   │
-│   └── create-reyhan/               # 🛠️ CLI Scaffolder: create-reyhan
-│       ├── bin/index.js             # Interactive Clack-powered CLI wizard
+│   └── create-reyhan/               # 🛠️ Official CLI Scaffolder
+│       ├── bin/index.js             # Interactive Clack-powered wizard
 │       └── package.json             # NPM executable package
 │
-├── backend/                         # Reference Backend Application (Laravel 13 + Filament 5)
-├── frontend/                        # Reference Storefront Application (Nuxt 4 + Vue 3)
-└── docs/                            # Official Documentation Portal (VitePress)
+├── backend/                         # Reference Backend API & Admin Console
+├── frontend/                        # Reference Reactive Storefront
+└── docs/                            # Official Documentation Portal
 ```
 
 ---
 
-## 🔒 2. Concurrency, Stock Locking & Financial Integrity
+## 🛠️ 2. Technology Stack & Infrastructure Foundation
+
+| Layer | Technology | Architectural Role & Implementation Details |
+| :--- | :--- | :--- |
+| **Backend Engine** | **PHP 8.4+ & Laravel 13** | Implements the single-use-case Action pattern, strongly-typed DTOs (`spatie/laravel-data`), native Eloquent persistence, FormRequest validation, and asynchronous queue workers. |
+| **Admin Backoffice** | **Filament 5 & Livewire 3** | Interactive management console with fine-grained RBAC permissions (`filament-shield`), real-time websocket updates, and Activitylog audit timelines. |
+| **Storefront Layer** | **Nuxt 4 & Vue 3** | Server-Side Rendering (SSR), Composition API, Pinia stores, Reka UI headless accessible primitives, and Tailwind 4 tokens. |
+| **Primary Database** | **PostgreSQL 17+** | Native JSONB variant matrices, GIN indexing, `pg_trgm` fuzzy text matching, and pessimistic database locking (`lockForUpdate`). |
+| **Memory & Mutex Engine** | **Redis 7+** | Sub-millisecond cart caching, distributed sessions, Horizon queue workers, and atomic Lua script stock reservation mutexes. |
+| **High-Performance Runtime** | **FrankenPHP Octane & Caddy** | Worker-mode execution for ultra-low latency and automated TLS certificate handling. |
+| **Testing & Quality Assurance** | **Pest 4 & Vitest** | End-to-end domain feature testing, concurrency assertions, architecture linting, and automated UI unit testing. |
+
+---
+
+## 🔒 3. Concurrency, Stock Locking & Financial Integrity
 
 Reyhan implements a battle-tested **Two-Tier Concurrency Architecture**:
 
@@ -51,8 +65,8 @@ Reyhan implements a battle-tested **Two-Tier Concurrency Architecture**:
 sequenceDiagram
     autonumber
     actor Customer
-    participant Storefront as Nuxt 4 Storefront
-    participant API as Laravel 13 Core
+    participant Storefront as Reactive Storefront
+    participant API as Headless API Engine
     participant Redis as Redis 7 (ZSET)
     participant DB as PostgreSQL 17
 
@@ -79,7 +93,7 @@ sequenceDiagram
 
 ---
 
-## 🧩 3. Sovereign Extensibility: Zero Core Modification
+## 🧩 4. Sovereign Extensibility: Zero Core Modification
 
 ### A. Dynamic Model Swapping (`Reyhan::model()`)
 Core actions and services interact with Eloquent entities through contracts and the `Reyhan::model()` resolver. To override any core model:
@@ -111,16 +125,16 @@ Drop self-contained extensions inside `extensions/{plugin-name}/` with a `module
 
 ---
 
-## 🌐 4. Reactive Storefront Nuxt 4 Layer
+## 🌐 5. Storefront Layering & Cascading Architecture
 
-Storefronts consume `@reyhan-commerce/storefront` as a Nuxt 4 Layer:
+Storefronts consume `@reyhan-commerce/storefront` as a modular layer:
 
 ```ts
 // frontend/nuxt.config.ts
 export default defineNuxtConfig({
   extends: ['@reyhan-commerce/storefront'],
   
-  // Custom store-specific overrides
+  // Custom store-specific configuration
   app: {
     head: {
       title: 'My Custom Store'
@@ -134,15 +148,15 @@ export default defineNuxtConfig({
 
 ---
 
-## 🛠️ 5. Central CLI Orchestrator (`./reyhan`)
+## 🛠️ 6. Central CLI Orchestrator (`./reyhan`)
 
 | Command | Purpose |
 | :--- | :--- |
-| `./reyhan doctor` | Deep diagnostic of PostgreSQL 17, Redis 7, PHP 8.4 extensions, and node environment |
+| `./reyhan doctor` | Deep diagnostic of PostgreSQL 17, Redis 7, runtime extensions, and Node.js environment |
 | `./reyhan install` | Local environment provisioning (Migrations, encryption keys, seeders, symlinks) |
-| `./reyhan install --prod` | Automated VPS production deployment (FrankenPHP Octane, Docker, Caddy SSL) |
-| `./reyhan update` | Safe rolling update: automated DB snapshot, migrations, filament upgrade, cache optimization |
-| `./reyhan dev` | Concurrent boot of backend API and Nuxt 4 storefront dev servers |
+| `./reyhan install --prod` | Automated VPS production deployment (Worker-mode runtime, Docker, Caddy SSL) |
+| `./reyhan update` | Safe rolling update: automated DB snapshot, migrations, admin upgrades, cache optimization |
+| `./reyhan dev` | Concurrent boot of backend API and storefront dev servers |
 
 ---
 

@@ -1,6 +1,6 @@
-# Frontend Technical Specification & Architecture Guide
+# Reyhan Commerce — Storefront Technical Specification & Architecture Guide
 
-This document defines the comprehensive frontend architecture, design system tokens, component guidelines, user experience standards, and implementation roadmap for the **Reyhan Commerce** storefront built on **Nuxt 4**, **Vue 3**, **Nuxt UI**, **Tailwind CSS v4**, and **TypeScript 7.x**.
+This document defines the comprehensive frontend architecture, design system tokens, component guidelines, user experience standards, and implementation roadmap for the reactive storefront layer of the **Reyhan Commerce** framework.
 
 ---
 
