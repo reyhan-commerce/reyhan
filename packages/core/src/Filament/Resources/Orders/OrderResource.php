@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Orders;
 
+use App\Actions\Orders\ApproveCardTransferReceiptAction;
+use App\Actions\Orders\RejectCardTransferReceiptAction;
 use App\Enums\OrderStatus;
-use App\Enums\PaymentGateway;
-use App\Enums\PaymentStatus;
 use App\Enums\ShippingMethod;
 use App\Filament\Resources\Orders\Pages\CreateOrder;
 use App\Filament\Resources\Orders\Pages\EditOrder;
@@ -15,7 +15,6 @@ use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Http\Controllers\Api\V1\OrderInvoiceController;
 use App\Http\Controllers\OrderShippingLabelController;
 use App\Models\Order;
-use App\Models\ProductVariant;
 use App\Notifications\Orders\OrderShippedNotification;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -43,7 +42,6 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification as SystemNotification;
 use Illuminate\Support\HtmlString;
@@ -461,59 +459,18 @@ class OrderResource extends Resource
                         $isApproved = ($data['decision'] ?? '') === 'approve';
                         $notes = trim((string) ($data['admin_notes'] ?? ''));
 
-                        DB::transaction(function () use ($record, $receipt, $isApproved, $notes): void {
-                            $receipt->update([
-                                'status' => $isApproved ? 'approved' : 'rejected',
-                                'reviewed_by' => auth()->id(),
-                                'reviewed_at' => now(),
-                                'admin_notes' => $notes,
-                            ]);
-
-                            if ($isApproved) {
-                                // Tier 2 Pessimistic Database Concurrency Locking for variant stock
-                                $record->loadMissing('items');
-                                foreach ($record->items as $item) {
-                                    /** @var ProductVariant|null $variant */
-                                    $variant = ProductVariant::where('id', $item->product_variant_id)
-                                        ->lockForUpdate()
-                                        ->first();
-
-                                    if ($variant) {
-                                        $variant->decrement('stock', $item->quantity);
-                                    }
-                                }
-
-                                $record->update([
-                                    'status' => OrderStatus::Processing,
-                                    'paid_at' => now(),
-                                ]);
-
-                                $payment = $record->payments()->latest()->first();
-                                if ($payment) {
-                                    $payment->update([
-                                        'status' => PaymentStatus::Success,
-                                        'paid_at' => now(),
-                                        'reference_id' => $receipt->tracking_number,
-                                    ]);
-                                } else {
-                                    $record->payments()->create([
-                                        'user_id' => $record->user_id,
-                                        'amount' => $receipt->amount,
-                                        'gateway' => PaymentGateway::CardToCard,
-                                        'status' => PaymentStatus::Success,
-                                        'reference_id' => $receipt->tracking_number,
-                                        'paid_at' => now(),
-                                    ]);
-                                }
-                            }
-                        });
-
                         if ($isApproved) {
+                            app(ApproveCardTransferReceiptAction::class)
+                                ->execute($record, $receipt, auth()->id(), $notes ?: null);
+
                             Notification::make()
                                 ->title('فیش واریزی با موفقیت تأیید شد، موجودی انبار کسر گردید و سفارش به در حال پردازش تغییر یافت')
                                 ->success()
                                 ->send();
                         } else {
+                            app(RejectCardTransferReceiptAction::class)
+                                ->execute($record, $receipt, auth()->id(), $notes ?: null);
+
                             Notification::make()
                                 ->title('فیش واریزی رد شد')
                                 ->warning()

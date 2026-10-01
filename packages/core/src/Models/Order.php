@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Contracts\Models\OrderContract;
 use App\Enums\OrderStatus;
 use App\Enums\ShippingMethod as ShippingMethodEnum;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
@@ -61,7 +62,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property-read Payment|null $successfulPayment
  */
 #[Guarded(['id'])]
-class Order extends Model implements ProvidesActivityTitle
+class Order extends Model implements OrderContract, ProvidesActivityTitle
 {
     /** @use HasFactory<OrderFactory> */
     use HasFactory, LogsActivity, SoftDeletes;

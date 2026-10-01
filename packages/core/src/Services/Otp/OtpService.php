@@ -23,6 +23,16 @@ class OtpService
     protected const TTL_SECONDS = 120;
 
     /**
+     * Maximum allowed verification attempts before invalidating OTP.
+     */
+    public const int MAX_ATTEMPTS = 5;
+
+    /**
+     * Lockout duration in seconds after exceeding max attempts (15 minutes).
+     */
+    public const int LOCKOUT_SECONDS = 900;
+
+    /**
      * Check if an OTP request is currently throttled for the given mobile.
      */
     public function isThrottled(string $mobile): bool
@@ -70,6 +80,7 @@ class OtpService
 
         $redis->setex("otp:code:{$mobile}", self::TTL_SECONDS, $hashedCode);
         $redis->setex($throttleKey, self::TTL_SECONDS, '1');
+        $redis->del("otp:attempts:{$mobile}");
 
         Notification::route('sms', $mobile)
             ->notify(new SendOtpNotification($code));
@@ -81,7 +92,8 @@ class OtpService
     }
 
     /**
-     * Verify the provided OTP code against Redis hash, and automatically clear keys if valid.
+     * Verify the provided OTP code against Redis hash, enforce brute-force rate-limiting,
+     * and automatically clear keys if valid.
      */
     public function verify(string $mobile, string $code): bool
     {
@@ -92,7 +104,26 @@ class OtpService
             return false;
         }
 
+        $attemptsKey = "otp:attempts:{$mobile}";
+        $attempts = (int) $redis->get($attemptsKey);
+
+        if ($attempts >= self::MAX_ATTEMPTS) {
+            // Lockout user and invalidate active code immediately
+            $this->clear($mobile);
+            $redis->setex("otp:throttle:{$mobile}", self::LOCKOUT_SECONDS, '1');
+
+            return false;
+        }
+
         if (! Hash::check($code, $storedHash)) {
+            $newAttempts = (int) $redis->incr($attemptsKey);
+            $redis->expire($attemptsKey, self::TTL_SECONDS);
+
+            if ($newAttempts >= self::MAX_ATTEMPTS) {
+                $this->clear($mobile);
+                $redis->setex("otp:throttle:{$mobile}", self::LOCKOUT_SECONDS, '1');
+            }
+
             return false;
         }
 
@@ -118,12 +149,13 @@ class OtpService
     }
 
     /**
-     * Consume (clear) OTP and throttle keys from Redis upon successful verification.
+     * Consume (clear) OTP, attempts, and throttle keys from Redis upon successful verification.
      */
     public function clear(string $mobile): void
     {
         $redis = Redis::connection(self::REDIS_CONNECTION);
         $redis->del("otp:code:{$mobile}");
         $redis->del("otp:throttle:{$mobile}");
+        $redis->del("otp:attempts:{$mobile}");
     }
 }

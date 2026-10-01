@@ -56,5 +56,12 @@
     "enter_otp": "Enter OTP Code",
     "resend_otp": "Resend Code",
     "logout": "Logout"
+  },
+  "errors": {
+    "not_found_title": "Page Not Found!",
+    "not_found_desc": "The page you are looking for might have been removed, renamed, or is temporarily unavailable.",
+    "server_error_title": "Server Error Occurred",
+    "server_error_desc": "An unexpected error occurred while processing your request. Please try again in a few moments.",
+    "back_to_home": "Back to Home"
   }
 }
