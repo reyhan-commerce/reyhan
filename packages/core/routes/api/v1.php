@@ -218,3 +218,10 @@ Route::prefix('blog')->name('blog.')->group(function () {
     Route::get('/posts', [BlogController::class, 'index'])->name('posts.index');
     Route::get('/posts/{slug}', [BlogController::class, 'show'])->name('posts.show');
 });
+
+// Marketplace Product Feeds (Torob & Emalls)
+Route::prefix('integrations')->name('integrations.')->group(function () {
+    Route::get('/torob/products', \App\Http\Controllers\Api\V1\Integrations\TorobProductFeedController::class)->name('torob.products');
+    Route::get('/emalls/products', \App\Http\Controllers\Api\V1\Integrations\EmallsProductFeedController::class)->name('emalls.products');
+});
+

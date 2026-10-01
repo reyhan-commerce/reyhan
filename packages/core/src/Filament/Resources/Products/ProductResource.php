@@ -153,6 +153,11 @@ class ProductResource extends Resource
                                             ->default(true)
                                             ->helperText('در صورت غیرفعال بودن، کالا در کاتالوگ فرانت نمایش داده نمی‌شود'),
 
+                                        Toggle::make('is_tax_exempt')
+                                            ->label('معاف از مالیات بر ارزش افزوده (ماده ۹)')
+                                            ->default(false)
+                                            ->helperText('برای کالاهای اساسی، کتاب، دارو و محصولات کشاورزی معاف از ۱۰٪ ارزش افزوده'),
+
                                         Toggle::make('is_featured')
                                             ->label('محصول ویژه و پیشنهادی')
                                             ->default(false)

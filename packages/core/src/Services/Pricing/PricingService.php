@@ -33,6 +33,7 @@ final class PricingService
 
         $originalItemsSubtotal = 0;
         $itemsSubtotal = 0;
+        $taxableItemsSubtotal = 0;
         $totalWeight = 0;
         $totalItemsCount = 0;
 
@@ -46,11 +47,17 @@ final class PricingService
             $qty = $item->quantity;
             $unitPrice = $variant->price;
             $compareAt = $variant->compare_at_price ?? $unitPrice;
+            $lineSubtotal = $unitPrice * $qty;
 
-            $itemsSubtotal += $unitPrice * $qty;
+            $itemsSubtotal += $lineSubtotal;
             $originalItemsSubtotal += $compareAt * $qty;
             $totalWeight += ($variant->weight ?? 0) * $qty;
             $totalItemsCount += $qty;
+
+            $isExempt = (bool) ($variant->product?->is_tax_exempt ?? false);
+            if (! $isExempt) {
+                $taxableItemsSubtotal += $lineSubtotal;
+            }
         }
 
         $catalogDiscount = max(0, $originalItemsSubtotal - $itemsSubtotal);
@@ -88,9 +95,30 @@ final class PricingService
         );
 
         $subtotalAfterCoupon = max(0, $itemsSubtotal - $couponDiscount);
+
+        // Pro-rata taxable base calculation after coupon discount
+        $taxableSubtotalAfterCoupon = 0;
+        if ($itemsSubtotal > 0 && $taxableItemsSubtotal > 0) {
+            $discountRatio = min(1.0, $couponDiscount / $itemsSubtotal);
+            $taxableSubtotalAfterCoupon = max(0, (int) round($taxableItemsSubtotal * (1 - $discountRatio)));
+        }
+
         $taxRate = (int) config('reyhan.store.tax_rate_percent', 10);
-        $taxAmount = (int) round($subtotalAfterCoupon * ($taxRate / 100));
-        $finalPayable = $subtotalAfterCoupon + $taxAmount + $shipping['shipping_fee'];
+        $taxMode = (string) config('reyhan.store.tax_mode', 'exclusive');
+
+        if ($taxRate > 0 && $taxableSubtotalAfterCoupon > 0) {
+            if ($taxMode === 'inclusive') {
+                $taxAmount = (int) round($taxableSubtotalAfterCoupon * ($taxRate / (100 + $taxRate)));
+                $finalPayable = $subtotalAfterCoupon + $shipping['shipping_fee'];
+            } else {
+                $taxAmount = (int) round($taxableSubtotalAfterCoupon * ($taxRate / 100));
+                $finalPayable = $subtotalAfterCoupon + $taxAmount + $shipping['shipping_fee'];
+            }
+        } else {
+            $taxAmount = 0;
+            $finalPayable = $subtotalAfterCoupon + $shipping['shipping_fee'];
+        }
+
         $totalDiscount = $catalogDiscount + $couponDiscount;
 
         return new CartPricingData(

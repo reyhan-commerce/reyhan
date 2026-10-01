@@ -109,6 +109,8 @@ return [
         'name' => env('APP_NAME', 'فروشگاه ریحان'),
         'currency' => env('STORE_CURRENCY', 'IRR'),
         'currency_symbol' => env('STORE_CURRENCY_SYMBOL', 'تومان'),
+        'tax_rate_percent' => (int) env('STORE_TAX_RATE_PERCENT', 10),
+        'tax_mode' => env('STORE_TAX_MODE', 'exclusive'), // 'exclusive' | 'inclusive'
         'locale' => env('APP_LOCALE', 'fa'),
         'fallback_locale' => 'en',
     ],

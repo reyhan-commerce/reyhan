@@ -7,6 +7,8 @@ namespace App\Actions\Payment;
 use App\Data\Payment\VerifyPaymentResultData;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Models\Coupon;
+use App\Models\CouponUsage;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\ProductVariant;
@@ -95,6 +97,8 @@ final class VerifyPaymentAction
             $order->loadMissing('items');
 
             // Tier 2 Pessimistic Database Concurrency Locking & Stock Settlement
+            $reservationId = $order->reservation_id ?? "order_{$order->id}";
+
             foreach ($order->items as $item) {
                 /** @var ProductVariant|null $variant */
                 $variant = ProductVariant::where('id', $item->product_variant_id)
@@ -104,7 +108,7 @@ final class VerifyPaymentAction
                 if ($variant) {
                     $variant->decrement('stock', $item->quantity);
                     // Commit/Release Redis reservation (Tier 1 -> Tier 2 transition)
-                    $this->stockReservationService->commit($variant->id, $item->quantity, "order_{$order->id}");
+                    $this->stockReservationService->commit($variant->id, $item->quantity, $reservationId);
                 }
             }
 
@@ -123,6 +127,25 @@ final class VerifyPaymentAction
                 'status' => OrderStatus::Processing,
                 'paid_at' => now(),
             ]);
+
+            // Settle Coupon Usage if applied
+            if (! empty($order->coupon_code)) {
+                /** @var Coupon|null $coupon */
+                $coupon = Coupon::where('code', $order->coupon_code)->lockForUpdate()->first();
+                if ($coupon) {
+                    CouponUsage::firstOrCreate(
+                        [
+                            'coupon_id' => $coupon->id,
+                            'order_id' => $order->id,
+                        ],
+                        [
+                            'user_id' => $order->user_id,
+                            'discount_amount' => (int) $order->coupon_discount,
+                        ]
+                    );
+                    $coupon->increment('used_count');
+                }
+            }
 
             // Settle Referral Reward if customer was referred
             $this->referralService->rewardReferralUponOrderCompletion($order);

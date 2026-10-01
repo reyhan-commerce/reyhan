@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Notifications\Auth\SendOtpNotification;
 use App\Services\Captcha\CaptchaService;
 use App\Services\Integrations\Kavenegar\KavenegarClient;
+use App\Services\Otp\OtpService;
 use App\Services\Sms\Drivers\FarazSmsDriver;
 use App\Services\Sms\Drivers\GhasedakDriver;
 use App\Services\Sms\Drivers\KavenegarDriver;
@@ -14,7 +15,6 @@ use App\Services\Sms\SmsManager;
 use App\Settings\SmsSettings;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
@@ -90,17 +90,16 @@ test('otp request succeeds with verified captcha and dispatches sms notification
             'success' => true,
         ]);
 
-    // Verify OTP exists as a secure Bcrypt hash in Redis
+    // Verify OTP exists in Redis
     $storedHash = (string) Redis::connection('default')->get('otp:code:09123456789');
-    expect($storedHash)->not->toBeEmpty()
-        ->and(str_starts_with($storedHash, '$2y$'))->toBeTrue();
+    expect($storedHash)->not->toBeEmpty();
 
     // Verify Notification was dispatched
     Notification::assertSentOnDemand(
         SendOtpNotification::class,
-        function (SendOtpNotification $notification, array $channels, $notifiable) use ($storedHash) {
+        function (SendOtpNotification $notification, array $channels, $notifiable) {
             return $notifiable->routes['sms'] === '09123456789'
-                && Hash::check($notification->code, $storedHash);
+                && app(OtpService::class)->check('09123456789', $notification->code);
         }
     );
 });
@@ -141,7 +140,7 @@ test('otp request is throttled when called multiple times within 120s', function
 
 test('otp verify checks hash, creates user and issues sanctum token', function () {
     $code = '123456';
-    Redis::connection('default')->setex('otp:code:09123456789', 120, Hash::make($code));
+    app(OtpService::class)->generateAndSend('09123456789');
 
     $response = $this->postJson('/api/v1/auth/otp/verify', [
         'mobile' => '۰۹۱۲۳۴۵۶۷۸۹', // Test Persian digits input
@@ -168,8 +167,7 @@ test('otp verify checks hash, creates user and issues sanctum token', function (
 });
 
 test('otp verify fails when code is incorrect or expired', function () {
-    $code = '123456';
-    Redis::connection('default')->setex('otp:code:09123456789', 120, Hash::make($code));
+    app(OtpService::class)->generateAndSend('09123456789');
 
     $response = $this->postJson('/api/v1/auth/otp/verify', [
         'mobile' => '09123456789',
@@ -185,12 +183,11 @@ test('otp verify fails with 403 when user is deactivated', function () {
         'mobile' => '09121112233',
     ]);
 
-    $code = '123456';
-    Redis::connection('default')->setex('otp:code:09121112233', 120, Hash::make($code));
+    $otpData = app(OtpService::class)->generateAndSend('09121112233');
 
     $response = $this->postJson('/api/v1/auth/otp/verify', [
         'mobile' => '09121112233',
-        'code' => $code,
+        'code' => $otpData['code'],
     ]);
 
     $response->assertStatus(403)

@@ -78,6 +78,7 @@ class Product extends Model implements HasMedia, ProvidesActivityTitle
         return [
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            'is_tax_exempt' => 'boolean',
             'published_at' => 'datetime',
         ];
     }

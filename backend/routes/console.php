@@ -24,3 +24,15 @@ Schedule::command('cart:recover-abandoned')
     ->hourly()
     ->withoutOverlapping()
     ->runInBackground();
+
+/*
+|--------------------------------------------------------------------------
+| Expired Pending Orders Cleanup Schedule
+|--------------------------------------------------------------------------
+| Automatically cancel pending orders older than 30 minutes, release stock
+| reservations in Redis, and refund wallet deductions.
+*/
+Schedule::command('orders:cancel-expired --minutes=30')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();

@@ -12,6 +12,7 @@ use App\Models\Admin;
 use App\Models\Category;
 use App\Observers\CategoryObserver;
 use App\Services\Sms\SmsManager;
+use App\Support\Modules\ModuleManager;
 use BokshornIt\FilamentActivityTimeline\Policies\ActivityPolicy;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
@@ -36,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        \App\Support\Modules\ModuleManager::registerDiscoveredExtensions($this->app);
+        ModuleManager::registerDiscoveredExtensions($this->app);
     }
 
     /**
@@ -108,6 +109,43 @@ class AppServiceProvider extends ServiceProvider
         // Register default Pennant feature flags
         foreach (ShopFeature::names() as $feature) {
             Feature::define($feature, fn () => true);
+        }
+
+        // Register Iranian custom validator string rules
+        $this->registerIranianValidators();
+    }
+
+    /**
+     * Register zero-dependency Iranian validation rule aliases.
+     */
+    protected function registerIranianValidators(): void
+    {
+        $rules = [
+            'ir_mobile' => new \App\Rules\IranianMobileRule(),
+            'ir_phone' => new \App\Rules\IranianPhoneRule(),
+            'ir_national_code' => new \App\Rules\NationalCodeRule(),
+            'ir_company_national_id' => new \App\Rules\CompanyNationalIdRule(),
+            'ir_sheba' => new \App\Rules\ShebaRule(),
+            'ir_postal_code' => new \App\Rules\PostalCodeRule(),
+            'ir_bank_card' => new \App\Rules\CardNumberRule(),
+            'ir_bank_card_number' => new \App\Rules\CardNumberRule(),
+            'persian_text' => new \App\Rules\PersianTextRule(),
+            'persian_alphabet' => new \App\Rules\PersianTextRule(),
+            'no_persian' => new \App\Rules\NoPersianRule(),
+        ];
+
+        foreach ($rules as $name => $rule) {
+            \Illuminate\Support\Facades\Validator::extend(
+                $name,
+                function (string $attribute, mixed $value, array $parameters, \Illuminate\Validation\Validator $validator) use ($rule): bool {
+                    $failed = false;
+                    $rule->validate($attribute, $value, function ($message) use (&$failed): void {
+                        $failed = true;
+                    });
+
+                    return ! $failed;
+                }
+            );
         }
     }
 }

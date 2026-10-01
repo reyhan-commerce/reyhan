@@ -6,7 +6,6 @@ namespace App\Services\Otp;
 
 use App\Exceptions\Auth\OtpThrottledException;
 use App\Notifications\Auth\SendOtpNotification;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redis;
 
@@ -54,7 +53,17 @@ class OtpService
     }
 
     /**
-     * Generate 6-digit cryptographically secure OTP, store hashed in Redis, and dispatch notification.
+     * Compute fast constant-time HMAC hash for OTP code without CPU exhaustion.
+     */
+    protected function hashOtp(string $code): string
+    {
+        $key = (string) (config('app.key') ?: 'reyhan_secure_otp_salt_key');
+
+        return hash_hmac('sha256', $code, $key);
+    }
+
+    /**
+     * Generate 6-digit cryptographically secure OTP, store HMAC hash in Redis, and dispatch notification.
      * Throws OtpThrottledException if called within throttle window.
      *
      * @return array{code: string, expires_in: int}
@@ -72,11 +81,12 @@ class OtpService
             throw new OtpThrottledException($ttl);
         }
 
-        // Fixed OTP in local/dev environment for seamless development and testing
-        $code = app()->environment(['local', 'dev'])
+        // Fixed OTP in local/testing environment for seamless development and automated testing
+        $code = app()->environment(['local', 'testing'])
             ? '123456'
             : (string) random_int(100000, 999999);
-        $hashedCode = Hash::make($code);
+
+        $hashedCode = $this->hashOtp($code);
 
         $redis->setex("otp:code:{$mobile}", self::TTL_SECONDS, $hashedCode);
         $redis->setex($throttleKey, self::TTL_SECONDS, '1');
@@ -115,7 +125,9 @@ class OtpService
             return false;
         }
 
-        if (! Hash::check($code, $storedHash)) {
+        $expectedHash = $this->hashOtp($code);
+
+        if (! hash_equals($storedHash, $expectedHash)) {
             $newAttempts = (int) $redis->incr($attemptsKey);
             $redis->expire($attemptsKey, self::TTL_SECONDS);
 
@@ -145,7 +157,7 @@ class OtpService
             return false;
         }
 
-        return Hash::check($code, $storedHash);
+        return hash_equals($storedHash, $this->hashOtp($code));
     }
 
     /**

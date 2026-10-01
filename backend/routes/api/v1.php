@@ -21,6 +21,8 @@ use App\Http\Controllers\Api\V1\CompareProductsController;
 use App\Http\Controllers\Api\V1\ContactMessageController;
 use App\Http\Controllers\Api\V1\FaqController;
 use App\Http\Controllers\Api\V1\GeoController;
+use App\Http\Controllers\Api\V1\Integrations\EmallsProductFeedController;
+use App\Http\Controllers\Api\V1\Integrations\TorobProductFeedController;
 use App\Http\Controllers\Api\V1\LoyaltyController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\OrderInvoiceController;
@@ -217,4 +219,10 @@ Route::prefix('blog')->name('blog.')->group(function () {
     Route::get('/featured', [BlogController::class, 'featured'])->name('featured');
     Route::get('/posts', [BlogController::class, 'index'])->name('posts.index');
     Route::get('/posts/{slug}', [BlogController::class, 'show'])->name('posts.show');
+});
+
+// Marketplace Product Feeds (Torob & Emalls)
+Route::prefix('integrations')->name('integrations.')->group(function () {
+    Route::get('/torob/products', TorobProductFeedController::class)->name('torob.products');
+    Route::get('/emalls/products', EmallsProductFeedController::class)->name('emalls.products');
 });

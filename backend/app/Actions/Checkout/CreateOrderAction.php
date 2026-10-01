@@ -12,6 +12,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Address;
 use App\Models\AttributeValue;
 use App\Models\CardTransferReceipt;
+use App\Models\CouponUsage;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
@@ -127,6 +128,7 @@ final class CreateOrderAction
             $finalPayable,
             $walletDeduction,
             $remainingPayable,
+            $reservationId,
             $data
         ): Order {
             $initialStatus = ($remainingPayable === 0) ? OrderStatus::Processing : OrderStatus::PendingPayment;
@@ -134,6 +136,7 @@ final class CreateOrderAction
 
             $order = Order::create([
                 'order_number' => Order::generateOrderNumber(),
+                'reservation_id' => $reservationId,
                 'user_id' => $user->id,
                 'status' => $initialStatus,
                 'shipping_method' => $shippingMethodCode,
@@ -259,6 +262,16 @@ final class CreateOrderAction
                 'tracking_code' => Payment::generateTrackingCode(),
                 'paid_at' => now(),
             ]);
+
+            if ($cart->coupon) {
+                CouponUsage::create([
+                    'coupon_id' => $cart->coupon->id,
+                    'user_id' => $user->id,
+                    'order_id' => $order->id,
+                    'discount_amount' => (int) $order->coupon_discount,
+                ]);
+                $cart->coupon->increment('used_count');
+            }
 
             $this->cartService->clearCart($cart);
 

@@ -11,6 +11,15 @@ use App\Listeners\Catalog\SendProductRestockAlertsListener;
 use App\Models\Admin;
 use App\Models\Category;
 use App\Observers\CategoryObserver;
+use App\Rules\CardNumberRule;
+use App\Rules\CompanyNationalIdRule;
+use App\Rules\IranianMobileRule;
+use App\Rules\IranianPhoneRule;
+use App\Rules\NationalCodeRule;
+use App\Rules\NoPersianRule;
+use App\Rules\PersianTextRule;
+use App\Rules\PostalCodeRule;
+use App\Rules\ShebaRule;
 use App\Services\Sms\SmsManager;
 use App\Support\Modules\ModuleManager;
 use BokshornIt\FilamentActivityTimeline\Policies\ActivityPolicy;
@@ -18,6 +27,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Validator;
 use Laravel\Pennant\Feature;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
@@ -109,6 +119,43 @@ class AppServiceProvider extends ServiceProvider
         // Register default Pennant feature flags
         foreach (ShopFeature::names() as $feature) {
             Feature::define($feature, fn () => true);
+        }
+
+        // Register Iranian custom validator string rules
+        $this->registerIranianValidators();
+    }
+
+    /**
+     * Register zero-dependency Iranian validation rule aliases.
+     */
+    protected function registerIranianValidators(): void
+    {
+        $rules = [
+            'ir_mobile' => new IranianMobileRule,
+            'ir_phone' => new IranianPhoneRule,
+            'ir_national_code' => new NationalCodeRule,
+            'ir_company_national_id' => new CompanyNationalIdRule,
+            'ir_sheba' => new ShebaRule,
+            'ir_postal_code' => new PostalCodeRule,
+            'ir_bank_card' => new CardNumberRule,
+            'ir_bank_card_number' => new CardNumberRule,
+            'persian_text' => new PersianTextRule,
+            'persian_alphabet' => new PersianTextRule,
+            'no_persian' => new NoPersianRule,
+        ];
+
+        foreach ($rules as $name => $rule) {
+            \Illuminate\Support\Facades\Validator::extend(
+                $name,
+                function (string $attribute, mixed $value, array $parameters, Validator $validator) use ($rule): bool {
+                    $failed = false;
+                    $rule->validate($attribute, $value, function ($message) use (&$failed): void {
+                        $failed = true;
+                    });
+
+                    return ! $failed;
+                }
+            );
         }
     }
 }
