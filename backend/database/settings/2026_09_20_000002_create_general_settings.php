@@ -7,7 +7,7 @@ return new class extends SettingsMigration
     public function up(): void
     {
         $this->migrator->add('general.store_name', 'فروشگاه اینترنتی ریحان');
-        $this->migrator->add('general.store_slogan', 'تخصصی‌ترین مرجع لوازم آرایشی و بهداشتی اصل');
+        $this->migrator->add('general.store_slogan', 'خرید آنلاین هوشمند و سریع با تضمین اصالت و بهترین قیمت');
         $this->migrator->add('general.store_logo', null);
         $this->migrator->add('general.store_favicon', null);
         $this->migrator->add('general.support_phone', '۰۲۱-۸۸۸۸۸۸۸۸');

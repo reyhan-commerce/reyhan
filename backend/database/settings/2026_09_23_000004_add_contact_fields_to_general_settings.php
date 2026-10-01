@@ -8,7 +8,11 @@ return new class extends SettingsMigration
 {
     public function up(): void
     {
-        $this->migrator->add('general.work_hours', 'شنبه تا چهارشنبه ۹ الی ۱۸ • پنج‌شنبه ۹ الی ۱۴');
-        $this->migrator->add('general.whatsapp_url', null);
+        if (! $this->migrator->exists('general.work_hours')) {
+            $this->migrator->add('general.work_hours', 'شنبه تا چهارشنبه ۹ الی ۱۸ • پنج‌شنبه ۹ الی ۱۴');
+        }
+        if (! $this->migrator->exists('general.whatsapp_url')) {
+            $this->migrator->add('general.whatsapp_url', null);
+        }
     }
 };

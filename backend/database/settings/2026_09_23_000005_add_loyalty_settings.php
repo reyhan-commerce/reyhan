@@ -8,8 +8,14 @@ return new class extends SettingsMigration
 {
     public function up(): void
     {
-        $this->migrator->add('general.loyalty_rate_amount_per_point', 10000);
-        $this->migrator->add('general.loyalty_point_redemption_value', 500);
-        $this->migrator->add('general.loyalty_signup_bonus', 50);
+        if (! $this->migrator->exists('general.loyalty_rate_amount_per_point')) {
+            $this->migrator->add('general.loyalty_rate_amount_per_point', 10000);
+        }
+        if (! $this->migrator->exists('general.loyalty_point_redemption_value')) {
+            $this->migrator->add('general.loyalty_point_redemption_value', 500);
+        }
+        if (! $this->migrator->exists('general.loyalty_signup_bonus')) {
+            $this->migrator->add('general.loyalty_signup_bonus', 50);
+        }
     }
 };

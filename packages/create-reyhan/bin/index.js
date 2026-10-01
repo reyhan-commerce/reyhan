@@ -33,125 +33,145 @@ async function main() {
   console.log(BANNER)
   intro(pc.green(pc.bold('🌿  Reyhan Full-Stack Headless Commerce Installer')))
 
-  const defaultDir = process.argv[2] || 'my-reyhan-store'
+  const args = process.argv.slice(2)
+  const isYes = args.includes('--yes') || args.includes('-y') || args.includes('--non-interactive')
 
-  // 1. Project Directory
-  const targetDirInput = await text({
-    message: 'Where would you like to create your new store project?',
-    placeholder: defaultDir,
-    defaultValue: defaultDir,
-    validate(val) {
-      if (!val || val.trim().length === 0) return 'Project folder name cannot be empty.'
-      if (existsSync(resolve(process.cwd(), val))) return `Directory "${val}" already exists.`
+  function getArgValue(name, fallback) {
+    const prefix = `--${name}=`
+    const found = args.find(a => a.startsWith(prefix))
+    if (found) return found.slice(prefix.length)
+    const idx = args.indexOf(`--${name}`)
+    if (idx !== -1 && args[idx + 1] && !args[idx + 1].startsWith('--')) {
+      return args[idx + 1]
     }
-  })
+    return fallback
+  }
 
-  if (isCancel(targetDirInput)) {
-    cancel('Setup cancelled.')
-    process.exit(0)
+  const defaultDir = args.find(a => !a.startsWith('-')) || 'my-reyhan-store'
+
+  let targetDirInput = defaultDir
+  let storeName = getArgValue('store-name', 'فروشگاه ریحان')
+  let themeColor = getArgValue('theme', 'emerald')
+  let dbHost = getArgValue('db-host', '127.0.0.1')
+  let dbPort = getArgValue('db-port', '5432')
+  let dbName = getArgValue('db-name', 'reyhan_db')
+  let dbUser = getArgValue('db-user', 'postgres')
+  let dbPass = getArgValue('db-password', '')
+  let redisHost = getArgValue('redis-host', '127.0.0.1')
+  let redisPort = getArgValue('redis-port', '6379')
+  let shouldInitGit = !args.includes('--no-git')
+  let shouldInstallDeps = args.includes('--install-deps')
+
+  if (!isYes) {
+    // 1. Project Directory
+    targetDirInput = await text({
+      message: 'Where would you like to create your new store project?',
+      placeholder: defaultDir,
+      defaultValue: defaultDir,
+      validate(val) {
+        if (!val || val.trim().length === 0) return 'Project folder name cannot be empty.'
+        if (existsSync(resolve(process.cwd(), val))) return `Directory "${val}" already exists.`
+      }
+    })
+
+    if (isCancel(targetDirInput)) {
+      cancel('Setup cancelled.')
+      process.exit(0)
+    }
+
+    // 2. Store Name
+    storeName = await text({
+      message: 'What is your store brand name?',
+      placeholder: 'فروشگاه ریحان',
+      defaultValue: 'فروشگاه ریحان'
+    })
+    if (isCancel(storeName)) { cancel('Setup cancelled.'); process.exit(0); }
+
+    // 3. Theme Preset
+    themeColor = await select({
+      message: 'Select the primary brand color theme for Nuxt 4 Storefront:',
+      options: [
+        { value: 'emerald', label: 'Emerald (زمردی ریحان — تم امضا)', hint: 'Universal clean, fresh & modern' },
+        { value: 'indigo', label: 'Indigo (نیلی فناوری)', hint: 'Ideal for tech, electronics & modern retail' },
+        { value: 'rose', label: 'Rose (رز لوکس)', hint: 'Ideal for fashion, beauty & luxury goods' },
+        { value: 'violet', label: 'Violet (بنفش سلطنتی)', hint: 'Vibrant, creative & modern digital goods' },
+        { value: 'neutral', label: 'Zinc (تک‌رنگ مینیمال)', hint: 'Sleek monochrome minimal design' }
+      ],
+      initialValue: 'emerald'
+    })
+    if (isCancel(themeColor)) { cancel('Setup cancelled.'); process.exit(0); }
+
+    // 4. BYOD Database Configuration Notice
+    note(
+      `Reyhan adheres to BYOD (Bring Your Own Database).\n` +
+      `It connects to existing PostgreSQL & Redis servers via .env and does NOT install DB software locally.`,
+      pc.yellow('Database Architecture Notice')
+    )
+
+    dbHost = await text({
+      message: 'PostgreSQL Host:',
+      placeholder: '127.0.0.1',
+      defaultValue: '127.0.0.1'
+    })
+    if (isCancel(dbHost)) { cancel('Setup cancelled.'); process.exit(0); }
+
+    dbPort = await text({
+      message: 'PostgreSQL Port:',
+      placeholder: '5432',
+      defaultValue: '5432'
+    })
+    if (isCancel(dbPort)) { cancel('Setup cancelled.'); process.exit(0); }
+
+    dbName = await text({
+      message: 'PostgreSQL Database Name:',
+      placeholder: 'reyhan_db',
+      defaultValue: 'reyhan_db'
+    })
+    if (isCancel(dbName)) { cancel('Setup cancelled.'); process.exit(0); }
+
+    dbUser = await text({
+      message: 'PostgreSQL Username:',
+      placeholder: 'postgres',
+      defaultValue: 'postgres'
+    })
+    if (isCancel(dbUser)) { cancel('Setup cancelled.'); process.exit(0); }
+
+    dbPass = await password({
+      message: 'PostgreSQL Password (leave blank if none):',
+      mask: '*'
+    })
+    if (isCancel(dbPass)) { cancel('Setup cancelled.'); process.exit(0); }
+
+    redisHost = await text({
+      message: 'Redis Host:',
+      placeholder: '127.0.0.1',
+      defaultValue: '127.0.0.1'
+    })
+    if (isCancel(redisHost)) { cancel('Setup cancelled.'); process.exit(0); }
+
+    redisPort = await text({
+      message: 'Redis Port:',
+      placeholder: '6379',
+      defaultValue: '6379'
+    })
+    if (isCancel(redisPort)) { cancel('Setup cancelled.'); process.exit(0); }
+
+    shouldInitGit = await confirm({
+      message: 'Initialize a new Git repository?',
+      initialValue: true
+    })
+    if (isCancel(shouldInitGit)) { cancel('Setup cancelled.'); process.exit(0); }
+
+    shouldInstallDeps = await confirm({
+      message: 'Install dependencies and run initial migrations now?',
+      initialValue: true
+    })
+    if (isCancel(shouldInstallDeps)) { cancel('Setup cancelled.'); process.exit(0); }
   }
 
   const targetDir = resolve(process.cwd(), targetDirInput)
   const projectName = basename(targetDir)
 
-  // 2. Store Name
-  const storeName = await text({
-    message: 'What is your store brand name?',
-    placeholder: 'فروشگاه ریحان',
-    defaultValue: 'فروشگاه ریحان'
-  })
-
-  if (isCancel(storeName)) {
-    cancel('Setup cancelled.')
-    process.exit(0)
-  }
-
-  // 3. Theme Preset
-  const themeColor = await select({
-    message: 'Select the primary brand color theme for Nuxt 4 Storefront:',
-    options: [
-      { value: 'emerald', label: 'Emerald (زمردی ریحان — تم امضا)', hint: 'Ideal for cosmetics, organics & healthcare' },
-      { value: 'indigo', label: 'Indigo (نیلی فناوری)', hint: 'Ideal for tech, electronics & modern retail' },
-      { value: 'rose', label: 'Rose (رز لوکس)', hint: 'Ideal for fashion, beauty & luxury goods' },
-      { value: 'violet', label: 'Violet (بنفش سلطنتی)', hint: 'Vibrant, creative & modern digital goods' },
-      { value: 'neutral', label: 'Zinc (تک‌رنگ مینیمال)', hint: 'Sleek monochrome minimal design' }
-    ],
-    initialValue: 'emerald'
-  })
-
-  if (isCancel(themeColor)) {
-    cancel('Setup cancelled.')
-    process.exit(0)
-  }
-
-  // 4. BYOD Database Configuration Notice
-  note(
-    `Reyhan adheres to BYOD (Bring Your Own Database).\n` +
-    `It connects to existing PostgreSQL & Redis servers via .env and does NOT install DB software locally.`,
-    pc.yellow('Database Architecture Notice')
-  )
-
-  const dbHost = await text({
-    message: 'PostgreSQL Host:',
-    placeholder: '127.0.0.1',
-    defaultValue: '127.0.0.1'
-  })
-  if (isCancel(dbHost)) { cancel('Setup cancelled.'); process.exit(0); }
-
-  const dbPort = await text({
-    message: 'PostgreSQL Port:',
-    placeholder: '5432',
-    defaultValue: '5432'
-  })
-  if (isCancel(dbPort)) { cancel('Setup cancelled.'); process.exit(0); }
-
-  const dbName = await text({
-    message: 'PostgreSQL Database Name:',
-    placeholder: 'reyhan_db',
-    defaultValue: 'reyhan_db'
-  })
-  if (isCancel(dbName)) { cancel('Setup cancelled.'); process.exit(0); }
-
-  const dbUser = await text({
-    message: 'PostgreSQL Username:',
-    placeholder: 'postgres',
-    defaultValue: 'postgres'
-  })
-  if (isCancel(dbUser)) { cancel('Setup cancelled.'); process.exit(0); }
-
-  const dbPass = await password({
-    message: 'PostgreSQL Password (leave blank if none):',
-    mask: '*'
-  })
-  if (isCancel(dbPass)) { cancel('Setup cancelled.'); process.exit(0); }
-
-  const redisHost = await text({
-    message: 'Redis Host:',
-    placeholder: '127.0.0.1',
-    defaultValue: '127.0.0.1'
-  })
-  if (isCancel(redisHost)) { cancel('Setup cancelled.'); process.exit(0); }
-
-  const redisPort = await text({
-    message: 'Redis Port:',
-    placeholder: '6379',
-    defaultValue: '6379'
-  })
-  if (isCancel(redisPort)) { cancel('Setup cancelled.'); process.exit(0); }
-
-  const shouldInitGit = await confirm({
-    message: 'Initialize a new Git repository?',
-    initialValue: true
-  })
-  if (isCancel(shouldInitGit)) { cancel('Setup cancelled.'); process.exit(0); }
-
-  const shouldInstallDeps = await confirm({
-    message: 'Install dependencies and run initial migrations now?',
-    initialValue: true
-  })
-  if (isCancel(shouldInstallDeps)) { cancel('Setup cancelled.'); process.exit(0); }
-
-  // Scaffolding execution
   const s = spinner()
   s.start(pc.green('Scaffolding Reyhan full-stack monorepo...'))
 
@@ -239,6 +259,16 @@ MAIL_MAILER=log
 `
   writeFileSync(join(targetDir, 'backend/.env'), backendEnvContent, 'utf-8')
 
+  // Generate customized frontend/.env
+  const frontendEnvContent = `NODE_ENV=development
+PORT=3000
+HOST=0.0.0.0
+
+NUXT_PUBLIC_SITE_URL=http://localhost:3000
+NUXT_PUBLIC_API_BASE=http://localhost:8000/api/v1
+`
+  writeFileSync(join(targetDir, 'frontend/.env'), frontendEnvContent, 'utf-8')
+
   // Update frontend app.config.ts with store brand and theme color
   const appConfigPath = join(targetDir, 'frontend/app/app.config.ts')
   if (existsSync(appConfigPath)) {
@@ -253,7 +283,7 @@ MAIL_MAILER=log
   reyhan: {
     brand: {
       name: '${storeName}',
-      slogan: 'عطر و طراوت خرید هوشمند با ارسال سریع 🌿',
+      slogan: 'تجربه خرید آنلاین هوشمند، سریع و مطمئن ✨',
       logoUrl: '/icon.svg',
       faviconUrl: '/icon.svg'
     },
