@@ -1,56 +1,58 @@
-# Reyhan Commerce (ریحان) — راهنمای جامع معماری فریم‌ورک، توسعه‌پذیری و به‌روزرسانی
+# Reyhan Commerce — Framework Architecture, Extensibility & Lifecycle Guide
 
-این سند مرجع رسمی معماری پلتفرم فروشگاهی **Reyhan Commerce** به عنوان یک فریم‌ورک فروشگاهی فول‌استک و ماژولار مبتنی بر **Laravel 13 + Nuxt 4** است. در این معماری، کاربر یا توسعه‌دهنده بدون دستکاری در کدهای هسته (Core)، می‌تواند سیستم را تا حداکثر ممکن سفارشی کند و در عین حال به‌روزرسانی‌های مرکزی را با یک فرمان دریافت نماید.
+This document is the official architectural specification for the **Reyhan Commerce Framework** — an enterprise-scale, full-stack, headless, and modular e-commerce engine.
+
+The core design principle of Reyhan is **Zero Core Modification with Sovereign Customizability**: developers can fully customize models, business workflows, storefront components, and admin panels without altering core files, ensuring seamless zero-breaking updates via a single CLI command.
 
 ---
 
-## ۱. ساختار کلان جداسازی هسته از لایه کاربری (Core vs. User Land)
+## 1. High-Level Core vs. User Land Segregation
 
 ```text
 reyhan-store/
-├── version.json                     # منیفست مرکزی نسخه‌بندی معنایی (SemVer)
-├── reyhan                           # ابزار ارکستراتور CLI خط فرمان پروژه
-├── backend/                         # اپلیکیشن بک‌اند (Laravel 13)
-│   ├── config/reyhan.php            # رجیستری مدل‌ها، پایپ‌لاین‌ها و افزونه‌ها
-│   ├── extensions/                  # پوشه اختصاصی ماژول‌ها و پکیج‌های کاستوم کاربر
+├── version.json                     # Central Semantic Versioning Manifest (SemVer)
+├── reyhan                           # Central Executable CLI Orchestrator
+│
+├── backend/                         # Headless Commerce Engine
+│   ├── config/reyhan.php            # Dynamic Model Registries, Drivers & Pipelines
+│   ├── extensions/                  # Modular User Plugins (auto-discovered via module.json)
 │   └── app/
 │       ├── Support/
-│       │   ├── Reyhan.php           # فاساد حل پویا و تعویض مدل‌های هسته
-│       │   └── Modules/             # موتور کشف و بارگذاری خودکار ماژول‌ها
+│       │   ├── Reyhan.php           # Central Dynamic Model Resolver Facade
+│       │   └── Modules/             # Automatic Extension Discovery Engine
 │       └── Console/Commands/
 │           ├── ReyhanVersionCommand.php   # php artisan reyhan:version
 │           ├── ReyhanDoctorCommand.php    # php artisan reyhan:doctor
 │           ├── ReyhanInstallCommand.php   # php artisan reyhan:install
 │           └── ReyhanUpdateCommand.php    # php artisan reyhan:update
 │
-└── frontend/                        # اپلیکیشن فرانت‌اند (Nuxt 4 + Nuxt UI)
+└── frontend/                        # Reactive Storefront Engine
     ├── app/
-    │   ├── app.config.ts            # تنظیمات هویت برند، هدر، فوتر و تم ریحان
-    │   ├── locales/                 # دیکشنری‌های ترجمه (fa.json, en.json)
-    │   ├── composables/
-    │   │   └── useShopLocale.ts     # هوک بومی ترجمه با قابلیت بازنویسی در کانفیگ
-    │   ├── layouts/                 # لایوت‌های قابل بازنویسی
-    │   ├── pages/                   # صفحات قابل بازنویسی
-    │   └── components/              # کامپوننت‌های قابل بازنویسی
-    └── nuxt.config.ts               # پشتیبانی از ماژول‌ها و پلاگین‌های کاستوم کاربر
+    │   ├── app.config.ts            # Brand Identity, Theming & UI Tokens
+    │   ├── locales/                 # Localization Dictionaries (en.json, fa.json)
+    │   ├── composables/             # Reactive Storefront Hooks
+    │   ├── layouts/                 # Cascading User-Land Layout Overrides
+    │   ├── pages/                   # Cascading User-Land Route Overrides
+    │   └── components/              # Cascading User-Land Component Overrides
+    └── nuxt.config.ts               # Storefront Layer Configuration & Module Bindings
 ```
 
 ---
 
-## ۲. خط مشی زیرساخت داده: اتصال به دیتابیس و ردیس صرفاً از طریق `.env` (BYOD)
+## 2. Infrastructure Standard: BYOD (Bring Your Own Database)
 
 > [!IMPORTANT]
-> فریم‌ورک **Reyhan به هیچ عنوان سرور دیتابیس یا ردیس را خودکار نصب نمی‌کند**. این فریم‌ورک از الگوی **BYOD (Bring Your Own Database)** پیروی می‌کند.
+> **Reyhan Commerce strictly adheres to the Bring Your Own Database (BYOD) standard**. The framework does not install local database or Redis daemons.
 
-1. **الزام قطعی PostgreSQL و Redis:**
-   - سیستم برای عملیات‌های پیچیده تجارت الکترونیک (مثل شاخص‌های `GIN`، جستجوی سه‌حرفی `pg_trgm`، فیلدهای `JSONB`، قفل‌های همزمانی انبار، صف‌های بلادرنگ `Horizon` و پایش `Pulse`) **حتماً و منحصراً به PostgreSQL 17+ و Redis 7+** نیاز دارد.
-2. **اتصال مستقل بدون بسته‌بندی محلی:**
-   - کاربر اطلاعات اتصال دیتابیس و ردیس موجود خود را در فایل `.env` وارد می‌کند:
+1. **Mandatory PostgreSQL 17+ and Redis 7+:**
+   - Enterprise commerce capabilities—including `GIN` indexes, `pg_trgm` fuzzy text matching, `JSONB` variant matrices, concurrency stock mutexes, `Horizon` queues, and `Pulse` performance telemetry—rely strictly on PostgreSQL 17+ and Redis 7+.
+2. **Clean Environment Isolation:**
+   - Database and cache connections are configured entirely via `backend/.env`:
      ```ini
      DB_CONNECTION=pgsql
      DB_HOST=127.0.0.1
      DB_PORT=5432
-     DB_DATABASE=reyhan_db
+     DB_DATABASE=reyhan_commerce
      DB_USERNAME=postgres
      DB_PASSWORD=secret
 
@@ -58,73 +60,73 @@ reyhan-store/
      REDIS_PORT=6379
      REDIS_PASSWORD=null
      ```
-3. **راستی‌آزمایی با دستور Doctor:**
-   - دستور `./reyhan doctor` با بررسی آدرس و پورت ثبت‌شده در `.env` صحت اتصال به دیتابیس و پینگ ردیس را ارزیابی کرده و در صورت عدم برقراری ارتباط، راهنمایی اصلاح مشخصات را نمایش می‌دهد.
+3. **Automated Diagnostic Verification:**
+   - The `./reyhan doctor` command evaluates live TCP connections, latency, and read/write permissions before any installation or deployment.
 
 ---
 
-## ۳. نصب سریع پروژه جدید با ابزار تعاملی (`npx create-reyhan`)
+## 3. Scaffolding New Stores (`create-reyhan`)
 
-برای آغاز یک فروشگاه جدید بدون نیاز به کلون دستی یا نصب ابزارهای سراسری، از اینستالر مدرن NPX استفاده می‌شود:
+To create a brand-new store without manual cloning:
 
 ```bash
 npx create-reyhan@latest my-store
-# یا
+# or with pnpm
 pnpm create reyhan my-store
 ```
 
 ---
 
-## ۴. ابزار ارکستراتور مرکزی CLI (`./reyhan`)
+## 4. Central Orchestrator CLI (`./reyhan`)
 
-یک اسکریپت اجرایی جامع در ریشه پروژه قرار دارد که تمام عملیات‌های نصب، بررسی سلامت، ارتقا و اجرای محیط توسعه را به صورت استاندارد یکپارچه می‌کند:
+An executable orchestrator in the project root streamlines all lifecycle operations:
 
 ```bash
-# مشاهده ماتریس نسخه‌ها و وضعیت وابستگی‌ها
+# View full version matrix and active extensions
 ./reyhan version
 
-# اجرای آزمون جامع سلامت سیستم (PHP، دیتابیس، ردیس، پرمیشن‌ها، نود و پکیج منیجر)
+# Run deep health diagnostics (PHP, PostgreSQL, Redis, Permissions, Node)
 ./reyhan doctor
 
-# نصب و آماده‌سازی خودکار دیتابیس، کلیدها، میگریشن‌ها و فرانت‌اند (محیط توسعه)
+# Run local development installer (Migrations, Keys, Seeders, Symlinks)
 ./reyhan install
 
-# نصب روی سرور لایو و VPS از طریق داکر و Caddy
+# Run containerized production installer (Docker, Octane, Caddy SSL)
 ./reyhan install --prod
 
-# اجرای به‌روزرسانی بدون قطعی، پشتیبان‌گیری، ارتقای فیلامنت و بهینه‌سازی کش
+# Execute zero-downtime update with automated backup
 ./reyhan update
 
-# اجرای همزمان سرور بک‌اند و فرانت‌اند در محیط لوکال
+# Concurrently boot backend API and frontend storefront dev servers
 ./reyhan dev
 ```
 
 ---
 
-## ۵. دستورات رسمی Artisan در بک‌اند (`reyhan:*`)
+## 5. Official Artisan Commands (`reyhan:*`)
 
-| دستور | شرح عملکرد |
+| Command | Operational Purpose |
 | :--- | :--- |
-| `php artisan reyhan:version` | نمایش جدول ماتریس نسخه‌های هسته، ناکست ۴، لاراول، فیلامنت و افزونه‌های فعال |
-| `php artisan reyhan:doctor` | عیب‌یابی عمیق اکستنشن‌های PHP، اتصال PostgreSQL، اتصال Redis، دسترسی فولدرها و سیم‌لینک |
-| `php artisan reyhan:install` | راه‌اندازی، تولید کلید، اجرای امن میگریشن‌ها، سیدرها، سیم‌لینک و کش‌ها |
-| `php artisan reyhan:update` | چرخه امن آپدیت هسته با پشتیبان‌گیری خودکار دیتابیس و ری‌لود داغ Octane |
+| `php artisan reyhan:version` | Renders a structured version matrix of Core, PHP, Database, and Active Extensions |
+| `php artisan reyhan:doctor` | Evaluates PHP C-extensions, PostgreSQL connection, Redis latency, and symlinks |
+| `php artisan reyhan:install` | Generates encryption keys, runs idempotent migrations, seeds data, and builds assets |
+| `php artisan reyhan:update` | Triggers pre-update DB snapshot, runs migrations, upgrades admin UI, and sends Octane reload |
 
 ---
 
-## ۶. استانداردهای سفارشی‌سازی فرانت‌اند (Nuxt 4 Layer)
+## 6. Storefront Customization Standards
 
-کاربر بدون تغییر کدهای هسته، در سطوح زیر دسترسی کامل به شخصی‌سازی دارد:
+User-land customizations are completely decoupled from core frontend files:
 
-### الف) بازنویسی کامپوننت‌ها (Component Overriding)
-اگر کاربر کامپوننتی با همان نام هسته در پوشه `frontend/app/components/` قرار دهد (مثلاً `ProductCard.vue` یا `PriceTag.vue`)، ناکست ۴ به صورت بومی و خودکار نسخه کاربر را جایگزین هسته می‌کند.
+### A. Cascading Component Overrides
+Placing a Vue component in `frontend/app/components/` with the same name as a core component (e.g. `ProductCard.vue` or `PriceTag.vue`) automatically replaces the default implementation during compilation and SSR.
 
-### ب) بازنویسی لایوت‌ها و صفحات (Layouts & Pages Overriding)
-- لایوت‌های فروشگاه مانند `layouts/default.vue` یا `layouts/checkout.vue` با ایجاد فایل همنام در پوشه `app/layouts/` پروژه کاربر بازنویسی می‌شوند.
-- افزودن صفحات جدید (مانند `/about` یا `/rules`) با ایجاد فایل درون `app/pages/` انجام می‌پذیرد.
+### B. Layouts and Pages Overrides
+- Core storefront layouts (e.g. `layouts/default.vue`, `layouts/checkout.vue`) are overridden by creating the same file inside `frontend/app/layouts/`.
+- Custom routes (e.g. `/brand-story`, `/faq`) are added simply by creating files inside `frontend/app/pages/`.
 
-### ج) تنظیمات هویت، برند و ظاهر در `app.config.ts`
-بدون نیاز به کدنویسی، مقادیر برندینگ، شعار، لوگو، متن اعلان بالای سایت، رنگ‌بندی اولیه و ثانویه در `app.config.ts` قابل تنظیم هستند:
+### C. Token-Driven Branding (`app.config.ts`)
+Brand name, logos, primary/neutral color palettes, and top announcement bars are configured declaratively in `frontend/app/app.config.ts`:
 
 ```ts
 export default defineAppConfig({
@@ -133,14 +135,14 @@ export default defineAppConfig({
   },
   reyhan: {
     brand: {
-      name: 'فروشگاه ریحان',
-      slogan: 'عطر و طراوت خرید هوشمند با ارسال سریع 🌿',
+      name: 'Reyhan Store',
+      slogan: 'Pure Elegance, Fast Delivery 🌿',
       logoUrl: '/icon.svg'
     },
     header: {
       announcementBar: {
         enabled: true,
-        text: 'ارسال رایگان برای خریدهای بالای ۱ میلیون تومان ✨',
+        text: '✨ Free express shipping on orders over $50!',
         link: '/faq'
       }
     }
@@ -150,30 +152,46 @@ export default defineAppConfig({
 
 ---
 
-## ۷. استانداردهای سفارشی‌سازی بک‌اند (Laravel 13 Engine)
+## 7. Backend Domain Customization Standards
 
-### الف) تعویض مدل‌ها (Dynamic Model Swapping)
-هسته برای همه فرایندها مدل‌ها را از طریق کلاس `App\Support\Reyhan::model('product')` فراخوانی می‌کند.
-کاربر می‌تواند در `backend/config/reyhan.php` مدل‌های اختصاصی خود را متصل کند:
+### A. Dynamic Model Swapping (`Reyhan::model()`)
+Core actions never hardcode concrete model classes. All models are resolved dynamically:
+
+```php
+use App\Support\Reyhan;
+
+$productClass = Reyhan::model('product');
+$product = $productClass::where('slug', $slug)->firstOrFail();
+```
+
+To register a custom model subclass, configure `backend/config/reyhan.php`:
+
 ```php
 'models' => [
     'product' => \App\Models\CustomProduct::class,
 ],
 ```
 
-### ب) سیستم ماژولار و افزونه‌های مستقل (User Extensions Directory)
-کاربر برای افزودن امکانات اختصاصی خود کافی است در مسیر `backend/extensions/` یک پوشه ایجاد کند و ماژول خود را همراه با `module.json` مستقر کند. موتور `ModuleManager` آن را به صورت خودکار فعال می‌کند.
+### B. Modular Extensions Subsystem (`backend/extensions/`)
+Custom business domains, shipping carriers, and third-party integrations live inside isolated subfolders under `backend/extensions/` accompanied by a `module.json` manifest. The `ModuleManager` auto-discovers and registers service providers, routes, and migrations at boot.
 
 ---
 
-## ۸. سیستم مدیریت نسخه و به‌روزرسانی امن (SemVer & Updates)
+## 8. Semantic Versioning & Safe Updates
 
-1. نسخه کلی سیستم در فایل ریشه `version.json` با متدولوژی **Semantic Versioning** کنترل می‌شود.
-2. با اجرای فرمان `./reyhan update` عملیات زیر به ترتیب و بدون توقف سرویس انجام می‌شود:
-   - تست سلامت دیتابیس
-   - ایجاد پشتیبان امن از PostgreSQL قبل از آپدیت
-   - اجرای میگریشن‌های جدید (`php artisan migrate --force`)
-   - بازسازی آیکون‌ها و کامپوننت‌های فیلامنت (`php artisan filament:upgrade`)
-   - پاکسازی و بهینه‌سازی کش روت‌ها، ویوها و تنظیمات
-   - ری‌لود بدون قطعی ورکر‌های FrankenPHP Octane
-   - هماهنگ‌سازی تایپ‌های Nuxt 4 در فرانت‌اند
+1. Framework releases are tracked via the root `version.json` file using **Semantic Versioning (SemVer)**.
+2. Executing `./reyhan update` executes a non-breaking rolling update sequence:
+   - Pre-flight database connectivity check
+   - Automated compressed PostgreSQL snapshot via `spatie/laravel-backup`
+   - Execution of new database migrations (`php artisan migrate --force`)
+   - Asset compilation & Filament admin upgrades (`php artisan filament:upgrade`)
+   - Route, config, and view cache optimization
+   - Zero-downtime graceful worker reload (`FrankenPHP Octane`)
+   - Synchronized storefront type checking
+
+---
+
+## 9. Official Documentation Website
+
+For complete step-by-step guides, API contracts, and tutorials, visit the official live documentation:
+👉 [**https://reyhan-commerce.github.io/docs/**](https://reyhan-commerce.github.io/docs/)
