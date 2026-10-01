@@ -74,14 +74,26 @@ final class VerifyPaymentAction
             );
         }
 
-        // Database updates inside transaction
-        DB::transaction(function () use ($payment, $verifyResult): void {
-            $order = $payment->order;
-            if (! $order) {
-                return;
+        // Database updates inside transaction with pessimistic locking
+        $order = DB::transaction(function () use ($payment, $verifyResult): ?\App\Models\Order {
+            // Lock payment record for concurrency safety
+            /** @var Payment $lockedPayment */
+            $lockedPayment = Payment::where('id', $payment->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($lockedPayment->status === PaymentStatus::Success) {
+                return $lockedPayment->order;
             }
 
-            // Tier 2 Pessimistic Database Concurrency Locking
+            $order = $lockedPayment->order;
+            if (! $order) {
+                return null;
+            }
+
+            $order->loadMissing('items');
+
+            // Tier 2 Pessimistic Database Concurrency Locking & Stock Settlement
             foreach ($order->items as $item) {
                 /** @var ProductVariant|null $variant */
                 $variant = ProductVariant::where('id', $item->product_variant_id)
@@ -90,11 +102,13 @@ final class VerifyPaymentAction
 
                 if ($variant) {
                     $variant->decrement('stock', $item->quantity);
+                    // Commit/Release Redis reservation (Tier 1 -> Tier 2 transition)
+                    $this->stockReservationService->commit($variant->id, $item->quantity, "order_{$order->id}");
                 }
             }
 
             // Update Payment record
-            $payment->update([
+            $lockedPayment->update([
                 'status' => PaymentStatus::Success,
                 'reference_id' => $verifyResult->referenceId,
                 'tracking_code' => $verifyResult->trackingCode,
@@ -117,9 +131,11 @@ final class VerifyPaymentAction
                 $userCart = $this->cartService->resolveCart($order->user);
                 $this->cartService->clearCart($userCart);
             }
+
+            return $order;
         });
 
-        $order = $payment->order;
+        $order = $order ?? $payment->order;
         $orderNumber = $order ? $order->order_number : '';
         $userMobile = $order?->user?->mobile;
 

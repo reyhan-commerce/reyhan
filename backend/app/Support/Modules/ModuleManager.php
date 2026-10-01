@@ -71,17 +71,17 @@ final class ModuleManager
             }
         }
 
+        $pascalName = str_replace(['-', '_'], '', ucwords($id, '-_'));
+        $srcDirectory = $directory.'/src';
+
+        // 1. Dynamic PSR-4 Autoloader Registration
+        self::registerExtensionPsr4Autoload($id, $pascalName, $directory, $composerFile, $manifestFile);
+
         // Conventional fallback: Check for ExtensionNameServiceProvider in src/
         if (! $providerClass) {
-            $pascalName = str_replace(['-', '_'], '', ucwords($id, '-_'));
-            $conventionalProviderPath = $directory."/src/{$pascalName}ServiceProvider.php";
             $conventionalClass = "Extensions\\{$pascalName}\\{$pascalName}ServiceProvider";
-
-            if (File::exists($conventionalProviderPath)) {
-                require_once $conventionalProviderPath;
-                if (class_exists($conventionalClass)) {
-                    $providerClass = $conventionalClass;
-                }
+            if (class_exists($conventionalClass)) {
+                $providerClass = $conventionalClass;
             }
         }
 
@@ -101,6 +101,60 @@ final class ModuleManager
                     'exception' => $e,
                 ]);
             }
+        }
+    }
+
+    /**
+     * Dynamically register extension PSR-4 namespaces into Composer ClassLoader.
+     */
+    private static function registerExtensionPsr4Autoload(
+        string $id,
+        string $pascalName,
+        string $directory,
+        string $composerFile,
+        string $manifestFile
+    ): void {
+        static $composerLoader = null;
+
+        if ($composerLoader === null) {
+            $autoloaders = spl_autoload_functions() ?: [];
+            foreach ($autoloaders as $autoloader) {
+                if (is_array($autoloader) && isset($autoloader[0]) && $autoloader[0] instanceof \Composer\Autoload\ClassLoader) {
+                    $composerLoader = $autoloader[0];
+                    break;
+                }
+            }
+        }
+
+        if (! $composerLoader) {
+            return;
+        }
+
+        $registered = false;
+
+        if (File::exists($composerFile)) {
+            $composer = json_decode(File::get($composerFile), true);
+            if (is_array($composer) && isset($composer['autoload']['psr-4']) && is_array($composer['autoload']['psr-4'])) {
+                foreach ($composer['autoload']['psr-4'] as $prefix => $path) {
+                    $composerLoader->addPsr4($prefix, $directory.'/'.ltrim((string) $path, '/'));
+                    $registered = true;
+                }
+            }
+        }
+
+        if (File::exists($manifestFile)) {
+            $manifest = json_decode(File::get($manifestFile), true);
+            if (is_array($manifest) && ! empty($manifest['namespace'])) {
+                $prefix = rtrim((string) $manifest['namespace'], '\\').'\\';
+                $srcPath = $directory.'/'.ltrim((string) ($manifest['src'] ?? 'src'), '/');
+                $composerLoader->addPsr4($prefix, $srcPath);
+                $registered = true;
+            }
+        }
+
+        if (! $registered) {
+            // Default PSR-4 mapping: Extensions\<PascalName>\ -> extensions/<id>/src
+            $composerLoader->addPsr4("Extensions\\{$pascalName}\\", $directory.'/src');
         }
     }
 

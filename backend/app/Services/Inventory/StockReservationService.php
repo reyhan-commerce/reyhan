@@ -12,11 +12,34 @@ class StockReservationService
     public const int DEFAULT_TTL = 900; // 15 minutes in seconds
 
     /**
-     * Get available stock taking into account currently reserved items in Redis.
+     * Get available stock taking into account currently active reserved items in Redis.
      */
     public function getAvailableStock(ProductVariant $variant): int
     {
-        $reserved = (int) Redis::get($this->variantReservedKey($variant->id));
+        $key = $this->variantReservationsKey($variant->id);
+        $now = time();
+
+        $lua = <<<'LUA'
+            local key = KEYS[1]
+            local now = tonumber(ARGV[1])
+
+            -- Purge any expired reservations
+            redis.call('ZREMRANGEBYSCORE', key, '-inf', now)
+
+            local members = redis.call('ZRANGE', key, 0, -1)
+            local totalReserved = 0
+
+            for _, member in ipairs(members) do
+                local _, qty = string.match(member, "^([^:]+):(%d+)$")
+                if qty then
+                    totalReserved = totalReserved + tonumber(qty)
+                end
+            end
+
+            return totalReserved
+        LUA;
+
+        $reserved = (int) Redis::connection()->command('eval', [$lua, [$key, $now], 1]);
 
         return max(0, $variant->stock - $reserved);
     }
@@ -35,30 +58,46 @@ class StockReservationService
             return false;
         }
 
-        $reservedKey = $this->variantReservedKey($variantId);
-        $reservationKey = $this->reservationItemKey($reservationId, $variantId);
+        $key = $this->variantReservationsKey($variantId);
+        $now = time();
+        $expireAt = $now + $ttlSeconds;
+        $member = "{$reservationId}:{$quantity}";
 
-        // Atomic Lua script to check availability and reserve
+        // Atomic Lua script to purge expired, check available stock, and add reservation
         $lua = <<<'LUA'
-            local reservedKey = KEYS[1]
-            local reservationKey = KEYS[2]
+            local key = KEYS[1]
             local maxStock = tonumber(ARGV[1])
             local requestedQty = tonumber(ARGV[2])
-            local ttl = tonumber(ARGV[3])
+            local now = tonumber(ARGV[3])
+            local expireAt = tonumber(ARGV[4])
+            local member = ARGV[5]
 
-            local currentReserved = tonumber(redis.call('GET', reservedKey) or 0)
-            local available = maxStock - currentReserved
+            -- 1. Purge expired reservations
+            redis.call('ZREMRANGEBYSCORE', key, '-inf', now)
 
+            -- 2. Calculate currently active reservations
+            local members = redis.call('ZRANGE', key, 0, -1)
+            local totalReserved = 0
+
+            for _, m in ipairs(members) do
+                local _, qty = string.match(m, "^([^:]+):(%d+)$")
+                if qty then
+                    totalReserved = totalReserved + tonumber(qty)
+                end
+            end
+
+            local available = maxStock - totalReserved
+
+            -- 3. Reserve if available
             if available >= requestedQty then
-                redis.call('INCRBY', reservedKey, requestedQty)
-                redis.call('SETEX', reservationKey, ttl, requestedQty)
+                redis.call('ZADD', key, expireAt, member)
                 return 1
             else
                 return 0
             end
         LUA;
 
-        $result = Redis::connection()->command('eval', [$lua, [$reservedKey, $reservationKey, $variant->stock, $quantity, $ttlSeconds], 2]);
+        $result = Redis::connection()->command('eval', [$lua, [$key, $variant->stock, $quantity, $now, $expireAt, $member], 1]);
 
         return (bool) $result;
     }
@@ -68,42 +107,44 @@ class StockReservationService
      */
     public function release(int $variantId, int $quantity, string $reservationId): void
     {
-        $reservedKey = $this->variantReservedKey($variantId);
-        $reservationKey = $this->reservationItemKey($reservationId, $variantId);
+        $key = $this->variantReservationsKey($variantId);
+        $member = "{$reservationId}:{$quantity}";
 
         $lua = <<<'LUA'
-            local reservedKey = KEYS[1]
-            local reservationKey = KEYS[2]
-            local qty = tonumber(ARGV[1])
+            local key = KEYS[1]
+            local targetReservationId = ARGV[1]
+            local explicitMember = ARGV[2]
 
-            redis.call('DEL', reservationKey)
-            local current = tonumber(redis.call('GET', reservedKey) or 0)
-            if current > 0 then
-                local newReserved = math.max(0, current - qty)
-                redis.call('SET', reservedKey, newReserved)
+            -- First try direct removal
+            if redis.call('ZREM', key, explicitMember) == 0 then
+                -- Fallback: find and remove any member with matching reservationId prefix
+                local members = redis.call('ZRANGE', key, 0, -1)
+                for _, m in ipairs(members) do
+                    local resId, _ = string.match(m, "^([^:]+):(%d+)$")
+                    if resId == targetReservationId then
+                        redis.call('ZREM', key, m)
+                    end
+                end
             end
+
             return 1
         LUA;
 
-        Redis::connection()->command('eval', [$lua, [$reservedKey, $reservationKey, $quantity], 2]);
+        Redis::connection()->command('eval', [$lua, [$key, $reservationId, $member], 1]);
     }
 
     /**
      * Commit a reservation after successful payment (Tier 2).
-     * Clears the Redis reservation counter because DB stock is now decremented.
+     * Clears the Redis reservation item because DB stock is now permanently decremented.
      */
     public function commit(int $variantId, int $quantity, string $reservationId): void
     {
         $this->release($variantId, $quantity, $reservationId);
     }
 
-    protected function variantReservedKey(int $variantId): string
+    protected function variantReservationsKey(int $variantId): string
     {
-        return "inventory:reserved:{$variantId}";
-    }
-
-    protected function reservationItemKey(string $reservationId, int $variantId): string
-    {
-        return "inventory:reservation:{$reservationId}:{$variantId}";
+        return "inventory:reservations:{$variantId}";
     }
 }
+

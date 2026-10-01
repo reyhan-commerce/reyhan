@@ -461,59 +461,18 @@ class OrderResource extends Resource
                         $isApproved = ($data['decision'] ?? '') === 'approve';
                         $notes = trim((string) ($data['admin_notes'] ?? ''));
 
-                        DB::transaction(function () use ($record, $receipt, $isApproved, $notes): void {
-                            $receipt->update([
-                                'status' => $isApproved ? 'approved' : 'rejected',
-                                'reviewed_by' => auth()->id(),
-                                'reviewed_at' => now(),
-                                'admin_notes' => $notes,
-                            ]);
-
-                            if ($isApproved) {
-                                // Tier 2 Pessimistic Database Concurrency Locking for variant stock
-                                $record->loadMissing('items');
-                                foreach ($record->items as $item) {
-                                    /** @var ProductVariant|null $variant */
-                                    $variant = ProductVariant::where('id', $item->product_variant_id)
-                                        ->lockForUpdate()
-                                        ->first();
-
-                                    if ($variant) {
-                                        $variant->decrement('stock', $item->quantity);
-                                    }
-                                }
-
-                                $record->update([
-                                    'status' => OrderStatus::Processing,
-                                    'paid_at' => now(),
-                                ]);
-
-                                $payment = $record->payments()->latest()->first();
-                                if ($payment) {
-                                    $payment->update([
-                                        'status' => PaymentStatus::Success,
-                                        'paid_at' => now(),
-                                        'reference_id' => $receipt->tracking_number,
-                                    ]);
-                                } else {
-                                    $record->payments()->create([
-                                        'user_id' => $record->user_id,
-                                        'amount' => $receipt->amount,
-                                        'gateway' => PaymentGateway::CardToCard,
-                                        'status' => PaymentStatus::Success,
-                                        'reference_id' => $receipt->tracking_number,
-                                        'paid_at' => now(),
-                                    ]);
-                                }
-                            }
-                        });
-
                         if ($isApproved) {
+                            app(\App\Actions\Orders\ApproveCardTransferReceiptAction::class)
+                                ->execute($record, $receipt, auth()->id(), $notes ?: null);
+
                             Notification::make()
                                 ->title('فیش واریزی با موفقیت تأیید شد، موجودی انبار کسر گردید و سفارش به در حال پردازش تغییر یافت')
                                 ->success()
                                 ->send();
                         } else {
+                            app(\App\Actions\Orders\RejectCardTransferReceiptAction::class)
+                                ->execute($record, $receipt, auth()->id(), $notes ?: null);
+
                             Notification::make()
                                 ->title('فیش واریزی رد شد')
                                 ->warning()
