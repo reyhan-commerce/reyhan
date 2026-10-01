@@ -1,197 +1,151 @@
-# Reyhan Commerce — Framework Architecture, Extensibility & Lifecycle Guide
+# 🌿 Reyhan Commerce — Framework Architecture & Extensibility Specification
 
-This document is the official architectural specification for the **Reyhan Commerce Framework** — an enterprise-scale, full-stack, headless, and modular e-commerce engine.
-
-The core design principle of Reyhan is **Zero Core Modification with Sovereign Customizability**: developers can fully customize models, business workflows, storefront components, and admin panels without altering core files, ensuring seamless zero-breaking updates via a single CLI command.
+This document is the official architectural specification for the **Reyhan Commerce Framework** — an enterprise-grade, full-stack, headless, and modular e-commerce engine designed for high concurrency, sovereign customizability, and seamless zero-breaking updates.
 
 ---
 
-## 1. High-Level Core vs. User Land Segregation
+## 🏛️ 1. Framework Monorepo & Package Architecture
+
+Reyhan is organized as a modular monorepo distributing standalone, reusable packages alongside reference implementations:
 
 ```text
-reyhan-store/
-├── version.json                     # Central Semantic Versioning Manifest (SemVer)
-├── reyhan                           # Central Executable CLI Orchestrator
+reyhan/
+├── packages/
+│   ├── core/                        # 🟢 Laravel Engine: reyhan-commerce/core
+│   │   ├── src/
+│   │   │   ├── Actions/             # Domain actions (Checkout, Payment, Orders, Wishlist)
+│   │   │   ├── Contracts/Models/    # Domain interfaces (OrderContract, ProductContract, ...)
+│   │   │   ├── Data/                # Strongly-typed DTOs (Spatie Laravel Data)
+│   │   │   ├── Models/              # Native Eloquent entities (swappable via Reyhan::model())
+│   │   │   ├── Services/            # Inventory, Pricing, Otp, Sms, Payment Manager
+│   │   │   └── Support/Modules/     # Dynamic PSR-4 extension loader
+│   │   ├── database/migrations/     # PostgreSQL 17 JSONB schemas & GIN indices
+│   │   └── composer.json            # Package metadata & provider auto-discovery
+│   │
+│   ├── storefront/                  # 🎨 Nuxt 4 Layer: @reyhan-commerce/storefront
+│   │   ├── app/
+│   │   │   ├── components/          # Cascading e-commerce UI components (Nuxt UI + Tailwind 4)
+│   │   │   ├── composables/         # Reactive hooks (useShopLocale, useApi, usePersian)
+│   │   │   ├── layouts/             # Default, checkout, invoice layouts
+│   │   │   ├── pages/               # Catalog, PDP, Checkout, Profile, Wishlist, RMA
+│   │   │   └── stores/              # Pinia state stores (cart, auth, checkout, catalog)
+│   │   ├── nuxt.config.ts           # Storefront layer configuration
+│   │   └── package.json             # NPM package specification
+│   │
+│   └── create-reyhan/               # 🛠️ CLI Scaffolder: create-reyhan
+│       ├── bin/index.js             # Interactive Clack-powered CLI wizard
+│       └── package.json             # NPM executable package
 │
-├── backend/                         # Headless Commerce Engine
-│   ├── config/reyhan.php            # Dynamic Model Registries, Drivers & Pipelines
-│   ├── extensions/                  # Modular User Plugins (auto-discovered via module.json)
-│   └── app/
-│       ├── Support/
-│       │   ├── Reyhan.php           # Central Dynamic Model Resolver Facade
-│       │   └── Modules/             # Automatic Extension Discovery Engine
-│       └── Console/Commands/
-│           ├── ReyhanVersionCommand.php   # php artisan reyhan:version
-│           ├── ReyhanDoctorCommand.php    # php artisan reyhan:doctor
-│           ├── ReyhanInstallCommand.php   # php artisan reyhan:install
-│           └── ReyhanUpdateCommand.php    # php artisan reyhan:update
-│
-└── frontend/                        # Reactive Storefront Engine
-    ├── app/
-    │   ├── app.config.ts            # Brand Identity, Theming & UI Tokens
-    │   ├── locales/                 # Localization Dictionaries (en.json, fa.json)
-    │   ├── composables/             # Reactive Storefront Hooks
-    │   ├── layouts/                 # Cascading User-Land Layout Overrides
-    │   ├── pages/                   # Cascading User-Land Route Overrides
-    │   └── components/              # Cascading User-Land Component Overrides
-    └── nuxt.config.ts               # Storefront Layer Configuration & Module Bindings
+├── backend/                         # Reference Backend Application (Laravel 13 + Filament 5)
+├── frontend/                        # Reference Storefront Application (Nuxt 4 + Vue 3)
+└── docs/                            # Official Documentation Portal (VitePress)
 ```
 
 ---
 
-## 2. Infrastructure Standard: BYOD (Bring Your Own Database)
+## 🔒 2. Concurrency, Stock Locking & Financial Integrity
 
-> [!IMPORTANT]
-> **Reyhan Commerce strictly adheres to the Bring Your Own Database (BYOD) standard**. The framework does not install local database or Redis daemons.
+Reyhan implements a battle-tested **Two-Tier Concurrency Architecture**:
 
-1. **Mandatory PostgreSQL 17+ and Redis 7+:**
-   - Enterprise commerce capabilities—including `GIN` indexes, `pg_trgm` fuzzy text matching, `JSONB` variant matrices, concurrency stock mutexes, `Horizon` queues, and `Pulse` performance telemetry—rely strictly on PostgreSQL 17+ and Redis 7+.
-2. **Clean Environment Isolation:**
-   - Database and cache connections are configured entirely via `backend/.env`:
-     ```ini
-     DB_CONNECTION=pgsql
-     DB_HOST=127.0.0.1
-     DB_PORT=5432
-     DB_DATABASE=reyhan_commerce
-     DB_USERNAME=postgres
-     DB_PASSWORD=secret
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Customer
+    participant Storefront as Nuxt 4 Storefront
+    participant API as Laravel 13 Core
+    participant Redis as Redis 7 (ZSET)
+    participant DB as PostgreSQL 17
 
-     REDIS_HOST=127.0.0.1
-     REDIS_PORT=6379
-     REDIS_PASSWORD=null
-     ```
-3. **Automated Diagnostic Verification:**
-   - The `./reyhan doctor` command evaluates live TCP connections, latency, and read/write permissions before any installation or deployment.
-
----
-
-## 3. Scaffolding New Stores (`create-reyhan`)
-
-To create a brand-new store without manual cloning:
-
-```bash
-npx create-reyhan@latest my-store
-# or with pnpm
-pnpm create reyhan my-store
+    Customer->>Storefront: Click "Place Order & Pay"
+    Storefront->>API: POST /api/v1/checkout/create-order
+    API->>Redis: Atomic Lua: ZADD inventory:reservations:{id} (15m TTL)
+    API->>DB: DB::transaction -> Create Order & OrderItems (PendingPayment)
+    API-->>Storefront: Gateway Redirect URL
+    Customer->>Storefront: Complete Bank Payment & Return
+    Storefront->>API: POST /api/v1/payment/verify
+    Note over API,DB: lockForUpdate() on Payment & Order
+    API->>DB: DB::transaction -> Decrement DB Stock & Set Order Processing
+    API->>Redis: Atomic commit() -> Release Redis ZSET Reservation
+    API-->>Storefront: Payment Verified & Order Confirmed
 ```
 
----
-
-## 4. Central Orchestrator CLI (`./reyhan`)
-
-An executable orchestrator in the project root streamlines all lifecycle operations:
-
-```bash
-# View full version matrix and active extensions
-./reyhan version
-
-# Run deep health diagnostics (PHP, PostgreSQL, Redis, Permissions, Node)
-./reyhan doctor
-
-# Run local development installer (Migrations, Keys, Seeders, Symlinks)
-./reyhan install
-
-# Run containerized production installer (Docker, Octane, Caddy SSL)
-./reyhan install --prod
-
-# Execute zero-downtime update with automated backup
-./reyhan update
-
-# Concurrently boot backend API and frontend storefront dev servers
-./reyhan dev
-```
+1. **Tier 1 (Redis Sorted Sets with Self-Purging Expiration):**
+   - Stock reservations are stored as `member = "reservationId:quantity"` with `score = expireTimestamp`.
+   - Expired reservations are automatically pruned in every check and reservation call via atomic Lua scripts without leaving ghost locks.
+2. **Tier 2 (PostgreSQL Pessimistic Locking):**
+   - In `VerifyPaymentAction` and `ApproveCardTransferReceiptAction`, rows are locked using `lockForUpdate()` to eliminate race conditions, double-decrements, or duplicate verification webhooks.
+3. **Anti-Brute-Force OTP Protection:**
+   - OTP codes enforce a maximum of 5 verification attempts. Exceeding the threshold immediately invalidates the OTP token and triggers a 15-minute lockout period.
 
 ---
 
-## 5. Official Artisan Commands (`reyhan:*`)
+## 🧩 3. Sovereign Extensibility: Zero Core Modification
 
-| Command | Operational Purpose |
-| :--- | :--- |
-| `php artisan reyhan:version` | Renders a structured version matrix of Core, PHP, Database, and Active Extensions |
-| `php artisan reyhan:doctor` | Evaluates PHP C-extensions, PostgreSQL connection, Redis latency, and symlinks |
-| `php artisan reyhan:install` | Generates encryption keys, runs idempotent migrations, seeds data, and builds assets |
-| `php artisan reyhan:update` | Triggers pre-update DB snapshot, runs migrations, upgrades admin UI, and sends Octane reload |
+### A. Dynamic Model Swapping (`Reyhan::model()`)
+Core actions and services interact with Eloquent entities through contracts and the `Reyhan::model()` resolver. To override any core model:
+
+1. Create your custom model extending the base model:
+   ```php
+   namespace App\Models;
+
+   use App\Contracts\Models\OrderContract;
+   use App\Models\Order as BaseOrder;
+
+   class CustomOrder extends BaseOrder implements OrderContract
+   {
+       public function customLoyaltyPoints(): int
+       {
+           return (int) ($this->final_payable * 0.05);
+       }
+   }
+   ```
+2. Bind the custom class in `config/reyhan.php`:
+   ```php
+   'models' => [
+       'order' => \App\Models\CustomOrder::class,
+   ],
+   ```
+
+### B. Dynamic PSR-4 Plugin Architecture (`backend/extensions/`)
+Drop self-contained extensions inside `extensions/{plugin-name}/` with a `module.json` or `composer.json`. `ModuleManager` dynamically injects the extension namespace into Composer's `ClassLoader` and registers its `ServiceProvider` at runtime.
 
 ---
 
-## 6. Storefront Customization Standards
+## 🌐 4. Reactive Storefront Nuxt 4 Layer
 
-User-land customizations are completely decoupled from core frontend files:
-
-### A. Cascading Component Overrides
-Placing a Vue component in `frontend/app/components/` with the same name as a core component (e.g. `ProductCard.vue` or `PriceTag.vue`) automatically replaces the default implementation during compilation and SSR.
-
-### B. Layouts and Pages Overrides
-- Core storefront layouts (e.g. `layouts/default.vue`, `layouts/checkout.vue`) are overridden by creating the same file inside `frontend/app/layouts/`.
-- Custom routes (e.g. `/brand-story`, `/faq`) are added simply by creating files inside `frontend/app/pages/`.
-
-### C. Token-Driven Branding (`app.config.ts`)
-Brand name, logos, primary/neutral color palettes, and top announcement bars are configured declaratively in `frontend/app/app.config.ts`:
+Storefronts consume `@reyhan-commerce/storefront` as a Nuxt 4 Layer:
 
 ```ts
-export default defineAppConfig({
-  ui: {
-    colors: { primary: 'emerald', neutral: 'zinc' }
-  },
-  reyhan: {
-    brand: {
-      name: 'Reyhan Store',
-      slogan: 'Pure Elegance, Fast Delivery 🌿',
-      logoUrl: '/icon.svg'
-    },
-    header: {
-      announcementBar: {
-        enabled: true,
-        text: '✨ Free express shipping on orders over $50!',
-        link: '/faq'
-      }
+// frontend/nuxt.config.ts
+export default defineNuxtConfig({
+  extends: ['@reyhan-commerce/storefront'],
+  
+  // Custom store-specific overrides
+  app: {
+    head: {
+      title: 'My Custom Store'
     }
   }
 })
 ```
 
----
-
-## 7. Backend Domain Customization Standards
-
-### A. Dynamic Model Swapping (`Reyhan::model()`)
-Core actions never hardcode concrete model classes. All models are resolved dynamically:
-
-```php
-use App\Support\Reyhan;
-
-$productClass = Reyhan::model('product');
-$product = $productClass::where('slug', $slug)->firstOrFail();
-```
-
-To register a custom model subclass, configure `backend/config/reyhan.php`:
-
-```php
-'models' => [
-    'product' => \App\Models\CustomProduct::class,
-],
-```
-
-### B. Modular Extensions Subsystem (`backend/extensions/`)
-Custom business domains, shipping carriers, and third-party integrations live inside isolated subfolders under `backend/extensions/` accompanied by a `module.json` manifest. The `ModuleManager` auto-discovers and registers service providers, routes, and migrations at boot.
+- **Cascading Component Overrides:** Drop a component with the same name into `components/` to seamlessly override the core implementation.
+- **Dynamic Localization & RTL:** `useShopLocale` synchronizes HTML `dir="rtl"` / `dir="ltr"`, locale cookies, parameter interpolation (`{name}`), and API `Accept-Language` headers automatically.
 
 ---
 
-## 8. Semantic Versioning & Safe Updates
+## 🛠️ 5. Central CLI Orchestrator (`./reyhan`)
 
-1. Framework releases are tracked via the root `version.json` file using **Semantic Versioning (SemVer)**.
-2. Executing `./reyhan update` executes a non-breaking rolling update sequence:
-   - Pre-flight database connectivity check
-   - Automated compressed PostgreSQL snapshot via `spatie/laravel-backup`
-   - Execution of new database migrations (`php artisan migrate --force`)
-   - Asset compilation & Filament admin upgrades (`php artisan filament:upgrade`)
-   - Route, config, and view cache optimization
-   - Zero-downtime graceful worker reload (`FrankenPHP Octane`)
-   - Synchronized storefront type checking
+| Command | Purpose |
+| :--- | :--- |
+| `./reyhan doctor` | Deep diagnostic of PostgreSQL 17, Redis 7, PHP 8.4 extensions, and node environment |
+| `./reyhan install` | Local environment provisioning (Migrations, encryption keys, seeders, symlinks) |
+| `./reyhan install --prod` | Automated VPS production deployment (FrankenPHP Octane, Docker, Caddy SSL) |
+| `./reyhan update` | Safe rolling update: automated DB snapshot, migrations, filament upgrade, cache optimization |
+| `./reyhan dev` | Concurrent boot of backend API and Nuxt 4 storefront dev servers |
 
 ---
 
-## 9. Official Documentation Website
-
-For complete step-by-step guides, API contracts, and tutorials, visit the official live documentation:
-👉 [**https://reyhan-commerce.github.io/docs/**](https://reyhan-commerce.github.io/docs/)
+<div align="center">
+  <sub>Released under the MIT License. Copyright © 2026 Reyhan Commerce.</sub>
+</div>

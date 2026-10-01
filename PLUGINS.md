@@ -1,10 +1,51 @@
-# Filament Plugins & Extension Registry
+# 🔌 Reyhan Commerce — Filament & Modular Plugin System
 
-This document defines the official and community plugin registry for the **Filament 5 Admin Panel** in **Reyhan Commerce**, including active installed plugins, architectural guidelines, and future candidates.
+This document specifies the modular plugin and extension architecture for the **Reyhan Commerce Framework** — covering native Filament 5 admin panel extensions, drop-in user modules (`extensions/`), dynamic PSR-4 autoloading, and pipeline hooks.
 
 ---
 
-## 1. Active & Installed Plugins
+## 1. Modular Extensions Architecture (`backend/extensions/`)
+
+Reyhan enables complete modularity without requiring modifications to root `composer.json` or core framework files.
+
+```text
+backend/extensions/
+└── my-carrier-plugin/
+    ├── module.json                  # Manifest (id, name, version, namespace, provider)
+    ├── composer.json                # (Optional) Standalone composer manifest
+    ├── src/
+    │   ├── MyCarrierServiceProvider.php
+    │   ├── Actions/
+    │   ├── Filament/
+    │   └── Models/
+    └── routes/
+        └── api.php
+```
+
+### A. Manifest Specification (`module.json`)
+
+```json
+{
+  "id": "my-carrier",
+  "name": "My Custom Shipping Carrier",
+  "version": "1.0.0",
+  "namespace": "Extensions\\MyCarrier",
+  "provider": "Extensions\\MyCarrier\\MyCarrierServiceProvider",
+  "src": "src",
+  "enabled": true
+}
+```
+
+### B. Dynamic PSR-4 Autoloading Engine
+
+When Reyhan boots, `ModuleManager` scans `backend/extensions/` and:
+1. Dynamically injects the extension's namespace mapping into Composer's `ClassLoader` (`$composerLoader->addPsr4(...)`).
+2. Discovers and registers the extension's `ServiceProvider`.
+3. Loads extension routes, migrations, and event listeners seamlessly.
+
+---
+
+## 2. Active & Verified Core Filament 5 Plugins
 
 | Plugin Name | Composer Package | Purpose in Reyhan | Status |
 | :--- | :--- | :--- | :--- |
@@ -22,33 +63,12 @@ This document defines the official and community plugin registry for the **Filam
 
 ---
 
-## 2. Modular Extension Architecture (`backend/extensions/`)
+## 3. Evaluation Checklist for Adding New Extensions
 
-In addition to Composer packages, custom extensions live inside `backend/extensions/` and are auto-discovered via `module.json`:
-
-```json
-{
-  "name": "custom-carrier",
-  "title": "Custom Shipping Carrier Integration",
-  "version": "1.0.0",
-  "description": "Calculates real-time shipping rates and generates tracking labels",
-  "providers": [
-    "Reyhan\\Extensions\\CustomCarrier\\Providers\\CustomCarrierServiceProvider"
-  ],
-  "enabled": true
-}
-```
-
----
-
-## 3. Evaluation Checklist for Adding New Plugins
-
-Before introducing any new plugin or package to the Reyhan ecosystem, ensure it satisfies the following architectural criteria:
-
-1. **Version Compatibility:** Fully supports Filament 5 (`filament/filament: ^5.0`) and PHP 8.3+.
-2. **Strict Guard Isolation:** Must respect the `admin` guard and not pollute customer authentication tables.
+1. **Version Compatibility:** Fully supports Filament 5 and PHP 8.4+.
+2. **Strict Guard Isolation:** Respects the `admin` guard; customer domain authentication is strictly isolated via OTP and Sanctum.
 3. **Pest Test Coverage:** Every plugin integration must have associated Pest Feature tests verifying registration and authorization boundaries.
-4. **Performance Impact:** Zero-overhead asset loading without introducing unminified scripts or blocking Livewire requests.
+4. **Clean Domain Separation:** Complex mutations and transactions belong in single-responsibility `final` Action classes, not inline within Filament UI closures.
 
 ---
 
@@ -56,3 +76,7 @@ Before introducing any new plugin or package to the Reyhan ecosystem, ensure it 
 
 For guides on building custom extensions and customizing the admin panel:
 👉 [**https://reyhan-commerce.github.io/docs/v1/extensions/plugin-architecture**](https://reyhan-commerce.github.io/docs/v1/extensions/plugin-architecture)
+
+<div align="center">
+  <sub>Released under the MIT License. Copyright © 2026 Reyhan Commerce.</sub>
+</div>
