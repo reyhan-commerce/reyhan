@@ -7,6 +7,7 @@ namespace App\Actions\Payment;
 use App\Data\Payment\VerifyPaymentResultData;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Models\Order;
 use App\Models\Payment;
 use App\Models\ProductVariant;
 use App\Notifications\Orders\OrderPaidNotification;
@@ -75,7 +76,7 @@ final class VerifyPaymentAction
         }
 
         // Database updates inside transaction with pessimistic locking
-        $order = DB::transaction(function () use ($payment, $verifyResult): ?\App\Models\Order {
+        $order = DB::transaction(function () use ($payment, $verifyResult): ?Order {
             // Lock payment record for concurrency safety
             /** @var Payment $lockedPayment */
             $lockedPayment = Payment::where('id', $payment->id)

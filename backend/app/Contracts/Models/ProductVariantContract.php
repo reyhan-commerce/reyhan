@@ -7,6 +7,4 @@ namespace App\Contracts\Models;
 /**
  * Contract for Reyhan ProductVariant Model.
  */
-interface ProductVariantContract
-{
-}
+interface ProductVariantContract {}

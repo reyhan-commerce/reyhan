@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Orders;
 
+use App\Actions\Orders\ApproveCardTransferReceiptAction;
+use App\Actions\Orders\RejectCardTransferReceiptAction;
 use App\Enums\OrderStatus;
-use App\Enums\PaymentGateway;
-use App\Enums\PaymentStatus;
 use App\Enums\ShippingMethod;
 use App\Filament\Resources\Orders\Pages\CreateOrder;
 use App\Filament\Resources\Orders\Pages\EditOrder;
@@ -15,7 +15,6 @@ use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Http\Controllers\Api\V1\OrderInvoiceController;
 use App\Http\Controllers\OrderShippingLabelController;
 use App\Models\Order;
-use App\Models\ProductVariant;
 use App\Notifications\Orders\OrderShippedNotification;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -43,7 +42,6 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification as SystemNotification;
 use Illuminate\Support\HtmlString;
@@ -462,7 +460,7 @@ class OrderResource extends Resource
                         $notes = trim((string) ($data['admin_notes'] ?? ''));
 
                         if ($isApproved) {
-                            app(\App\Actions\Orders\ApproveCardTransferReceiptAction::class)
+                            app(ApproveCardTransferReceiptAction::class)
                                 ->execute($record, $receipt, auth()->id(), $notes ?: null);
 
                             Notification::make()
@@ -470,7 +468,7 @@ class OrderResource extends Resource
                                 ->success()
                                 ->send();
                         } else {
-                            app(\App\Actions\Orders\RejectCardTransferReceiptAction::class)
+                            app(RejectCardTransferReceiptAction::class)
                                 ->execute($record, $receipt, auth()->id(), $notes ?: null);
 
                             Notification::make()

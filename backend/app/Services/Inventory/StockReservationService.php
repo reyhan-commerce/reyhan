@@ -147,4 +147,3 @@ class StockReservationService
         return "inventory:reservations:{$variantId}";
     }
 }
-

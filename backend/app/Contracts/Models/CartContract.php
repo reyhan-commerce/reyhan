@@ -7,6 +7,4 @@ namespace App\Contracts\Models;
 /**
  * Contract for Reyhan Cart Model.
  */
-interface CartContract
-{
-}
+interface CartContract {}

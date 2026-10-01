@@ -12,6 +12,7 @@ use App\Models\Admin;
 use App\Models\Category;
 use App\Observers\CategoryObserver;
 use App\Services\Sms\SmsManager;
+use App\Support\Modules\ModuleManager;
 use BokshornIt\FilamentActivityTimeline\Policies\ActivityPolicy;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
@@ -36,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        \App\Support\Modules\ModuleManager::registerDiscoveredExtensions($this->app);
+        ModuleManager::registerDiscoveredExtensions($this->app);
     }
 
     /**

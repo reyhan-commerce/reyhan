@@ -88,7 +88,8 @@ final class PricingService
         );
 
         $subtotalAfterCoupon = max(0, $itemsSubtotal - $couponDiscount);
-        $taxAmount = (int) round($subtotalAfterCoupon * 0.10); // 10% Iranian standard VAT
+        $taxRate = (int) config('reyhan.store.tax_rate_percent', 10);
+        $taxAmount = (int) round($subtotalAfterCoupon * ($taxRate / 100));
         $finalPayable = $subtotalAfterCoupon + $taxAmount + $shipping['shipping_fee'];
         $totalDiscount = $catalogDiscount + $couponDiscount;
 

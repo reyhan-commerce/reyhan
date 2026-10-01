@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\Modules;
 
+use Composer\Autoload\ClassLoader;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -119,7 +120,7 @@ final class ModuleManager
         if ($composerLoader === null) {
             $autoloaders = spl_autoload_functions() ?: [];
             foreach ($autoloaders as $autoloader) {
-                if (is_array($autoloader) && isset($autoloader[0]) && $autoloader[0] instanceof \Composer\Autoload\ClassLoader) {
+                if (is_array($autoloader) && isset($autoloader[0]) && $autoloader[0] instanceof ClassLoader) {
                     $composerLoader = $autoloader[0];
                     break;
                 }

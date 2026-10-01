@@ -62,7 +62,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property-read Payment|null $successfulPayment
  */
 #[Guarded(['id'])]
-class Order extends Model implements ProvidesActivityTitle, OrderContract
+class Order extends Model implements OrderContract, ProvidesActivityTitle
 {
     /** @use HasFactory<OrderFactory> */
     use HasFactory, LogsActivity, SoftDeletes;

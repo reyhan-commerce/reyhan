@@ -1,6 +1,22 @@
 <?php
 
 declare(strict_types=1);
+use App\Models\Address;
+use App\Models\Admin;
+use App\Models\Brand;
+use App\Models\Cart;
+use App\Models\CartItem;
+use App\Models\Category;
+use App\Models\Coupon;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Payment;
+use App\Models\Product;
+use App\Models\ProductVariant;
+use App\Models\Review;
+use App\Models\ShippingMethod;
+use App\Models\User;
+use App\Models\Wishlist;
 
 return [
 
@@ -28,22 +44,22 @@ return [
     */
 
     'models' => [
-        'product' => \App\Models\Product::class,
-        'product_variant' => \App\Models\ProductVariant::class,
-        'category' => \App\Models\Category::class,
-        'brand' => \App\Models\Brand::class,
-        'order' => \App\Models\Order::class,
-        'order_item' => \App\Models\OrderItem::class,
-        'cart' => \App\Models\Cart::class,
-        'cart_item' => \App\Models\CartItem::class,
-        'user' => \App\Models\User::class,
-        'admin' => \App\Models\Admin::class,
-        'address' => \App\Models\Address::class,
-        'coupon' => \App\Models\Coupon::class,
-        'review' => \App\Models\Review::class,
-        'payment' => \App\Models\Payment::class,
-        'shipping_method' => \App\Models\ShippingMethod::class,
-        'wishlist' => \App\Models\Wishlist::class,
+        'product' => Product::class,
+        'product_variant' => ProductVariant::class,
+        'category' => Category::class,
+        'brand' => Brand::class,
+        'order' => Order::class,
+        'order_item' => OrderItem::class,
+        'cart' => Cart::class,
+        'cart_item' => CartItem::class,
+        'user' => User::class,
+        'admin' => Admin::class,
+        'address' => Address::class,
+        'coupon' => Coupon::class,
+        'review' => Review::class,
+        'payment' => Payment::class,
+        'shipping_method' => ShippingMethod::class,
+        'wishlist' => Wishlist::class,
     ],
 
     /*
@@ -109,6 +125,7 @@ return [
         'name' => env('APP_NAME', 'فروشگاه ریحان'),
         'currency' => env('STORE_CURRENCY', 'IRR'),
         'currency_symbol' => env('STORE_CURRENCY_SYMBOL', 'تومان'),
+        'tax_rate_percent' => (int) env('STORE_TAX_RATE_PERCENT', 10),
         'locale' => env('APP_LOCALE', 'fa'),
         'fallback_locale' => 'en',
     ],

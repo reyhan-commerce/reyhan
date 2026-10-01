@@ -7,6 +7,4 @@ namespace App\Contracts\Models;
 /**
  * Contract for Reyhan User Model.
  */
-interface UserContract
-{
-}
+interface UserContract {}
