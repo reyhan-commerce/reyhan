@@ -1,6 +1,6 @@
 # Reyhan E-Commerce Execution Roadmap & Phased Implementation Plan
 
-This document outlines the structured, milestone-driven execution plan for building the cosmetics e-commerce platform across the **Laravel 13** backend and the **Nuxt 4** frontend.
+This document outlines the structured, milestone-driven execution plan for building the **Reyhan Commerce** headless e-commerce framework across the **Laravel 13** backend and the **Nuxt 4** frontend.
 
 ---
 
@@ -8,7 +8,7 @@ This document outlines the structured, milestone-driven execution plan for build
 
 ```mermaid
 gantt
-    title Cosmetics E-Commerce Project Roadmap
+    title Reyhan Commerce Framework Roadmap
     dateFormat  YYYY-MM-DD
     section Phase 0: Foundations
     Environment & Scaffolding Setup       :p0, 2026-09-21, 5d
@@ -239,7 +239,7 @@ gantt
 
 ## 6. Reviews, Customer Dashboard, Static CMS & Media Storage
 
-**Objective**: Deliver authentic multi-dimensional cosmetics reviews, customer profile management, switchable cloud storage, and dynamic CMS pages.
+**Objective**: Deliver authentic multi-dimensional criteria reviews, customer profile management, switchable cloud storage, and dynamic CMS pages.
 
 ### 6.1. Backend Deliverables
 - [x] Create database migrations:

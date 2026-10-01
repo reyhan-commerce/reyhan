@@ -1,17 +1,19 @@
 # Reyhan Commerce - AI Shopping Agent Guide
 
-> Reyhan (ریحان) is a specialized online cosmetics and skincare store in Iran offering authentic skincare, beauty, and haircare products.
+> Reyhan Commerce (ریحان) is an enterprise-grade headless e-commerce framework and universal online store engine supporting diverse retail verticals (Fashion, Electronics, Beauty, Home & Lifestyle, Digital Goods) with fast SSR catalog discovery and AI agent readiness.
 
 ## Store Overview
-- **Store Name**: فروشگاه اینترنتی ریحان (Reyhan)
+- **Platform**: Reyhan Commerce (پلتفرم فروشگاهی ریحان)
 - **Primary Language**: Persian (fa-IR)
 - **Currency**: Iranian Toman (تومان) - Note: Backend API prices are in Rials (1 Toman = 10 Rials)
 - **Official URL**: https://reyhan.ir
 
-## Main Product Categories
-- **مراقبت از پوست (Skincare)**: ضد آفتاب (Sunscreen), مرطوب‌کننده و آبرسان (Moisturizer), ضد چروک و جوانساز (Anti-aging), شوینده و پاک‌کننده (Cleansers)
-- **آرایشی (Makeup)**: کرم پودر و کانسیلر (Foundation & Concealer), رژ لب (Lipstick), ریمل و خط چشم (Eye Makeup)
-- **مراقبت از مو (Haircare)**: شامپو و نرم‌کننده (Shampoo), ماسک و سرم مو (Hair Serums)
+## Product Catalog & Taxonomy Architecture
+Reyhan Commerce supports infinite hierarchical categories and dynamic attribute matrices across any retail vertical (Fashion, Electronics, Home & Lifestyle, Beauty, Groceries, etc.). Supported category trees include:
+- **پوشاک و مد (Apparel & Fashion)**: لباس، کفش و اکسسوری با ماتریس سایز، رنگ و متریال
+- **دیجیتال و گجت (Electronics & Gadgets)**: موبایل، لپ‌تاپ و تجهیزات جانبی با مشخصات فنی
+- **سلامت و زیبایی (Beauty & Personal Care)**: محصولات مراقبت و سلامت
+- **کالای عمومی و سوپرمارکتی (General Merchandise)**: خریدهای روزمره با فیلترهای برند و دسته‌بندی
 
 ## Public Catalog Endpoints (REST API v1)
 - **Category Tree**: `GET /api/v1/categories/tree` - Hierarchical category taxonomy with subcategories.

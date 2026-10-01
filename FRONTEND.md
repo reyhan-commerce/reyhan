@@ -1,6 +1,6 @@
 # Frontend Technical Specification & Architecture Guide
 
-This document defines the comprehensive frontend architecture, design system tokens, component guidelines, user experience standards, and implementation roadmap for the cosmetics e-commerce platform built on **Nuxt 4**, **Vue 3**, **Nuxt UI**, **Tailwind CSS v4**, and **TypeScript 7.x**.
+This document defines the comprehensive frontend architecture, design system tokens, component guidelines, user experience standards, and implementation roadmap for the **Reyhan Commerce** storefront built on **Nuxt 4**, **Vue 3**, **Nuxt UI**, **Tailwind CSS v4**, and **TypeScript 7.x**.
 
 ---
 
@@ -17,7 +17,7 @@ This document defines the comprehensive frontend architecture, design system tok
 | **State Management** | **Pinia** | Centralized reactive stores for Cart, Authentication, Wishlist, and Checkout |
 | **Theme Engine** | `@nuxtjs/color-mode` | Native Dark / Light / System theme switching with cookie persistence and zero-flash hydration |
 | **Full SEO Ecosystem** | [`@nuxtjs/seo`](https://github.com/harlan-zw/nuxt-seo) | Complete Harlan-Zw suite: Sitemap, Robots, Schema.org, OpenGraph Image Generation |
-| **Image Optimization** | `@nuxt/image` | Automatic WebP/AVIF compression, lazy loading, and responsive beauty galleries |
+| **Image Optimization** | `@nuxt/image` | Automatic WebP/AVIF compression, lazy loading, and responsive product galleries |
 | **Typography** | **Vazirmatn** | Clean, highly legible Persian web typography across all display and body elements |
 | **Form Validation** | **Vee-Validate + Zod** | Type-safe schema validation integrated into `<UForm>` with Persian error feedback |
 | **AI & Agent Integration** | `llms.txt` + JSON-LD | Structured metadata and endpoints optimized for AI agents and autonomous shopping crawlers |
@@ -265,9 +265,9 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: 'https://cosmetics.store.ir',
-    name: 'فروشگاه تخصصی لوازم آرایشی و بهداشتی',
-    description: 'خرید اینترنتی انواع لوازم آرایشی اورجینال، رژ لب، کرم پودر و عطر با تضمین اصالت و ارسال سریع.',
+    url: 'https://reyhan.ir',
+    name: 'فروشگاه اینترنتی ریحان',
+    description: 'خرید اینترنتی انواع محصولات با تضمین اصالت کالا و ارسال سریع.',
     defaultLocale: 'fa',
   },
 
@@ -380,7 +380,7 @@ frontend/
 ├── stores/                       # Pinia setup stores
 │   ├── auth.ts                   # Token, user state & profile
 │   ├── cart.ts                   # Persistent cart state & sync logic
-│   ├── wishlist.ts               # Favorited cosmetics
+│   ├── wishlist.ts               # Favorited products
 │   └── checkout.ts               # Selected address, gateway, invoice state
 ├── types/                        # TypeScript 7.x interfaces matching Laravel API Resources
 │   ├── product.d.ts              # Product, Variant, Attribute, Category
@@ -445,15 +445,15 @@ Every page is engineered using **Nuxt UI** components and **Tailwind CSS v4** wi
 2. **Catalog / Product Listing (`pages/products/index.vue`)**:
    - Responsive product cards grid with quick-view modal.
    - Filter drawer on mobile (`USlideover`) / sidebar on desktop (`UCard`).
-   - Filters: Categories, Skin Type (Oily, Dry, Sensitive, etc.), Brand, Price Slider, In-Stock Only, Cruelty-Free toggle.
+   - Filters: Categories, Dynamic Attributes (Color, Size, Specs, etc.), Brand, Price Slider, In-Stock Only.
    - Sorting: Most Popular, Cheapest, Most Expensive, Newest.
 3. **Product Detail Page (`pages/products/[slug].vue`)**:
    - Decoded Persian URL slug support (`decodeURIComponent`).
-   - High-resolution cosmetics gallery with `@nuxt/image` and deep zoom.
+   - High-resolution product gallery with `@nuxt/image` and deep zoom.
    - Interactive `VariantSelector.vue` (swatches, size pills, stock check).
    - Sticky Add-to-Cart bottom bar on mobile (< 640px).
-   - Tabbed section (`UTabs`): Product Overview, Ingredients, How to Use, Specs.
-   - Multi-dimensional verified reviews (`rating_longevity`, `rating_coverage`, `rating_value`) with "Verified Buyer" badge.
+   - Tabbed section (`UTabs`): Product Overview, Specifications, Details, Reviews.
+   - Multi-dimensional verified reviews (`criteria_ratings`, overall score) with "Verified Buyer" badge.
    - Related and complementary products carousel.
 4. **Category Map (`pages/categories/index.vue`) & Category Detail (`pages/categories/[slug].vue`)**:
    - Visual category tree with rich imagery for elderly and mobile accessibility.

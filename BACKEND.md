@@ -1,6 +1,6 @@
 # Backend Technical Specification & Architecture Guide
 
-This document defines the comprehensive architecture, design patterns, database blueprints, coding standards, and implementation roadmap for the **Laravel 13** backend of the cosmetics e-commerce platform.
+This document defines the comprehensive architecture, design patterns, database blueprints, coding standards, and implementation roadmap for the **Laravel 13** backend of the **Reyhan Commerce** headless e-commerce framework.
 
 ---
 
@@ -23,7 +23,7 @@ This document defines the comprehensive architecture, design patterns, database 
 | **Filament Admin Panel** | `5.x` | Dedicated Persian (`fa`) RTL admin panel for the `admin` guard |
 | **Filament Shield** | [`bezhansalleh/filament-shield`](https://filamentphp.com/plugins/bezhansalleh-shield) | Role-Based Access Control (RBAC) restricted strictly to `Admin` models |
 | **Filament Settings Plugin** | [`filamentphp/spatie-laravel-settings-plugin`](https://github.com/filamentphp/spatie-laravel-settings-plugin) | Visual tabbed management of system, encrypted SMS, and payment settings |
-| **Filament Media Library** | [`filamentphp/spatie-laravel-media-library-plugin`](https://github.com/filamentphp/spatie-laravel-media-library-plugin) | Product images, cosmetics color swatches, and media conversions |
+| **Filament Media Library** | [`filamentphp/spatie-laravel-media-library-plugin`](https://github.com/filamentphp/spatie-laravel-media-library-plugin) | Product images, category banners, attribute swatches, and media conversions |
 | **Filament Backup Plugin** | [`shuvroroy/filament-spatie-laravel-backup`](https://github.com/shuvroroy/filament-spatie-laravel-backup) | Backup creation, monitoring, and downloads via `spatie/laravel-backup` |
 | **Iranian Validation Rules** | [`iamfarhad/validation`](https://github.com/iamfarhad/validation) | Validation rules for Iranian mobile, national code, postal code, IBAN, and cards |
 | **Online Payment Gateway** | [`shetabit/payment`](https://github.com/shetabit/payment) | Unified driver-based payment processing for Iranian banks & Shaparak |
@@ -319,7 +319,7 @@ TextInput::make('slug')
 
 ## 6. Hierarchical Nested Categories Architecture
 
-Categories support infinite nesting (e.g., *Cosmetics $\rightarrow$ Face Makeup $\rightarrow$ Foundations*):
+Categories support infinite nesting (e.g., *Apparel $\rightarrow$ Men $\rightarrow$ Jackets* or *Electronics $\rightarrow$ Audio $\rightarrow$ Headphones*):
 
 ### 6.1. Database Schema (`categories`)
 ```php

@@ -2,7 +2,7 @@
 
 ## MODIFIED Requirements
 
-### Requirement: Multi-Dimensional Cosmetics Review Engine
+### Requirement: Multi-Dimensional Criteria Review Engine
 Customers SHALL submit granular ratings across customizable rating criteria along with qualitative feedback.
 
 #### Scenario: Submit Product Review

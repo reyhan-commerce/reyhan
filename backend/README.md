@@ -1,6 +1,6 @@
-# Reyhan E-Commerce — Backend Core (Laravel 13)
+# Reyhan Commerce — Backend Core Framework (Laravel 13)
 
-Production-grade, high-concurrency RESTful backend API for the Reyhan cosmetics and personal care e-commerce platform. Built on **Laravel 13**, **PostgreSQL 18/17**, and **Redis**.
+Production-grade, high-concurrency RESTful backend API framework for spinning up, customizing, and scaling any e-commerce store. Built on **Laravel 13**, **PostgreSQL 18/17**, and **Redis** with full modularity and extensibility.
 
 ---
 

@@ -88,7 +88,7 @@ class PageResource extends Resource
 
                                 TextInput::make('metadata.heading')
                                     ->label('تیتر برجسته هیرو')
-                                    ->placeholder('مثال: تجربه‌ای نو از خرید آنلاین محصولات پوستی و آرایشی'),
+                                    ->placeholder('مثال: تجربه‌ای نو و سریع از خرید آنلاین با تضمین اصالت و بهترین قیمت'),
 
                                 Repeater::make('metadata.stats')
                                     ->label('آمارهای کلیدی (Stats Grid)')

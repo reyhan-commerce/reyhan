@@ -1,12 +1,12 @@
 # Reviews, Customer Dashboard & Content Management Specification
 
 ## Purpose
-Provides multi-dimensional cosmetic product reviews with verified buyer tagging and admin moderation, customer account profile hub (orders, addresses, wishlist), switchable S3 media storage, and dynamic CMS pages.
+Provides multi-dimensional product criteria reviews with verified buyer tagging and admin moderation, customer account profile hub (orders, addresses, wishlist), switchable S3 media storage, and dynamic CMS pages.
 
 ## Requirements
 
-### Requirement: Multi-Dimensional Cosmetics Review Engine
-Customers SHALL submit granular ratings for cosmetic performance along with qualitative feedback.
+### Requirement: Multi-Dimensional Criteria Review Engine
+Customers SHALL submit granular ratings for product performance criteria along with qualitative feedback.
 
 #### Scenario: Submit Product Review
 - **WHEN** user submits review with ratings for longevity (ماندگاری), coverage (پوشش‌دهی), and value (ارزش خرید) along with text feedback

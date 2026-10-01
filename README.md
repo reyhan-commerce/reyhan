@@ -1,6 +1,6 @@
-# Reyhan (ریحان) — Enterprise Cosmetics & Personal Care E-Commerce
+# Reyhan Commerce (ریحان) — Next-Gen Headless E-Commerce Framework
 
-Production-grade, enterprise-scale, decoupled Iranian cosmetics and personal care e-commerce platform built with **Laravel 13 (Backend)** and **Nuxt 4 + Nuxt UI + Tailwind CSS v4 (Frontend)**.
+Production-grade, enterprise-scale, modular and headless e-commerce framework for rapidly building, customizing, and scaling any online store (Fashion, Electronics, Beauty, Groceries, Digital Goods, General Merchandise) built on **Laravel 13 (Backend)** and **Nuxt 4 + Nuxt UI + Tailwind CSS v4 (Frontend)**.
 
 The system is designed with a **Decoupled (Headless) Architecture**:
 - **Backend**: High-performance RESTful API built on **Laravel 13**, **PostgreSQL 17**, **Filament 5**, **Laravel Octane**, **Horizon**, **Pulse**, and **Spatie Laravel Data** inside the `backend/` directory, backed by **Redis** as the default driver for Cache, Sessions, and Queues.
@@ -25,7 +25,7 @@ The interactive CLI will prompt for your store name, PostgreSQL and Redis creden
 ## 1. Project Directory Structure
 
 ```text
-jafari/
+reyhan/
 ├── README.md               # Master architecture overview and system guidelines (This file)
 ├── BACKEND.md              # In-depth technical specification for the Laravel 13 backend
 ├── FRONTEND.md             # In-depth technical specification for the Nuxt 4 frontend
@@ -134,5 +134,5 @@ graph TD
 ## 4. Dedicated Documentation Files
 
 For complete technical specifications, see the dedicated documentation files:
-- [Backend Documentation (`BACKEND.md`)](./BACKEND.md): PostgreSQL 17 setup, Persian text normalizer pipeline, multi-auth separation (`admins` vs `users`), two-tier stock concurrency locking, rule-based discount engine, Iranian provinces/cities seeder & shipping calculator, multi-dimensional cosmetics reviews, switchable media storage (Local $\to$ S3), Jalali dates, Pest functional testing, and daily logging.
+- [Backend Documentation (`BACKEND.md`)](./BACKEND.md): PostgreSQL 17 setup, Persian text normalizer pipeline, multi-auth separation (`admins` vs `users`), two-tier stock concurrency locking, rule-based discount engine, Iranian provinces/cities seeder & shipping calculator, multi-dimensional criteria reviews, switchable media storage (Local $\to$ S3), Jalali dates, Pest functional testing, and daily logging.
 - [Frontend Documentation (`FRONTEND.md`)](./FRONTEND.md): Nuxt 4 directory structure, Nuxt UI component adoption, Tailwind CSS v4 design system, TypeScript 7.x strict setup, `ui-ux-pro-max` universal design ergonomics, interactive variant selector engine, cross-attribute availability matrix, `@nuxtjs/seo`, and AI agent (`llms.txt`) integration.

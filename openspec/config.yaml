@@ -2,7 +2,7 @@ schema: spec-driven
 
 # Reyhan Architecture & Domain Context
 context: |
-  Domain: Cosmetics & Skincare E-Commerce Platform (Reyhan / فروشگاه اینترنتی ریحان)
+  Domain: Modular Headless E-Commerce Framework & Store Engine (Reyhan Commerce / فریم‌ورک فروشگاهی ریحان)
   Language & Locale: Persian (fa-IR), universal RTL direction, Persian numerals (Vazirmatn FD font). Use .font-en for English numbers/SKU/codes.
   Currency: Consumer UI in Iranian Toman (IRT), Backend database in Rials (IRR) (1 Toman = 10 Rials).
 
