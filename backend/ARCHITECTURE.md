@@ -153,7 +153,7 @@ All AI agents and developers writing backend code for Reyhan **must strictly fol
 ### Contract 9: Standardized Enum Architecture & Filament Native Integration
 - **PHP 8.1+ Backed Enums**: All status, type, and categorical values must be backed enums (string-backed).
 - **Core Interfaces & Helpers**:
-  - Every Enum must use the `App\Enums\Concerns\HasEnumHelpers` trait, which provides:
+  - Every Enum must use the `Reyhan\Core\Enums\Concerns\HasEnumHelpers` trait (or `App\Enums\Concerns\HasEnumHelpers` in userland), which provides:
     - `public function label(): string`
     - `public static function options(): array<string, string>` (for selects and filters)
     - `public static function values(): array<string>` (for validation in rules)
@@ -177,7 +177,7 @@ All AI agents and developers writing backend code for Reyhan **must strictly fol
 - **Configurable Business & Marketing Policies**:
   - Operational parameters subject to business updates (e.g. Return guarantee window days, Return policy notice, Corporate tax invoice notice, Support work hours notice, Referral rewards and promotional banners) MUST NOT be hardcoded in frontend components or backend logic.
 - **Spatie Settings Architecture**:
-  - Settings are defined as typed properties in `App\Settings\GeneralSettings`.
+  - Settings are defined as typed properties in `Reyhan\Core\Settings\GeneralSettings` (or `App\Settings\GeneralSettings`).
   - Database schema changes for settings are versioned via Spatie settings migrations in `database/settings/`.
 - **Filament Management**:
   - All dynamic settings must be editable in the Filament admin panel under `ManageGeneralSettings` within appropriate tabbed sections.

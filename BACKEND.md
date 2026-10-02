@@ -46,14 +46,14 @@ graph TD
     subgraph StaffAccess [Staff & Operations]
         AdminUser[Admin Staff] -->|Session Auth fa/RTL| FilamentPanel[Filament 5 Admin Panel]
         FilamentPanel --> AdminGuard[Guard: admin]
-        AdminGuard --> AdminModel[Model: App\Models\Admin]
+        AdminGuard --> AdminModel[Model: Reyhan\Core\Models\Admin]
         AdminModel --> SpatieShield[Spatie Permissions & Filament Shield]
     end
 
     subgraph CustomerAccess [Customer Shopping]
         Customer[Customer] -->|OTP SMS Auth| NuxtFrontend[Nuxt 4 Frontend]
         NuxtFrontend --> SanctumGuard[Guard: sanctum]
-        SanctumGuard --> UserModel[Model: App\Models\User]
+        SanctumGuard --> UserModel[Model: Reyhan\Core\Models\User / App\Models\User]
         UserModel --> ShoppingEntities[Orders, Addresses, Reviews, Cart]
     end
 ```
@@ -84,11 +84,11 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => \Reyhan\Core\Models\User::class,
         ],
         'admins' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Admin::class,
+            'model' => \Reyhan\Core\Models\Admin::class,
         ],
     ],
 ];
@@ -135,9 +135,9 @@ Schema::create('admins', function (Blueprint $table) {
 
 To eliminate search mismatches and database inconsistencies caused by keyboard variations (Arabic vs. Persian characters, Indic/English digits, and invisible control characters), all incoming descriptive inputs and search queries must pass through the **Persian Normalization Pipeline**.
 
-### 3.1. Pipeline Architecture (`app/Services/Normalization/`)
+### 3.1. Pipeline Architecture (`packages/core/src/Services/Normalization/`)
 ```text
-app/Services/Normalization/
+packages/core/src/Services/Normalization/
 ├── PersianNormalizer.php                # Pipeline runner facade
 ├── Contracts/NormalizerPipeInterface.php
 └── Pipes/
@@ -149,12 +149,12 @@ app/Services/Normalization/
 
 ### 3.2. Pipeline Implementation Code
 ```php
-namespace App\Services\Normalization;
+namespace Reyhan\Core\Services\Normalization;
 
-use App\Services\Normalization\Pipes\NormalizeCharactersPipe;
-use App\Services\Normalization\Pipes\NormalizeDigitsPipe;
-use App\Services\Normalization\Pipes\NormalizePunctuationPipe;
-use App\Services\Normalization\Pipes\NormalizeSpacingAndZwnjPipe;
+use Reyhan\Core\Services\Normalization\Pipes\NormalizeCharactersPipe;
+use Reyhan\Core\Services\Normalization\Pipes\NormalizeDigitsPipe;
+use Reyhan\Core\Services\Normalization\Pipes\NormalizePunctuationPipe;
+use Reyhan\Core\Services\Normalization\Pipes\NormalizeSpacingAndZwnjPipe;
 use Illuminate\Pipeline\Pipeline;
 
 final class PersianNormalizer
@@ -275,9 +275,9 @@ erDiagram
 
 Persian URL slugs enhance local SEO and visual branding. Slugs are managed via `spatie/laravel-sluggable`:
 
-### 5.1. Product Slug Configuration (`App\Models\Product`)
+### 5.1. Product Slug Configuration (`Reyhan\Core\Models\Product`)
 ```php
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
@@ -373,17 +373,17 @@ In a modern decoupled architecture:
 All API routes follow strict RESTful conventions using `Route::apiResource` within `routes/api/v1.php`:
 
 ```php
-use App\Http\Controllers\Api\V1\AddressController;
-use App\Http\Controllers\Api\V1\Auth\AuthController;
-use App\Http\Controllers\Api\V1\CartController;
-use App\Http\Controllers\Api\V1\CategoryController;
-use App\Http\Controllers\Api\V1\CheckoutController;
-use App\Http\Controllers\Api\V1\OrderController;
-use App\Http\Controllers\Api\V1\PaymentController;
-use App\Http\Controllers\Api\V1\ProductController;
-use App\Http\Controllers\Api\V1\ReviewController;
-use App\Http\Controllers\Api\V1\SettingsController;
-use App\Http\Controllers\Api\V1\SitemapController;
+use Reyhan\Core\Http\Controllers\Api\V1\AddressController;
+use Reyhan\Core\Http\Controllers\Api\V1\Auth\AuthController;
+use Reyhan\Core\Http\Controllers\Api\V1\CartController;
+use Reyhan\Core\Http\Controllers\Api\V1\CategoryController;
+use Reyhan\Core\Http\Controllers\Api\V1\CheckoutController;
+use Reyhan\Core\Http\Controllers\Api\V1\OrderController;
+use Reyhan\Core\Http\Controllers\Api\V1\PaymentController;
+use Reyhan\Core\Http\Controllers\Api\V1\ProductController;
+use Reyhan\Core\Http\Controllers\Api\V1\ReviewController;
+use Reyhan\Core\Http\Controllers\Api\V1\SettingsController;
+use Reyhan\Core\Http\Controllers\Api\V1\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -472,9 +472,9 @@ sequenceDiagram
 Schema::create('coupons', function (Blueprint $table) {
     $table->id();
     $table->string('code')->unique();
-    $table->string('type'); // App\Enums\Payment\CouponType (PERCENTAGE, FIXED_AMOUNT, FREE_SHIPPING)
+    $table->string('type'); // Reyhan\Core\Enums\Payment\CouponType (PERCENTAGE, FIXED_AMOUNT, FREE_SHIPPING)
     $table->unsignedBigInteger('value'); // Percentage (e.g. 20) or Fixed Amount (e.g. 100000)
-    $table->string('scope')->default('order'); // App\Enums\Payment\CouponScope (ORDER, CATEGORIES, BRANDS, VARIANTS)
+    $table->string('scope')->default('order'); // Reyhan\Core\Enums\Payment\CouponScope (ORDER, CATEGORIES, BRANDS, VARIANTS)
     $table->jsonb('scope_ids')->nullable(); // Array of category_ids, brand_ids, or variant_ids
     $table->unsignedBigInteger('min_cart_amount')->default(0);
     $table->unsignedBigInteger('max_discount_cap')->nullable(); // Max discount limit for percentage
@@ -590,10 +590,10 @@ Configured as `stack` logging to both daily rolling files (30-day retention) and
 All outbound SMS messages and customer alerts must strictly pass through Laravel's native Notification system (`Illuminate\Notifications\Notification`). Direct invocation of `SmsManager` or low-level SMS drivers inside Controllers, Actions, Commands, Jobs, or Filament Resources is **strictly prohibited**.
 
 ### Core Architecture Rules:
-1. **Laravel Notification First**: Every SMS or customer alert must be encapsulated in a dedicated notification class under `App\Notifications\` (e.g. `Orders\OrderPaidNotification`, `Orders\OrderShippedNotification`, `Marketing\AbandonedCartReminderNotification`, `Catalog\StockAlertNotification`, `Auth\SendOtpNotification`).
+1. **Laravel Notification First**: Every SMS or customer alert must be encapsulated in a dedicated notification class under `Reyhan\Core\Notifications\` (e.g. `Orders\OrderPaidNotification`, `Orders\OrderShippedNotification`, `Marketing\AbandonedCartReminderNotification`, `Catalog\StockAlertNotification`, `Auth\SendOtpNotification`).
 2. **Channel Specification**: All SMS notifications must implement `via($notifiable)` returning `[SmsChannel::class]`.
 3. **Queue by Default**: All notification classes must implement `ShouldQueue` (with `use Queueable;`) to ensure non-blocking background queue execution via Redis/Horizon.
-4. **Message Encapsulation**: Notifications must implement `toSms($notifiable): SmsMessage` utilizing the fluent `App\Notifications\Messages\SmsMessage` builder.
+4. **Message Encapsulation**: Notifications must implement `toSms($notifiable): SmsMessage` utilizing the fluent `Reyhan\Core\Notifications\Messages\SmsMessage` builder.
 5. **Notifiable Routing**:
    - For registered users: Call `$user->notify(new [NotificationName]($model))`. The `User` model implements `routeNotificationForSms()` to provide `$this->mobile`.
    - For guest/anonymous recipients: Call `Notification::route('sms', $mobile)->notify(new [NotificationName]($params))`.
@@ -614,7 +614,7 @@ All models strictly use official `Illuminate\Database\Eloquent\Attributes\` attr
 - **Table / Timestamp Configuration**: `#[Table('custom_name', incrementing: true, timestamps: false)]` or `#[WithoutTimestamps]`.
 
 ```php
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
@@ -640,7 +640,7 @@ All Artisan commands use official `Illuminate\Console\Attributes\` attributes:
 - `#[Description('Description text')]` instead of `protected $description`.
 
 ```php
-namespace App\Console\Commands;
+namespace Reyhan\Core\Console\Commands;
 
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;

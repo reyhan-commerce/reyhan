@@ -102,8 +102,8 @@ Core actions and services interact with Eloquent entities through contracts and 
    ```php
    namespace App\Models;
 
-   use App\Contracts\Models\OrderContract;
-   use App\Models\Order as BaseOrder;
+   use Reyhan\Core\Contracts\Models\OrderContract;
+   use Reyhan\Core\Models\Order as BaseOrder;
 
    class CustomOrder extends BaseOrder implements OrderContract
    {
