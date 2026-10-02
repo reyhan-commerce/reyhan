@@ -4,17 +4,16 @@ This document specifies the modular plugin and extension architecture for the **
 
 ---
 
-## 1. Modular Extensions Architecture (`backend/extensions/`)
+## 1. Modular Extensions Architecture (`extensions/`)
 
 Reyhan enables complete modularity without requiring modifications to root `composer.json` or core framework files.
 
 ```text
-backend/extensions/
+extensions/
 └── my-carrier-plugin/
-    ├── module.json                  # Manifest (id, name, version, namespace, provider)
-    ├── composer.json                # (Optional) Standalone composer manifest
+    ├── composer.json                # Extension package manifest (type: reyhan-plugin)
     ├── src/
-    │   ├── MyCarrierServiceProvider.php
+    │   ├── MyCarrierServiceProvider.php  # Extends ReyhanExtensionServiceProvider
     │   ├── Actions/
     │   ├── Filament/
     │   └── Models/
@@ -22,23 +21,28 @@ backend/extensions/
         └── api.php
 ```
 
-### A. Manifest Specification (`module.json`)
+### A. Extension Service Provider (`ReyhanExtensionServiceProvider`)
 
-```json
+Extensions extend the base `ReyhanExtensionServiceProvider` to register drivers, pipelines, custom routes, and model swaps fluently:
+
+```php
+namespace Reyhan\Plugins\MyCarrier;
+
+use Reyhan\Core\Support\Extensions\ReyhanExtensionServiceProvider;
+
+final class MyCarrierServiceProvider extends ReyhanExtensionServiceProvider
 {
-  "id": "my-carrier",
-  "name": "My Custom Shipping Carrier",
-  "version": "1.0.0",
-  "namespace": "Extensions\\MyCarrier",
-  "provider": "Extensions\\MyCarrier\\MyCarrierServiceProvider",
-  "src": "src",
-  "enabled": true
+    public function bootExtension(): void
+    {
+        // Fluent registration of shipping drivers, checkout pipes, etc.
+        $this->loadExtensionApiRoutes(__DIR__.'/../routes/api.php');
+    }
 }
 ```
 
 ### B. Dynamic PSR-4 Autoloading Engine
 
-When Reyhan boots, `ModuleManager` scans `backend/extensions/` and:
+When Reyhan boots, `ModuleManager` scans `extensions/` and:
 1. Dynamically injects the extension's namespace mapping into Composer's `ClassLoader` (`$composerLoader->addPsr4(...)`).
 2. Discovers and registers the extension's `ServiceProvider`.
 3. Loads extension routes, migrations, and event listeners seamlessly.

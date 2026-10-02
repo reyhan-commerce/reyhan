@@ -88,25 +88,39 @@ Clone this repository and run the central CLI orchestrator:
 
 ---
 
-## 📂 Repository Anatomy
+## 📂 Application Anatomy
 
 ```text
 reyhan/
-├── version.json                     # Semantic versioning manifest (SemVer)
-├── reyhan                           # Central executable CLI orchestrator
-│
-├── packages/
-│   └── core/                        # 🟢 Core Domain Engine Package (`reyhan-commerce/core`)
-│       ├── src/                     # Facades, Actions, Services, Pipelines, Models
-│       └── database/                # Schema migrations and factories
-│
-└── backend/                         # Reference Backend Application (`reyhan-commerce/reyhan`)
-    ├── app/Actions/                 # Single-responsibility domain action classes
-    ├── app/Contracts/Models/        # Domain entity interface contracts
-    ├── app/Data/                    # Strongly-typed Data Transfer Objects (DTOs)
-    ├── app/Filament/                # Admin Panel resources and dashboards
-    └── config/reyhan.php            # Model registries & gateway configurations
+├── app/                             # Application Domain Layer & Custom Overrides
+│   ├── Actions/                     # Single-responsibility userland action classes
+│   ├── Filament/                    # Admin Backoffice resources, pages & dashboards
+│   └── Providers/                   # Application service providers
+├── bootstrap/                       # Laravel 13 framework bootloader
+├── config/                          # Application & Reyhan driver configurations
+├── database/                        # Migrations, seeders, and model factories
+├── extensions/                      # Isolated custom modular extensions (PSR-4)
+├── public/                          # Web server entrypoint & compiled assets
+├── routes/                          # Web, API, and console route definitions
+├── storage/                         # Application logs, caches, and uploaded assets
+├── tests/                           # Pest 4 test suite (Feature, Unit, Architecture)
+├── artisan                          # Laravel command-line interface
+├── composer.json                    # Application dependencies (reyhan-commerce/core)
+├── reyhan                           # Central orchestrator CLI
+└── version.json                     # Release & compatibility manifest
 ```
+
+---
+
+## 🌐 Official Ecosystem Repositories
+
+| Repository | Role | Package Name | Status |
+| :--- | :--- | :--- | :--- |
+| [**reyhan-commerce/core**](https://github.com/reyhan-commerce/core) | Core Engine Package (Facades, Actions, Pipelines, Models) | `reyhan-commerce/core` | Open Source (MIT) |
+| [**reyhan-commerce/reyhan**](https://github.com/reyhan-commerce/reyhan) | Application Skeleton Starter (This Repository) | `reyhan-commerce/reyhan` | Open Source (MIT) |
+| [**reyhan-commerce/create-reyhan**](https://github.com/reyhan-commerce/create-reyhan) | Composer-native CLI Scaffolder | `reyhan-commerce/installer` | Open Source (MIT) |
+| [**reyhan-commerce/storefront-nuxt**](https://github.com/reyhan-commerce/storefront-nuxt) | Decoupled Nuxt 4 Storefront Layer | `storefront-nuxt` | Official Commercial |
+| [**reyhan-commerce/docs**](https://github.com/reyhan-commerce/docs) | Official Documentation Portal | VitePress | Live Online |
 
 ---
 
@@ -116,6 +130,7 @@ reyhan/
 - [Backend Technical Specification (`BACKEND.md`)](./BACKEND.md): Detailed backend architecture, PostgreSQL schemas, payment drivers, SMS pipelines, and Pest testing suites.
 - [Admin & Plugins Guide (`PLUGINS.md`)](./PLUGINS.md): Admin panel plugins, modular extensions architecture, and evaluation checklists.
 - [Execution Roadmap (`ROADMAP.md`)](./ROADMAP.md): Milestone progress and upcoming major features.
+- [AI & Coding Agent Standards (`AGENTS.md`)](./AGENTS.md): Strict guidelines and protocol for AI coding assistants.
 
 ---
 

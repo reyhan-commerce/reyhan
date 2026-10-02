@@ -688,11 +688,11 @@ The API documentation is powered by **Scramble** (`dedoc/scramble`) using **Scal
 ### 18.3. Exporting Specs & Frontend Type Synchronization (Nuxt 4)
 To export the complete OpenAPI specification for CI/CD, Postman, or Nuxt 4 TypeScript generation:
 ```bash
-# Export OpenAPI 3.1 JSON from backend
+# Export OpenAPI 3.1 JSON specification
 php artisan scramble:export
 
-# Generate TypeScript types & API clients for Nuxt 4 (inside frontend/)
-npx openapi-typescript ../backend/api.json -o ./types/api-schema.d.ts
+# Generate TypeScript types & API clients for frontend applications
+npx openapi-typescript api.json -o ./types/api-schema.d.ts
 ```
 
 

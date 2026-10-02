@@ -23,7 +23,7 @@ All contributions to the core framework must strictly follow **Farshid's Laravel
 ```bash
 # Clone the repository
 git clone https://github.com/reyhan-commerce/reyhan.git
-cd reyhan/core/backend
+cd reyhan
 
 # Install PHP dependencies
 composer install
@@ -63,7 +63,7 @@ php artisan test
 1. **Fork the repository** on GitHub.
 2. **Create a topic branch**: `git checkout -b feature/awesome-feature` or `git checkout -b fix/issue-description`.
 3. **Commit your changes**: write clear, concise commit messages.
-4. **Push to your fork** and submit a Pull Request targeting the `develop` branch.
+4. **Push to your fork** and submit a Pull Request targeting the `main` branch.
 5. Ensure all automated GitHub Actions CI checks pass.
 
 Thank you for helping build Iran's leading open-source e-commerce framework! 🌿

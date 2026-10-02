@@ -4,30 +4,27 @@ This document is the official architectural specification for the **Reyhan Comme
 
 ---
 
-## 🏛️ 1. Architecture & Repository Anatomy
+## 🏛️ 1. Architecture & Ecosystem Anatomy
 
-Reyhan provides a pure, decoupled headless e-commerce architecture:
+Reyhan provides a pure, decoupled headless e-commerce architecture divided into specialized repositories:
 
 ```text
-reyhan/
-├── packages/
-│   └── core/                        # 🟢 Headless Domain Engine (Composer: reyhan-commerce/core)
-│       ├── src/
-│       │   ├── Facades/             # Domain Facades (Cart, Pricing, Inventory, Checkout, Ledger)
-│       │   ├── Pipelines/           # Commercial Hookable Pipelines (Cart, Order)
-│       │   ├── Actions/             # Single-responsibility domain action classes
-│       │   ├── Contracts/Models/    # Domain interfaces (OrderContract, ProductContract, ...)
-│       │   ├── Data/                # Strongly-typed Data Transfer Objects (DTOs)
-│       │   ├── Models/              # Native Eloquent entities (swappable via Reyhan::model())
-│       │   ├── Services/            # Ledger, Inventory, Pricing, OTP, SMS & Payment Managers
-│       │   └── Support/Extensions/  # Base ReyhanExtensionServiceProvider for plugins
-│       ├── database/migrations/     # PostgreSQL 17 JSONB schemas & GIN indices
-│       └── composer.json            # Package auto-discovery manifest
+Ecosystem Overview:
+├── reyhan-commerce/core             # 🟢 Headless Domain Engine (Composer Package)
+│   ├── src/                         # Facades, Pipelines, Actions, Contracts, Models, Services
+│   ├── database/migrations/         # PostgreSQL 17 JSONB schemas & GIN indices
+│   └── composer.json                # Package auto-discovery manifest
 │
-└── backend/                         # Reference Backend API & Admin Console (reyhan-commerce/reyhan)
-    ├── app/Actions/                 # Application action orchestrations
-    ├── app/Filament/                # Admin backoffice resources, tables, and dashboards
-    └── config/reyhan.php            # Model registries & driver configurations
+├── reyhan-commerce/reyhan           # 🚀 Application Starter Skeleton (This Repository)
+│   ├── app/                         # Userland Actions, Providers, Filament Resources
+│   ├── config/                      # Application & Reyhan driver configurations
+│   ├── extensions/                  # Modular plugin extensions (PSR-4)
+│   ├── tests/                       # Pest 4 test suite
+│   ├── artisan                      # Command line interface
+│   └── composer.json                # Application dependencies (requires reyhan-commerce/core)
+│
+├── reyhan-commerce/installer        # 🛠️ Composer-Native CLI Scaffolder (`reyhan new`)
+└── reyhan-commerce/storefront-nuxt  # 🎨 Decoupled Nuxt 4 Storefront (Tailwind 4, Pinia)
 ```
 
 ---
@@ -109,30 +106,18 @@ Core actions and services interact with Eloquent entities through contracts and 
    ],
    ```
 
-### B. Dynamic PSR-4 Plugin Architecture (`backend/extensions/`)
-Drop self-contained extensions inside `extensions/{plugin-name}/` with a `module.json` or `composer.json`. `ModuleManager` dynamically injects the extension namespace into Composer's `ClassLoader` and registers its `ServiceProvider` at runtime.
+### B. Dynamic PSR-4 Plugin Architecture (`extensions/`)
+Drop self-contained extensions inside `extensions/{plugin-name}/` with a `composer.json` extending `ReyhanExtensionServiceProvider`. `ModuleManager` dynamically injects the extension namespace into Composer's `ClassLoader` and registers its `ServiceProvider` at runtime.
 
 ---
 
-## 🌐 5. Storefront Layering & Cascading Architecture
+## 🌐 5. Decoupled Storefront Architecture
 
-Storefronts consume `@reyhan-commerce/storefront` as a modular layer:
+Reyhan operates as a pure headless backend API server exposing high-concurrency endpoints and OpenAPI 3.1 interactive contracts:
 
-```ts
-// frontend/nuxt.config.ts
-export default defineNuxtConfig({
-  extends: ['@reyhan-commerce/storefront'],
-  
-  // Custom store-specific configuration
-  app: {
-    head: {
-      title: 'My Custom Store'
-    }
-  }
-})
-```
-
-- **Cascading Component Overrides:** Drop a component with the same name into `components/` to seamlessly override the core implementation.
+- **Interactive Documentation**: Available out of the box at `/docs/api` (powered by Scramble).
+- **Official Nuxt 4 Storefront**: Maintained in the dedicated [storefront-nuxt](https://github.com/reyhan-commerce/storefront-nuxt) repository with Tailwind 4 design tokens, Pinia stores, and bidirectional RTL/LTR support.
+- **Any Client Support**: Works with Next.js, Flutter, React Native, iOS/Android native apps, or IoT checkouts.
 - **Dynamic Localization & RTL:** `useShopLocale` synchronizes HTML `dir="rtl"` / `dir="ltr"`, locale cookies, parameter interpolation (`{name}`), and API `Accept-Language` headers automatically.
 
 ---
