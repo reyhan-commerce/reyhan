@@ -44,17 +44,6 @@ jobs:
           extensions: pdo_pgsql, redis, bcmath, intl, mbstring, curl, zip
           coverage: none
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Build Assets
-        run: |
-          npm ci
-          npm run build
-
       - name: Get Composer Cache Directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -68,6 +57,17 @@ jobs:
 
       - name: Install Composer Dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build Frontend Assets
+        run: |
+          npm ci
+          npm run build
 
       - name: Verify Code Style (Laravel Pint)
         run: ./vendor/bin/pint --test
