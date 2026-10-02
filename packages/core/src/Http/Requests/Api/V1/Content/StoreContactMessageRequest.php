@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Api\V1\Content;
+namespace Reyhan\Core\Http\Requests\Api\V1\Content;
 
-use App\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class StoreContactMessageRequest extends FormRequest

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Integrations\Ghasedak;
+namespace Reyhan\Core\Services\Integrations\Ghasedak;
 
-use App\Settings\SmsSettings;
+use Reyhan\Core\Settings\SmsSettings;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;

@@ -2,16 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Orders;
+namespace Reyhan\Core\Actions\Orders;
 
-use App\Enums\OrderStatus;
-use App\Enums\PaymentGateway;
-use App\Enums\PaymentStatus;
-use App\Models\CardTransferReceipt;
-use App\Models\Order;
-use App\Models\ProductVariant;
-use App\Services\Inventory\StockReservationService;
+use Reyhan\Core\Actions\Accounting\CreateLedgerJournalEntryAction;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Enums\PaymentGateway;
+use Reyhan\Core\Enums\PaymentStatus;
+use Reyhan\Core\Models\CardTransferReceipt;
+use Reyhan\Core\Models\Coupon;
+use Reyhan\Core\Models\CouponUsage;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Services\Inventory\StockReservationService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 final class ApproveCardTransferReceiptAction
 {
@@ -33,6 +37,7 @@ final class ApproveCardTransferReceiptAction
             ]);
 
             // Tier 2 Pessimistic Database Concurrency Locking for variant stock
+            $reservationId = $order->reservation_id ?? "order_{$order->id}";
             $order->loadMissing('items');
             foreach ($order->items as $item) {
                 /** @var ProductVariant|null $variant */
@@ -42,7 +47,7 @@ final class ApproveCardTransferReceiptAction
 
                 if ($variant) {
                     $variant->decrement('stock', $item->quantity);
-                    $this->stockReservationService->commit($variant->id, $item->quantity, "order_{$order->id}");
+                    $this->stockReservationService->commit($variant->id, $item->quantity, $reservationId);
                 }
             }
 
@@ -50,6 +55,25 @@ final class ApproveCardTransferReceiptAction
                 'status' => OrderStatus::Processing,
                 'paid_at' => now(),
             ]);
+
+            // Settle Coupon Usage if applied
+            if (! empty($order->coupon_code)) {
+                /** @var Coupon|null $coupon */
+                $coupon = Coupon::where('code', $order->coupon_code)->lockForUpdate()->first();
+                if ($coupon) {
+                    CouponUsage::firstOrCreate(
+                        [
+                            'coupon_id' => $coupon->id,
+                            'order_id' => $order->id,
+                        ],
+                        [
+                            'user_id' => $order->user_id,
+                            'discount_amount' => (int) $order->coupon_discount,
+                        ]
+                    );
+                    $coupon->increment('used_count');
+                }
+            }
 
             $payment = $order->payments()->latest()->first();
             if ($payment) {
@@ -59,7 +83,7 @@ final class ApproveCardTransferReceiptAction
                     'reference_id' => $receipt->tracking_number,
                 ]);
             } else {
-                $order->payments()->create([
+                $payment = $order->payments()->create([
                     'user_id' => $order->user_id,
                     'amount' => $receipt->amount,
                     'gateway' => PaymentGateway::CardToCard,
@@ -67,6 +91,13 @@ final class ApproveCardTransferReceiptAction
                     'reference_id' => $receipt->tracking_number,
                     'paid_at' => now(),
                 ]);
+            }
+
+            // Record balanced double-entry accounting journal transaction
+            try {
+                app(CreateLedgerJournalEntryAction::class)->recordOrderSettlement($order, $payment);
+            } catch (\Throwable $e) {
+                Log::error("Failed to record ledger settlement for card approval order {$order->order_number}: {$e->getMessage()}");
             }
         });
     }

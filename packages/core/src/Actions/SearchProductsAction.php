@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Actions;
+namespace Reyhan\Core\Actions;
 
-use App\Models\Product;
-use App\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Database\Eloquent\Builder;
 
 final class SearchProductsAction

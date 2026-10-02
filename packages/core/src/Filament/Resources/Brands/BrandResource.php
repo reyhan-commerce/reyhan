@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Brands;
+namespace Reyhan\Core\Filament\Resources\Brands;
 
-use App\Filament\Resources\Brands\Pages\CreateBrand;
-use App\Filament\Resources\Brands\Pages\EditBrand;
-use App\Filament\Resources\Brands\Pages\ListBrands;
-use App\Models\Brand;
+use Reyhan\Core\Filament\Resources\Brands\Pages\CreateBrand;
+use Reyhan\Core\Filament\Resources\Brands\Pages\EditBrand;
+use Reyhan\Core\Filament\Resources\Brands\Pages\ListBrands;
+use Reyhan\Core\Models\Brand;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

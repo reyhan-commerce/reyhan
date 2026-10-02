@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\AttributeValue;
-use App\Models\ProductVariant;
-use App\Models\ProductVariantValue;
+use Reyhan\Core\Models\AttributeValue;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\ProductVariantValue;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

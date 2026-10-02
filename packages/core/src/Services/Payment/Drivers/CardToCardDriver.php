@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Payment\Drivers;
+namespace Reyhan\Core\Services\Payment\Drivers;
 
-use App\Models\Order;
-use App\Models\Payment;
-use App\Services\Payment\Contracts\PaymentDriverInterface;
-use App\Services\Payment\DTOs\PaymentRequestResult;
-use App\Services\Payment\DTOs\PaymentVerifyResult;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\Payment;
+use Reyhan\Core\Services\Payment\Contracts\PaymentDriverInterface;
+use Reyhan\Core\Services\Payment\DTOs\PaymentRequestResult;
+use Reyhan\Core\Services\Payment\DTOs\PaymentVerifyResult;
 use Illuminate\Support\Str;
 
 class CardToCardDriver implements PaymentDriverInterface

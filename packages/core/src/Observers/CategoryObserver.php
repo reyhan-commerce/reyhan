@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Observers;
+namespace Reyhan\Core\Observers;
 
-use App\Models\Category;
-use App\Services\Catalog\CategoryService;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Services\Catalog\CategoryService;
 
 final class CategoryObserver
 {

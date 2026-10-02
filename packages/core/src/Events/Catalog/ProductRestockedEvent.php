@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Events\Catalog;
+namespace Reyhan\Core\Events\Catalog;
 
-use App\Models\ProductVariant;
+use Reyhan\Core\Models\ProductVariant;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

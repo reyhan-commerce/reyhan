@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
-use App\Contracts\Models\OrderContract;
-use App\Enums\OrderStatus;
-use App\Enums\ShippingMethod as ShippingMethodEnum;
+use Reyhan\Core\Contracts\Models\OrderContract;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Enums\ShippingMethod as ShippingMethodEnum;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
-use Database\Factories\OrderFactory;
+use Reyhan\Core\Support\Reyhan;
+use Reyhan\Core\Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -131,7 +132,7 @@ class Order extends Model implements OrderContract, ProvidesActivityTitle
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Reyhan::userModel());
     }
 
     /**
@@ -163,7 +164,7 @@ class Order extends Model implements OrderContract, ProvidesActivityTitle
      */
     public function items(): HasMany
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(Reyhan::model('order_item'));
     }
 
     /**

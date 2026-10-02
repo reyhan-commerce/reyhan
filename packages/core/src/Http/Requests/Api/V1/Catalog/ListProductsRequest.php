@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Api\V1\Catalog;
+namespace Reyhan\Core\Http\Requests\Api\V1\Catalog;
 
-use App\Enums\ProductSortOption;
+use Reyhan\Core\Enums\ProductSortOption;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;

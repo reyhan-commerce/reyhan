@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\Page;
+use Reyhan\Core\Models\Page;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

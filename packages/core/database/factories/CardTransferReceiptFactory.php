@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\CardTransferReceipt;
-use App\Models\Order;
-use App\Models\User;
+use Reyhan\Core\Models\CardTransferReceipt;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

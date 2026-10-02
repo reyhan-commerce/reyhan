@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Notifications\Messages;
+namespace Reyhan\Core\Notifications\Messages;
 
 class SmsMessage
 {

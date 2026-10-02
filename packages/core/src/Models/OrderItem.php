@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
-use Database\Factories\OrderItemFactory;
+use Reyhan\Core\Database\Factories\OrderItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,6 +42,9 @@ class OrderItem extends Model
         return [
             'unit_price' => 'integer',
             'discount_amount' => 'integer',
+            'allocated_discount' => 'integer',
+            'is_tax_exempt' => 'boolean',
+            'tax_amount' => 'integer',
             'final_price' => 'integer',
             'quantity' => 'integer',
             'total_price' => 'integer',

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\ProductVariant;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductVariant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;

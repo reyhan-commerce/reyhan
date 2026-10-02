@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Exceptions\Cart;
+namespace Reyhan\Core\Exceptions\Cart;
 
 use Exception;
 use Illuminate\Http\JsonResponse;

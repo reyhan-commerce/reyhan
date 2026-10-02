@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders;
+namespace Reyhan\Core\Database\Seeders;
 
-use App\Models\Faq;
+use Reyhan\Core\Models\Faq;
 use Illuminate\Database\Seeder;
 
 class FaqSeeder extends Seeder

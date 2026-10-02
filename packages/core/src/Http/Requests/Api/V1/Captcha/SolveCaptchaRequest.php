@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Api\V1\Captcha;
+namespace Reyhan\Core\Http\Requests\Api\V1\Captcha;
 
-use App\Rules\ValidPoWChallenge;
+use Reyhan\Core\Rules\ValidPoWChallenge;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class SolveCaptchaRequest extends FormRequest

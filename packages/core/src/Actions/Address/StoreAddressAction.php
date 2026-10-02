@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Address;
+namespace Reyhan\Core\Actions\Address;
 
-use App\Data\Address\StoreAddressData;
-use App\Models\Address;
-use App\Models\User;
+use Reyhan\Core\Data\Address\StoreAddressData;
+use Reyhan\Core\Models\Address;
+use Reyhan\Core\Models\User;
 use Illuminate\Support\Facades\DB;
 
 final class StoreAddressAction

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Catalog;
+namespace Reyhan\Core\Actions\Catalog;
 
-use App\Models\ProductVariant;
-use App\Models\StockAlert;
-use App\Models\User;
-use App\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\StockAlert;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Pipelines\Normalizer\PersianNormalizer;
 
 final class CreateStockAlertAction
 {

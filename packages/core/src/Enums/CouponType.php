@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Enums;
+namespace Reyhan\Core\Enums;
 
-use App\Enums\Concerns\HasEnumHelpers;
+use Reyhan\Core\Enums\Concerns\HasEnumHelpers;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;

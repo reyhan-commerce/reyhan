@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Review;
+namespace Reyhan\Core\Actions\Review;
 
-use App\Data\Review\StoreReviewData;
-use App\Enums\OrderStatus;
-use App\Enums\ReviewStatus;
-use App\Models\OrderItem;
-use App\Models\Product;
-use App\Models\Review;
-use App\Models\User;
+use Reyhan\Core\Data\Review\StoreReviewData;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Enums\ReviewStatus;
+use Reyhan\Core\Models\OrderItem;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\Review;
+use Reyhan\Core\Models\User;
 
 final class StoreReviewAction
 {

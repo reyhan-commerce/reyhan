@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\ContactMessages\Pages;
+namespace Reyhan\Core\Filament\Resources\ContactMessages\Pages;
 
-use App\Filament\Resources\ContactMessages\ContactMessageResource;
-use App\Models\ContactMessage;
+use Reyhan\Core\Filament\Resources\ContactMessages\ContactMessageResource;
+use Reyhan\Core\Models\ContactMessage;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ViewRecord;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Actions\Catalog\CompareProductsAction;
-use App\Http\Controllers\Controller;
+use Reyhan\Core\Actions\Catalog\CompareProductsAction;
+use Reyhan\Core\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

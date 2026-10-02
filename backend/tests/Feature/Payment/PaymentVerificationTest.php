@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-use App\Enums\OrderStatus;
-use App\Enums\PaymentGateway;
-use App\Enums\PaymentStatus;
-use App\Enums\ShippingMethod;
-use App\Models\Brand;
-use App\Models\Cart;
-use App\Models\Category;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Payment;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\User;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Enums\PaymentGateway;
+use Reyhan\Core\Enums\PaymentStatus;
+use Reyhan\Core\Enums\ShippingMethod;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\OrderItem;
+use Reyhan\Core\Models\Payment;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 uses(DatabaseTransactions::class);

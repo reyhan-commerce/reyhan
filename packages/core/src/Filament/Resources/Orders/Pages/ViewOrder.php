@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Orders\Pages;
+namespace Reyhan\Core\Filament\Resources\Orders\Pages;
 
-use App\Filament\Resources\Orders\OrderResource;
-use App\Http\Controllers\Api\V1\OrderInvoiceController;
-use App\Models\Order;
+use Reyhan\Core\Filament\Resources\Orders\OrderResource;
+use Reyhan\Core\Http\Controllers\Api\V1\OrderInvoiceController;
+use Reyhan\Core\Models\Order;
 use BokshornIt\FilamentActivityTimeline\Actions\ActivityTimelineAction;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Users;
+namespace Reyhan\Core\Filament\Resources\Users;
 
-use App\Enums\WalletTransactionType;
-use App\Filament\Resources\Users\Pages\CreateUser;
-use App\Filament\Resources\Users\Pages\EditUser;
-use App\Filament\Resources\Users\Pages\ListUsers;
-use App\Filament\Resources\Users\Pages\ViewUser;
-use App\Models\User;
-use App\Services\Wallet\WalletService;
+use Reyhan\Core\Enums\WalletTransactionType;
+use Reyhan\Core\Filament\Resources\Users\Pages\CreateUser;
+use Reyhan\Core\Filament\Resources\Users\Pages\EditUser;
+use Reyhan\Core\Filament\Resources\Users\Pages\ListUsers;
+use Reyhan\Core\Filament\Resources\Users\Pages\ViewUser;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Services\Wallet\WalletService;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;

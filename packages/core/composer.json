@@ -42,7 +42,8 @@
     "autoload": {
         "psr-4": {
             "Reyhan\\Core\\": "src/",
-            "App\\": "src/"
+            "Reyhan\\Core\\Database\\Factories\\": "database/factories/",
+            "Reyhan\\Core\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "extra": {

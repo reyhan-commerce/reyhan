@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Payments\Pages;
+namespace Reyhan\Core\Filament\Resources\Payments\Pages;
 
-use App\Filament\Resources\Payments\PaymentResource;
+use Reyhan\Core\Filament\Resources\Payments\PaymentResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreatePayment extends CreateRecord

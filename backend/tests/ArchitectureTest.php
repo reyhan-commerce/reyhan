@@ -3,30 +3,48 @@
 declare(strict_types=1);
 
 arch('actions are final and have execute method')
-    ->expect('App\Actions')
+    ->expect('Reyhan\Core\Actions')
     ->classes()
     ->toBeFinal()
     ->toHaveMethod('execute');
 
 arch('dtos are final')
-    ->expect('App\Data')
+    ->expect('Reyhan\Core\Data')
+    ->classes()
+    ->toBeFinal();
+
+arch('pipelines and pipes are final')
+    ->expect('Reyhan\Core\Pipelines')
+    ->classes()
+    ->toBeFinal();
+
+arch('domain events are final')
+    ->expect('Reyhan\Core\Events')
     ->classes()
     ->toBeFinal();
 
 arch('form requests are final')
-    ->expect('App\Http\Requests')
+    ->expect('Reyhan\Core\Http\Requests')
     ->classes()
     ->toBeFinal();
 
 arch('api controllers are final')
-    ->expect('App\Http\Controllers\Api\V1')
+    ->expect('Reyhan\Core\Http\Controllers\Api\V1')
     ->classes()
     ->toBeFinal();
 
+arch('models do not use direct http or request instances')
+    ->expect('Reyhan\Core\Models')
+    ->not->toUse([
+        'Illuminate\Support\Facades\Http',
+        'Illuminate\Http\Request',
+    ]);
+
 arch('strict no-repository rule')
-    ->expect('App\Repositories')
+    ->expect('Reyhan\Core\Repositories')
     ->not->toBeUsed();
 
-arch('strict types are declared in app')
-    ->expect('App')
+arch('strict types are declared across core framework')
+    ->expect('Reyhan\Core')
     ->toUseStrictTypes();
+

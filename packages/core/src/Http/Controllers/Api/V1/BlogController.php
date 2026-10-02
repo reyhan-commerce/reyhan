@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\V1\BlogCategoryResource;
-use App\Http\Resources\V1\BlogPostDetailResource;
-use App\Http\Resources\V1\BlogPostResource;
-use App\Models\BlogCategory;
-use App\Models\BlogPost;
-use App\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Resources\V1\BlogCategoryResource;
+use Reyhan\Core\Http\Resources\V1\BlogPostDetailResource;
+use Reyhan\Core\Http\Resources\V1\BlogPostResource;
+use Reyhan\Core\Models\BlogCategory;
+use Reyhan\Core\Models\BlogPost;
+use Reyhan\Core\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

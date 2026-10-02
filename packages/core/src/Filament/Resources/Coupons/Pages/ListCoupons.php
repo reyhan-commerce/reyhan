@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Coupons\Pages;
+namespace Reyhan\Core\Filament\Resources\Coupons\Pages;
 
-use App\Filament\Resources\Coupons\CouponResource;
+use Reyhan\Core\Filament\Resources\Coupons\CouponResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 

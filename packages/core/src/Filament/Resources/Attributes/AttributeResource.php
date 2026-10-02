@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Attributes;
+namespace Reyhan\Core\Filament\Resources\Attributes;
 
-use App\Enums\AttributeType;
-use App\Filament\Resources\Attributes\Pages\CreateAttribute;
-use App\Filament\Resources\Attributes\Pages\EditAttribute;
-use App\Filament\Resources\Attributes\Pages\ListAttributes;
-use App\Models\Attribute;
+use Reyhan\Core\Enums\AttributeType;
+use Reyhan\Core\Filament\Resources\Attributes\Pages\CreateAttribute;
+use Reyhan\Core\Filament\Resources\Attributes\Pages\EditAttribute;
+use Reyhan\Core\Filament\Resources\Attributes\Pages\ListAttributes;
+use Reyhan\Core\Models\Attribute;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

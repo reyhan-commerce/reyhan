@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Pages;
+namespace Reyhan\Core\Filament\Pages;
 
-use App\Features\ShopFeature;
-use App\Http\Controllers\Api\V1\AppFeaturesController;
+use Reyhan\Core\Features\ShopFeature;
+use Reyhan\Core\Http\Controllers\Api\V1\AppFeaturesController;
 use BackedEnum;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;

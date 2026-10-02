@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Pages;
+namespace Reyhan\Core\Filament\Pages;
 
-use App\Settings\GeneralSettings;
+use Reyhan\Core\Settings\GeneralSettings;
 use BackedEnum;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;

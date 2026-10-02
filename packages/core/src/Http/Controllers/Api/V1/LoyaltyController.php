@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Exceptions\Feature\FeatureDisabledException;
-use App\Features\ShopFeature;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Loyalty\RedeemLoyaltyPointsRequest;
-use App\Models\User;
-use App\Services\Loyalty\LoyaltyService;
-use App\Settings\GeneralSettings;
+use Reyhan\Core\Exceptions\Feature\FeatureDisabledException;
+use Reyhan\Core\Features\ShopFeature;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Requests\Api\V1\Loyalty\RedeemLoyaltyPointsRequest;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Services\Loyalty\LoyaltyService;
+use Reyhan\Core\Settings\GeneralSettings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use InvalidArgumentException;

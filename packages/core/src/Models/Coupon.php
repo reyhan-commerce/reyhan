@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
-use App\Enums\CouponScope;
-use App\Enums\CouponType;
+use Reyhan\Core\Enums\CouponScope;
+use Reyhan\Core\Enums\CouponType;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
-use Database\Factories\CouponFactory;
+use Reyhan\Core\Database\Factories\CouponFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;

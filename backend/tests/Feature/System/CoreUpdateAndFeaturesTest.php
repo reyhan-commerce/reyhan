@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Actions\System\PerformCoreUpdateAction;
-use App\Data\System\UpdateResultData;
-use App\Features\ShopFeature;
-use App\Http\Controllers\Api\V1\AppFeaturesController;
+use Reyhan\Core\Actions\System\PerformCoreUpdateAction;
+use Reyhan\Core\Data\System\UpdateResultData;
+use Reyhan\Core\Features\ShopFeature;
+use Reyhan\Core\Http\Controllers\Api\V1\AppFeaturesController;
 use Illuminate\Support\Facades\Cache;
 
 test('shop features enum contains all modular modules', function () {

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use App\Models\Address;
-use App\Models\Brand;
-use App\Models\Cart;
-use App\Models\Category;
-use App\Models\City;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\Province;
-use App\Models\User;
+use Reyhan\Core\Models\Address;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\City;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\Province;
+use Reyhan\Core\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Sanctum\Sanctum;
 

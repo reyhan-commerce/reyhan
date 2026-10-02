@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Api\V1\Address;
+namespace Reyhan\Core\Http\Requests\Api\V1\Address;
 
-use App\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Rules\IranianMobileRule;
+use Reyhan\Core\Rules\PostalCodeRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateAddressRequest extends FormRequest
@@ -56,8 +58,8 @@ final class UpdateAddressRequest extends FormRequest
             'province_id' => ['sometimes', 'integer', 'exists:provinces,id'],
             'city_id' => ['sometimes', 'integer', 'exists:cities,id'],
             'recipient_name' => ['sometimes', 'string', 'max:100'],
-            'recipient_mobile' => ['sometimes', 'string', 'regex:/^09[0-9]{9}$/'],
-            'postal_code' => ['sometimes', 'string', 'digits:10'],
+            'recipient_mobile' => ['sometimes', 'string', new IranianMobileRule],
+            'postal_code' => ['sometimes', 'string', new PostalCodeRule],
             'address_line' => ['sometimes', 'string', 'max:500'],
             'building_number' => ['nullable', 'string', 'max:20'],
             'unit' => ['nullable', 'string', 'max:20'],

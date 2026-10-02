@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Api\V1\Profile;
+namespace Reyhan\Core\Http\Requests\Api\V1\Profile;
 
-use App\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
+use Reyhan\Core\Contracts\Models\UserContract;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
-use Database\Factories\UserFactory;
+use Reyhan\Core\Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -48,7 +49,7 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 #[Guarded(['id'])]
 #[Hidden(['remember_token'])]
-class User extends Authenticatable implements ProvidesActivityTitle
+class User extends Authenticatable implements ProvidesActivityTitle, UserContract
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, LogsActivity, Notifiable, SoftDeletes;

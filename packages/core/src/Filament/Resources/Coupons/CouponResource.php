@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Coupons;
+namespace Reyhan\Core\Filament\Resources\Coupons;
 
-use App\Enums\CouponScope;
-use App\Enums\CouponType;
-use App\Filament\Resources\Coupons\Pages\CreateCoupon;
-use App\Filament\Resources\Coupons\Pages\EditCoupon;
-use App\Filament\Resources\Coupons\Pages\ListCoupons;
-use App\Models\Coupon;
+use Reyhan\Core\Enums\CouponScope;
+use Reyhan\Core\Enums\CouponType;
+use Reyhan\Core\Filament\Resources\Coupons\Pages\CreateCoupon;
+use Reyhan\Core\Filament\Resources\Coupons\Pages\EditCoupon;
+use Reyhan\Core\Filament\Resources\Coupons\Pages\ListCoupons;
+use Reyhan\Core\Models\Coupon;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

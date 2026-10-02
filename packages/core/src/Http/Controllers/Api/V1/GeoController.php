@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\V1\CityResource;
-use App\Http\Resources\V1\ProvinceResource;
-use App\Models\Province;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Resources\V1\CityResource;
+use Reyhan\Core\Http\Resources\V1\ProvinceResource;
+use Reyhan\Core\Models\Province;
 use Illuminate\Http\JsonResponse;
 
 final class GeoController extends Controller

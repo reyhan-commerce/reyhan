@@ -2,42 +2,42 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Api\V1\AddressController;
-use App\Http\Controllers\Api\V1\AppFeaturesController;
-use App\Http\Controllers\Api\V1\AppSettingController;
-use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\Api\V1\BannerController;
-use App\Http\Controllers\Api\V1\BlogController;
-use App\Http\Controllers\Api\V1\CaptchaController;
-use App\Http\Controllers\Api\V1\CartController;
-use App\Http\Controllers\Api\V1\CartCouponController;
-use App\Http\Controllers\Api\V1\CartItemController;
-use App\Http\Controllers\Api\V1\CartSyncController;
-use App\Http\Controllers\Api\V1\CatalogFiltersController;
-use App\Http\Controllers\Api\V1\CategoryController;
-use App\Http\Controllers\Api\V1\CategoryTreeController;
-use App\Http\Controllers\Api\V1\CheckoutController;
-use App\Http\Controllers\Api\V1\CompareProductsController;
-use App\Http\Controllers\Api\V1\ContactMessageController;
-use App\Http\Controllers\Api\V1\FaqController;
-use App\Http\Controllers\Api\V1\GeoController;
-use App\Http\Controllers\Api\V1\LoyaltyController;
-use App\Http\Controllers\Api\V1\OrderController;
-use App\Http\Controllers\Api\V1\OrderInvoiceController;
-use App\Http\Controllers\Api\V1\OrderReturnController;
-use App\Http\Controllers\Api\V1\PageController;
-use App\Http\Controllers\Api\V1\PaymentController;
-use App\Http\Controllers\Api\V1\ProductController;
-use App\Http\Controllers\Api\V1\ProductPriceHistoryController;
-use App\Http\Controllers\Api\V1\ProductQuestionController;
-use App\Http\Controllers\Api\V1\ProfileController;
-use App\Http\Controllers\Api\V1\ReferralController;
-use App\Http\Controllers\Api\V1\ReviewController;
-use App\Http\Controllers\Api\V1\SearchSuggestionController;
-use App\Http\Controllers\Api\V1\StockAlertController;
-use App\Http\Controllers\Api\V1\SupportTicketController;
-use App\Http\Controllers\Api\V1\WalletController;
-use App\Http\Controllers\Api\V1\WishlistController;
+use Reyhan\Core\Http\Controllers\Api\V1\AddressController;
+use Reyhan\Core\Http\Controllers\Api\V1\AppFeaturesController;
+use Reyhan\Core\Http\Controllers\Api\V1\AppSettingController;
+use Reyhan\Core\Http\Controllers\Api\V1\AuthController;
+use Reyhan\Core\Http\Controllers\Api\V1\BannerController;
+use Reyhan\Core\Http\Controllers\Api\V1\BlogController;
+use Reyhan\Core\Http\Controllers\Api\V1\CaptchaController;
+use Reyhan\Core\Http\Controllers\Api\V1\CartController;
+use Reyhan\Core\Http\Controllers\Api\V1\CartCouponController;
+use Reyhan\Core\Http\Controllers\Api\V1\CartItemController;
+use Reyhan\Core\Http\Controllers\Api\V1\CartSyncController;
+use Reyhan\Core\Http\Controllers\Api\V1\CatalogFiltersController;
+use Reyhan\Core\Http\Controllers\Api\V1\CategoryController;
+use Reyhan\Core\Http\Controllers\Api\V1\CategoryTreeController;
+use Reyhan\Core\Http\Controllers\Api\V1\CheckoutController;
+use Reyhan\Core\Http\Controllers\Api\V1\CompareProductsController;
+use Reyhan\Core\Http\Controllers\Api\V1\ContactMessageController;
+use Reyhan\Core\Http\Controllers\Api\V1\FaqController;
+use Reyhan\Core\Http\Controllers\Api\V1\GeoController;
+use Reyhan\Core\Http\Controllers\Api\V1\LoyaltyController;
+use Reyhan\Core\Http\Controllers\Api\V1\OrderController;
+use Reyhan\Core\Http\Controllers\Api\V1\OrderInvoiceController;
+use Reyhan\Core\Http\Controllers\Api\V1\OrderReturnController;
+use Reyhan\Core\Http\Controllers\Api\V1\PageController;
+use Reyhan\Core\Http\Controllers\Api\V1\PaymentController;
+use Reyhan\Core\Http\Controllers\Api\V1\ProductController;
+use Reyhan\Core\Http\Controllers\Api\V1\ProductPriceHistoryController;
+use Reyhan\Core\Http\Controllers\Api\V1\ProductQuestionController;
+use Reyhan\Core\Http\Controllers\Api\V1\ProfileController;
+use Reyhan\Core\Http\Controllers\Api\V1\ReferralController;
+use Reyhan\Core\Http\Controllers\Api\V1\ReviewController;
+use Reyhan\Core\Http\Controllers\Api\V1\SearchSuggestionController;
+use Reyhan\Core\Http\Controllers\Api\V1\StockAlertController;
+use Reyhan\Core\Http\Controllers\Api\V1\SupportTicketController;
+use Reyhan\Core\Http\Controllers\Api\V1\WalletController;
+use Reyhan\Core\Http\Controllers\Api\V1\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -221,7 +221,7 @@ Route::prefix('blog')->name('blog.')->group(function () {
 
 // Marketplace Product Feeds (Torob & Emalls)
 Route::prefix('integrations')->name('integrations.')->group(function () {
-    Route::get('/torob/products', \App\Http\Controllers\Api\V1\Integrations\TorobProductFeedController::class)->name('torob.products');
-    Route::get('/emalls/products', \App\Http\Controllers\Api\V1\Integrations\EmallsProductFeedController::class)->name('emalls.products');
+    Route::get('/torob/products', \Reyhan\Core\Http\Controllers\Api\V1\Integrations\TorobProductFeedController::class)->name('torob.products');
+    Route::get('/emalls/products', \Reyhan\Core\Http\Controllers\Api\V1\Integrations\EmallsProductFeedController::class)->name('emalls.products');
 });
 

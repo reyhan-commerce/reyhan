@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\Product;
-use App\Models\User;
-use App\Models\Wishlist;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Models\Wishlist;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

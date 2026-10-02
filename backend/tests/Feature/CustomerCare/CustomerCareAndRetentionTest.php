@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-use App\Enums\OrderStatus;
-use App\Enums\TicketDepartment;
-use App\Enums\TicketPriority;
-use App\Enums\TicketStatus;
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
-use App\Models\ProductQuestion;
-use App\Models\ProductVariant;
-use App\Models\SupportTicket;
-use App\Models\User;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Enums\TicketDepartment;
+use Reyhan\Core\Enums\TicketPriority;
+use Reyhan\Core\Enums\TicketStatus;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\OrderItem;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductQuestion;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\SupportTicket;
+use Reyhan\Core\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 uses(DatabaseTransactions::class);

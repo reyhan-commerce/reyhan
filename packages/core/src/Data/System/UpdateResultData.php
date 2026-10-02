@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Data\System;
+namespace Reyhan\Core\Data\System;
 
 use Spatie\LaravelData\Data;
 

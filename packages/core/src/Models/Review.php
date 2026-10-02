@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
-use App\Enums\ReviewStatus;
+use Reyhan\Core\Enums\ReviewStatus;
 use Carbon\Carbon;
-use Database\Factories\ReviewFactory;
+use Reyhan\Core\Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;

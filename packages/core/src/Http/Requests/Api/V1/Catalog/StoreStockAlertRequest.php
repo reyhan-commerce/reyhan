@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Api\V1\Catalog;
+namespace Reyhan\Core\Http\Requests\Api\V1\Catalog;
 
-use App\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class StoreStockAlertRequest extends FormRequest

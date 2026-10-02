@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
-use Database\Factories\CategoryFactory;
+use Reyhan\Core\Contracts\Models\CategoryContract;
+use Reyhan\Core\Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -36,7 +37,7 @@ use Spatie\Sluggable\SlugOptions;
  */
 #[RouteKey('slug')]
 #[Guarded(['id'])]
-class Category extends Model implements HasMedia
+class Category extends Model implements CategoryContract, HasMedia
 {
     /** @use HasFactory<CategoryFactory> */
     use HasFactory, HasSlug, InteractsWithMedia;

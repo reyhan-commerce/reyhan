@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Settings;
+namespace Reyhan\Core\Settings;
 
 use Spatie\LaravelSettings\Settings;
 

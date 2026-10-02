@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Widgets;
+namespace Reyhan\Core\Filament\Widgets;
 
-use App\Enums\OrderStatus;
-use App\Models\Order;
-use App\Models\ProductVariant;
-use App\Models\User;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\User;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 

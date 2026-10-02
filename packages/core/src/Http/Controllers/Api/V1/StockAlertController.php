@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Actions\Catalog\CreateStockAlertAction;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Catalog\StoreStockAlertRequest;
-use App\Models\ProductVariant;
+use Reyhan\Core\Actions\Catalog\CreateStockAlertAction;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Requests\Api\V1\Catalog\StoreStockAlertRequest;
+use Reyhan\Core\Models\ProductVariant;
 use Illuminate\Http\JsonResponse;
 
 final class StockAlertController extends Controller

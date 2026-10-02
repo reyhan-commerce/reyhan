@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Actions\SearchProductsAction;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\V1\ProductResource;
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Product;
-use App\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Actions\SearchProductsAction;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Resources\V1\ProductResource;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Pipelines\Normalizer\PersianNormalizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

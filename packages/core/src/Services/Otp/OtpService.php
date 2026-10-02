@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Otp;
+namespace Reyhan\Core\Services\Otp;
 
-use App\Exceptions\Auth\OtpThrottledException;
-use App\Notifications\Auth\SendOtpNotification;
+use Reyhan\Core\Exceptions\Auth\OtpThrottledException;
+use Reyhan\Core\Notifications\Auth\SendOtpNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redis;
 

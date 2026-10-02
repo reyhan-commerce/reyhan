@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Sms\Drivers;
+namespace Reyhan\Core\Services\Sms\Drivers;
 
-use App\Services\Sms\Contracts\SmsDriverInterface;
+use Reyhan\Core\Services\Sms\Contracts\SmsDriverInterface;
 use Illuminate\Support\Facades\Log;
 
 class LogDriver implements SmsDriverInterface

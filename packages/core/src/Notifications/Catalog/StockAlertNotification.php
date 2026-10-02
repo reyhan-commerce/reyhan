@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Notifications\Catalog;
+namespace Reyhan\Core\Notifications\Catalog;
 
-use App\Models\StockAlert;
-use App\Notifications\Channels\SmsChannel;
-use App\Notifications\Messages\SmsMessage;
+use Reyhan\Core\Models\StockAlert;
+use Reyhan\Core\Notifications\Channels\SmsChannel;
+use Reyhan\Core\Notifications\Messages\SmsMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;

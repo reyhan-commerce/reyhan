@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Enums\OrderStatus;
-use App\Enums\ShippingMethod;
-use App\Filament\Widgets\LatestOrdersWidget;
-use App\Models\Admin;
-use App\Models\Order;
-use App\Models\User;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Enums\ShippingMethod;
+use Reyhan\Core\Filament\Widgets\LatestOrdersWidget;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
@@ -85,7 +85,7 @@ test('order model dispatches realtime event upon status update', function (): vo
     });
 });
 
-use App\Filament\Resources\Orders\Pages\ListOrders;
+use Reyhan\Core\Filament\Resources\Orders\Pages\ListOrders;
 use Livewire\Livewire;
 
 test('order resource table has socket configured for orders channel', function (): void {

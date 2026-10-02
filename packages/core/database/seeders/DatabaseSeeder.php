@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Seeders;
+namespace Reyhan\Core\Database\Seeders;
 
-use App\Models\User;
+use Reyhan\Core\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

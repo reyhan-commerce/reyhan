@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Sms\Drivers;
+namespace Reyhan\Core\Services\Sms\Drivers;
 
-use App\Services\Integrations\FarazSms\FarazSmsClient;
-use App\Services\Sms\Contracts\SmsDriverInterface;
+use Reyhan\Core\Services\Integrations\FarazSms\FarazSmsClient;
+use Reyhan\Core\Services\Sms\Contracts\SmsDriverInterface;
 
 class FarazSmsDriver implements SmsDriverInterface
 {

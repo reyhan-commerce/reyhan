@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands;
+namespace Reyhan\Core\Console\Commands;
 
-use App\Models\AbandonedCartLog;
-use App\Models\Cart;
-use App\Notifications\Marketing\AbandonedCartReminderNotification;
+use Reyhan\Core\Models\AbandonedCartLog;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Notifications\Marketing\AbandonedCartReminderNotification;
 use Carbon\Carbon;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;

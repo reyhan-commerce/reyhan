@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
-use App\Enums\StockStatus;
-use App\Events\Catalog\ProductRestockedEvent;
+use Reyhan\Core\Contracts\Models\ProductVariantContract;
+use Reyhan\Core\Enums\StockStatus;
+use Reyhan\Core\Events\Catalog\ProductRestockedEvent;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
-use Database\Factories\ProductVariantFactory;
+use Reyhan\Core\Database\Factories\ProductVariantFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -43,7 +44,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property-read int $discount_percent
  */
 #[Guarded(['id'])]
-class ProductVariant extends Model implements ProvidesActivityTitle
+class ProductVariant extends Model implements ProductVariantContract, ProvidesActivityTitle
 {
     /** @use HasFactory<ProductVariantFactory> */
     use HasFactory, LogsActivity, SoftDeletes;
@@ -118,6 +119,30 @@ class ProductVariant extends Model implements ProvidesActivityTitle
     public function attributeValues(): BelongsToMany
     {
         return $this->belongsToMany(AttributeValue::class, 'product_variant_values');
+    }
+
+    /**
+     * @return HasMany<CartItem, $this>
+     */
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(CartItem::class, 'product_variant_id');
+    }
+
+    /**
+     * @return HasMany<OrderItem, $this>
+     */
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class, 'product_variant_id');
+    }
+
+    /**
+     * Check if variant has sufficient stock for requested quantity.
+     */
+    public function hasStock(int $quantity = 1): bool
+    {
+        return $this->is_active && $this->stock >= $quantity;
     }
 
     /**

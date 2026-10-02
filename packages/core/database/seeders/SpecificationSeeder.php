@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders;
+namespace Reyhan\Core\Database\Seeders;
 
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\ProductSpecification;
-use App\Models\Specification;
-use App\Models\SpecificationGroup;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductSpecification;
+use Reyhan\Core\Models\Specification;
+use Reyhan\Core\Models\SpecificationGroup;
 use Illuminate\Database\Seeder;
 
 class SpecificationSeeder extends Seeder

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\LoyaltyTransaction;
-use App\Models\User;
+use Reyhan\Core\Models\LoyaltyTransaction;
+use Reyhan\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

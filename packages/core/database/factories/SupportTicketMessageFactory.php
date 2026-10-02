@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\SupportTicket;
-use App\Models\SupportTicketMessage;
-use App\Models\User;
+use Reyhan\Core\Models\SupportTicket;
+use Reyhan\Core\Models\SupportTicketMessage;
+use Reyhan\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

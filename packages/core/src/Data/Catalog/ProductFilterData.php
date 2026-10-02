@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Data\Catalog;
+namespace Reyhan\Core\Data\Catalog;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;

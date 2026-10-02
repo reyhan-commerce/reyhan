@@ -2,10 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Api\V1\Checkout;
+namespace Reyhan\Core\Http\Requests\Api\V1\Checkout;
 
-use App\Enums\PaymentGateway;
-use App\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Enums\PaymentGateway;
+use Reyhan\Core\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Rules\CardNumberRule;
+use Reyhan\Core\Rules\CompanyNationalIdRule;
+use Reyhan\Core\Rules\IranianPhoneRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -51,11 +54,11 @@ final class CreateOrderRequest extends FormRequest
             'corporate_data' => ['nullable', 'array'],
             'corporate_data.company_name' => ['required_if:is_corporate_invoice,true', 'nullable', 'string', 'max:150'],
             'corporate_data.economic_code' => ['nullable', 'string', 'max:50'],
-            'corporate_data.national_id' => ['required_if:is_corporate_invoice,true', 'nullable', 'string', 'max:50'],
+            'corporate_data.national_id' => ['required_if:is_corporate_invoice,true', 'nullable', 'string', new CompanyNationalIdRule],
             'corporate_data.registration_number' => ['nullable', 'string', 'max:50'],
-            'corporate_data.phone' => ['nullable', 'string', 'max:50'],
+            'corporate_data.phone' => ['nullable', 'string', new IranianPhoneRule],
             'card_tracking_number' => ['nullable', 'string', 'max:64'],
-            'card_source_number' => ['nullable', 'string', 'max:32'],
+            'card_source_number' => ['nullable', 'string', new CardNumberRule],
         ];
     }
 }

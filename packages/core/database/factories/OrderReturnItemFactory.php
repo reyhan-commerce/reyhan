@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\OrderItem;
-use App\Models\OrderReturn;
-use App\Models\OrderReturnItem;
+use Reyhan\Core\Models\OrderItem;
+use Reyhan\Core\Models\OrderReturn;
+use Reyhan\Core\Models\OrderReturnItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

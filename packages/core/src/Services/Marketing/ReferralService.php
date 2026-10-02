@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Marketing;
+namespace Reyhan\Core\Services\Marketing;
 
-use App\Enums\ReferralStatus;
-use App\Enums\WalletTransactionType;
-use App\Models\Order;
-use App\Models\Referral;
-use App\Models\User;
-use App\Services\Wallet\WalletService;
+use Reyhan\Core\Enums\ReferralStatus;
+use Reyhan\Core\Enums\WalletTransactionType;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\Referral;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Services\Wallet\WalletService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 

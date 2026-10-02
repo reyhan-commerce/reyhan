@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Inventory;
+namespace Reyhan\Core\Services\Inventory;
 
-use App\Models\ProductVariant;
+use Reyhan\Core\Models\ProductVariant;
 use Illuminate\Support\Facades\Redis;
 
 class StockReservationService

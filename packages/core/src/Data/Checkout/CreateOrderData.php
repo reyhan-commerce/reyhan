@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Data\Checkout;
+namespace Reyhan\Core\Data\Checkout;
 
-use App\Enums\PaymentGateway;
-use App\Enums\ShippingMethod;
+use Reyhan\Core\Enums\PaymentGateway;
+use Reyhan\Core\Enums\ShippingMethod;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Max;
 use Spatie\LaravelData\Attributes\Validation\Required;

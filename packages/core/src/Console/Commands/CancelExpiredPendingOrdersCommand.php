@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands;
+namespace Reyhan\Core\Console\Commands;
 
-use App\Enums\OrderStatus;
-use App\Models\Order;
-use App\Services\Inventory\StockReservationService;
-use App\Services\Wallet\WalletService;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Services\Inventory\StockReservationService;
+use Reyhan\Core\Services\Wallet\WalletService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Enums\TicketDepartment;
-use App\Enums\TicketPriority;
-use App\Enums\TicketStatus;
-use App\Http\Controllers\Controller;
-use App\Models\SupportTicket;
-use App\Models\User;
+use Reyhan\Core\Enums\TicketDepartment;
+use Reyhan\Core\Enums\TicketPriority;
+use Reyhan\Core\Enums\TicketStatus;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Models\SupportTicket;
+use Reyhan\Core\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

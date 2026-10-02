@@ -6,13 +6,13 @@ namespace Reyhan\Core;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use App\Console\Commands\ReyhanDoctorCommand;
-use App\Console\Commands\ReyhanInstallCommand;
-use App\Console\Commands\ReyhanUpdateCommand;
-use App\Console\Commands\ReyhanVersionCommand;
-use App\Console\Commands\ShopPresetCommand;
-use App\Console\Commands\SystemUpdateCommand;
-use App\Support\Reyhan;
+use Reyhan\Core\Console\Commands\ReyhanDoctorCommand;
+use Reyhan\Core\Console\Commands\ReyhanInstallCommand;
+use Reyhan\Core\Console\Commands\ReyhanUpdateCommand;
+use Reyhan\Core\Console\Commands\ReyhanVersionCommand;
+use Reyhan\Core\Console\Commands\ShopPresetCommand;
+use Reyhan\Core\Console\Commands\SystemUpdateCommand;
+use Reyhan\Core\Support\Reyhan;
 
 class ReyhanServiceProvider extends ServiceProvider
 {
@@ -27,11 +27,13 @@ class ReyhanServiceProvider extends ServiceProvider
             ]),
             'auth.providers.admins' => config('auth.providers.admins', [
                 'driver' => 'eloquent',
-                'model' => \App\Models\Admin::class,
+                'model' => \Reyhan\Core\Models\Admin::class,
             ]),
         ]);
 
         $this->app->singleton(Reyhan::class, fn () => new Reyhan());
+        $this->app->register(Providers\AppServiceProvider::class);
+        $this->app->register(Providers\SmsServiceProvider::class);
     }
 
     public function boot(): void
@@ -48,9 +50,23 @@ class ReyhanServiceProvider extends ServiceProvider
         // 4. Load API Routes
         $this->loadRoutes();
 
+        // Factory name resolver for Core models
+        \Illuminate\Database\Eloquent\Factories\Factory::guessFactoryNamesUsing(function (string $modelName) {
+            if (str_starts_with($modelName, 'Reyhan\\Core\\Models\\')) {
+                return 'Reyhan\\Core\\Database\\Factories\\'.class_basename($modelName).'Factory';
+            }
+            return 'Database\\Factories\\'.class_basename($modelName).'Factory';
+        });
+
         // 5. Console Commands & Publishing
         if ($this->app->runningInConsole()) {
             $this->commands([
+                Console\Commands\CancelExpiredPendingOrdersCommand::class,
+                Console\Commands\ExportMoadianInvoicesCommand::class,
+                Console\Commands\MakePaymentDriverCommand::class,
+                Console\Commands\MakePluginCommand::class,
+                Console\Commands\MakeShippingDriverCommand::class,
+                Console\Commands\RecoverAbandonedCartsCommand::class,
                 ReyhanDoctorCommand::class,
                 ReyhanInstallCommand::class,
                 ReyhanUpdateCommand::class,

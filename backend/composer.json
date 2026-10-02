@@ -5,8 +5,18 @@
     "description": "The skeleton application for the Laravel framework.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../packages/core",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "require": {
         "php": "^8.4",
+        "reyhan-commerce/core": "@dev",
         "alareqi/filament-tree": "^1.0",
         "bezhansalleh/filament-shield": "^4.3",
         "bokshorn-it/filament-activity-timeline": "^1.4",
@@ -111,6 +121,6 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }

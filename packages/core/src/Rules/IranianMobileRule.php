@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Rules;
+namespace Reyhan\Core\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 final class IranianMobileRule implements ValidationRule
 {
@@ -13,7 +14,7 @@ final class IranianMobileRule implements ValidationRule
      * Run the validation rule for Iranian Mobile Numbers (شماره موبایل ایران).
      * Supports formats: 0912xxxxxxx, +98912xxxxxxx, 0098912xxxxxxx, 98912xxxxxxx, 912xxxxxxx.
      *
-     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

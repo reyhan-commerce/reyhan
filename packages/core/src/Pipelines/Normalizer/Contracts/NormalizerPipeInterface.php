@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Pipelines\Normalizer\Contracts;
+namespace Reyhan\Core\Pipelines\Normalizer\Contracts;
 
 use Closure;
 

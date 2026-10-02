@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Enums\ReferralStatus;
-use App\Models\Referral;
-use App\Models\User;
+use Reyhan\Core\Enums\ReferralStatus;
+use Reyhan\Core\Models\Referral;
+use Reyhan\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

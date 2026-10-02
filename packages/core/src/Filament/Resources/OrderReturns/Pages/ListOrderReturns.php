@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\OrderReturns\Pages;
+namespace Reyhan\Core\Filament\Resources\OrderReturns\Pages;
 
-use App\Filament\Resources\OrderReturns\OrderReturnResource;
+use Reyhan\Core\Filament\Resources\OrderReturns\OrderReturnResource;
 use Filament\Resources\Pages\ListRecords;
 
 class ListOrderReturns extends ListRecords

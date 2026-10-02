@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Enums\PaymentGateway;
-use App\Models\Admin;
-use App\Models\Payment;
-use App\Models\User;
+use Reyhan\Core\Enums\PaymentGateway;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\Payment;
+use Reyhan\Core\Models\User;
 use Filament\Auth\Pages\Login;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Livewire\Livewire;

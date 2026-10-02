@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders;
+namespace Reyhan\Core\Database\Seeders;
 
-use App\Models\Page;
-use App\Settings\GeneralSettings;
+use Reyhan\Core\Models\Page;
+use Reyhan\Core\Settings\GeneralSettings;
 use Illuminate\Database\Seeder;
 
 class PageSeeder extends Seeder

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\Review;
-use App\Models\User;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\OrderItem;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\Review;
+use Reyhan\Core\Models\User;
 use Laravel\Sanctum\Sanctum;
 
 test('public can view reviews and stats for product', function () {

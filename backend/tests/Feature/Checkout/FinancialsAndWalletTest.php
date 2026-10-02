@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-use App\Enums\OrderStatus;
-use App\Enums\PaymentGateway;
-use App\Enums\WalletTransactionType;
-use App\Models\Address;
-use App\Models\Brand;
-use App\Models\Cart;
-use App\Models\CartItem;
-use App\Models\Category;
-use App\Models\City;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\Province;
-use App\Models\ShippingMethod;
-use App\Models\User;
-use App\Services\Wallet\WalletService;
-use Database\Seeders\ShippingMethodSeeder;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Enums\PaymentGateway;
+use Reyhan\Core\Enums\WalletTransactionType;
+use Reyhan\Core\Models\Address;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Models\CartItem;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\City;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\Province;
+use Reyhan\Core\Models\ShippingMethod;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Services\Wallet\WalletService;
+use Reyhan\Core\Database\Seeders\ShippingMethodSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Validation\ValidationException;
 
@@ -189,7 +189,7 @@ test('checkout creates card to card receipt and keeps order in pending payment',
             'gateway' => PaymentGateway::CardToCard->value,
             'callback_url' => 'http://localhost:3000/checkout/callback',
             'card_tracking_number' => 'REF-987654321',
-            'card_source_number' => '6037997911112222',
+            'card_source_number' => '6037991199999990',
         ]);
 
     $response->assertStatus(201)
@@ -226,9 +226,10 @@ test('checkout saves corporate tax invoice data', function (): void {
             'is_corporate_invoice' => true,
             'corporate_data' => [
                 'company_name' => 'شرکت توسعه پایدار فناوران',
-                'national_id' => '10320876543',
+                'national_id' => '10861676731',
                 'economic_code' => '411485297531',
                 'registration_number' => '582140',
+                'phone' => '02188776655',
             ],
         ]);
 
@@ -240,5 +241,5 @@ test('checkout saves corporate tax invoice data', function (): void {
     expect($order)->not->toBeNull()
         ->and($order->is_corporate_invoice)->toBeTrue()
         ->and($order->corporate_data['company_name'])->toBe('شرکت توسعه پایدار فناوران')
-        ->and($order->corporate_data['national_id'])->toBe('10320876543');
+        ->and($order->corporate_data['national_id'])->toBe('10861676731');
 });

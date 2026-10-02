@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Services\Captcha\CaptchaService;
+use Reyhan\Core\Services\Captcha\CaptchaService;
 use Illuminate\Support\Facades\Redis;
 
 beforeEach(function () {

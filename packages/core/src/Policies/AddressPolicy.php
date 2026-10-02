@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Policies;
+namespace Reyhan\Core\Policies;
 
-use App\Models\Address;
-use App\Models\User;
+use Reyhan\Core\Models\Address;
+use Reyhan\Core\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class AddressPolicy

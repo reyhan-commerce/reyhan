@@ -2,16 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Payment;
+namespace Reyhan\Core\Services\Payment;
 
-use App\Enums\PaymentGateway;
-use App\Services\Payment\Contracts\PaymentDriverInterface;
-use App\Services\Payment\Drivers\CardToCardDriver;
-use App\Services\Payment\Drivers\SandboxDriver;
-use App\Services\Payment\Drivers\SnappPayDriver;
-use App\Services\Payment\Drivers\WalletDriver;
-use App\Services\Payment\Drivers\ZarinpalDriver;
-use App\Services\Wallet\WalletService;
+use Reyhan\Core\Enums\PaymentGateway;
+use Reyhan\Core\Services\Payment\Contracts\PaymentDriverInterface;
+use Reyhan\Core\Services\Payment\Drivers\BehpardakhtDriver;
+use Reyhan\Core\Services\Payment\Drivers\CardToCardDriver;
+use Reyhan\Core\Services\Payment\Drivers\SandboxDriver;
+use Reyhan\Core\Services\Payment\Drivers\SepDriver;
+use Reyhan\Core\Services\Payment\Drivers\SnappPayDriver;
+use Reyhan\Core\Services\Payment\Drivers\WalletDriver;
+use Reyhan\Core\Services\Payment\Drivers\ZarinpalDriver;
+use Reyhan\Core\Services\Wallet\WalletService;
 use Illuminate\Support\Manager;
 
 class PaymentManager extends Manager
@@ -52,17 +54,21 @@ class PaymentManager extends Manager
      */
     protected function createSamanDriver(): PaymentDriverInterface
     {
-        // Fallback to sandbox if not configured
-        return new SandboxDriver;
+        /** @var array<string, mixed> $config */
+        $config = (array) $this->config->get('payment.gateways.saman', []);
+
+        return new SepDriver($config);
     }
 
     /**
-     * Create Mellat driver instance.
+     * Create Mellat (Behpardakht) driver instance.
      */
     protected function createMellatDriver(): PaymentDriverInterface
     {
-        // Fallback to sandbox if not configured
-        return new SandboxDriver;
+        /** @var array<string, mixed> $config */
+        $config = (array) $this->config->get('payment.gateways.mellat', []);
+
+        return new BehpardakhtDriver($config);
     }
 
     /**

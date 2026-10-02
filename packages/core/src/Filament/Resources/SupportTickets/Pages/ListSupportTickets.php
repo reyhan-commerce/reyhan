@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\SupportTickets\Pages;
+namespace Reyhan\Core\Filament\Resources\SupportTickets\Pages;
 
-use App\Filament\Resources\SupportTickets\SupportTicketResource;
+use Reyhan\Core\Filament\Resources\SupportTickets\SupportTicketResource;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSupportTickets extends ListRecords

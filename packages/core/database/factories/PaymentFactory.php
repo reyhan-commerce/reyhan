@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Enums\PaymentGateway;
-use App\Enums\PaymentStatus;
-use App\Models\Order;
-use App\Models\Payment;
-use App\Models\User;
+use Reyhan\Core\Enums\PaymentGateway;
+use Reyhan\Core\Enums\PaymentStatus;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\Payment;
+use Reyhan\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

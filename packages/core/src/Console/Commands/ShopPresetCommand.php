@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands;
+namespace Reyhan\Core\Console\Commands;
 
-use App\Models\Admin;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Settings\GeneralSettings;
-use App\Settings\ThemeSettings;
-use Database\Seeders\AdminRoleSeeder;
-use Database\Seeders\ApparelPresetSeeder;
-use Database\Seeders\BlogSeeder;
-use Database\Seeders\CatalogSeeder;
-use Database\Seeders\DigitalPresetSeeder;
-use Database\Seeders\FaqSeeder;
-use Database\Seeders\PageSeeder;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Settings\GeneralSettings;
+use Reyhan\Core\Settings\ThemeSettings;
+use Reyhan\Core\Database\Seeders\AdminRoleSeeder;
+use Reyhan\Core\Database\Seeders\ApparelPresetSeeder;
+use Reyhan\Core\Database\Seeders\BlogSeeder;
+use Reyhan\Core\Database\Seeders\CatalogSeeder;
+use Reyhan\Core\Database\Seeders\DigitalPresetSeeder;
+use Reyhan\Core\Database\Seeders\FaqSeeder;
+use Reyhan\Core\Database\Seeders\PageSeeder;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;

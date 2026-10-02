@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands;
+namespace Reyhan\Core\Console\Commands;
 
-use App\Actions\System\PerformCoreUpdateAction;
+use Reyhan\Core\Actions\System\PerformCoreUpdateAction;
 use Illuminate\Console\Command;
 
 final class SystemUpdateCommand extends Command

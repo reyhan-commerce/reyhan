@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\ShippingMethod;
+use Reyhan\Core\Models\ShippingMethod;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

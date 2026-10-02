@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Pages;
+namespace Reyhan\Core\Filament\Pages;
 
-use App\Settings\SmsSettings;
+use Reyhan\Core\Settings\SmsSettings;
 use BackedEnum;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

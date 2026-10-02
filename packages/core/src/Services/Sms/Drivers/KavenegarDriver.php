@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Sms\Drivers;
+namespace Reyhan\Core\Services\Sms\Drivers;
 
-use App\Services\Integrations\Kavenegar\KavenegarClient;
-use App\Services\Sms\Contracts\SmsDriverInterface;
+use Reyhan\Core\Services\Integrations\Kavenegar\KavenegarClient;
+use Reyhan\Core\Services\Sms\Contracts\SmsDriverInterface;
 
 class KavenegarDriver implements SmsDriverInterface
 {

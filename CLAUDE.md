@@ -1,10 +1,13 @@
 # Farshid Laravel Standards for Claude Code
 
-You are operating under Farshid's Laravel & PHP Coding Standards.
+## Universal Documentation Contract
+- **All documentation, markdown (`.md`) files, blueprints, guides, code comments, and docblocks across the entire repository MUST be written in English.**
+- Markdown files must never be written in Persian.
+- Persian is reserved strictly for localization files (`lang/fa.json`), translation strings, and Iranian commerce seeders.
 
 ## Core Rules
 - **Laravel Native First**: Always prefer native Laravel features (`DB::transaction`, `FormRequest`, `Policy`, `ApiResource`, `Eloquent`, `Http::fake`, `Concurrency::run`).
-- **Strict Typing**: All function parameters, return types, and class properties must have explicit types.
+- **Strict Typing**: All function parameters, return types, and class properties must have explicit types (`declare(strict_types=1);` mandatory).
 - **Strictly No Repositories**: Use Eloquent directly.
 - **Actions for Business Logic**: Use `final class [Verb][Noun]Action` with `execute()`.
 - **Controllers Are Thin**: FormRequest -> Action -> ApiResource. No inline validation or business logic in controllers.

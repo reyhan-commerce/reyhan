@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
-use Database\Factories\BrandFactory;
+use Reyhan\Core\Contracts\Models\BrandContract;
+use Reyhan\Core\Database\Factories\BrandFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -30,7 +31,7 @@ use Spatie\Sluggable\SlugOptions;
  */
 #[RouteKey('slug')]
 #[Guarded(['id'])]
-class Brand extends Model implements HasMedia
+class Brand extends Model implements BrandContract, HasMedia
 {
     /** @use HasFactory<BrandFactory> */
     use HasFactory, HasSlug, InteractsWithMedia;

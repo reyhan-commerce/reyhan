@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Pipelines\Normalizer\PersianNormalizer;
 
 test('normalizes Arabic characters to Persian', function () {
     $input = 'كتابخانه زيبا';

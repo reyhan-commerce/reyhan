@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\ProductQuestions\Pages;
+namespace Reyhan\Core\Filament\Resources\ProductQuestions\Pages;
 
-use App\Filament\Resources\ProductQuestions\ProductQuestionResource;
+use Reyhan\Core\Filament\Resources\ProductQuestions\ProductQuestionResource;
 use Filament\Resources\Pages\ListRecords;
 
 class ListProductQuestions extends ListRecords

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders;
+namespace Reyhan\Core\Database\Seeders;
 
-use App\Models\City;
-use App\Models\Province;
+use Reyhan\Core\Models\City;
+use Reyhan\Core\Models\Province;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Reviews;
+namespace Reyhan\Core\Filament\Resources\Reviews;
 
-use App\Enums\ReviewStatus;
-use App\Filament\Resources\Reviews\Pages\CreateReview;
-use App\Filament\Resources\Reviews\Pages\EditReview;
-use App\Filament\Resources\Reviews\Pages\ListReviews;
-use App\Filament\Resources\Reviews\Pages\ViewReview;
-use App\Models\Review;
-use App\Models\User;
+use Reyhan\Core\Enums\ReviewStatus;
+use Reyhan\Core\Filament\Resources\Reviews\Pages\CreateReview;
+use Reyhan\Core\Filament\Resources\Reviews\Pages\EditReview;
+use Reyhan\Core\Filament\Resources\Reviews\Pages\ListReviews;
+use Reyhan\Core\Filament\Resources\Reviews\Pages\ViewReview;
+use Reyhan\Core\Models\Review;
+use Reyhan\Core\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;

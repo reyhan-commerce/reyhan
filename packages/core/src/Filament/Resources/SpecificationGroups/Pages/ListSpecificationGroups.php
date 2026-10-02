@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\SpecificationGroups\Pages;
+namespace Reyhan\Core\Filament\Resources\SpecificationGroups\Pages;
 
-use App\Filament\Resources\SpecificationGroups\SpecificationGroupResource;
+use Reyhan\Core\Filament\Resources\SpecificationGroups\SpecificationGroupResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 

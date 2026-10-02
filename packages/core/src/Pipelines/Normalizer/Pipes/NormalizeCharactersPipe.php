@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Pipelines\Normalizer\Pipes;
+namespace Reyhan\Core\Pipelines\Normalizer\Pipes;
 
-use App\Pipelines\Normalizer\Contracts\NormalizerPipeInterface;
+use Reyhan\Core\Pipelines\Normalizer\Contracts\NormalizerPipeInterface;
 use Closure;
 
-class NormalizeCharactersPipe implements NormalizerPipeInterface
+final class NormalizeCharactersPipe implements NormalizerPipeInterface
 {
     /**
      * Replacement map for Arabic to standard Persian letters.

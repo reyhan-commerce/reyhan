@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\SpecificationGroups;
+namespace Reyhan\Core\Filament\Resources\SpecificationGroups;
 
-use App\Filament\Resources\SpecificationGroups\Pages\CreateSpecificationGroup;
-use App\Filament\Resources\SpecificationGroups\Pages\EditSpecificationGroup;
-use App\Filament\Resources\SpecificationGroups\Pages\ListSpecificationGroups;
-use App\Models\SpecificationGroup;
+use Reyhan\Core\Filament\Resources\SpecificationGroups\Pages\CreateSpecificationGroup;
+use Reyhan\Core\Filament\Resources\SpecificationGroups\Pages\EditSpecificationGroup;
+use Reyhan\Core\Filament\Resources\SpecificationGroups\Pages\ListSpecificationGroups;
+use Reyhan\Core\Models\SpecificationGroup;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

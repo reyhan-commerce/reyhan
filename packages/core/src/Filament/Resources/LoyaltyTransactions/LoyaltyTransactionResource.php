@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\LoyaltyTransactions;
+namespace Reyhan\Core\Filament\Resources\LoyaltyTransactions;
 
-use App\Filament\Resources\LoyaltyTransactions\Pages\ListLoyaltyTransactions;
-use App\Models\LoyaltyTransaction;
+use Reyhan\Core\Filament\Resources\LoyaltyTransactions\Pages\ListLoyaltyTransactions;
+use Reyhan\Core\Models\LoyaltyTransaction;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

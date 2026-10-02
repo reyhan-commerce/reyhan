@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Pricing;
+namespace Reyhan\Core\Services\Pricing;
 
-use App\Data\Pricing\CartPricingData;
-use App\Enums\CouponScope;
-use App\Enums\CouponType;
-use App\Models\Cart;
-use App\Models\CartItem;
-use App\Models\City;
-use App\Models\Coupon;
-use App\Models\ShippingMethod;
-use App\Services\Shipping\ShippingService;
+use Reyhan\Core\Data\Pricing\CartPricingData;
+use Reyhan\Core\Enums\CouponScope;
+use Reyhan\Core\Enums\CouponType;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Models\CartItem;
+use Reyhan\Core\Models\City;
+use Reyhan\Core\Models\Coupon;
+use Reyhan\Core\Models\ShippingMethod;
+use Reyhan\Core\Services\Shipping\ShippingService;
 use Illuminate\Database\Eloquent\Collection;
 
 final class PricingService
@@ -27,7 +27,7 @@ final class PricingService
     public function calculateCart(
         Cart $cart,
         ?City $destinationCity = null,
-        ShippingMethod|\App\Enums\ShippingMethod|int|string|null $shippingMethod = null
+        ShippingMethod|\Reyhan\Core\Enums\ShippingMethod|int|string|null $shippingMethod = null
     ): CartPricingData {
         $items = $cart->items()->with(['variant.product.category', 'variant.product.brand'])->get();
 

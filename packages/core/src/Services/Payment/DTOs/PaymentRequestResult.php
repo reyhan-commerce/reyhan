@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Payment\DTOs;
+namespace Reyhan\Core\Services\Payment\DTOs;
 
 readonly class PaymentRequestResult
 {

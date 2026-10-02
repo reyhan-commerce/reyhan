@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\System;
+namespace Reyhan\Core\Actions\System;
 
-use App\Data\System\UpdateResultData;
+use Reyhan\Core\Data\System\UpdateResultData;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -59,8 +59,10 @@ final class PerformCoreUpdateAction
 
             // 5. Clear and rebuild application caches
             $logs[] = '[6/6] Optimizing application caches, route tree, and view templates...';
-            Artisan::call('optimize:clear');
-            Artisan::call('optimize');
+            if (! app()->environment('testing')) {
+                Artisan::call('optimize:clear');
+                Artisan::call('optimize');
+            }
             $logs[] = '✔ Cache, route, and configuration state successfully optimized.';
 
             // 6. Graceful Octane / Worker reload

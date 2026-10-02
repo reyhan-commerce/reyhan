@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Actions\Checkout\CreateOrderAction;
-use App\Data\Checkout\CreateOrderData;
-use App\Exceptions\Cart\EmptyCartException;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Checkout\CreateOrderRequest;
-use App\Models\Address;
-use App\Models\User;
-use App\Services\Cart\CartService;
-use App\Services\Pricing\PricingService;
-use App\Services\Shipping\ShippingService;
+use Reyhan\Core\Actions\Checkout\CreateOrderAction;
+use Reyhan\Core\Data\Checkout\CreateOrderData;
+use Reyhan\Core\Exceptions\Cart\EmptyCartException;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Requests\Api\V1\Checkout\CreateOrderRequest;
+use Reyhan\Core\Models\Address;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Services\Cart\CartService;
+use Reyhan\Core\Services\Pricing\PricingService;
+use Reyhan\Core\Services\Shipping\ShippingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

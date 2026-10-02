@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Services\User;
+namespace Reyhan\Core\Services\User;
 
-use App\Exceptions\User\UserDeactivatedException;
-use App\Models\User;
+use Reyhan\Core\Exceptions\User\UserDeactivatedException;
+use Reyhan\Core\Models\User;
 
 class UserService
 {

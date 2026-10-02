@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Enums\BannerPosition;
-use App\Models\Banner;
+use Reyhan\Core\Enums\BannerPosition;
+use Reyhan\Core\Models\Banner;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

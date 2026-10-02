@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Address;
+namespace Reyhan\Core\Actions\Address;
 
-use App\Models\Address;
-use App\Models\User;
+use Reyhan\Core\Models\Address;
+use Reyhan\Core\Models\User;
 use Illuminate\Support\Facades\DB;
 
 final class SetDefaultAddressAction

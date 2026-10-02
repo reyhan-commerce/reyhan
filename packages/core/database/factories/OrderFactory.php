@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Enums\OrderStatus;
-use App\Enums\ShippingMethod;
-use App\Models\Order;
-use App\Models\User;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Enums\ShippingMethod;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

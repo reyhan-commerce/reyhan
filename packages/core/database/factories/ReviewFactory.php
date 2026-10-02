@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Enums\ReviewStatus;
-use App\Models\Product;
-use App\Models\Review;
-use App\Models\User;
+use Reyhan\Core\Enums\ReviewStatus;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\Review;
+use Reyhan\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

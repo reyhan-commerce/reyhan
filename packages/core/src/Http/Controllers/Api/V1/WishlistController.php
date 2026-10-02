@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Actions\Wishlist\ToggleWishlistAction;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\V1\WishlistResource;
-use App\Models\Product;
-use App\Models\User;
-use App\Models\Wishlist;
+use Reyhan\Core\Actions\Wishlist\ToggleWishlistAction;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Resources\V1\WishlistResource;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Models\Wishlist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

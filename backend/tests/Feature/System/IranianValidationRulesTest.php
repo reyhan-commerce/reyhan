@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use App\Rules\CardNumberRule;
-use App\Rules\CompanyNationalIdRule;
-use App\Rules\IranianMobileRule;
-use App\Rules\IranianPhoneRule;
-use App\Rules\NationalCodeRule;
-use App\Rules\NoPersianRule;
-use App\Rules\PersianTextRule;
-use App\Rules\PostalCodeRule;
-use App\Rules\ShebaRule;
+use Reyhan\Core\Rules\CardNumberRule;
+use Reyhan\Core\Rules\CompanyNationalIdRule;
+use Reyhan\Core\Rules\IranianMobileRule;
+use Reyhan\Core\Rules\IranianPhoneRule;
+use Reyhan\Core\Rules\NationalCodeRule;
+use Reyhan\Core\Rules\NoPersianRule;
+use Reyhan\Core\Rules\PersianTextRule;
+use Reyhan\Core\Rules\PostalCodeRule;
+use Reyhan\Core\Rules\ShebaRule;
 use Illuminate\Support\Facades\Validator;
 
 it('validates authentic Iranian National Codes and rejects invalid algorithms or repeating digits', function (): void {

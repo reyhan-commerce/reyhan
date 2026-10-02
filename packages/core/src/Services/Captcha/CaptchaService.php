@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Captcha;
+namespace Reyhan\Core\Services\Captcha;
 
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;

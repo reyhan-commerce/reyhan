@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Profile;
+namespace Reyhan\Core\Actions\Profile;
 
-use App\Data\Profile\UpdateProfileData;
-use App\Models\User;
+use Reyhan\Core\Data\Profile\UpdateProfileData;
+use Reyhan\Core\Models\User;
 
 final class UpdateProfileAction
 {

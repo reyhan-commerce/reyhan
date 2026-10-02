@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Notifications\Orders;
+namespace Reyhan\Core\Notifications\Orders;
 
-use App\Models\Order;
-use App\Notifications\Channels\SmsChannel;
-use App\Notifications\Messages\SmsMessage;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Notifications\Channels\SmsChannel;
+use Reyhan\Core\Notifications\Messages\SmsMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;

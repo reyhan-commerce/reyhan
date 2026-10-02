@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\BlogPosts;
+namespace Reyhan\Core\Filament\Resources\BlogPosts;
 
-use App\Filament\Resources\BlogPosts\Pages\CreateBlogPost;
-use App\Filament\Resources\BlogPosts\Pages\EditBlogPost;
-use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
-use App\Models\BlogPost;
+use Reyhan\Core\Filament\Resources\BlogPosts\Pages\CreateBlogPost;
+use Reyhan\Core\Filament\Resources\BlogPosts\Pages\EditBlogPost;
+use Reyhan\Core\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
+use Reyhan\Core\Models\BlogPost;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

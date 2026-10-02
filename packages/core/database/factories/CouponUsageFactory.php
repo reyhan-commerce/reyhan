@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\Coupon;
-use App\Models\CouponUsage;
-use App\Models\Order;
-use App\Models\User;
+use Reyhan\Core\Models\Coupon;
+use Reyhan\Core\Models\CouponUsage;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

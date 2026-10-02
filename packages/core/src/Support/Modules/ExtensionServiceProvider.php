@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Modules;
+namespace Reyhan\Core\Support\Modules;
 
 use Illuminate\Support\ServiceProvider;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Models\Faq;
+use Reyhan\Core\Models\Faq;
 
 test('faqs endpoint returns active faqs ordered by order column', function () {
     Faq::factory()->inactive()->create([

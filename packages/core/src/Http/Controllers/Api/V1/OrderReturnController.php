@@ -2,18 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Enums\OrderReturnStatus;
-use App\Enums\OrderStatus;
-use App\Http\Controllers\Controller;
-use App\Models\Order;
-use App\Models\OrderReturn;
-use App\Models\User;
+use Reyhan\Core\Enums\OrderReturnStatus;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\OrderItem;
+use Reyhan\Core\Models\OrderReturn;
+use Reyhan\Core\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Morilog\Jalali\Jalalian;
 
 final class OrderReturnController extends Controller
@@ -119,11 +121,12 @@ final class OrderReturnController extends Controller
             ], 422);
         }
 
-        // Validate 7-day window if shipped_at exists
-        if ($order->shipped_at && $order->shipped_at->lt(now()->subDays(10))) {
+        // Validate 7-day window based on delivered_at (ماده ۳۷ قانون تجارت الکترونیک)
+        $deliveryDate = $order->delivered_at ?? $order->shipped_at;
+        if ($deliveryDate && $deliveryDate->lt(now()->subDays(7))) {
             return response()->json([
                 'success' => false,
-                'message' => __('messages.returns.window_expired'),
+                'message' => __('messages.returns.window_expired', ['default' => 'مهلت ۷ روزه قانونی حق انصراف و مرجوعی کالا به پایان رسیده است.']),
             ], 422);
         }
 
@@ -146,13 +149,24 @@ final class OrderReturnController extends Controller
             $itemsToCreate = [];
 
             foreach ($validated['items'] as $itemData) {
-                $orderItem = $order->items->firstWhere('id', $itemData['order_item_id']);
+                /** @var OrderItem|null $orderItem */
+                $orderItem = $order->items()->with('product')->find($itemData['order_item_id']);
                 if (! $orderItem) {
                     continue;
                 }
 
+                // Check Article 38 non-returnable exceptions (مواد بهداشتی، فاسدشدنی، دیجیتال)
+                if (! ($orderItem->product?->is_returnable ?? true)) {
+                    $reasonText = $orderItem->product?->non_returnable_reason ?? 'کالاهای بهداشتی یا غیرقابل انصراف';
+                    throw ValidationException::withMessages([
+                        'items' => ["کالای '{$orderItem->product_name}' طبق ماده ۳۸ قانون تجارت الکترونیک ({$reasonText}) امکان مرجوعی ندارد."],
+                    ]);
+                }
+
                 $qty = min((int) $itemData['quantity'], $orderItem->quantity);
-                $linePrice = (int) ($orderItem->final_price / $orderItem->quantity) * $qty;
+                // Compute net line price after pro-rata coupon discount
+                $netUnitPayable = (int) round((($orderItem->final_price * $orderItem->quantity) - ($orderItem->allocated_discount ?? 0)) / $orderItem->quantity);
+                $linePrice = ($netUnitPayable + (int) round($orderItem->tax_amount / $orderItem->quantity)) * $qty;
                 $totalRefund += $linePrice;
 
                 $itemsToCreate[] = [

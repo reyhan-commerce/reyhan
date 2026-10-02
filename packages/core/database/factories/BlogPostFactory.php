@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\Admin;
-use App\Models\BlogCategory;
-use App\Models\BlogPost;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\BlogCategory;
+use Reyhan\Core\Models\BlogPost;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Actions\Address\DeleteAddressAction;
-use App\Actions\Address\SetDefaultAddressAction;
-use App\Actions\Address\StoreAddressAction;
-use App\Actions\Address\UpdateAddressAction;
-use App\Data\Address\StoreAddressData;
-use App\Data\Address\UpdateAddressData;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Address\StoreAddressRequest;
-use App\Http\Requests\Api\V1\Address\UpdateAddressRequest;
-use App\Http\Resources\V1\AddressResource;
-use App\Models\Address;
-use App\Models\User;
+use Reyhan\Core\Actions\Address\DeleteAddressAction;
+use Reyhan\Core\Actions\Address\SetDefaultAddressAction;
+use Reyhan\Core\Actions\Address\StoreAddressAction;
+use Reyhan\Core\Actions\Address\UpdateAddressAction;
+use Reyhan\Core\Data\Address\StoreAddressData;
+use Reyhan\Core\Data\Address\UpdateAddressData;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Requests\Api\V1\Address\StoreAddressRequest;
+use Reyhan\Core\Http\Requests\Api\V1\Address\UpdateAddressRequest;
+use Reyhan\Core\Http\Resources\V1\AddressResource;
+use Reyhan\Core\Models\Address;
+use Reyhan\Core\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;

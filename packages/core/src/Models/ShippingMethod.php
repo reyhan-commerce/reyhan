@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
 use Carbon\Carbon;
-use Database\Factories\ShippingMethodFactory;
+use Reyhan\Core\Database\Factories\ShippingMethodFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;

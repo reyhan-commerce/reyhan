@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\Cart;
-use App\Models\CartItem;
-use App\Models\Coupon;
-use App\Models\User;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Models\CartItem;
+use Reyhan\Core\Models\Coupon;
+use Reyhan\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

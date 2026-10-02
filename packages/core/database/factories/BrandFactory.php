@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Models\Brand;
+use Reyhan\Core\Models\Brand;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

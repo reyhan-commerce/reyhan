@@ -146,7 +146,7 @@
         $city = $address['city_name'] ?? '-';
         $fullAddress = $address['full_address'] ?? ($address['address_line'] ?? '-');
         $postalCode = $address['postal_code'] ?? '----------';
-        $shippingTitle = $order->shippingMethod?->name ?? ($order->shipping_method instanceof \App\Enums\ShippingMethod ? $order->shipping_method->title() : ($order->shipping_method ?? 'پست پیشتاز'));
+        $shippingTitle = $order->shippingMethod?->name ?? ($order->shipping_method instanceof \Reyhan\Core\Enums\ShippingMethod ? $order->shipping_method->title() : ($order->shipping_method ?? 'پست پیشتاز'));
     @endphp
 
     <div class="label-container">

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders;
+namespace Reyhan\Core\Database\Seeders;
 
-use App\Models\ShippingMethod;
+use Reyhan\Core\Models\ShippingMethod;
 use Illuminate\Database\Seeder;
 
 class ShippingMethodSeeder extends Seeder

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Models\Address;
-use App\Models\City;
-use App\Models\Province;
-use App\Models\User;
+use Reyhan\Core\Models\Address;
+use Reyhan\Core\Models\City;
+use Reyhan\Core\Models\Province;
+use Reyhan\Core\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Sanctum\Sanctum;
 

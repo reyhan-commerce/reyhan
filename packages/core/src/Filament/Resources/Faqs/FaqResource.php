@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Faqs;
+namespace Reyhan\Core\Filament\Resources\Faqs;
 
-use App\Filament\Resources\Faqs\Pages\CreateFaq;
-use App\Filament\Resources\Faqs\Pages\EditFaq;
-use App\Filament\Resources\Faqs\Pages\ListFaqs;
-use App\Models\Faq;
+use Reyhan\Core\Filament\Resources\Faqs\Pages\CreateFaq;
+use Reyhan\Core\Filament\Resources\Faqs\Pages\EditFaq;
+use Reyhan\Core\Filament\Resources\Faqs\Pages\ListFaqs;
+use Reyhan\Core\Models\Faq;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

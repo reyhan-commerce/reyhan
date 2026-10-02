@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Enums\AttributeType;
-use App\Models\Attribute;
+use Reyhan\Core\Enums\AttributeType;
+use Reyhan\Core\Models\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use App\Enums\CouponType;
-use App\Models\Brand;
-use App\Models\Cart;
-use App\Models\Category;
-use App\Models\Coupon;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\User;
-use App\Services\Pricing\PricingService;
+use Reyhan\Core\Enums\CouponType;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Coupon;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Services\Pricing\PricingService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 uses(DatabaseTransactions::class);

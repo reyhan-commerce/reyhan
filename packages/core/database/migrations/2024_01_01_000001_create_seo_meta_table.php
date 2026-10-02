@@ -47,7 +47,7 @@ return new class extends Migration
             | using the HasSEO trait.
             |
             | Example: Post model with ID 5 would have:
-            | - seoable_type: 'App\Models\Post'
+            | - seoable_type: 'Reyhan\Core\Models\Post'
             | - seoable_id: 5
             |
             */

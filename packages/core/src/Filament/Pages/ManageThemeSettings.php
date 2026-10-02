@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Pages;
+namespace Reyhan\Core\Filament\Pages;
 
-use App\Settings\ThemeSettings;
+use Reyhan\Core\Settings\ThemeSettings;
 use BackedEnum;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;

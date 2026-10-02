@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Settings;
+namespace Reyhan\Core\Services\Settings;
 
-use App\Settings\GeneralSettings;
-use App\Settings\ThemeSettings;
+use Reyhan\Core\Settings\GeneralSettings;
+use Reyhan\Core\Settings\ThemeSettings;
 use Illuminate\Support\Facades\Cache;
 
 class AppSettingService

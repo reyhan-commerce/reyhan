@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Users\Pages;
+namespace Reyhan\Core\Filament\Resources\Users\Pages;
 
-use App\Filament\Resources\Users\UserResource;
+use Reyhan\Core\Filament\Resources\Users\UserResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Orders;
+namespace Reyhan\Core\Actions\Orders;
 
-use App\Models\CardTransferReceipt;
-use App\Models\Order;
+use Reyhan\Core\Models\CardTransferReceipt;
+use Reyhan\Core\Models\Order;
 use Illuminate\Support\Facades\DB;
 
 final class RejectCardTransferReceiptAction

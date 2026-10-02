@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Rules;
+namespace Reyhan\Core\Rules;
 
-use App\Services\Otp\OtpService;
+use Reyhan\Core\Services\Otp\OtpService;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;

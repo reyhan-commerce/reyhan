@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
-use App\Enums\TicketDepartment;
-use App\Enums\TicketPriority;
-use App\Enums\TicketStatus;
+use Reyhan\Core\Enums\TicketDepartment;
+use Reyhan\Core\Enums\TicketPriority;
+use Reyhan\Core\Enums\TicketStatus;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

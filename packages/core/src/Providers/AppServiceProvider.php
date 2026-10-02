@@ -2,22 +2,32 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace Reyhan\Core\Providers;
 
-use App\Events\Catalog\ProductRestockedEvent;
-use App\Features\ShopFeature;
-use App\Http\Controllers\Api\V1\AppSettingController;
-use App\Listeners\Catalog\SendProductRestockAlertsListener;
-use App\Models\Admin;
-use App\Models\Category;
-use App\Observers\CategoryObserver;
-use App\Services\Sms\SmsManager;
-use App\Support\Modules\ModuleManager;
+use Reyhan\Core\Events\Catalog\ProductRestockedEvent;
+use Reyhan\Core\Features\ShopFeature;
+use Reyhan\Core\Http\Controllers\Api\V1\AppSettingController;
+use Reyhan\Core\Listeners\Catalog\SendProductRestockAlertsListener;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Observers\CategoryObserver;
+use Reyhan\Core\Rules\CardNumberRule;
+use Reyhan\Core\Rules\CompanyNationalIdRule;
+use Reyhan\Core\Rules\IranianMobileRule;
+use Reyhan\Core\Rules\IranianPhoneRule;
+use Reyhan\Core\Rules\NationalCodeRule;
+use Reyhan\Core\Rules\NoPersianRule;
+use Reyhan\Core\Rules\PersianTextRule;
+use Reyhan\Core\Rules\PostalCodeRule;
+use Reyhan\Core\Rules\ShebaRule;
+use Reyhan\Core\Services\Sms\SmsManager;
+use Reyhan\Core\Support\Modules\ModuleManager;
 use BokshornIt\FilamentActivityTimeline\Policies\ActivityPolicy;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Validator;
 use Laravel\Pennant\Feature;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
@@ -121,23 +131,23 @@ class AppServiceProvider extends ServiceProvider
     protected function registerIranianValidators(): void
     {
         $rules = [
-            'ir_mobile' => new \App\Rules\IranianMobileRule(),
-            'ir_phone' => new \App\Rules\IranianPhoneRule(),
-            'ir_national_code' => new \App\Rules\NationalCodeRule(),
-            'ir_company_national_id' => new \App\Rules\CompanyNationalIdRule(),
-            'ir_sheba' => new \App\Rules\ShebaRule(),
-            'ir_postal_code' => new \App\Rules\PostalCodeRule(),
-            'ir_bank_card' => new \App\Rules\CardNumberRule(),
-            'ir_bank_card_number' => new \App\Rules\CardNumberRule(),
-            'persian_text' => new \App\Rules\PersianTextRule(),
-            'persian_alphabet' => new \App\Rules\PersianTextRule(),
-            'no_persian' => new \App\Rules\NoPersianRule(),
+            'ir_mobile' => new IranianMobileRule,
+            'ir_phone' => new IranianPhoneRule,
+            'ir_national_code' => new NationalCodeRule,
+            'ir_company_national_id' => new CompanyNationalIdRule,
+            'ir_sheba' => new ShebaRule,
+            'ir_postal_code' => new PostalCodeRule,
+            'ir_bank_card' => new CardNumberRule,
+            'ir_bank_card_number' => new CardNumberRule,
+            'persian_text' => new PersianTextRule,
+            'persian_alphabet' => new PersianTextRule,
+            'no_persian' => new NoPersianRule,
         ];
 
         foreach ($rules as $name => $rule) {
             \Illuminate\Support\Facades\Validator::extend(
                 $name,
-                function (string $attribute, mixed $value, array $parameters, \Illuminate\Validation\Validator $validator) use ($rule): bool {
+                function (string $attribute, mixed $value, array $parameters, Validator $validator) use ($rule): bool {
                     $failed = false;
                     $rule->validate($attribute, $value, function ($message) use (&$failed): void {
                         $failed = true;

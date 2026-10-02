@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\BlogPosts\Pages;
+namespace Reyhan\Core\Filament\Resources\BlogPosts\Pages;
 
-use App\Filament\Resources\BlogPosts\BlogPostResource;
+use Reyhan\Core\Filament\Resources\BlogPosts\BlogPostResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources\V1;
+namespace Reyhan\Core\Http\Resources\V1;
 
-use App\Models\Cart;
-use App\Services\Pricing\PricingService;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Services\Pricing\PricingService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

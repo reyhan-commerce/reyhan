@@ -22,9 +22,9 @@ final class ReyhanCorePlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel
-            ->discoverResources(in: __DIR__.'/Filament/Resources', for: 'App\\Filament\\Resources')
-            ->discoverPages(in: __DIR__.'/Filament/Pages', for: 'App\\Filament\\Pages')
-            ->discoverWidgets(in: __DIR__.'/Filament/Widgets', for: 'App\\Filament\\Widgets');
+            ->discoverResources(in: __DIR__.'/Filament/Resources', for: 'Reyhan\\Core\\Filament\\Resources')
+            ->discoverPages(in: __DIR__.'/Filament/Pages', for: 'Reyhan\\Core\\Filament\\Pages')
+            ->discoverWidgets(in: __DIR__.'/Filament/Widgets', for: 'Reyhan\\Core\\Filament\\Widgets');
     }
 
     public function boot(Panel $panel): void

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Sms;
+namespace Reyhan\Core\Services\Sms;
 
-use App\Services\Sms\Contracts\SmsDriverInterface;
-use App\Services\Sms\Drivers\FarazSmsDriver;
-use App\Services\Sms\Drivers\GhasedakDriver;
-use App\Services\Sms\Drivers\KavenegarDriver;
-use App\Services\Sms\Drivers\LogDriver;
-use App\Settings\SmsSettings;
+use Reyhan\Core\Services\Sms\Contracts\SmsDriverInterface;
+use Reyhan\Core\Services\Sms\Drivers\FarazSmsDriver;
+use Reyhan\Core\Services\Sms\Drivers\GhasedakDriver;
+use Reyhan\Core\Services\Sms\Drivers\KavenegarDriver;
+use Reyhan\Core\Services\Sms\Drivers\LogDriver;
+use Reyhan\Core\Settings\SmsSettings;
 use Illuminate\Support\Manager;
 
 class SmsManager extends Manager

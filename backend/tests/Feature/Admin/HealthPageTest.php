@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Models\Admin;
+use Reyhan\Core\Models\Admin;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Gate;
 use Spatie\Permission\Models\Permission;

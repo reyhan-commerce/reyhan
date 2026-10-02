@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\ProductSpecification;
-use App\Models\ProductVariant;
-use App\Models\Specification;
-use App\Models\SpecificationGroup;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductSpecification;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\Specification;
+use Reyhan\Core\Models\SpecificationGroup;
 
 beforeEach(function (): void {
     $this->category = Category::factory()->create(['name' => 'لپ‌تاپ و اولترابوک', 'slug' => 'laptops']);

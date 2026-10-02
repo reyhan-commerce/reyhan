@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\BlogCategories\Pages;
+namespace Reyhan\Core\Filament\Resources\BlogCategories\Pages;
 
-use App\Filament\Resources\BlogCategories\BlogCategoryResource;
+use Reyhan\Core\Filament\Resources\BlogCategories\BlogCategoryResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 

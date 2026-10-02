@@ -16,7 +16,7 @@ use Rankbeam\Seo\Services\SEODefaultsRepository;
  * 1. Global defaults (scope = '*' or 'global')
  *    Applied to all pages as the base layer.
  *
- * 2. Model-type defaults (scope = 'App\Models\Post')
+ * 2. Model-type defaults (scope = 'Reyhan\Core\Models\Post')
  *    Applied to all instances of a specific model type.
  *    Example: All blog posts use the same title template.
  *
@@ -52,7 +52,7 @@ return new class extends Migration
             | Determines where these defaults apply. Can be:
             |
             | - '*' or 'global': Applies to all pages (lowest priority)
-            | - Model class: 'App\Models\Post', 'App\Models\Product'
+            | - Model class: 'Reyhan\Core\Models\Post', 'Reyhan\Core\Models\Product'
             | - Route name: 'blog.index', 'pages.about', 'products.show'
             |
             | The SEO resolver checks scopes in order:
@@ -60,8 +60,8 @@ return new class extends Migration
             |
             | Examples:
             | - scope: 'global' - Base defaults for entire site
-            | - scope: 'App\Models\Post' - All blog posts
-            | - scope: 'App\Models\Product' - All products
+            | - scope: 'Reyhan\Core\Models\Post' - All blog posts
+            | - scope: 'Reyhan\Core\Models\Product' - All products
             | - scope: 'blog.archive' - Blog archive page
             | - scope: 'pages.*' - All pages routes (wildcard)
             |

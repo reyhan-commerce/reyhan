@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Data\Profile;
+namespace Reyhan\Core\Data\Profile;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;

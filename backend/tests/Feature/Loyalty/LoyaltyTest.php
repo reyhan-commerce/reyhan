@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Features\ShopFeature;
-use App\Models\User;
+use Reyhan\Core\Features\ShopFeature;
+use Reyhan\Core\Models\User;
 use Laravel\Pennant\Feature;
 
 test('loyalty tiers public endpoint returns tier levels and perks', function () {

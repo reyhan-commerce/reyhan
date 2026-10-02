@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
-use Database\Factories\AdminFactory;
+use Reyhan\Core\Database\Factories\AdminFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;

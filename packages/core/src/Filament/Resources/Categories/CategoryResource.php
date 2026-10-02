@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Categories;
+namespace Reyhan\Core\Filament\Resources\Categories;
 
 use Alareqi\FilamentTree\Columns\TreeColumn;
 use Alareqi\FilamentTree\Forms\Components\TreeSelect;
-use App\Filament\Resources\Categories\Pages\CreateCategory;
-use App\Filament\Resources\Categories\Pages\EditCategory;
-use App\Filament\Resources\Categories\Pages\ListCategories;
-use App\Models\Category;
+use Reyhan\Core\Filament\Resources\Categories\Pages\CreateCategory;
+use Reyhan\Core\Filament\Resources\Categories\Pages\EditCategory;
+use Reyhan\Core\Filament\Resources\Categories\Pages\ListCategories;
+use Reyhan\Core\Models\Category;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

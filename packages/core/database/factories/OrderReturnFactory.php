@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Enums\OrderReturnStatus;
-use App\Models\Order;
-use App\Models\OrderReturn;
-use App\Models\User;
+use Reyhan\Core\Enums\OrderReturnStatus;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\OrderReturn;
+use Reyhan\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

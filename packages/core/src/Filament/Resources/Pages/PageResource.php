@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Pages;
+namespace Reyhan\Core\Filament\Resources\Pages;
 
-use App\Filament\Resources\Pages\Pages\CreatePage;
-use App\Filament\Resources\Pages\Pages\EditPage;
-use App\Filament\Resources\Pages\Pages\ListPages;
-use App\Models\Page;
+use Reyhan\Core\Filament\Resources\Pages\Pages\CreatePage;
+use Reyhan\Core\Filament\Resources\Pages\Pages\EditPage;
+use Reyhan\Core\Filament\Resources\Pages\Pages\ListPages;
+use Reyhan\Core\Models\Page;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

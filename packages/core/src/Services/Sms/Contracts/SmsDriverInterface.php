@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Sms\Contracts;
+namespace Reyhan\Core\Services\Sms\Contracts;
 
 interface SmsDriverInterface
 {

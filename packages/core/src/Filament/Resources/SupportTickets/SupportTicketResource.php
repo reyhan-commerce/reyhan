@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\SupportTickets;
+namespace Reyhan\Core\Filament\Resources\SupportTickets;
 
-use App\Enums\TicketDepartment;
-use App\Enums\TicketStatus;
-use App\Filament\Resources\SupportTickets\Pages\ListSupportTickets;
-use App\Filament\Resources\SupportTickets\Pages\ViewSupportTicket;
-use App\Models\SupportTicket;
+use Reyhan\Core\Enums\TicketDepartment;
+use Reyhan\Core\Enums\TicketStatus;
+use Reyhan\Core\Filament\Resources\SupportTickets\Pages\ListSupportTickets;
+use Reyhan\Core\Filament\Resources\SupportTickets\Pages\ViewSupportTicket;
+use Reyhan\Core\Models\SupportTicket;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;

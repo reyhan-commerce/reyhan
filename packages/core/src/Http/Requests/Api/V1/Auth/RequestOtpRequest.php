@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Api\V1\Auth;
+namespace Reyhan\Core\Http\Requests\Api\V1\Auth;
 
-use App\Pipelines\Normalizer\PersianNormalizer;
-use App\Rules\ValidCaptcha;
+use Reyhan\Core\Pipelines\Normalizer\PersianNormalizer;
+use Reyhan\Core\Rules\ValidCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class RequestOtpRequest extends FormRequest

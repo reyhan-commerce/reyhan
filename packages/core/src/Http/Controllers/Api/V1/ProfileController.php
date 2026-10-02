@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Actions\Profile\UpdateProfileAction;
-use App\Data\Profile\UpdateProfileData;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Profile\UpdateProfileRequest;
-use App\Http\Resources\V1\UserResource;
-use App\Models\User;
+use Reyhan\Core\Actions\Profile\UpdateProfileAction;
+use Reyhan\Core\Data\Profile\UpdateProfileData;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Requests\Api\V1\Profile\UpdateProfileRequest;
+use Reyhan\Core\Http\Resources\V1\UserResource;
+use Reyhan\Core\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

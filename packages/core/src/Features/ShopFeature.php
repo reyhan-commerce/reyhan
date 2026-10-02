@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Features;
+namespace Reyhan\Core\Features;
 
 final class ShopFeature
 {

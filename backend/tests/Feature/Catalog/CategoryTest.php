@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Models\Category;
-use App\Services\Catalog\CategoryService;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Services\Catalog\CategoryService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Cache;
 

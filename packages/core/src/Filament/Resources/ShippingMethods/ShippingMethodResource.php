@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\ShippingMethods;
+namespace Reyhan\Core\Filament\Resources\ShippingMethods;
 
-use App\Filament\Resources\ShippingMethods\Pages\CreateShippingMethod;
-use App\Filament\Resources\ShippingMethods\Pages\EditShippingMethod;
-use App\Filament\Resources\ShippingMethods\Pages\ListShippingMethods;
-use App\Models\Province;
-use App\Models\ShippingMethod;
+use Reyhan\Core\Filament\Resources\ShippingMethods\Pages\CreateShippingMethod;
+use Reyhan\Core\Filament\Resources\ShippingMethods\Pages\EditShippingMethod;
+use Reyhan\Core\Filament\Resources\ShippingMethods\Pages\ListShippingMethods;
+use Reyhan\Core\Models\Province;
+use Reyhan\Core\Models\ShippingMethod;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;

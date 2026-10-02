@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\ContactMessages;
+namespace Reyhan\Core\Filament\Resources\ContactMessages;
 
-use App\Filament\Resources\ContactMessages\Pages\ListContactMessages;
-use App\Filament\Resources\ContactMessages\Pages\ViewContactMessage;
-use App\Models\ContactMessage;
+use Reyhan\Core\Filament\Resources\ContactMessages\Pages\ListContactMessages;
+use Reyhan\Core\Filament\Resources\ContactMessages\Pages\ViewContactMessage;
+use Reyhan\Core\Models\ContactMessage;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;

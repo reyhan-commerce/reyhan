@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Enums\WalletTransactionType;
-use App\Models\User;
-use App\Models\WalletTransaction;
+use Reyhan\Core\Enums\WalletTransactionType;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Models\WalletTransaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

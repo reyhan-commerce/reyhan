@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\V1\OrderResource;
-use App\Models\Order;
-use App\Models\User;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Resources\V1\OrderResource;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;

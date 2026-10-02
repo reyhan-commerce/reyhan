@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Models\Admin;
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\Review;
-use App\Models\User;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\Review;
+use Reyhan\Core\Models\User;
 
 test('public features endpoint returns active feature flags', function () {
     $response = $this->getJson(route('app.features'));

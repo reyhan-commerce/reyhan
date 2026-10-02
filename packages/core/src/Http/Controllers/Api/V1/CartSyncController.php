@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Api\V1\Concerns\ResolvesCart;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Cart\SyncCartRequest;
-use App\Models\User;
-use App\Services\Cart\CartService;
+use Reyhan\Core\Http\Controllers\Api\V1\Concerns\ResolvesCart;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Requests\Api\V1\Cart\SyncCartRequest;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Services\Cart\CartService;
 use Illuminate\Http\JsonResponse;
 
 final class CartSyncController extends Controller

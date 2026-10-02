@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Shipping;
+namespace Reyhan\Core\Services\Shipping;
 
-use App\Models\City;
-use App\Models\ShippingMethod;
-use App\Settings\GeneralSettings;
+use Reyhan\Core\Models\City;
+use Reyhan\Core\Models\ShippingMethod;
+use Reyhan\Core\Settings\GeneralSettings;
 use Carbon\Carbon;
 use Morilog\Jalali\Jalalian;
 
@@ -44,7 +44,7 @@ class ShippingService
         int $totalWeightGrams = 0,
         ?City $destinationCity = null,
         bool $couponGrantsFreeShipping = false,
-        ShippingMethod|\App\Enums\ShippingMethod|int|string|null $shippingMethod = null
+        ShippingMethod|\Reyhan\Core\Enums\ShippingMethod|int|string|null $shippingMethod = null
     ): array {
         $threshold = $this->settings->free_shipping_threshold;
 
@@ -235,14 +235,14 @@ class ShippingService
      * Resolve a ShippingMethod model instance from various input formats.
      */
     protected function resolveShippingMethod(
-        ShippingMethod|\App\Enums\ShippingMethod|int|string|null $method,
+        ShippingMethod|\Reyhan\Core\Enums\ShippingMethod|int|string|null $method,
         ?City $destinationCity = null
     ): ?ShippingMethod {
         if ($method instanceof ShippingMethod) {
             return $method;
         }
 
-        if ($method instanceof \App\Enums\ShippingMethod) {
+        if ($method instanceof \Reyhan\Core\Enums\ShippingMethod) {
             $method = $method->value;
         }
 

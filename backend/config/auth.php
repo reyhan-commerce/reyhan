@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Admin;
-use App\Models\User;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\User;
 
 return [
 

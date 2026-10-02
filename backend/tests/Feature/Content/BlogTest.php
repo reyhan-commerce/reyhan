@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Models\BlogCategory;
-use App\Models\BlogPost;
+use Reyhan\Core\Models\BlogCategory;
+use Reyhan\Core\Models\BlogPost;
 
 test('blog categories endpoint returns active categories with count', function () {
     $response = $this->getJson('/api/v1/blog/categories');

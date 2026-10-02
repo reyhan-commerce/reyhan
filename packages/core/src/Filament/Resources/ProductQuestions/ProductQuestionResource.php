@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\ProductQuestions;
+namespace Reyhan\Core\Filament\Resources\ProductQuestions;
 
-use App\Filament\Resources\ProductQuestions\Pages\ListProductQuestions;
-use App\Models\ProductQuestion;
+use Reyhan\Core\Filament\Resources\ProductQuestions\Pages\ListProductQuestions;
+use Reyhan\Core\Models\ProductQuestion;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;

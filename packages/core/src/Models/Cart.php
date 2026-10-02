@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
-use Database\Factories\CartFactory;
+use Reyhan\Core\Contracts\Models\CartContract;
+use Reyhan\Core\Database\Factories\CartFactory;
+use Reyhan\Core\Support\Reyhan;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Collection<int, CartItem> $items
  */
 #[Guarded(['id'])]
-class Cart extends Model
+class Cart extends Model implements CartContract
 {
     /** @use HasFactory<CartFactory> */
     use HasFactory;
@@ -32,7 +34,7 @@ class Cart extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Reyhan::userModel());
     }
 
     /**
@@ -48,7 +50,7 @@ class Cart extends Model
      */
     public function items(): HasMany
     {
-        return $this->hasMany(CartItem::class);
+        return $this->hasMany(Reyhan::model('cart_item'));
     }
 
     public function totalItemsQuantity(): int

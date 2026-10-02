@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Wallet;
+namespace Reyhan\Core\Services\Wallet;
 
-use App\Enums\WalletTransactionType;
-use App\Models\Order;
-use App\Models\User;
-use App\Models\WalletTransaction;
+use Reyhan\Core\Enums\WalletTransactionType;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Models\WalletTransaction;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;

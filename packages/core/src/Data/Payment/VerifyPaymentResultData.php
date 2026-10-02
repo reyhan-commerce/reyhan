@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Data\Payment;
+namespace Reyhan\Core\Data\Payment;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;

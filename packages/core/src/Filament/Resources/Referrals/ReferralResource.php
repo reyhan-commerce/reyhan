@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Referrals;
+namespace Reyhan\Core\Filament\Resources\Referrals;
 
-use App\Enums\ReferralStatus;
-use App\Filament\Resources\Referrals\Pages\ListReferrals;
-use App\Models\Referral;
+use Reyhan\Core\Enums\ReferralStatus;
+use Reyhan\Core\Filament\Resources\Referrals\Pages\ListReferrals;
+use Reyhan\Core\Models\Referral;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Data\Checkout;
+namespace Reyhan\Core\Data\Checkout;
 
-use App\Models\Order;
-use App\Models\Payment;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\Payment;
 use Spatie\LaravelData\Data;
 
 final class CreateOrderResultData extends Data

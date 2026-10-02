@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Banners;
+namespace Reyhan\Core\Filament\Resources\Banners;
 
-use App\Enums\BannerPosition;
-use App\Filament\Resources\Banners\Pages\CreateBanner;
-use App\Filament\Resources\Banners\Pages\EditBanner;
-use App\Filament\Resources\Banners\Pages\ListBanners;
-use App\Models\Banner;
+use Reyhan\Core\Enums\BannerPosition;
+use Reyhan\Core\Filament\Resources\Banners\Pages\CreateBanner;
+use Reyhan\Core\Filament\Resources\Banners\Pages\EditBanner;
+use Reyhan\Core\Filament\Resources\Banners\Pages\ListBanners;
+use Reyhan\Core\Models\Banner;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;

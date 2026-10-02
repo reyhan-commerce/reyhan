@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Pipelines\Normalizer;
+namespace Reyhan\Core\Pipelines\Normalizer;
 
-use App\Pipelines\Normalizer\Contracts\NormalizerPipeInterface;
-use App\Pipelines\Normalizer\Pipes\NormalizeCharactersPipe;
-use App\Pipelines\Normalizer\Pipes\NormalizeDigitsPipe;
-use App\Pipelines\Normalizer\Pipes\NormalizeZwnjPipe;
+use Reyhan\Core\Pipelines\Normalizer\Contracts\NormalizerPipeInterface;
+use Reyhan\Core\Pipelines\Normalizer\Pipes\NormalizeCharactersPipe;
+use Reyhan\Core\Pipelines\Normalizer\Pipes\NormalizeDigitsPipe;
+use Reyhan\Core\Pipelines\Normalizer\Pipes\NormalizeZwnjPipe;
 use Illuminate\Support\Facades\Pipeline;
 
-class PersianNormalizer
+final class PersianNormalizer
 {
     /**
      * Default pipe list for Persian general text normalization.

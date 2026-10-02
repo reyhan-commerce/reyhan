@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Actions\Review\StoreReviewAction;
-use App\Data\Review\StoreReviewData;
-use App\Enums\ReviewStatus;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Review\StoreReviewRequest;
-use App\Http\Resources\V1\ReviewResource;
-use App\Models\Product;
-use App\Models\Review;
-use App\Models\User;
+use Reyhan\Core\Actions\Review\StoreReviewAction;
+use Reyhan\Core\Data\Review\StoreReviewData;
+use Reyhan\Core\Enums\ReviewStatus;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Requests\Api\V1\Review\StoreReviewRequest;
+use Reyhan\Core\Http\Resources\V1\ReviewResource;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\Review;
+use Reyhan\Core\Models\User;
 use Illuminate\Http\JsonResponse;
 
 final class ReviewController extends Controller

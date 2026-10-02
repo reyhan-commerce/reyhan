@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Data\Review;
+namespace Reyhan\Core\Data\Review;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;

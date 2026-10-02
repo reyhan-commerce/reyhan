@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands;
+namespace Reyhan\Core\Console\Commands;
 
-use App\Support\Modules\ModuleManager;
-use App\Support\Reyhan;
+use Reyhan\Core\Support\Modules\ModuleManager;
+use Reyhan\Core\Support\Reyhan;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 

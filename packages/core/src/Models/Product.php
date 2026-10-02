@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace Reyhan\Core\Models;
 
-use App\Enums\ReviewStatus;
+use Reyhan\Core\Contracts\Models\ProductContract;
+use Reyhan\Core\Enums\ReviewStatus;
 use BokshornIt\FilamentActivityTimeline\Contracts\ProvidesActivityTitle;
 use Carbon\Carbon;
-use Database\Factories\ProductFactory;
+use Reyhan\Core\Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -51,7 +52,7 @@ use Spatie\Sluggable\SlugOptions;
  */
 #[RouteKey('slug')]
 #[Guarded(['id'])]
-class Product extends Model implements HasMedia, ProvidesActivityTitle
+class Product extends Model implements HasMedia, ProductContract, ProvidesActivityTitle
 {
     /** @use HasFactory<ProductFactory> */
     use HasFactory, HasSEO, HasSlug, InteractsWithMedia, LogsActivity, SoftDeletes;

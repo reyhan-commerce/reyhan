@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Widgets;
+namespace Reyhan\Core\Filament\Widgets;
 
-use App\Enums\OrderStatus;
-use App\Filament\Resources\Orders\OrderResource;
-use App\Models\Order;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Filament\Resources\Orders\OrderResource;
+use Reyhan\Core\Models\Order;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;

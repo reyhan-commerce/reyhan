@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\LoyaltyTransactions\Pages;
+namespace Reyhan\Core\Filament\Resources\LoyaltyTransactions\Pages;
 
-use App\Filament\Resources\LoyaltyTransactions\LoyaltyTransactionResource;
-use App\Models\User;
+use Reyhan\Core\Filament\Resources\LoyaltyTransactions\LoyaltyTransactionResource;
+use Reyhan\Core\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

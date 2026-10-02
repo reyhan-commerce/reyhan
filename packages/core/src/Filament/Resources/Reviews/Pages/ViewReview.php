@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Reviews\Pages;
+namespace Reyhan\Core\Filament\Resources\Reviews\Pages;
 
-use App\Filament\Resources\Reviews\ReviewResource;
+use Reyhan\Core\Filament\Resources\Reviews\ReviewResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 

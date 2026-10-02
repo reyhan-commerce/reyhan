@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1\Concerns;
+namespace Reyhan\Core\Http\Controllers\Api\V1\Concerns;
 
-use App\Http\Resources\V1\CartResource;
-use App\Models\Cart;
-use App\Services\Cart\CartService;
+use Reyhan\Core\Http\Resources\V1\CartResource;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Services\Cart\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

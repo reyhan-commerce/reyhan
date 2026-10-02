@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-use App\Models\User;
-use App\Notifications\Auth\SendOtpNotification;
-use App\Services\Captcha\CaptchaService;
-use App\Services\Integrations\Kavenegar\KavenegarClient;
-use App\Services\Otp\OtpService;
-use App\Services\Sms\Drivers\FarazSmsDriver;
-use App\Services\Sms\Drivers\GhasedakDriver;
-use App\Services\Sms\Drivers\KavenegarDriver;
-use App\Services\Sms\Drivers\LogDriver;
-use App\Services\Sms\SmsManager;
-use App\Settings\SmsSettings;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Notifications\Auth\SendOtpNotification;
+use Reyhan\Core\Services\Captcha\CaptchaService;
+use Reyhan\Core\Services\Integrations\Kavenegar\KavenegarClient;
+use Reyhan\Core\Services\Otp\OtpService;
+use Reyhan\Core\Services\Sms\Drivers\FarazSmsDriver;
+use Reyhan\Core\Services\Sms\Drivers\GhasedakDriver;
+use Reyhan\Core\Services\Sms\Drivers\KavenegarDriver;
+use Reyhan\Core\Services\Sms\Drivers\LogDriver;
+use Reyhan\Core\Services\Sms\SmsManager;
+use Reyhan\Core\Settings\SmsSettings;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;

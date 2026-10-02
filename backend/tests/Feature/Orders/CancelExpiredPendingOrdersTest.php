@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-use App\Enums\OrderStatus;
-use App\Enums\ShippingMethod;
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\User;
-use App\Services\Inventory\StockReservationService;
-use App\Services\Wallet\WalletService;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Enums\ShippingMethod;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\OrderItem;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Services\Inventory\StockReservationService;
+use Reyhan\Core\Services\Wallet\WalletService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 uses(DatabaseTransactions::class);

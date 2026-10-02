@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\ShippingMethods\Pages;
+namespace Reyhan\Core\Filament\Resources\ShippingMethods\Pages;
 
-use App\Filament\Resources\ShippingMethods\ShippingMethodResource;
+use Reyhan\Core\Filament\Resources\ShippingMethods\ShippingMethodResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Models\Page;
+use Reyhan\Core\Models\Page;
 
 test('page show endpoint returns metadata and content for active page', function () {
     Page::updateOrCreate(

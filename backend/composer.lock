@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "20e646c519360652beccdd619985214f",
+    "content-hash": "dfdde68d4e8507ffde4060c829e678f3",
     "packages": [
         {
             "name": "alareqi/filament-tree",
@@ -7741,6 +7741,73 @@
                 }
             ],
             "time": "2024-06-11T12:45:25+00:00"
+        },
+        {
+            "name": "reyhan-commerce/core",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "../packages/core",
+                "reference": "2dc44967a4dcaaad80179f07211c844d6ccab6a7"
+            },
+            "require": {
+                "alareqi/filament-tree": "^1.0",
+                "bezhansalleh/filament-shield": "^4.3",
+                "bokshorn-it/filament-activity-timeline": "^1.4",
+                "dedoc/scramble": "^0.13.45",
+                "filament/filament": "^5.8",
+                "filament/spatie-laravel-media-library-plugin": "^5.8",
+                "filament/spatie-laravel-settings-plugin": "^5.8",
+                "laravel/framework": "^13.17",
+                "laravel/horizon": "^5.49",
+                "laravel/octane": "^2.19",
+                "laravel/pennant": "^1.26",
+                "laravel/pulse": "^1.8",
+                "laravel/reverb": "^1.12",
+                "laravel/sanctum": "^4.3",
+                "marcusvbda/filament-realtime-driver": "^0.1.2",
+                "morilog/jalali": "^3.4",
+                "php": "^8.4",
+                "rankbeam/laravel-seo-filament": "^1.12",
+                "shuvroroy/filament-spatie-laravel-backup": "^4.0",
+                "shuvroroy/filament-spatie-laravel-health": "^3.3",
+                "spatie/laravel-data": "^4.23",
+                "spatie/laravel-medialibrary": "^11.0",
+                "spatie/laravel-permission": "^8.3",
+                "spatie/laravel-settings": "^3.9",
+                "spatie/laravel-sluggable": "^4.0",
+                "zvizvi/filament-column-filters": "^0.0.6",
+                "zvizvi/filament-notifications-tabs": "^0.0.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Reyhan\\Core\\ReyhanServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Reyhan\\Core\\": "src/",
+                    "Reyhan\\Core\\Database\\Factories\\": "database/factories/",
+                    "Reyhan\\Core\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Reyhan Commerce Core Team",
+                    "email": "dev@reyhan.ir"
+                }
+            ],
+            "description": "Next-Gen Headless E-Commerce Core Framework for Laravel 13",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "ryangjchandler/blade-capture-directive",
@@ -16327,8 +16394,10 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": {},
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "reyhan-commerce/core": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

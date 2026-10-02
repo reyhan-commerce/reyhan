@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Policies;
+namespace Reyhan\Core\Policies;
 
-use App\Models\Payment;
+use Reyhan\Core\Models\Payment;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Foundation\Auth\User as AuthUser;
 

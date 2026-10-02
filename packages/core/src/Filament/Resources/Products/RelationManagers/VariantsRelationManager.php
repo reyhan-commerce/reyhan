@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Products\RelationManagers;
+namespace Reyhan\Core\Filament\Resources\Products\RelationManagers;
 
-use App\Models\ProductVariant;
+use Reyhan\Core\Models\ProductVariant;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;

@@ -2,8 +2,31 @@
 
 declare(strict_types=1);
 
-namespace App\Support;
+namespace Reyhan\Core\Support;
 
+use Reyhan\Core\Contracts\Models\BrandContract;
+use Reyhan\Core\Contracts\Models\CartContract;
+use Reyhan\Core\Contracts\Models\CategoryContract;
+use Reyhan\Core\Contracts\Models\OrderContract;
+use Reyhan\Core\Contracts\Models\ProductContract;
+use Reyhan\Core\Contracts\Models\ProductVariantContract;
+use Reyhan\Core\Contracts\Models\UserContract;
+use Reyhan\Core\Models\Address;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Models\CartItem;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Coupon;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\OrderItem;
+use Reyhan\Core\Models\Payment;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\Review;
+use Reyhan\Core\Models\ShippingMethod;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Models\Wishlist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
@@ -18,6 +41,31 @@ final class Reyhan
     private static array $modelBindings = [];
 
     /**
+     * Default core model mappings.
+     *
+     * @var array<string, class-string<Model>>
+     */
+    private static array $defaultModels = [
+        'order' => Order::class,
+        'order_item' => OrderItem::class,
+        'product' => Product::class,
+        'product_variant' => ProductVariant::class,
+        'variant' => ProductVariant::class,
+        'cart' => Cart::class,
+        'cart_item' => CartItem::class,
+        'user' => User::class,
+        'admin' => Admin::class,
+        'category' => Category::class,
+        'brand' => Brand::class,
+        'address' => Address::class,
+        'coupon' => Coupon::class,
+        'review' => Review::class,
+        'payment' => Payment::class,
+        'shipping_method' => ShippingMethod::class,
+        'wishlist' => Wishlist::class,
+    ];
+
+    /**
      * Get the current Reyhan engine version.
      */
     public static function version(): string
@@ -28,7 +76,7 @@ final class Reyhan
     /**
      * Bind a custom user model to replace a core model.
      *
-     * @param  string  $alias  e.g. 'product', 'order'
+     * @param  string  $alias  e.g. 'product', 'order', 'cart', 'user'
      * @param  class-string<Model>  $concrete
      */
     public static function useModel(string $alias, string $concrete): void
@@ -43,7 +91,7 @@ final class Reyhan
     /**
      * Resolve the configured Eloquent model class for a given alias.
      *
-     * @param  string  $alias  e.g. 'product', 'order', 'cart'
+     * @param  string  $alias  e.g. 'product', 'order', 'cart', 'user'
      * @return class-string<Model>
      */
     public static function model(string $alias): string
@@ -56,6 +104,10 @@ final class Reyhan
 
         if (is_string($configured) && class_exists($configured)) {
             return $configured;
+        }
+
+        if (isset(self::$defaultModels[$alias])) {
+            return self::$defaultModels[$alias];
         }
 
         throw new InvalidArgumentException("No model configured for Reyhan alias [{$alias}].");
@@ -82,5 +134,68 @@ final class Reyhan
         $class = self::model($alias);
 
         return $class::query();
+    }
+
+    /**
+     * @return class-string<OrderContract&Model>
+     */
+    public static function orderModel(): string
+    {
+        /** @var class-string<OrderContract&Model> */
+        return self::model('order');
+    }
+
+    /**
+     * @return class-string<ProductContract&Model>
+     */
+    public static function productModel(): string
+    {
+        /** @var class-string<ProductContract&Model> */
+        return self::model('product');
+    }
+
+    /**
+     * @return class-string<ProductVariantContract&Model>
+     */
+    public static function variantModel(): string
+    {
+        /** @var class-string<ProductVariantContract&Model> */
+        return self::model('variant');
+    }
+
+    /**
+     * @return class-string<CartContract&Model>
+     */
+    public static function cartModel(): string
+    {
+        /** @var class-string<CartContract&Model> */
+        return self::model('cart');
+    }
+
+    /**
+     * @return class-string<UserContract&Model>
+     */
+    public static function userModel(): string
+    {
+        /** @var class-string<UserContract&Model> */
+        return self::model('user');
+    }
+
+    /**
+     * @return class-string<CategoryContract&Model>
+     */
+    public static function categoryModel(): string
+    {
+        /** @var class-string<CategoryContract&Model> */
+        return self::model('category');
+    }
+
+    /**
+     * @return class-string<BrandContract&Model>
+     */
+    public static function brandModel(): string
+    {
+        /** @var class-string<BrandContract&Model> */
+        return self::model('brand');
     }
 }

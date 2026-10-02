@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
-use App\Models\Admin;
-use App\Models\User;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\ReyhanCorePlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BokshornIt\FilamentActivityTimeline\ActivityTimelinePlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -76,6 +77,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('دسترسی و پرسنل')->collapsed(),
             ])
             ->plugins([
+                ReyhanCorePlugin::make(),
                 FilamentShieldPlugin::make()
                     ->navigationGroup('دسترسی و پرسنل')
                     ->navigationSort(1),

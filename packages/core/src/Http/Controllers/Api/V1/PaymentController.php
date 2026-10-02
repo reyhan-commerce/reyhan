@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Actions\Payment\VerifyPaymentAction;
-use App\Http\Controllers\Controller;
-use App\Services\Payment\PaymentManager;
+use Reyhan\Core\Actions\Payment\VerifyPaymentAction;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Services\Payment\PaymentManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

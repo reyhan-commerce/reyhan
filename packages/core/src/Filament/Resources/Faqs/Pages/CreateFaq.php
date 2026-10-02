@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Faqs\Pages;
+namespace Reyhan\Core\Filament\Resources\Faqs\Pages;
 
-use App\Filament\Resources\Faqs\FaqResource;
+use Reyhan\Core\Filament\Resources\Faqs\FaqResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateFaq extends CreateRecord

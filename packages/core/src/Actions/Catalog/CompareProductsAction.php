@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Catalog;
+namespace Reyhan\Core\Actions\Catalog;
 
-use App\Models\Product;
+use Reyhan\Core\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 
 final class CompareProductsAction

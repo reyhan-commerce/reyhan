@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Payments;
+namespace Reyhan\Core\Filament\Resources\Payments;
 
-use App\Enums\PaymentGateway;
-use App\Enums\PaymentStatus;
-use App\Filament\Resources\Payments\Pages\CreatePayment;
-use App\Filament\Resources\Payments\Pages\EditPayment;
-use App\Filament\Resources\Payments\Pages\ListPayments;
-use App\Models\Payment;
-use App\Models\User;
+use Reyhan\Core\Enums\PaymentGateway;
+use Reyhan\Core\Enums\PaymentStatus;
+use Reyhan\Core\Filament\Resources\Payments\Pages\CreatePayment;
+use Reyhan\Core\Filament\Resources\Payments\Pages\EditPayment;
+use Reyhan\Core\Filament\Resources\Payments\Pages\ListPayments;
+use Reyhan\Core\Models\Payment;
+use Reyhan\Core\Models\User;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

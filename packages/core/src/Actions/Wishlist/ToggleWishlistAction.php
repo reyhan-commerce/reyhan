@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Wishlist;
+namespace Reyhan\Core\Actions\Wishlist;
 
-use App\Data\Wishlist\WishlistToggleResultData;
-use App\Models\Product;
-use App\Models\User;
-use App\Models\Wishlist;
+use Reyhan\Core\Data\Wishlist\WishlistToggleResultData;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Models\Wishlist;
 
 final class ToggleWishlistAction
 {

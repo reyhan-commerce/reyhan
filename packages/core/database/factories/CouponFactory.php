@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Reyhan\Core\Database\Factories;
 
-use App\Enums\CouponScope;
-use App\Enums\CouponType;
-use App\Models\Coupon;
+use Reyhan\Core\Enums\CouponScope;
+use Reyhan\Core\Enums\CouponType;
+use Reyhan\Core\Models\Coupon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

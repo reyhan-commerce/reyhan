@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Pages;
+namespace Reyhan\Core\Filament\Pages;
 
-use App\Actions\System\PerformCoreUpdateAction;
+use Reyhan\Core\Actions\System\PerformCoreUpdateAction;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;

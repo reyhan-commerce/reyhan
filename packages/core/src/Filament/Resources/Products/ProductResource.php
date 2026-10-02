@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Products;
+namespace Reyhan\Core\Filament\Resources\Products;
 
 use Alareqi\FilamentTree\Forms\Components\TreeSelect;
-use App\Filament\Resources\Products\Pages\CreateProduct;
-use App\Filament\Resources\Products\Pages\EditProduct;
-use App\Filament\Resources\Products\Pages\ListProducts;
-use App\Filament\Resources\Products\RelationManagers\VariantsRelationManager;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\Specification;
+use Reyhan\Core\Filament\Resources\Products\Pages\CreateProduct;
+use Reyhan\Core\Filament\Resources\Products\Pages\EditProduct;
+use Reyhan\Core\Filament\Resources\Products\Pages\ListProducts;
+use Reyhan\Core\Filament\Resources\Products\RelationManagers\VariantsRelationManager;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\Specification;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

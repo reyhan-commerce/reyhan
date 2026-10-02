@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\OrderReturns;
+namespace Reyhan\Core\Filament\Resources\OrderReturns;
 
-use App\Enums\OrderReturnStatus;
-use App\Enums\WalletTransactionType;
-use App\Filament\Resources\OrderReturns\Pages\ListOrderReturns;
-use App\Filament\Resources\OrderReturns\Pages\ViewOrderReturn;
-use App\Models\OrderReturn;
-use App\Models\User;
-use App\Services\Wallet\WalletService;
+use Reyhan\Core\Enums\OrderReturnStatus;
+use Reyhan\Core\Enums\WalletTransactionType;
+use Reyhan\Core\Filament\Resources\OrderReturns\Pages\ListOrderReturns;
+use Reyhan\Core\Filament\Resources\OrderReturns\Pages\ViewOrderReturn;
+use Reyhan\Core\Models\OrderReturn;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Services\Wallet\WalletService;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\Banners\Pages;
+namespace Reyhan\Core\Filament\Resources\Banners\Pages;
 
-use App\Filament\Resources\Banners\BannerResource;
+use Reyhan\Core\Filament\Resources\Banners\BannerResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 

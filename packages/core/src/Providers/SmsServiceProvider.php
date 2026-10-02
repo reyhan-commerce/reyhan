@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace Reyhan\Core\Providers;
 
-use App\Notifications\Channels\SmsChannel;
-use App\Services\Integrations\FarazSms\FarazSmsClient;
-use App\Services\Integrations\Ghasedak\GhasedakClient;
-use App\Services\Integrations\Kavenegar\KavenegarClient;
-use App\Services\Sms\SmsManager;
-use App\Settings\SmsSettings;
+use Reyhan\Core\Notifications\Channels\SmsChannel;
+use Reyhan\Core\Services\Integrations\FarazSms\FarazSmsClient;
+use Reyhan\Core\Services\Integrations\Ghasedak\GhasedakClient;
+use Reyhan\Core\Services\Integrations\Kavenegar\KavenegarClient;
+use Reyhan\Core\Services\Sms\SmsManager;
+use Reyhan\Core\Settings\SmsSettings;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;

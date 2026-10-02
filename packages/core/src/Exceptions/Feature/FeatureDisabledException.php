@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Exceptions\Feature;
+namespace Reyhan\Core\Exceptions\Feature;
 
 use Exception;
 use Illuminate\Http\JsonResponse;

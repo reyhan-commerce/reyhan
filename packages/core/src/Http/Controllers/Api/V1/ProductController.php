@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace Reyhan\Core\Http\Controllers\Api\V1;
 
-use App\Data\Catalog\ProductFilterData;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Catalog\ListProductsRequest;
-use App\Http\Resources\V1\ProductDetailResource;
-use App\Http\Resources\V1\ProductResource;
-use App\Services\Catalog\ProductService;
+use Reyhan\Core\Data\Catalog\ProductFilterData;
+use Reyhan\Core\Http\Controllers\Controller;
+use Reyhan\Core\Http\Requests\Api\V1\Catalog\ListProductsRequest;
+use Reyhan\Core\Http\Resources\V1\ProductDetailResource;
+use Reyhan\Core\Http\Resources\V1\ProductResource;
+use Reyhan\Core\Services\Catalog\ProductService;
 use Illuminate\Http\JsonResponse;
 
 final class ProductController extends Controller

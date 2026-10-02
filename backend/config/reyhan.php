@@ -1,22 +1,22 @@
 <?php
 
 declare(strict_types=1);
-use App\Models\Address;
-use App\Models\Admin;
-use App\Models\Brand;
-use App\Models\Cart;
-use App\Models\CartItem;
-use App\Models\Category;
-use App\Models\Coupon;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Payment;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\Review;
-use App\Models\ShippingMethod;
-use App\Models\User;
-use App\Models\Wishlist;
+use Reyhan\Core\Models\Address;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\Brand;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Models\CartItem;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Coupon;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\OrderItem;
+use Reyhan\Core\Models\Payment;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\Review;
+use Reyhan\Core\Models\ShippingMethod;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\Models\Wishlist;
 
 return [
 

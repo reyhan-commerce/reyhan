@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Catalog;
+namespace Reyhan\Core\Services\Catalog;
 
-use App\Actions\SearchProductsAction;
-use App\Data\Catalog\ProductFilterData;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\ProductVariant;
+use Reyhan\Core\Actions\SearchProductsAction;
+use Reyhan\Core\Data\Catalog\ProductFilterData;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Models\Product;
+use Reyhan\Core\Models\ProductVariant;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

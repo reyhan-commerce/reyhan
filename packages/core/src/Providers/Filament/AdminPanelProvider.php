@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Providers\Filament;
+namespace Reyhan\Core\Providers\Filament;
 
-use App\Models\Admin;
-use App\Models\User;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\User;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BokshornIt\FilamentActivityTimeline\ActivityTimelinePlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -47,12 +47,12 @@ class AdminPanelProvider extends PanelProvider
             ->spa()
             ->unsavedChangesAlerts()
             ->databaseNotifications()
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'Reyhan\Core\Filament\Resources')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'Reyhan\Core\Filament\Pages')
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'Reyhan\Core\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
             ])

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Cart;
+namespace Reyhan\Core\Services\Cart;
 
-use App\Models\Cart;
-use App\Models\CartItem;
-use App\Models\Coupon;
-use App\Models\ProductVariant;
-use App\Models\User;
+use Reyhan\Core\Models\Cart;
+use Reyhan\Core\Models\CartItem;
+use Reyhan\Core\Models\Coupon;
+use Reyhan\Core\Models\ProductVariant;
+use Reyhan\Core\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;

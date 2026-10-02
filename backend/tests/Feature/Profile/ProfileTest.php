@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Models\User;
+use Reyhan\Core\Models\User;
 use Laravel\Sanctum\Sanctum;
 
 test('authenticated user can view profile with statistics', function () {

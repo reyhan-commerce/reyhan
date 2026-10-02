@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Listeners\Catalog;
+namespace Reyhan\Core\Listeners\Catalog;
 
-use App\Events\Catalog\ProductRestockedEvent;
-use App\Models\StockAlert;
-use App\Notifications\Catalog\StockAlertNotification;
+use Reyhan\Core\Events\Catalog\ProductRestockedEvent;
+use Reyhan\Core\Models\StockAlert;
+use Reyhan\Core\Notifications\Catalog\StockAlertNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Queue\Attributes\Queue;
