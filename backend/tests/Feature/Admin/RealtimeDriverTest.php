@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use Reyhan\Core\Enums\OrderStatus;
-use Reyhan\Core\Enums\ShippingMethod;
-use Reyhan\Core\Filament\Widgets\LatestOrdersWidget;
-use Reyhan\Core\Models\Admin;
-use Reyhan\Core\Models\Order;
-use Reyhan\Core\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Marcusvbda\FilamentRealtimeDriver\FilamentRealtimeDriverPlugin;
 use Marcusvbda\FilamentRealtimeDriver\RealtimeEvent;
 use Marcusvbda\FilamentRealtimeDriver\Tables\TableSocketRegistry;
+use Reyhan\Core\Enums\OrderStatus;
+use Reyhan\Core\Enums\ShippingMethod;
+use Reyhan\Core\Filament\Widgets\LatestOrdersWidget;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\User;
 use Spatie\Permission\Models\Role;
 
 uses(DatabaseTransactions::class);
@@ -85,8 +85,8 @@ test('order model dispatches realtime event upon status update', function (): vo
     });
 });
 
-use Reyhan\Core\Filament\Resources\Orders\Pages\ListOrders;
 use Livewire\Livewire;
+use Reyhan\Core\Filament\Resources\Orders\Pages\ListOrders;
 
 test('order resource table has socket configured for orders channel', function (): void {
     $component = Livewire::actingAs($this->admin, 'admin')->test(ListOrders::class);

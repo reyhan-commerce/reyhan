@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Validator;
 use Reyhan\Core\Rules\CardNumberRule;
 use Reyhan\Core\Rules\CompanyNationalIdRule;
 use Reyhan\Core\Rules\IranianMobileRule;
@@ -11,7 +12,6 @@ use Reyhan\Core\Rules\NoPersianRule;
 use Reyhan\Core\Rules\PersianTextRule;
 use Reyhan\Core\Rules\PostalCodeRule;
 use Reyhan\Core\Rules\ShebaRule;
-use Illuminate\Support\Facades\Validator;
 
 it('validates authentic Iranian National Codes and rejects invalid algorithms or repeating digits', function (): void {
     $rule = new NationalCodeRule;

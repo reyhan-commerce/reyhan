@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Checkout;
 
+use Closure;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
 use Reyhan\Core\Actions\Checkout\CreateOrderAction;
 use Reyhan\Core\Data\Checkout\CreateOrderData;
 use Reyhan\Core\Enums\PaymentGateway;
@@ -19,9 +22,6 @@ use Reyhan\Core\Models\Province;
 use Reyhan\Core\Models\User;
 use Reyhan\Core\Pipelines\Checkout\OrderCreationContext;
 use Reyhan\Core\Pipelines\Checkout\OrderCreationPipeline;
-use Closure;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Event;
 
 uses(DatabaseTransactions::class);
 

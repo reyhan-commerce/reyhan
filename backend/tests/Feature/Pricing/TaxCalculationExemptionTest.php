@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Reyhan\Core\Enums\CouponType;
 use Reyhan\Core\Models\Brand;
 use Reyhan\Core\Models\Cart;
@@ -11,7 +12,6 @@ use Reyhan\Core\Models\Product;
 use Reyhan\Core\Models\ProductVariant;
 use Reyhan\Core\Models\User;
 use Reyhan\Core\Services\Pricing\PricingService;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 uses(DatabaseTransactions::class);
 

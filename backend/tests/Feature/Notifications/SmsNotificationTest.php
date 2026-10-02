@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Reyhan\Core\Actions\Payment\VerifyPaymentAction;
 use Reyhan\Core\Console\Commands\RecoverAbandonedCartsCommand;
 use Reyhan\Core\Enums\PaymentGateway;
@@ -21,9 +24,6 @@ use Reyhan\Core\Notifications\Channels\SmsChannel;
 use Reyhan\Core\Notifications\Marketing\AbandonedCartReminderNotification;
 use Reyhan\Core\Notifications\Orders\OrderPaidNotification;
 use Reyhan\Core\Notifications\Orders\OrderShippedNotification;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Notification;
 
 uses(DatabaseTransactions::class);
 

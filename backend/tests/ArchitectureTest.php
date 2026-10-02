@@ -47,4 +47,3 @@ arch('strict no-repository rule')
 arch('strict types are declared across core framework')
     ->expect('Reyhan\Core')
     ->toUseStrictTypes();
-

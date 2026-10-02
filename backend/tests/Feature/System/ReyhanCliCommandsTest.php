@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\System;
 
-use Reyhan\Core\Models\Order;
-use Reyhan\Core\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\File;
+use Reyhan\Core\Models\Order;
+use Reyhan\Core\Models\User;
 
 uses(DatabaseTransactions::class);
 

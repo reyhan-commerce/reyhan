@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Livewire\Livewire;
 use Reyhan\Core\Filament\Resources\Categories\Pages\CreateCategory;
 use Reyhan\Core\Filament\Resources\Categories\Pages\EditCategory;
 use Reyhan\Core\Filament\Resources\Categories\Pages\ListCategories;
 use Reyhan\Core\Models\Admin;
 use Reyhan\Core\Models\Category;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
 uses(DatabaseTransactions::class);

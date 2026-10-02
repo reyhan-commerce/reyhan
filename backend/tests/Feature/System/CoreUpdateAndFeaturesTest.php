@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Cache;
 use Reyhan\Core\Actions\System\PerformCoreUpdateAction;
 use Reyhan\Core\Data\System\UpdateResultData;
 use Reyhan\Core\Features\ShopFeature;
 use Reyhan\Core\Http\Controllers\Api\V1\AppFeaturesController;
-use Illuminate\Support\Facades\Cache;
 
 test('shop features enum contains all modular modules', function () {
     $names = ShopFeature::names();

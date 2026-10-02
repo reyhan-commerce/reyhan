@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Reyhan\Core\Enums\OrderStatus;
 use Reyhan\Core\Enums\ShippingMethod;
 use Reyhan\Core\Models\Brand;
@@ -13,7 +14,6 @@ use Reyhan\Core\Models\ProductVariant;
 use Reyhan\Core\Models\User;
 use Reyhan\Core\Services\Inventory\StockReservationService;
 use Reyhan\Core\Services\Wallet\WalletService;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 uses(DatabaseTransactions::class);
 

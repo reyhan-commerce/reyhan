@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Reyhan\Core\Models\User;
 use Laravel\Sanctum\Sanctum;
+use Reyhan\Core\Models\User;
 
 test('authenticated user can view profile with statistics', function () {
     $user = User::factory()->create([

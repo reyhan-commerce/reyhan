@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
-use Reyhan\Core\Models\Admin;
-use Reyhan\Core\Models\User;
-use Reyhan\Core\ReyhanCorePlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BokshornIt\FilamentActivityTimeline\ActivityTimelinePlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -25,6 +22,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Marcusvbda\FilamentRealtimeDriver\FilamentRealtimeDriverPlugin;
+use Reyhan\Core\Models\Admin;
+use Reyhan\Core\Models\User;
+use Reyhan\Core\ReyhanCorePlugin;
 use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
 use Zvizvi\FilamentColumnFilters\FilamentColumnFiltersPlugin;

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
+use Laravel\Sanctum\Sanctum;
 use Reyhan\Core\Models\Brand;
 use Reyhan\Core\Models\Category;
 use Reyhan\Core\Models\Product;
 use Reyhan\Core\Models\User;
 use Reyhan\Core\Models\Wishlist;
-use Laravel\Sanctum\Sanctum;
 
 test('authenticated user can toggle a product in wishlist', function () {
     $user = User::factory()->create();

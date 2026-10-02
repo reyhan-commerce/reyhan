@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use Reyhan\Core\Enums\CouponScope;
 use Reyhan\Core\Models\Brand;
 use Reyhan\Core\Models\Category;
 use Reyhan\Core\Models\Coupon;
 use Reyhan\Core\Models\Product;
 use Reyhan\Core\Models\ProductVariant;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Str;
 
 uses(DatabaseTransactions::class);
 

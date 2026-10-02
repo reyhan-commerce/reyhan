@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Laravel\Sanctum\Sanctum;
 use Reyhan\Core\Models\Brand;
 use Reyhan\Core\Models\Category;
 use Reyhan\Core\Models\Order;
@@ -10,7 +11,6 @@ use Reyhan\Core\Models\Product;
 use Reyhan\Core\Models\ProductVariant;
 use Reyhan\Core\Models\Review;
 use Reyhan\Core\Models\User;
-use Laravel\Sanctum\Sanctum;
 
 test('public can view reviews and stats for product', function () {
     $category = Category::factory()->create([

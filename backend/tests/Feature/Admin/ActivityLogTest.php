@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Reyhan\Core\Enums\OrderStatus;
 use Reyhan\Core\Models\Admin;
 use Reyhan\Core\Models\Order;
 use Reyhan\Core\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Role;
 

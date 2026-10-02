@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Laravel\Sanctum\Sanctum;
 use Reyhan\Core\Models\Address;
 use Reyhan\Core\Models\Brand;
 use Reyhan\Core\Models\Cart;
@@ -11,8 +13,6 @@ use Reyhan\Core\Models\Product;
 use Reyhan\Core\Models\ProductVariant;
 use Reyhan\Core\Models\Province;
 use Reyhan\Core\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Laravel\Sanctum\Sanctum;
 
 uses(DatabaseTransactions::class);
 

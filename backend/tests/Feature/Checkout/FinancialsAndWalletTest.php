@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Validation\ValidationException;
+use Reyhan\Core\Database\Seeders\ShippingMethodSeeder;
 use Reyhan\Core\Enums\OrderStatus;
 use Reyhan\Core\Enums\PaymentGateway;
 use Reyhan\Core\Enums\WalletTransactionType;
@@ -18,9 +21,6 @@ use Reyhan\Core\Models\Province;
 use Reyhan\Core\Models\ShippingMethod;
 use Reyhan\Core\Models\User;
 use Reyhan\Core\Services\Wallet\WalletService;
-use Reyhan\Core\Database\Seeders\ShippingMethodSeeder;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Validation\ValidationException;
 
 uses(DatabaseTransactions::class);
 

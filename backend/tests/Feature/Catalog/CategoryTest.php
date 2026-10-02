@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Reyhan\Core\Models\Category;
-use Reyhan\Core\Services\Catalog\CategoryService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Cache;
+use Reyhan\Core\Models\Category;
+use Reyhan\Core\Services\Catalog\CategoryService;
 
 uses(DatabaseTransactions::class);
 

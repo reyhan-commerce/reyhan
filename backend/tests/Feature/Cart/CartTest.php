@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use Reyhan\Core\Models\Brand;
 use Reyhan\Core\Models\Category;
 use Reyhan\Core\Models\Product;
 use Reyhan\Core\Models\ProductVariant;
 use Reyhan\Core\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Str;
 
 uses(DatabaseTransactions::class);
 

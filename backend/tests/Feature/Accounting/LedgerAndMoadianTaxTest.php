@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Reyhan\Core\Actions\Accounting\CreateLedgerJournalEntryAction;
 use Reyhan\Core\Actions\Tax\GenerateMoadianInvoiceAction;
+use Reyhan\Core\Database\Seeders\LedgerAccountsSeeder;
 use Reyhan\Core\Enums\CouponType;
 use Reyhan\Core\Enums\PaymentGateway;
 use Reyhan\Core\Enums\PaymentStatus;
@@ -22,7 +23,6 @@ use Reyhan\Core\Models\ProductVariant;
 use Reyhan\Core\Models\Province;
 use Reyhan\Core\Models\ShippingMethod;
 use Reyhan\Core\Models\User;
-use Reyhan\Core\Database\Seeders\LedgerAccountsSeeder;
 
 beforeEach(function (): void {
     $this->seed(LedgerAccountsSeeder::class);

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
 use Reyhan\Core\Models\Attribute;
 use Reyhan\Core\Models\AttributeValue;
 use Reyhan\Core\Models\Brand;
 use Reyhan\Core\Models\Category;
 use Reyhan\Core\Models\Product;
 use Reyhan\Core\Models\ProductVariant;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Cache;
 
 uses(DatabaseTransactions::class);
 

@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Redis;
 use Reyhan\Core\Models\User;
 use Reyhan\Core\Notifications\Auth\SendOtpNotification;
 use Reyhan\Core\Services\Captcha\CaptchaService;
@@ -13,12 +19,6 @@ use Reyhan\Core\Services\Sms\Drivers\KavenegarDriver;
 use Reyhan\Core\Services\Sms\Drivers\LogDriver;
 use Reyhan\Core\Services\Sms\SmsManager;
 use Reyhan\Core\Settings\SmsSettings;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Redis;
 
 uses(DatabaseTransactions::class);
 

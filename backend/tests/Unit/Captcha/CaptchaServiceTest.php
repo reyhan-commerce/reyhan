@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Reyhan\Core\Services\Captcha\CaptchaService;
 use Illuminate\Support\Facades\Redis;
+use Reyhan\Core\Services\Captcha\CaptchaService;
 
 beforeEach(function () {
     Redis::connection('default')->flushdb();

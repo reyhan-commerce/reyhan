@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Reyhan\Core\Models\Admin;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Gate;
+use Reyhan\Core\Models\Admin;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 

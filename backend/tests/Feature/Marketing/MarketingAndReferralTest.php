@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Marketing;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Notification;
 use Reyhan\Core\Enums\BannerPosition;
 use Reyhan\Core\Enums\OrderStatus;
 use Reyhan\Core\Enums\ReferralStatus;
@@ -21,8 +23,6 @@ use Reyhan\Core\Models\Referral;
 use Reyhan\Core\Models\User;
 use Reyhan\Core\Notifications\Marketing\AbandonedCartReminderNotification;
 use Reyhan\Core\Services\Marketing\ReferralService;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Notification;
 
 uses(DatabaseTransactions::class);
 

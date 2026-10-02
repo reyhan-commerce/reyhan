@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Reyhan\Core\Enums\OrderStatus;
 use Reyhan\Core\Enums\TicketDepartment;
 use Reyhan\Core\Enums\TicketPriority;
@@ -15,7 +16,6 @@ use Reyhan\Core\Models\ProductQuestion;
 use Reyhan\Core\Models\ProductVariant;
 use Reyhan\Core\Models\SupportTicket;
 use Reyhan\Core\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 uses(DatabaseTransactions::class);
 

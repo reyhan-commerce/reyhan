@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\URL;
+use Laravel\Sanctum\Sanctum;
 use Reyhan\Core\Enums\OrderStatus;
 use Reyhan\Core\Enums\ShippingMethod;
 use Reyhan\Core\Http\Controllers\Api\V1\OrderInvoiceController;
@@ -12,9 +15,6 @@ use Reyhan\Core\Models\OrderItem;
 use Reyhan\Core\Models\Product;
 use Reyhan\Core\Models\ProductVariant;
 use Reyhan\Core\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\URL;
-use Laravel\Sanctum\Sanctum;
 
 uses(DatabaseTransactions::class);
 

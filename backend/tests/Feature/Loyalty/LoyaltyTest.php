@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use Laravel\Pennant\Feature;
 use Reyhan\Core\Features\ShopFeature;
 use Reyhan\Core\Models\User;
-use Laravel\Pennant\Feature;
 
 test('loyalty tiers public endpoint returns tier levels and perks', function () {
     $response = $this->getJson('/api/v1/loyalty/tiers');

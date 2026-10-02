@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Database\Eloquent\Model;
 use Reyhan\Core\Models\AbandonedCartLog;
 use Reyhan\Core\Models\Address;
 use Reyhan\Core\Models\Admin;
@@ -46,7 +47,6 @@ use Reyhan\Core\Models\SupportTicketMessage;
 use Reyhan\Core\Models\User;
 use Reyhan\Core\Models\WalletTransaction;
 use Reyhan\Core\Models\Wishlist;
-use Illuminate\Database\Eloquent\Model;
 
 test('every domain model has a working factory and can be instantiated', function (string $modelClass) {
     /** @var Model $model */

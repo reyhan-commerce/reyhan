@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Reyhan\Core\Http\Controllers\Api\V1\AppSettingController;
 use Illuminate\Support\Facades\Cache;
+use Reyhan\Core\Http\Controllers\Api\V1\AppSettingController;
 
 test('public settings endpoint returns store configuration and caches in redis', function () {
     Cache::forget(AppSettingController::CACHE_KEY);

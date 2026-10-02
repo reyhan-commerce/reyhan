@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Reyhan\Core\Contracts\Models\UserContract;
+use Illuminate\Support\Str;
 use Reyhan\Core\Facades\Cart;
 use Reyhan\Core\Facades\Checkout;
 use Reyhan\Core\Facades\Inventory;
@@ -12,15 +12,17 @@ use Reyhan\Core\Models\Cart as CartModel;
 use Reyhan\Core\Models\Product;
 use Reyhan\Core\Models\ProductVariant;
 use Reyhan\Core\Models\User;
+use Reyhan\Core\Pipelines\Cart\CartCalculationPipeline;
+use Reyhan\Core\Pipelines\Checkout\OrderCreationPipeline;
+use Reyhan\Core\Services\Accounting\LedgerService;
 use Reyhan\Core\Services\Cart\CartService;
 use Reyhan\Core\Services\Checkout\CheckoutService;
 use Reyhan\Core\Services\Inventory\StockReservationService;
 use Reyhan\Core\Services\Pricing\PricingService;
-use Illuminate\Support\Str;
 
 afterEach(function () {
-    \Reyhan\Core\Pipelines\Checkout\OrderCreationPipeline::resetPipes();
-    \Reyhan\Core\Pipelines\Cart\CartCalculationPipeline::resetPipes();
+    OrderCreationPipeline::resetPipes();
+    CartCalculationPipeline::resetPipes();
 });
 
 test('first-class facades resolve expected services from container', function () {
@@ -36,9 +38,9 @@ test('first-class facades resolve expected services from container', function ()
         ->and(app(CheckoutService::class))->toBeInstanceOf(CheckoutService::class)
         ->and(app('reyhan.checkout'))->toBeInstanceOf(CheckoutService::class)
         ->and(Reyhan::checkout())->toBeInstanceOf(CheckoutService::class)
-        ->and(app(\Reyhan\Core\Services\Accounting\LedgerService::class))->toBeInstanceOf(\Reyhan\Core\Services\Accounting\LedgerService::class)
-        ->and(app('reyhan.ledger'))->toBeInstanceOf(\Reyhan\Core\Services\Accounting\LedgerService::class)
-        ->and(Reyhan::ledger())->toBeInstanceOf(\Reyhan\Core\Services\Accounting\LedgerService::class);
+        ->and(app(LedgerService::class))->toBeInstanceOf(LedgerService::class)
+        ->and(app('reyhan.ledger'))->toBeInstanceOf(LedgerService::class)
+        ->and(Reyhan::ledger())->toBeInstanceOf(LedgerService::class);
 });
 
 test('Cart facade operations work seamlessly', function () {
@@ -121,31 +123,30 @@ test('Pricing facade calculates cart breakdown accurately', function () {
 });
 
 test('Checkout facade exposes pipeline and extension hooks', function () {
-    expect(Checkout::pipeline())->toBeInstanceOf(\Reyhan\Core\Pipelines\Checkout\OrderCreationPipeline::class);
+    expect(Checkout::pipeline())->toBeInstanceOf(OrderCreationPipeline::class);
 
-    $initialPipesCount = count(\Reyhan\Core\Pipelines\Checkout\OrderCreationPipeline::getPipes());
+    $initialPipesCount = count(OrderCreationPipeline::getPipes());
 
     // Test pipe hooking
     $dummyPipe = 'DummyCustomPipeClass';
     Checkout::appendPipe($dummyPipe);
 
-    $pipes = \Reyhan\Core\Pipelines\Checkout\OrderCreationPipeline::getPipes();
+    $pipes = OrderCreationPipeline::getPipes();
     expect($pipes)
         ->toHaveCount($initialPipesCount + 1)
         ->and(end($pipes))->toBe($dummyPipe);
 });
 
 test('Pricing facade exposes CartCalculationPipeline and supports custom pipes', function () {
-    expect(Pricing::pipeline())->toBeInstanceOf(\Reyhan\Core\Pipelines\Cart\CartCalculationPipeline::class);
+    expect(Pricing::pipeline())->toBeInstanceOf(CartCalculationPipeline::class);
 
-    $initialPipesCount = count(\Reyhan\Core\Pipelines\Cart\CartCalculationPipeline::getPipes());
+    $initialPipesCount = count(CartCalculationPipeline::getPipes());
 
     $dummyPricingPipe = 'DummyPricingCustomPipe';
     Pricing::appendPipe($dummyPricingPipe);
 
-    $pipes = \Reyhan\Core\Pipelines\Cart\CartCalculationPipeline::getPipes();
+    $pipes = CartCalculationPipeline::getPipes();
     expect($pipes)
         ->toHaveCount($initialPipesCount + 1)
         ->and(end($pipes))->toBe($dummyPricingPipe);
 });
-

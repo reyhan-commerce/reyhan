@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Http;
+use Reyhan\Core\Database\Seeders\ShippingMethodSeeder;
 use Reyhan\Core\Enums\OrderStatus;
 use Reyhan\Core\Enums\PaymentGateway;
 use Reyhan\Core\Models\Address;
@@ -16,9 +19,6 @@ use Reyhan\Core\Models\ProductVariant;
 use Reyhan\Core\Models\Province;
 use Reyhan\Core\Models\ShippingMethod;
 use Reyhan\Core\Models\User;
-use Reyhan\Core\Database\Seeders\ShippingMethodSeeder;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Http;
 
 uses(DatabaseTransactions::class);
 
