@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static CartPricingData calculateCart(Cart $cart, ?City $destinationCity = null, ShippingMethod|\Reyhan\Core\Enums\ShippingMethod|int|string|null $shippingMethod = null)
+ * @method static \Reyhan\Core\Pipelines\Cart\CartCalculationPipeline pipeline()
+ * @method static void prependPipe(string $pipe)
+ * @method static void appendPipe(string $pipe)
  *
  * @see \Reyhan\Core\Services\Pricing\PricingService
  */

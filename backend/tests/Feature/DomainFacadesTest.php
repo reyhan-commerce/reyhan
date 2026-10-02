@@ -18,6 +18,11 @@ use Reyhan\Core\Services\Inventory\StockReservationService;
 use Reyhan\Core\Services\Pricing\PricingService;
 use Illuminate\Support\Str;
 
+afterEach(function () {
+    \Reyhan\Core\Pipelines\Checkout\OrderCreationPipeline::resetPipes();
+    \Reyhan\Core\Pipelines\Cart\CartCalculationPipeline::resetPipes();
+});
+
 test('first-class facades resolve expected services from container', function () {
     expect(app(CartService::class))->toBeInstanceOf(CartService::class)
         ->and(app('reyhan.cart'))->toBeInstanceOf(CartService::class)
@@ -126,3 +131,18 @@ test('Checkout facade exposes pipeline and extension hooks', function () {
         ->toHaveCount($initialPipesCount + 1)
         ->and(end($pipes))->toBe($dummyPipe);
 });
+
+test('Pricing facade exposes CartCalculationPipeline and supports custom pipes', function () {
+    expect(Pricing::pipeline())->toBeInstanceOf(\Reyhan\Core\Pipelines\Cart\CartCalculationPipeline::class);
+
+    $initialPipesCount = count(\Reyhan\Core\Pipelines\Cart\CartCalculationPipeline::getPipes());
+
+    $dummyPricingPipe = 'DummyPricingCustomPipe';
+    Pricing::appendPipe($dummyPricingPipe);
+
+    $pipes = \Reyhan\Core\Pipelines\Cart\CartCalculationPipeline::getPipes();
+    expect($pipes)
+        ->toHaveCount($initialPipesCount + 1)
+        ->and(end($pipes))->toBe($dummyPricingPipe);
+});
+

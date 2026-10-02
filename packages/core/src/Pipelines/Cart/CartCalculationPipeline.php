@@ -2,27 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Reyhan\Core\Pipelines\Checkout;
+namespace Reyhan\Core\Pipelines\Cart;
 
-use Reyhan\Core\Data\Checkout\CreateOrderResultData;
+use Reyhan\Core\Data\Pricing\CartPricingData;
 use Illuminate\Pipeline\Pipeline;
 
-final class OrderCreationPipeline
+final class CartCalculationPipeline
 {
     /**
-     * The standard default pipes through which order creation requests pass.
+     * The standard default pipes through which cart pricing requests pass.
      *
      * @var array<int, class-string>
      */
     protected static array $defaultPipes = [
-        VerifyCartStatePipe::class,
-        ApplyDynamicPromotionsPipe::class,
-        CalculateTaxesAndShippingPipe::class,
-        ReserveInventoryMutexPipe::class,
-        ExecutePreOrderHooksPipe::class,
-        PersistOrderRecordPipe::class,
-        InitiatePaymentOrWalletPipe::class,
-        FireOrderCreatedEventsPipe::class,
+        CollectCartItemsPipe::class,
+        ApplyCatalogDiscountsPipe::class,
+        ApplyCouponsAndPromotionsPipe::class,
+        CalculateShippingFeePipe::class,
+        CalculateTaxesPipe::class,
+        AssemblePricingDataPipe::class,
     ];
 
     /**
@@ -31,14 +29,12 @@ final class OrderCreationPipeline
      * @var array<int, class-string>
      */
     protected static array $pipes = [
-        VerifyCartStatePipe::class,
-        ApplyDynamicPromotionsPipe::class,
-        CalculateTaxesAndShippingPipe::class,
-        ReserveInventoryMutexPipe::class,
-        ExecutePreOrderHooksPipe::class,
-        PersistOrderRecordPipe::class,
-        InitiatePaymentOrWalletPipe::class,
-        FireOrderCreatedEventsPipe::class,
+        CollectCartItemsPipe::class,
+        ApplyCatalogDiscountsPipe::class,
+        ApplyCouponsAndPromotionsPipe::class,
+        CalculateShippingFeePipe::class,
+        CalculateTaxesPipe::class,
+        AssemblePricingDataPipe::class,
     ];
 
     /**
@@ -90,13 +86,13 @@ final class OrderCreationPipeline
     }
 
     /**
-     * Process the order creation context through the pipeline.
+     * Process the cart calculation context through the pipeline.
      */
-    public function process(OrderCreationContext $context): CreateOrderResultData
+    public function process(CartCalculationContext $context): CartPricingData
     {
         return app(Pipeline::class)
             ->send($context)
             ->through(self::$pipes)
-            ->then(fn (OrderCreationContext $ctx): CreateOrderResultData => $ctx->result);
+            ->then(fn (CartCalculationContext $ctx): CartPricingData => $ctx->result);
     }
 }
