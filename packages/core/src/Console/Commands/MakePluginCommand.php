@@ -76,9 +76,9 @@ declare(strict_types=1);
 
 namespace Reyhan\Plugins\\{$studlyName};
 
-use Illuminate\Support\ServiceProvider;
+use Reyhan\Core\Support\Extensions\ReyhanExtensionServiceProvider;
 
-final class {$studlyName}ServiceProvider extends ServiceProvider
+final class {$studlyName}ServiceProvider extends ReyhanExtensionServiceProvider
 {
     public function register(): void
     {
@@ -88,7 +88,7 @@ final class {$studlyName}ServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (file_exists(__DIR__ . '/../routes/api.php')) {
-            \$this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+            \$this->loadExtensionApiRoutes(__DIR__ . '/../routes/api.php', 'v1/plugins/{$kebabName}');
         }
 
         if (\$this->app->runningInConsole()) {
