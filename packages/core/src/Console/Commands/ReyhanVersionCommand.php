@@ -41,12 +41,10 @@ final class ReyhanVersionCommand extends Command
             ? json_decode(File::get($rootManifestPath), true)
             : [];
 
-        $storefrontVersion = is_array($rootManifest) ? ($rootManifest['components']['storefront_layer'] ?? '1.0.0') : '1.0.0';
         $installedExtensions = ModuleManager::getLoadedExtensions();
 
         $rows = [
             ['Reyhan Core', Reyhan::version()],
-            ['Storefront Layer (Nuxt 4)', $storefrontVersion],
             ['Laravel Framework', app()->version()],
             ['PHP Runtime', PHP_VERSION],
             ['Filament Admin Panel', '5.8.x'],

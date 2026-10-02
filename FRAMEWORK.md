@@ -4,41 +4,30 @@ This document is the official architectural specification for the **Reyhan Comme
 
 ---
 
-## 🏛️ 1. Modular Monorepo & Package Anatomy
+## 🏛️ 1. Architecture & Repository Anatomy
 
-Reyhan distributes independent, production-grade packages alongside full-featured reference applications:
+Reyhan provides a pure, decoupled headless e-commerce architecture:
 
 ```text
 reyhan/
 ├── packages/
-│   ├── core/                        # 🟢 Headless Domain Engine (Composer Package)
-│   │   ├── src/
-│   │   │   ├── Actions/             # Single-responsibility domain action classes
-│   │   │   ├── Contracts/Models/    # Domain interfaces (OrderContract, ProductContract, ...)
-│   │   │   ├── Data/                # Strongly-typed Data Transfer Objects (DTOs)
-│   │   │   ├── Models/              # Native Eloquent entities (swappable via Reyhan::model())
-│   │   │   ├── Services/            # Inventory, Pricing, OTP, SMS & Payment Managers
-│   │   │   └── Support/Modules/     # Dynamic PSR-4 extension discovery autoloader
-│   │   ├── database/migrations/     # PostgreSQL 17 JSONB schemas & GIN indices
-│   │   └── composer.json            # Package auto-discovery manifest
-│   │
-│   ├── storefront/                  # 🎨 Reactive Storefront Layer (NPM Package)
-│   │   ├── app/
-│   │   │   ├── components/          # Cascading e-commerce UI components
-│   │   │   ├── composables/         # Reactive hooks (useShopLocale, useApi, usePersian)
-│   │   │   ├── layouts/             # Default, checkout, and invoice layouts
-│   │   │   ├── pages/               # Catalog, PDP, Checkout, Profile, Wishlist, Returns
-│   │   │   └── stores/              # Pinia state stores (cart, auth, checkout, catalog)
-│   │   ├── nuxt.config.ts           # Storefront layer configuration
-│   │   └── package.json             # NPM package specification
-│   │
-│   └── create-reyhan/               # 🛠️ Official CLI Scaffolder
-│       ├── bin/index.js             # Interactive Clack-powered wizard
-│       └── package.json             # NPM executable package
+│   └── core/                        # 🟢 Headless Domain Engine (Composer: reyhan-commerce/core)
+│       ├── src/
+│       │   ├── Facades/             # Domain Facades (Cart, Pricing, Inventory, Checkout, Ledger)
+│       │   ├── Pipelines/           # Commercial Hookable Pipelines (Cart, Order)
+│       │   ├── Actions/             # Single-responsibility domain action classes
+│       │   ├── Contracts/Models/    # Domain interfaces (OrderContract, ProductContract, ...)
+│       │   ├── Data/                # Strongly-typed Data Transfer Objects (DTOs)
+│       │   ├── Models/              # Native Eloquent entities (swappable via Reyhan::model())
+│       │   ├── Services/            # Ledger, Inventory, Pricing, OTP, SMS & Payment Managers
+│       │   └── Support/Extensions/  # Base ReyhanExtensionServiceProvider for plugins
+│       ├── database/migrations/     # PostgreSQL 17 JSONB schemas & GIN indices
+│       └── composer.json            # Package auto-discovery manifest
 │
-├── backend/                         # Reference Backend API & Admin Console
-├── frontend/                        # Reference Reactive Storefront
-└── docs/                            # Official Documentation Portal
+└── backend/                         # Reference Backend API & Admin Console (reyhan-commerce/reyhan)
+    ├── app/Actions/                 # Application action orchestrations
+    ├── app/Filament/                # Admin backoffice resources, tables, and dashboards
+    └── config/reyhan.php            # Model registries & driver configurations
 ```
 
 ---
@@ -49,11 +38,11 @@ reyhan/
 | :--- | :--- | :--- |
 | **Backend Engine** | **PHP 8.4+ & Laravel 13** | Implements the single-use-case Action pattern, strongly-typed DTOs (`spatie/laravel-data`), native Eloquent persistence, FormRequest validation, and asynchronous queue workers. |
 | **Admin Backoffice** | **Filament 5 & Livewire 3** | Interactive management console with fine-grained RBAC permissions (`filament-shield`), real-time websocket updates, and Activitylog audit timelines. |
-| **Storefront Layer** | **Nuxt 4 & Vue 3** | Server-Side Rendering (SSR), Composition API, Pinia stores, Reka UI headless accessible primitives, and Tailwind 4 tokens. |
+| **Domain Facades & Pipelines** | **Custom Engine** | First-class facades (`Cart`, `Pricing`, `Inventory`, `Checkout`, `Ledger`) and hookable computation pipelines. |
 | **Primary Database** | **PostgreSQL 17+** | Native JSONB variant matrices, GIN indexing, `pg_trgm` fuzzy text matching, and pessimistic database locking (`lockForUpdate`). |
 | **Memory & Mutex Engine** | **Redis 7+** | Sub-millisecond cart caching, distributed sessions, Horizon queue workers, and atomic Lua script stock reservation mutexes. |
 | **High-Performance Runtime** | **FrankenPHP Octane & Caddy** | Worker-mode execution for ultra-low latency and automated TLS certificate handling. |
-| **Testing & Quality Assurance** | **Pest 4 & Vitest** | End-to-end domain feature testing, concurrency assertions, architecture linting, and automated UI unit testing. |
+| **Testing & Quality Assurance** | **Pest 4** | End-to-end domain feature testing, concurrency assertions, architecture linting, and automated workflow tests. |
 
 ---
 

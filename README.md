@@ -7,7 +7,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Enterprise%20Grade-10b981.svg)](https://reyhan-commerce.github.io/docs/)
-[![Architecture: Headless Monorepo](https://img.shields.io/badge/Architecture-Headless%20Monorepo-blue.svg)](https://reyhan-commerce.github.io/docs/v1/architecture/lifecycle)
+[![Architecture: Headless Framework](https://img.shields.io/badge/Architecture-Headless%20Framework-blue.svg)](https://reyhan-commerce.github.io/docs/v1/architecture/lifecycle)
 [![Documentation](https://img.shields.io/badge/Docs-Live%20Website-10b981.svg)](https://reyhan-commerce.github.io/docs/)
 
 [**📖 Read Full Documentation**](https://reyhan-commerce.github.io/docs/) • [**🚀 Getting Started**](https://reyhan-commerce.github.io/docs/v1/getting-started/installation) • [**🏛 Architecture**](https://reyhan-commerce.github.io/docs/v1/architecture/lifecycle) • [**🛠 CLI Reference**](https://reyhan-commerce.github.io/docs/v1/cli/cli-reference)
@@ -18,24 +18,37 @@
 
 ## ⚡ Quick Start
 
-Scaffold a full-stack, enterprise headless store with a single command:
+### 1. Official Composer CLI Installer
+
+Scaffold a production-ready Reyhan Commerce backend using our official Composer-native CLI tool:
 
 ```bash
-npx create-reyhan@latest my-store
-# or with pnpm
-pnpm create reyhan my-store
+composer global require reyhan-commerce/installer
+reyhan new my-store
 ```
 
-Or clone this monorepo and run the central orchestrator:
+### 2. Composer Create-Project
+
+Or install directly via standard Composer:
 
 ```bash
-# Verify system prerequisites (PostgreSQL 17, Redis 7, PHP 8.4+, Node 20+)
+composer create-project reyhan-commerce/reyhan my-store
+cd my-store
+php artisan reyhan:install
+```
+
+### 3. Local Development & Orchestrator
+
+Clone this repository and run the central CLI orchestrator:
+
+```bash
+# Verify system prerequisites (PostgreSQL 17+, Redis 7+, PHP 8.4+)
 ./reyhan doctor
 
 # Provision database, encryption keys, and seeders
 ./reyhan install
 
-# Start concurrent development servers
+# Start backend development server
 ./reyhan dev
 ```
 
@@ -43,40 +56,39 @@ Or clone this monorepo and run the central orchestrator:
 
 ## 🏛️ Framework Architecture Pillars
 
-1. **Modular Monorepo Packages:**
-   - Standalone core engine distributed via package management.
-   - Cascading reactive storefront layer with zero-CSS theme tokens.
-   - Official CLI scaffolder for instant store creation.
-2. **Two-Tier Concurrency & Stock Locking:**
+1. **Pure Headless Backend Engine:**
+   - Distributed via Composer (`reyhan-commerce/core` & `reyhan-commerce/reyhan`).
+   - Standard OpenAPI 3.1 contract generation via Scramble at `/docs/api`.
+   - Works seamlessly with any frontend technology (Official Nuxt 4 storefront, Next.js, Flutter, React Native, or iOS/Android native apps).
+2. **First-Class Domain Facades:**
+   - Modern, expressive Laravel facades (`Cart`, `Pricing`, `Inventory`, `Checkout`, `Ledger`, `Reyhan`).
+3. **Hookable Commercial Pipelines:**
+   - Dynamic, customizable pipes for `CartCalculationPipeline` and `OrderCreationPipeline`.
+4. **General Financial Ledger Engine:**
+   - Double-entry bookkeeping core (`LedgerService` & `Ledger` facade) enforcing strict debit-credit balance and transaction integrity.
+5. **Two-Tier Concurrency & Stock Locking:**
    - Tier 1: Distributed memory Sorted Sets with self-purging TTL to eliminate ghost inventory locks.
    - Tier 2: Database-level pessimistic row locking during checkout payment settlement.
-3. **Sovereign Extensibility (Zero Core Modification):**
+6. **Sovereign Extensibility (Zero Core Modification):**
    - **Dynamic Model Swapping:** Domain workflows resolve entities dynamically through contracts and resolvers.
-   - **Dynamic PSR-4 Extensions:** Drop plugins into `extensions/` with automatic classloader namespace injection.
-   - **Cascading Storefront:** Override visual components and layouts natively without touching core package files.
-4. **Security & Financial Integrity:**
-   - Anti-brute-force rate-limiting on OTP authentication with automatic token revocation.
-   - Atomic database transactions with strict external HTTP network boundaries.
+   - **Dynamic PSR-4 Extensions:** Drop plugins into `extensions/` with automatic classloader namespace injection and `ReyhanExtensionServiceProvider`.
 
 ---
 
 ## 🛠️ Technology Stack & Architectural Foundation
 
-Reyhan is built upon an enterprise-grade, modern open-source technology foundation:
-
 | Domain | Technology / Engine | Architectural Role & Rationale |
 | :--- | :--- | :--- |
-| **Backend Engine** | **PHP 8.4+ & Laravel 13** | Provides single-responsibility `final` Action classes, strongly-typed DTOs (`spatie/laravel-data`), native Eloquent models, and robust queue workers. |
+| **Backend Engine** | **PHP 8.4+ & Laravel 13** | Implements single-responsibility `final` Action classes, strongly-typed DTOs (`spatie/laravel-data`), native Eloquent models, and robust queue workers. |
 | **Admin Backoffice** | **Filament 5 & Livewire 3** | High-productivity reactive admin panel, RBAC permissions (`filament-shield`), real-time websocket updates, and audit logging. |
-| **Storefront Layer** | **Nuxt 4 & Vue 3** | Server-Side Rendering (SSR), Composition API, Pinia state stores, Reka UI headless components, and Tailwind 4. |
 | **Primary Database** | **PostgreSQL 17+** | Enterprise JSONB variant matrices, GIN indexing, `pg_trgm` fuzzy text search, and ACID pessimistic row-locking (`lockForUpdate`). |
 | **Memory & Mutex Engine** | **Redis 7+** | Sub-millisecond cart caching, distributed sessions, Horizon queue workers, and atomic Lua script stock reservations. |
 | **High-Performance Runtime** | **FrankenPHP Octane & Caddy** | Worker-mode execution for microsecond response times and automated SSL certificate provisioning. |
-| **Testing & Quality Assurance** | **Pest 4 & Vitest** | End-to-end domain feature testing, concurrency assertions, architecture linting, and automated UI unit testing. |
+| **Testing & Quality Assurance** | **Pest 4** | End-to-end domain feature testing, concurrency assertions, architecture linting, and automated workflow tests. |
 
 ---
 
-## 📂 Monorepo Anatomy
+## 📂 Repository Anatomy
 
 ```text
 reyhan/
@@ -84,30 +96,24 @@ reyhan/
 ├── reyhan                           # Central executable CLI orchestrator
 │
 ├── packages/
-│   ├── core/                        # 🟢 Backend Domain Package
-│   ├── storefront/                  # 🎨 Reactive Storefront Layer
-│   └── create-reyhan/               # 🛠️ Official CLI Scaffolder
+│   └── core/                        # 🟢 Core Domain Engine Package (`reyhan-commerce/core`)
+│       ├── src/                     # Facades, Actions, Services, Pipelines, Models
+│       └── database/                # Schema migrations and factories
 │
-├── backend/                         # Reference Backend API & Admin Console
-│   ├── app/Actions/                 # Single-responsibility domain action classes
-│   ├── app/Contracts/Models/        # Domain entity interface contracts
-│   ├── app/Data/                    # Strongly-typed Data Transfer Objects (DTOs)
-│   ├── app/Filament/                # Admin Panel resources and dashboards
-│   └── config/reyhan.php            # Model registries & gateway configurations
-│
-└── frontend/                        # Reference Reactive Storefront
-    ├── app/components/              # Cascading user-land component overrides
-    ├── app/composables/             # useShopLocale (RTL/LTR & i18n), useApi
-    └── nuxt.config.ts               # Storefront build configuration
+└── backend/                         # Reference Backend Application (`reyhan-commerce/reyhan`)
+    ├── app/Actions/                 # Single-responsibility domain action classes
+    ├── app/Contracts/Models/        # Domain entity interface contracts
+    ├── app/Data/                    # Strongly-typed Data Transfer Objects (DTOs)
+    ├── app/Filament/                # Admin Panel resources and dashboards
+    └── config/reyhan.php            # Model registries & gateway configurations
 ```
 
 ---
 
 ## 📄 Dedicated Specification Files
 
-- [Framework Architecture (`FRAMEWORK.md`)](./FRAMEWORK.md): Monorepo design, concurrency lifecycle, and zero-breaking upgrade guarantees.
+- [Framework Architecture (`FRAMEWORK.md`)](./FRAMEWORK.md): Architectural design, concurrency lifecycle, and zero-breaking upgrade guarantees.
 - [Backend Technical Specification (`BACKEND.md`)](./BACKEND.md): Detailed backend architecture, PostgreSQL schemas, payment drivers, SMS pipelines, and Pest testing suites.
-- [Frontend Technical Specification (`FRONTEND.md`)](./FRONTEND.md): Storefront layers, design tokens, Pinia stores, and accessibility standards.
 - [Admin & Plugins Guide (`PLUGINS.md`)](./PLUGINS.md): Admin panel plugins, modular extensions architecture, and evaluation checklists.
 - [Execution Roadmap (`ROADMAP.md`)](./ROADMAP.md): Milestone progress and upcoming major features.
 

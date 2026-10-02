@@ -9,7 +9,7 @@
 #   ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
 #
 #   Reyhan Unified Orchestrator & CLI Tool
-#   Next-Gen Headless E-Commerce Framework (Laravel 13 + Nuxt 4)
+#   Next-Gen Headless E-Commerce Framework (PHP 8.4+ / Laravel 13 / Filament v5)
 # ==============================================================================
 
 set -eo pipefail
@@ -24,11 +24,8 @@ BOLD="${ESC}1m"
 DIM="${ESC}2m"
 EMERALD="${ESC}38;5;48m"
 GREEN="${ESC}38;5;42m"
-# shellcheck disable=SC2034
 CYAN="${ESC}38;5;51m"
-# shellcheck disable=SC2034
 BLUE="${ESC}38;5;39m"
-# shellcheck disable=SC2034
 PURPLE="${ESC}38;5;141m"
 YELLOW="${ESC}38;5;220m"
 RED="${ESC}38;5;196m"
@@ -47,7 +44,7 @@ print_header() {
 EOF
     echo -e "${RESET}"
     echo -e "   ${BOLD}${EMERALD}Reyhan CLI Orchestrator${RESET} ${DIM}│${RESET} ${WHITE}v1.0.0${RESET}"
-    echo -e "   ${GRAY}Next-Gen Headless E-Commerce Framework (Laravel 13 + Nuxt 4)${RESET}\n"
+    echo -e "   ${GRAY}Next-Gen Headless E-Commerce Framework (PHP 8.4+ / Laravel 13 / Filament v5)${RESET}\n"
 }
 
 show_help() {
@@ -56,9 +53,9 @@ show_help() {
     echo -e "  ${BOLD}AVAILABLE COMMANDS:${RESET}"
     echo -e "    ${EMERALD}version${RESET}             Display version matrix, drivers, and runtime status"
     echo -e "    ${EMERALD}doctor${RESET}              Run health, environment, and dependency diagnostics"
-    echo -e "    ${EMERALD}install [--dev]${RESET}     Provision database, env, storage link, and admin panel"
+    echo -e "    ${EMERALD}install [--prod]${RESET}    Provision database, env, storage link, and admin panel"
     echo -e "    ${EMERALD}update${RESET}              Execute safe, zero-downtime core update & migrations"
-    echo -e "    ${EMERALD}dev${RESET}                 Start backend and frontend development servers"
+    echo -e "    ${EMERALD}dev${RESET}                 Start backend development server"
     echo -e "    ${EMERALD}help${RESET}                Show this manual\n"
 }
 
@@ -73,27 +70,10 @@ cmd_version() {
 
 cmd_doctor() {
     print_header
-    echo -e "  ${BOLD}${WHITE}Frontend Diagnostic Checks:${RESET}"
-    
-    # Node check
-    if command -v node &> /dev/null; then
-        NODE_VER=$(node -v)
-        echo -e "  Node.js Engine                      ${GREEN}✔ PASS${RESET}  ${GRAY}(${NODE_VER})${RESET}"
-    else
-        echo -e "  Node.js Engine                      ${RED}✖ FAIL${RESET}  ${YELLOW}(Not installed)${RESET}"
-    fi
-
-    # pnpm check
-    if command -v pnpm &> /dev/null; then
-        PNPM_VER=$(pnpm -v)
-        echo -e "  pnpm Package Manager                ${GREEN}✔ PASS${RESET}  ${GRAY}(v${PNPM_VER})${RESET}"
-    else
-        echo -e "  pnpm Package Manager                ${RED}✖ FAIL${RESET}  ${YELLOW}(Not installed)${RESET}"
-    fi
-
-    echo ""
     if [ -f "backend/artisan" ]; then
         php backend/artisan reyhan:doctor
+    else
+        echo -e "  ${RED}✖ backend/artisan not detected.${RESET}"
     fi
 }
 
@@ -120,18 +100,11 @@ cmd_install() {
         fi
     fi
 
-    echo -e "  ${EMERALD}●${RESET} Configuring backend..."
+    echo -e "  ${EMERALD}●${RESET} Configuring backend and running migrations..."
     (cd backend && php artisan reyhan:install --force)
 
-    # Frontend setup
-    if [ -d "frontend" ]; then
-        echo -e "\n  ${EMERALD}●${RESET} Installing frontend dependencies via pnpm..."
-        (cd frontend && pnpm install --silent && pnpm postinstall)
-        echo -e "  ${GREEN}✔${RESET} Storefront layer dependencies initialized."
-    fi
-
-    echo -e "\n  ${GREEN}✨ Reyhan local development setup completed!${RESET}"
-    echo -e "  ${GRAY}Run: ${WHITE}./reyhan dev${GRAY} to start both servers.${RESET}\n"
+    echo -e "\n  ${GREEN}✨ Reyhan headless backend setup completed!${RESET}"
+    echo -e "  ${GRAY}Run: ${WHITE}./reyhan dev${GRAY} to start the development server.${RESET}\n"
 }
 
 cmd_update() {
@@ -143,26 +116,17 @@ cmd_update() {
         php backend/artisan reyhan:update "$@"
     fi
 
-    # Frontend sync
-    if [ -d "frontend" ]; then
-        echo -e "\n  ${EMERALD}[Front] Refreshing Nuxt 4 Storefront Layer...${RESET}"
-        (cd frontend && pnpm postinstall > /dev/null 2>&1 || true)
-        echo -e "  ${GREEN}✔ Nuxt 4 Storefront types and layer state synchronized.${RESET}"
-    fi
-
     echo -e "\n  ${GREEN}🎉 Reyhan core update completed successfully!${RESET}\n"
 }
 
 cmd_dev() {
     print_header
-    echo -e "  ${EMERALD}➜ Starting Reyhan Development Engine...${RESET}"
-    echo -e "  ${GRAY}Backend API:  ${WHITE}http://localhost:8000${RESET}"
-    echo -e "  ${GRAY}Storefront:   ${WHITE}http://localhost:3000${RESET}\n"
+    echo -e "  ${EMERALD}➜ Starting Reyhan Headless Engine...${RESET}"
+    echo -e "  ${GRAY}API Endpoints:     ${WHITE}http://localhost:8000/api/v1${RESET}"
+    echo -e "  ${GRAY}Interactive Docs:  ${WHITE}http://localhost:8000/docs/api${RESET}"
+    echo -e "  ${GRAY}Admin Backoffice:  ${WHITE}http://localhost:8000/admin${RESET}\n"
 
-    trap 'kill 0' EXIT
-    (cd backend && php artisan serve --port=8000) &
-    (cd frontend && pnpm dev) &
-    wait
+    (cd backend && php artisan serve --port=8000)
 }
 
 COMMAND="${1:-help}"
