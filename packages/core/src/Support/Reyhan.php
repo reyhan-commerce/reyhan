@@ -198,4 +198,36 @@ final class Reyhan
         /** @var class-string<BrandContract&Model> */
         return self::model('brand');
     }
+
+    /**
+     * Get the core Cart service instance.
+     */
+    public static function cart(): \Reyhan\Core\Services\Cart\CartService
+    {
+        return app(\Reyhan\Core\Services\Cart\CartService::class);
+    }
+
+    /**
+     * Get the core Stock/Inventory reservation service instance.
+     */
+    public static function inventory(): \Reyhan\Core\Services\Inventory\StockReservationService
+    {
+        return app(\Reyhan\Core\Services\Inventory\StockReservationService::class);
+    }
+
+    /**
+     * Get the core Pricing service instance.
+     */
+    public static function pricing(): \Reyhan\Core\Services\Pricing\PricingService
+    {
+        return app(\Reyhan\Core\Services\Pricing\PricingService::class);
+    }
+
+    /**
+     * Get the core Checkout service instance.
+     */
+    public static function checkout(): \Reyhan\Core\Services\Checkout\CheckoutService
+    {
+        return app(\Reyhan\Core\Services\Checkout\CheckoutService::class);
+    }
 }

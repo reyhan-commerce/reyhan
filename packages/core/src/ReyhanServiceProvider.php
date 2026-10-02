@@ -32,6 +32,17 @@ class ReyhanServiceProvider extends ServiceProvider
         ]);
 
         $this->app->singleton(Reyhan::class, fn () => new Reyhan());
+        $this->app->singleton(\Reyhan\Core\Services\Cart\CartService::class);
+        $this->app->singleton(\Reyhan\Core\Services\Inventory\StockReservationService::class);
+        $this->app->singleton(\Reyhan\Core\Services\Pricing\PricingService::class);
+        $this->app->singleton(\Reyhan\Core\Services\Checkout\CheckoutService::class);
+
+        // Aliases for DI and Facade resolution
+        $this->app->alias(\Reyhan\Core\Services\Cart\CartService::class, 'reyhan.cart');
+        $this->app->alias(\Reyhan\Core\Services\Inventory\StockReservationService::class, 'reyhan.inventory');
+        $this->app->alias(\Reyhan\Core\Services\Pricing\PricingService::class, 'reyhan.pricing');
+        $this->app->alias(\Reyhan\Core\Services\Checkout\CheckoutService::class, 'reyhan.checkout');
+
         $this->app->register(Providers\AppServiceProvider::class);
         $this->app->register(Providers\SmsServiceProvider::class);
     }
