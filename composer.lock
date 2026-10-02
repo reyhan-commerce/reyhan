@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3d257eb48624be3aaa468a4d4a07f879",
+    "content-hash": "d8edfea315beac22f47e4d08b05e4db3",
     "packages": [
         {
             "name": "alareqi/filament-tree",
@@ -7744,11 +7744,17 @@
         },
         {
             "name": "reyhan-commerce/core",
-            "version": "dev-main",
-            "dist": {
-                "type": "path",
-                "url": "../package-core",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reyhan-commerce/core.git",
                 "reference": "fd6e25387ea4ec61502e76fc46e7035641103ce9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reyhan-commerce/core/zipball/fd6e25387ea4ec61502e76fc46e7035641103ce9",
+                "reference": "fd6e25387ea4ec61502e76fc46e7035641103ce9",
+                "shasum": ""
             },
             "require": {
                 "alareqi/filament-tree": "^1.0",
@@ -7804,10 +7810,11 @@
                 }
             ],
             "description": "Next-Gen Headless E-Commerce Core Framework for Laravel 13",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/reyhan-commerce/core/tree/v1.0.0",
+                "issues": "https://github.com/reyhan-commerce/core/issues"
+            },
+            "time": "2026-10-02T22:28:30+00:00"
         },
         {
             "name": "ryangjchandler/blade-capture-directive",
