@@ -230,4 +230,12 @@ final class Reyhan
     {
         return app(\Reyhan\Core\Services\Checkout\CheckoutService::class);
     }
+
+    /**
+     * Get the core double-entry accounting Ledger service instance.
+     */
+    public static function ledger(): \Reyhan\Core\Services\Accounting\LedgerService
+    {
+        return app(\Reyhan\Core\Services\Accounting\LedgerService::class);
+    }
 }

@@ -35,7 +35,10 @@ test('first-class facades resolve expected services from container', function ()
         ->and(Reyhan::pricing())->toBeInstanceOf(PricingService::class)
         ->and(app(CheckoutService::class))->toBeInstanceOf(CheckoutService::class)
         ->and(app('reyhan.checkout'))->toBeInstanceOf(CheckoutService::class)
-        ->and(Reyhan::checkout())->toBeInstanceOf(CheckoutService::class);
+        ->and(Reyhan::checkout())->toBeInstanceOf(CheckoutService::class)
+        ->and(app(\Reyhan\Core\Services\Accounting\LedgerService::class))->toBeInstanceOf(\Reyhan\Core\Services\Accounting\LedgerService::class)
+        ->and(app('reyhan.ledger'))->toBeInstanceOf(\Reyhan\Core\Services\Accounting\LedgerService::class)
+        ->and(Reyhan::ledger())->toBeInstanceOf(\Reyhan\Core\Services\Accounting\LedgerService::class);
 });
 
 test('Cart facade operations work seamlessly', function () {
