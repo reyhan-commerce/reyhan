@@ -65,6 +65,8 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
+          php artisan storage:link
+          php artisan migrate --force
         env:
           DB_CONNECTION: pgsql
           DB_HOST: 127.0.0.1
