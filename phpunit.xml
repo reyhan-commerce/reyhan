@@ -19,6 +19,7 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="APP_KEY" value="base64:4TqFwYfTqFwYfTqFwYfTqFwYfTqFwYfTqFwYfTqFwYc="/>
         <env name="APP_LOCALE" value="fa"/>
         <server name="HTTP_ACCEPT_LANGUAGE" value="fa"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>

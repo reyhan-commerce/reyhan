@@ -44,6 +44,17 @@ jobs:
           extensions: pdo_pgsql, redis, bcmath, intl, mbstring, curl, zip
           coverage: none
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build Assets
+        run: |
+          npm ci
+          npm run build
+
       - name: Get Composer Cache Directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -64,10 +75,10 @@ jobs:
       - name: Configure Test Environment
         run: |
           cp .env.example .env
-          php artisan key:generate
           php artisan storage:link
           php artisan migrate --force
         env:
+          APP_KEY: base64:4TqFwYfTqFwYfTqFwYfTqFwYfTqFwYfTqFwYfTqFwYc=
           DB_CONNECTION: pgsql
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
@@ -80,6 +91,7 @@ jobs:
       - name: Run Test Suite (Pest)
         run: ./vendor/bin/pest --colors=always
         env:
+          APP_KEY: base64:4TqFwYfTqFwYfTqFwYfTqFwYfTqFwYfTqFwYfTqFwYc=
           DB_CONNECTION: pgsql
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
