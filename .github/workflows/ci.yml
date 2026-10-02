@@ -47,28 +47,24 @@ jobs:
       - name: Get Composer Cache Directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-        working-directory: backend
 
       - name: Cache Composer Dependencies
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('backend/composer.lock') }}
+          key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-${{ matrix.php }}-
 
       - name: Install Composer Dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
-        working-directory: backend
 
       - name: Verify Code Style (Laravel Pint)
         run: ./vendor/bin/pint --test
-        working-directory: backend
 
       - name: Configure Test Environment
         run: |
           cp .env.example .env
           php artisan key:generate
-        working-directory: backend
         env:
           DB_CONNECTION: pgsql
           DB_HOST: 127.0.0.1
@@ -81,7 +77,6 @@ jobs:
 
       - name: Run Test Suite (Pest)
         run: ./vendor/bin/pest --colors=always
-        working-directory: backend
         env:
           DB_CONNECTION: pgsql
           DB_HOST: 127.0.0.1

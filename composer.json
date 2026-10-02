@@ -1,0 +1,124 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "reyhan-commerce/reyhan",
+    "type": "project",
+    "description": "Reyhan Commerce — Headless E-Commerce Framework for Iran.",
+    "keywords": ["reyhan", "ecommerce", "framework", "headless", "laravel"],
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../package-core",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "reyhan-commerce/core": "^1.0 || dev-main",
+        "alareqi/filament-tree": "^1.0",
+        "bezhansalleh/filament-shield": "^4.3",
+        "bokshorn-it/filament-activity-timeline": "^1.4",
+        "dedoc/scramble": "^0.13.45",
+        "filament/filament": "^5.8",
+        "filament/spatie-laravel-media-library-plugin": "^5.8",
+        "filament/spatie-laravel-settings-plugin": "^5.8",
+        "laravel/framework": "^13.17",
+        "laravel/horizon": "^5.49",
+        "laravel/octane": "^2.19",
+        "laravel/pennant": "^1.26",
+        "laravel/pulse": "^1.8",
+        "laravel/reverb": "^1.12",
+        "laravel/sanctum": "^4.3",
+        "laravel/tinker": "^3.0",
+        "marcusvbda/filament-realtime-driver": "^0.1.2",
+        "morilog/jalali": "^3.4",
+        "rankbeam/laravel-seo-filament": "^1.12",
+        "shuvroroy/filament-spatie-laravel-backup": "^4.0",
+        "shuvroroy/filament-spatie-laravel-health": "^3.3",
+        "spatie/laravel-data": "^4.23",
+        "spatie/laravel-medialibrary": "^11.0",
+        "spatie/laravel-permission": "^8.3",
+        "spatie/laravel-settings": "^3.9",
+        "spatie/laravel-sluggable": "^4.0",
+        "zvizvi/filament-column-filters": "^0.0.6",
+        "zvizvi/filament-notifications-tabs": "^0.0.3"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.12",
+        "laravel/boost": "^2.9",
+        "laravel/pail": "^1.2.5",
+        "laravel/pao": "^1.0.6",
+        "laravel/pint": "^1.27",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.6",
+        "pestphp/pest": "^4.7",
+        "pestphp/pest-plugin-laravel": "^4.1",
+        "phpunit/phpunit": "^12.5.12"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "setup": [
+            "composer install",
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php artisan key:generate",
+            "@php artisan migrate --force"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan dev"
+        ],
+        "test": [
+            "@php artisan config:clear --ansi @no_additional_args",
+            "@php artisan test"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@php artisan filament:upgrade"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ],
+        "pre-package-uninstall": [
+            "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

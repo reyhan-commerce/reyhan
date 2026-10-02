@@ -5,21 +5,35 @@ Thumbs.db
 .vscode/
 .codegraph/
 *.sw?
+*.log
 
 # Environment & local files
 .env
 .env.backup
 .env.production
 .env.local
+/auth.json
 
 # Dependencies
-node_modules/
-vendor/
+/node_modules
+/vendor
 
-# Build outputs
-.nuxt/
-.output/
-dist/
+# Laravel Framework
+/public/build
+/public/hot
+/public/storage
+/public/fonts-manifest.dev.json
+/storage/*.key
+/storage/pail
+.phpunit.result.cache
+.phpunit.cache/
+
+# High Performance Runtime
+frankenphp
+frankenphp-worker.php
+/public/frankenphp-worker.php
+docker/caddy/
+/api.json
 
 # Temporary files
 *.bak

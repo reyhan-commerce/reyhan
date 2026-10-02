@@ -61,19 +61,19 @@ show_help() {
 
 cmd_version() {
     print_header
-    if [ -f "backend/artisan" ]; then
-        php backend/artisan reyhan:version
+    if [ -f "artisan" ]; then
+        php artisan reyhan:version
     else
-        echo -e "  ${RED}✖ backend/artisan not detected.${RESET}"
+        echo -e "  ${RED}✖ artisan not detected in root directory.${RESET}"
     fi
 }
 
 cmd_doctor() {
     print_header
-    if [ -f "backend/artisan" ]; then
-        php backend/artisan reyhan:doctor
+    if [ -f "artisan" ]; then
+        php artisan reyhan:doctor
     else
-        echo -e "  ${RED}✖ backend/artisan not detected.${RESET}"
+        echo -e "  ${RED}✖ artisan not detected in root directory.${RESET}"
     fi
 }
 
@@ -92,18 +92,18 @@ cmd_install() {
 
     echo -e "  ${EMERALD}➜ Initializing Reyhan Local Development Environment...${RESET}\n"
 
-    # Backend setup
-    if [ ! -f "backend/.env" ]; then
-        if [ -f "backend/.env.example" ]; then
-            cp backend/.env.example backend/.env
-            echo -e "  ${GREEN}✔${RESET} Created backend/.env from template."
+    # Environment setup
+    if [ ! -f ".env" ]; then
+        if [ -f ".env.example" ]; then
+            cp .env.example .env
+            echo -e "  ${GREEN}✔${RESET} Created .env from template."
         fi
     fi
 
-    echo -e "  ${EMERALD}●${RESET} Configuring backend and running migrations..."
-    (cd backend && php artisan reyhan:install --force)
+    echo -e "  ${EMERALD}●${RESET} Configuring application and running migrations..."
+    php artisan reyhan:install --force
 
-    echo -e "\n  ${GREEN}✨ Reyhan headless backend setup completed!${RESET}"
+    echo -e "\n  ${GREEN}✨ Reyhan headless application setup completed!${RESET}"
     echo -e "  ${GRAY}Run: ${WHITE}./reyhan dev${GRAY} to start the development server.${RESET}\n"
 }
 
@@ -111,9 +111,8 @@ cmd_update() {
     print_header
     echo -e "  ${EMERALD}➜ Initiating Reyhan Framework Zero-Downtime Update...${RESET}\n"
 
-    # Backend update
-    if [ -f "backend/artisan" ]; then
-        php backend/artisan reyhan:update "$@"
+    if [ -f "artisan" ]; then
+        php artisan reyhan:update "$@"
     fi
 
     echo -e "\n  ${GREEN}🎉 Reyhan core update completed successfully!${RESET}\n"
@@ -126,7 +125,7 @@ cmd_dev() {
     echo -e "  ${GRAY}Interactive Docs:  ${WHITE}http://localhost:8000/docs/api${RESET}"
     echo -e "  ${GRAY}Admin Backoffice:  ${WHITE}http://localhost:8000/admin${RESET}\n"
 
-    (cd backend && php artisan serve --port=8000)
+    php artisan serve --port=8000
 }
 
 COMMAND="${1:-help}"
