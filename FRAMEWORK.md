@@ -1,4 +1,4 @@
-# 🌿 Reyhan Commerce — Framework Architecture & Technical Specification
+# Reyhan Commerce — Framework Architecture & Technical Specification
 
 This document is the official architectural specification for the **Reyhan Commerce Framework** — an enterprise-scale, full-stack, headless, and modular e-commerce engine designed for high-concurrency resilience, sovereign customizability, and seamless zero-breaking upgrades.
 

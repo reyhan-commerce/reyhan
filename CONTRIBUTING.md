@@ -58,7 +58,7 @@ php artisan test
 
 ---
 
-## 🌿 Git Workflow & Pull Requests
+## Git Workflow & Pull Requests
 
 1. **Fork the repository** on GitHub.
 2. **Create a topic branch**: `git checkout -b feature/awesome-feature` or `git checkout -b fix/issue-description`.
@@ -66,4 +66,4 @@ php artisan test
 4. **Push to your fork** and submit a Pull Request targeting the `main` branch.
 5. Ensure all automated GitHub Actions CI checks pass.
 
-Thank you for helping build Iran's leading open-source e-commerce framework! 🌿
+Thank you for helping build Iran's leading open-source e-commerce framework! 
