@@ -139,3 +139,16 @@ test('order creation pipeline allows dynamic custom pipe registration', function
     expect($result->order)->not->toBeNull()
         ->and(TestCustomAuditPipe::$called)->toBeTrue();
 });
+
+test('order creation pipeline supports replacing and removing pipes cleanly', function () {
+    expect(OrderCreationPipeline::getPipes())->toContain(TestCustomAuditPipe::class);
+    OrderCreationPipeline::removePipe(TestCustomAuditPipe::class);
+    expect(OrderCreationPipeline::getPipes())->not->toContain(TestCustomAuditPipe::class);
+
+    OrderCreationPipeline::appendPipe(TestCustomAuditPipe::class);
+    OrderCreationPipeline::replacePipe(TestCustomAuditPipe::class, \Reyhan\Core\Pipelines\Checkout\VerifyCartStatePipe::class);
+    expect(OrderCreationPipeline::getPipes())->not->toContain(TestCustomAuditPipe::class);
+
+    OrderCreationPipeline::resetPipes();
+});
+

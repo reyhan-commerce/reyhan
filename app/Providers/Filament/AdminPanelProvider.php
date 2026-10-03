@@ -45,6 +45,9 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Emerald,
             ])
             ->font('Vazirmatn')
+            ->brandLogo(fn () => asset('images/logo.png'))
+            ->brandLogoHeight('2.5rem')
+            ->favicon(fn () => asset('favicon.ico'))
             ->spa()
             ->unsavedChangesAlerts()
             ->databaseNotifications()

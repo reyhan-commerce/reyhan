@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="public/images/banner.png" alt="Reyhan Commerce Framework" width="780" style="max-width: 100%; border-radius: 12px; margin-bottom: 24px;" />
+
 # 🌿 Reyhan Commerce
 
 ### The Sovereign Enterprise Headless E-Commerce Framework
